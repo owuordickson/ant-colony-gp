@@ -22,7 +22,11 @@ Description:
 
 import sys
 from optparse import OptionParser
-from algorithms.data_set import DataSet
+from algorithms.classes.data_set import DataSet
+
+
+def init_pheromone(attr_indx):
+    return False
 
 # --------------------- EXECUTE Ant-Colony GP -------------------------------------------
 
@@ -43,12 +47,11 @@ def algorithm_init(f_path, min_supp):
 
 if __name__ == "__main__":
     if not sys.argv:
-        pattern_type = sys.argv[1]
-        file_name = sys.argv[2]
-        ref_col = sys.argv[3]
-        min_sup = sys.argv[4]
-        min_rep = sys.argv[5]
-
+        pType = sys.argv[1]
+        filePath = sys.argv[2]
+        refCol = sys.argv[3]
+        minSup = sys.argv[4]
+        minRep = sys.argv[5]
     else:
         optparser = OptionParser()
         optparser.add_option('-t', '--patternType',
@@ -78,7 +81,6 @@ if __name__ == "__main__":
                              type='float')
         (options, args) = optparser.parse_args()
 
-        inFile = None
         if options.file is None:
             filePath = '../data/DATASET.csv'
             #print("Usage: $python t_graank.py -f filename.csv -c refColumn -s minSup
@@ -86,6 +88,10 @@ if __name__ == "__main__":
             #sys.exit('System will exit')
         else:
             filePath = options.file
+        pType = options.pType
+        refCol = options.refCol
+        minSup = options.minSup
+        minRep = options.minRep
     #import timeit
-    if options.pType == 1:
-        algorithm_init(filePath, options.minSup)
+    if pType == 1:
+        algorithm_init(filePath, minSup)
