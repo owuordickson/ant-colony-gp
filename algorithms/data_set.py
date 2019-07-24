@@ -14,24 +14,40 @@ import time
 class DataSet:
 
     def __init__(self, file_path):
-        raw_data = DataSet.read_csv(file_path)
-        if len(raw_data) == 0:
+        self.raw_data = DataSet.read_csv(file_path)
+        if len(self.raw_data) == 0:
             self.data = False
             print("Data-set error")
             raise Exception("Unable to read csv file")
         else:
-            self.data = raw_data
+            self.data = self.raw_data
+            self.title = self.get_title()
             self.column_size = self.get_attribute_no()
             self.time_columns = self.get_time_cols()
 
     def get_attribute_no(self):
-        length = len(self.data[0])
+        length = len(self.raw_data[0])
         return length
+
+    def get_title(self):
+        data = self.raw_data
+        if data[0][0].replace('.', '', 1).isdigit() or data[0][0].isdigit():
+            return False
+        else:
+            if data[0][1].replace('.', '', 1).isdigit() or data[0][1].isdigit():
+                return False
+            else:
+                title = []
+                for i in range(len(data[0])):
+                    sub = (str(i + 1) + ' : ' + data[0][i])
+                    title.append(sub)
+                del self.data[0]
+                return title
 
     def get_time_cols(self):
         time_cols = list()
-        for i in range(len(self.data[1])):  # check every column for time format
-            row_data = str(self.data[1][i])
+        for i in range(len(self.raw_data[1])):  # check every column for time format
+            row_data = str(self.raw_data[1][i])
             try:
                 time_ok, t_stamp = DataSet.test_time(row_data)
                 if time_ok:

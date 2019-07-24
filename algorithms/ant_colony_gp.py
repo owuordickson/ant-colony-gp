@@ -22,13 +22,18 @@ Description:
 
 import sys
 from optparse import OptionParser
+from algorithms.data_set import DataSet
 
 # --------------------- EXECUTE Ant-Colony GP -------------------------------------------
 
 
-def algorithm_init(file_path, min_sup):
+def algorithm_init(f_path, min_supp):
     try:
-        print("first run")
+        dataset = DataSet(f_path)
+        if dataset.data:
+            print(dataset.title)
+            for item in dataset.data:
+                print(item)
     except Exception as error:
         print(error)
 
@@ -75,17 +80,12 @@ if __name__ == "__main__":
 
         inFile = None
         if options.file is None:
-            inFile = '../data/DATASET.csv'
+            filePath = '../data/DATASET.csv'
             #print("Usage: $python t_graank.py -f filename.csv -c refColumn -s minSup
             # -r minRep")
             #sys.exit('System will exit')
         else:
-            inFile = options.file
-        file_path = inFile
-        pattern_type = options.pType
-        ref_col = options.refCol
-        min_sup = options.minSup
-        min_rep = options.minRep
+            filePath = options.file
     #import timeit
-    if pattern_type == 1:
-        algorithm_init(file_path, min_sup)
+    if options.pType == 1:
+        algorithm_init(filePath, options.minSup)
