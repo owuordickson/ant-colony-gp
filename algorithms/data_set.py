@@ -15,29 +15,33 @@ class DataSet:
 
     def __init__(self, file_path):
         raw_data = DataSet.read_csv(file_path)
+        if len(raw_data) == 0:
+            self.data = False
+            print("Data-set error")
+            raise Exception("Unable to read csv file")
+        else:
+            self.data = raw_data
+            self.column_size = self.get_attribute_no()
+            self.time_columns = self.get_time_cols()
 
     def get_attribute_no(self):
-        length = len(self.raw_data[0])
+        length = len(self.data[0])
         return length
 
     def get_time_cols(self):
         time_cols = list()
-        for i in range(len(self.raw_data[1])):  # check every column for time format
-            row_data = str(self.raw_data[1][i])
+        for i in range(len(self.data[1])):  # check every column for time format
+            row_data = str(self.data[1][i])
             try:
                 time_ok, t_stamp = DataSet.test_time(row_data)
                 if time_ok:
                     time_cols.append(i)
             except ValueError:
                 continue
-
         if time_cols:
             return time_cols
         else:
             return False
-
-    def separate_columns(self):
-        return self.raw_data
 
     @staticmethod
     def read_csv(file):
