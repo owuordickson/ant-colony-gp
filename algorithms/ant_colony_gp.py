@@ -25,8 +25,16 @@ from optparse import OptionParser
 from algorithms.classes.data_set import DataSet
 
 
-def init_pheromone(attr_indx):
-    return False
+def init_pheromone(dataset, thd_supp):
+    cols = dataset.get_attribute_no()
+    time_cols = dataset.get_time_cols()
+    for i in range(cols):
+        if time_cols and (i in time_cols):
+            # exclude date-time column
+            continue
+        else:
+            # rank in ascending order and assign pheromones
+            print(dataset.data[i])
 
 # --------------------- EXECUTE Ant-Colony GP -------------------------------------------
 
@@ -35,9 +43,8 @@ def algorithm_init(f_path, min_supp):
     try:
         dataset = DataSet(f_path)
         if dataset.data:
-            print(dataset.title)
-            for item in dataset.data:
-                print(item)
+            init_pheromone(dataset, min_supp)
+            # print(dataset.title)
     except Exception as error:
         print(error)
 

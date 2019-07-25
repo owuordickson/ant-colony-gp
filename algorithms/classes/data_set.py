@@ -26,9 +26,10 @@ class DataSet:
             self.title = self.get_title()
             self.column_size = self.get_attribute_no()
             self.time_columns = self.get_time_cols()
+            self.attributes = []
 
     def get_attribute_no(self):
-        length = len(self.raw_data[0])
+        length = len(self.raw_data)
         return length
 
     def get_title(self):
