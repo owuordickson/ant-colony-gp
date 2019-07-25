@@ -26,23 +26,50 @@ from algorithms.classes.data_set import DataSet
 from algorithms.classes.item import Item
 
 
+def init_pheromones(lst_items):
+    count = 0
+    support = 0
+    for i in range(len(lst_items)):
+        try:
+            item = lst_items[i]
+            next_item = lst_items[i+1]
+            if item.value < next_item.value:
+                next_item.update_pheromone(1, item.pheromone)
+                if count == 0:
+                    count = count + 2
+                else:
+                    count = count + 1
+            else:
+                next_item.update_pheromone(0, item.pheromone)
+        except IndexError as e:
+            support = count/(len(lst_items))
+            break
+    return support, lst_items
+
+
 def init_rank(raw_attr, thd_supp):
-    # raw_attr.sort()
-    # print(raw_attr)
     lst_tuple = []
     for i in range(len(raw_attr)):
         var_tuple = [i, raw_attr[i]]
         lst_tuple.append(var_tuple)
     sorted_tuples = sorted(lst_tuple, key=lambda x: x[1])
-    print(sorted_tuples)
+    # print(sorted_tuples)
+    temp_items = []
     for obj in sorted_tuples:
         tuple_item = Item(obj[0], obj[1])
+        temp_items.append(tuple_item)
+    supp, lst_items = init_pheromones(temp_items)
+    if supp >= thd_supp:
+        return lst_items
+    else:
+        return False
 
 
 def init_attributes(dataset, thd_supp):
     temp = dataset.data
     cols = dataset.get_attribute_no()
     time_cols = dataset.get_time_cols()
+    lst_attributes = []
     for col in range(cols):
         if time_cols and (col in time_cols):
             # exclude date-time column
@@ -53,7 +80,17 @@ def init_attributes(dataset, thd_supp):
             for row in range(len(temp)):
                 raw_tuples.append(float(temp[row][col]))
             # rank in ascending order and assign pheromones
-            init_rank(raw_tuples, thd_supp)
+            attribute = init_rank(raw_tuples, thd_supp)
+            if attribute:
+                temp = (dataset.title[col], attribute)
+                lst_attributes.append(temp)
+    for attr in lst_attributes:
+        print(attr[0])
+        for obj in attr[1]:
+            print(obj.index)
+            print(obj.value)
+            print(obj.pheromone)
+    return lst_attributes
 
 # --------------------- EXECUTE Ant-Colony GP -------------------------------------------
 
