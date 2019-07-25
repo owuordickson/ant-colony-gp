@@ -29,7 +29,7 @@ class DataSet:
             self.attributes = []
 
     def get_attribute_no(self):
-        length = len(self.raw_data)
+        length = len(self.raw_data[0])
         return length
 
     def get_title(self):
@@ -42,13 +42,17 @@ class DataSet:
             else:
                 title = []
                 for i in range(len(data[0])):
-                    sub = (str(i + 1) + ' : ' + data[0][i])
+                    # sub = (str(i + 1) + ' : ' + data[0][i])
+                    sub = data[0][i]
                     title.append(sub)
                 del self.data[0]
                 return title
 
     def get_time_cols(self):
         time_cols = list()
+        time_cols.append(0)
+        time_cols.append(2)
+        time_cols.append(3)
         for i in range(len(self.data[0])):  # check every column for time format
             row_data = str(self.data[0][i])
             try:

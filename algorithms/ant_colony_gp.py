@@ -23,27 +23,46 @@ Description:
 import sys
 from optparse import OptionParser
 from algorithms.classes.data_set import DataSet
+from algorithms.classes.item import Item
 
 
-def init_pheromone(dataset, thd_supp):
+def init_rank(raw_attr, thd_supp):
+    # raw_attr.sort()
+    # print(raw_attr)
+    lst_tuple = []
+    for i in range(len(raw_attr)):
+        var_tuple = [i, raw_attr[i]]
+        lst_tuple.append(var_tuple)
+    sorted_tuples = sorted(lst_tuple, key=lambda x: x[1])
+    print(sorted_tuples)
+    for obj in sorted_tuples:
+        tuple_item = Item(obj[0], obj[1])
+
+
+def init_attributes(dataset, thd_supp):
+    temp = dataset.data
     cols = dataset.get_attribute_no()
     time_cols = dataset.get_time_cols()
-    for i in range(cols):
-        if time_cols and (i in time_cols):
+    for col in range(cols):
+        if time_cols and (col in time_cols):
             # exclude date-time column
             continue
         else:
+            # get all tuples of an attribute/column
+            raw_tuples = []
+            for row in range(len(temp)):
+                raw_tuples.append(float(temp[row][col]))
             # rank in ascending order and assign pheromones
-            print(dataset.data[i])
+            init_rank(raw_tuples, thd_supp)
 
 # --------------------- EXECUTE Ant-Colony GP -------------------------------------------
 
 
-def algorithm_init(f_path, min_supp):
+def init_algorithm(f_path, min_supp):
     try:
         dataset = DataSet(f_path)
         if dataset.data:
-            init_pheromone(dataset, min_supp)
+            init_attributes(dataset, min_supp)
             # print(dataset.title)
     except Exception as error:
         print(error)
@@ -101,4 +120,4 @@ if __name__ == "__main__":
         minRep = options.minRep
     #import timeit
     if pType == 1:
-        algorithm_init(filePath, minSup)
+        init_algorithm(filePath, minSup)
