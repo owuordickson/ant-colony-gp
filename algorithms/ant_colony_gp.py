@@ -142,7 +142,12 @@ def compare_attributes(attr_x, attr_y):
     return path_length
 
 
+def gen_attribute_combinations():
+    return False
+
+
 def extract_patterns(lst_attributes, thd_supp, t_size):
+    patterns = []
     for i in range(len(lst_attributes)):
         for j in range(len(lst_attributes)):
             if i >= j:
@@ -152,12 +157,14 @@ def extract_patterns(lst_attributes, thd_supp, t_size):
                 attr = lst_attributes[i]
                 next_attr = lst_attributes[j]
                 count = compare_attributes(attr[1], next_attr[1])
+                # calculate support
                 supp = count/t_size
                 if supp >= thd_supp:
+                    temp = [attr[0], next_attr[0]]
+                    patterns.append(temp)
                     print(attr[0])
                     print(next_attr[0])
-                # calculate support
-    return False
+    return patterns
 
 # --------------------- EXECUTE Ant-Colony GP -------------------------------------------
 
@@ -167,12 +174,7 @@ def init_algorithm(f_path, min_supp):
         dataset = DataSet(f_path)
         if dataset.data:
             lst_attributes = init_attributes(dataset, min_supp)
-            # for attr in lst_attributes:
-            #    for obj in attr[1]:
-                    # obj = raw_obj[1]
-            #        str_obj = [obj.index, obj.value, obj.pheromone]
-            #        print(str_obj)
-            extract_patterns(lst_attributes, min_supp, dataset.get_size())
+            gp_patterns = extract_patterns(lst_attributes, min_supp, dataset.get_size())
             # print(dataset.title)
     except Exception as error:
         print(error)
