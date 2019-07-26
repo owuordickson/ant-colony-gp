@@ -26,25 +26,26 @@ from algorithms.classes.data_set import DataSet
 from algorithms.classes.item import Item
 
 
-def init_pheromones(lst_items):
-    count = 0
-    support = 0
-    for i in range(len(lst_items)):
-        try:
-            item = lst_items[i]
-            next_item = lst_items[i+1]
-            if item.value < next_item.value:
-                next_item.update_pheromone(1, item.pheromone)
-                if count == 0:
-                    count = count + 2
-                else:
-                    count = count + 1
-            else:
-                next_item.update_pheromone(0, item.pheromone)
-        except IndexError as e:
-            support = count/(len(lst_items))
-            break
-    return support, lst_items
+def init_attributes(dataset, thd_supp):
+    temp = dataset.data
+    cols = dataset.get_attribute_no()
+    time_cols = dataset.get_time_cols()
+    lst_attributes = []
+    for col in range(cols):
+        if time_cols and (col in time_cols):
+            # exclude date-time column
+            continue
+        else:
+            # get all tuples of an attribute/column
+            raw_tuples = []
+            for row in range(len(temp)):
+                raw_tuples.append(float(temp[row][col]))
+            # rank in ascending order and assign pheromones
+            attribute = init_rank(raw_tuples, thd_supp)
+            if attribute:
+                temp_attr = (dataset.title[col], attribute)
+                lst_attributes.append(temp_attr)
+    return lst_attributes
 
 
 def init_rank(raw_attr, thd_supp):
@@ -65,32 +66,98 @@ def init_rank(raw_attr, thd_supp):
         return False
 
 
-def init_attributes(dataset, thd_supp):
-    temp = dataset.data
-    cols = dataset.get_attribute_no()
-    time_cols = dataset.get_time_cols()
-    lst_attributes = []
-    for col in range(cols):
-        if time_cols and (col in time_cols):
-            # exclude date-time column
-            continue
-        else:
-            # get all tuples of an attribute/column
-            raw_tuples = []
-            for row in range(len(temp)):
-                raw_tuples.append(float(temp[row][col]))
-            # rank in ascending order and assign pheromones
-            attribute = init_rank(raw_tuples, thd_supp)
-            if attribute:
-                temp = (dataset.title[col], attribute)
-                lst_attributes.append(temp)
-    for attr in lst_attributes:
-        print(attr[0])
-        for obj in attr[1]:
-            print(obj.index)
-            print(obj.value)
-            print(obj.pheromone)
-    return lst_attributes
+def init_pheromones(lst_items):
+    count = 0
+    support = 0
+    for i in range(len(lst_items)):
+        try:
+            item = lst_items[i]
+            next_item = lst_items[i+1]
+            if item.value < next_item.value:
+                next_item.update_pheromone(1, item.pheromone)
+                if count == 0:
+                    count = count + 2
+                else:
+                    count = count + 1
+            else:
+                next_item.update_pheromone(0, item.pheromone)
+        except IndexError as e:
+            support = count/(len(lst_items))
+            break
+    return support, lst_items
+
+# --------------------- Extract pattern combinations ------------------------------------
+
+
+def validate_pattern_path(path_set, attr_x, attr_y):
+    length = 0
+    path_list = list(path_set)
+    for n in range(len(path_list)):
+        try:
+            node = path_list[n]
+            next_node = path_list[n + 1]
+            if (attr_x[node].pheromone < attr_x[next_node].pheromone) and \
+                    (attr_y[node].pheromone < attr_y[next_node].pheromone):
+                # update pheromones
+                if length == 0:
+                    length = length + 2
+                else:
+                    length = length + 1
+        except IndexError as e:
+            break
+    return length
+
+
+def generate_set(t, attr_t):
+    temp_t = [attr_t[t].index]
+    for i in range(t, len(attr_t)):
+        try:
+            itm = attr_t[i]
+            next_itm = attr_t[i + 1]
+            if itm.pheromone < next_itm.pheromone:
+                temp_t.append(next_itm.index)
+        except IndexError as e:
+            break
+    return set(temp_t)
+
+
+def compare_attributes(attr_x, attr_y):
+    path_length = 0
+    for x in range(len(attr_x)):
+        obj_x = attr_x[x]
+        row_x = obj_x.index
+        for y in range(len(attr_y)):
+            obj_y = attr_y[y]
+            row_y = obj_y.index
+            if row_x == row_y:
+                temp_x = generate_set(x, attr_x)
+                temp_y = generate_set(y, attr_y)
+                pattern_path = temp_x.intersection(temp_y)
+                temp_l = validate_pattern_path(pattern_path, attr_x, attr_y)
+                # print(temp_x)
+                # print(temp_y)
+                # print(temp_l)
+                if temp_l > path_length:
+                    path_length = temp_l
+    return path_length
+
+
+def extract_patterns(lst_attributes, thd_supp, t_size):
+    for i in range(len(lst_attributes)):
+        for j in range(len(lst_attributes)):
+            if i >= j:
+                # 2x2 combinations of same or repeated attributes
+                continue
+            else:
+                attr = lst_attributes[i]
+                next_attr = lst_attributes[j]
+                count = compare_attributes(attr[1], next_attr[1])
+                supp = count/t_size
+                if supp >= thd_supp:
+                    print(attr[0])
+                    print(next_attr[0])
+                # calculate support
+    return False
 
 # --------------------- EXECUTE Ant-Colony GP -------------------------------------------
 
@@ -99,7 +166,13 @@ def init_algorithm(f_path, min_supp):
     try:
         dataset = DataSet(f_path)
         if dataset.data:
-            init_attributes(dataset, min_supp)
+            lst_attributes = init_attributes(dataset, min_supp)
+            # for attr in lst_attributes:
+            #    for obj in attr[1]:
+                    # obj = raw_obj[1]
+            #        str_obj = [obj.index, obj.value, obj.pheromone]
+            #        print(str_obj)
+            extract_patterns(lst_attributes, min_supp, dataset.get_size())
             # print(dataset.title)
     except Exception as error:
         print(error)

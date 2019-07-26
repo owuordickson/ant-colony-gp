@@ -24,13 +24,18 @@ class DataSet:
         else:
             self.data = self.raw_data
             self.title = self.get_title()
-            self.column_size = self.get_attribute_no()
             self.time_columns = self.get_time_cols()
+            self.column_size = self.get_attribute_no()
+            self.size = self.get_size()
             self.attributes = []
 
+    def get_size(self):
+        size = len(self.raw_data)
+        return size
+
     def get_attribute_no(self):
-        length = len(self.raw_data[0])
-        return length
+        count = len(self.raw_data[0])
+        return count
 
     def get_title(self):
         data = self.raw_data
@@ -50,8 +55,7 @@ class DataSet:
 
     def get_time_cols(self):
         time_cols = list()
-        time_cols.append(0)
-        time_cols.append(2)
+        # time_cols.append(0)
         time_cols.append(3)
         for i in range(len(self.data[0])):  # check every column for time format
             row_data = str(self.data[0][i])
