@@ -268,6 +268,7 @@ if __name__ == "__main__":
 
         if options.file is None:
             filePath = '../data/DATASET.csv'
+            #filePath = '../data/FluTopicData-testsansdate-blank.csv'
             #print("Usage: $python t_graank.py -f filename.csv -c refColumn -s minSup
             # -r minRep")
             #sys.exit('System will exit')
