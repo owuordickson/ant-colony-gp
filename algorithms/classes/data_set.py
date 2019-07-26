@@ -48,7 +48,8 @@ class DataSet:
                 title = []
                 for i in range(len(data[0])):
                     # sub = (str(i + 1) + ' : ' + data[0][i])
-                    sub = data[0][i]
+                    # sub = data[0][i]
+                    sub = [str(i+1), data[0][i]]
                     title.append(sub)
                 del self.data[0]
                 return title
@@ -56,7 +57,7 @@ class DataSet:
     def get_time_cols(self):
         time_cols = list()
         # time_cols.append(0)
-        time_cols.append(3)
+        # time_cols.append(3)
         for i in range(len(self.data[0])):  # check every column for time format
             row_data = str(self.data[0][i])
             try:
