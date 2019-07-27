@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 """
 @author: "Dickson Owuor"
 @credits: "Anne Laurent, Joseph Orero"
@@ -25,6 +24,8 @@ from optparse import OptionParser
 import networkx as nx
 from algorithms.classes.data_set import DataSet
 from algorithms.classes.node import Node
+
+# -------------- Arrange rank attributes to generate Graph attribute -------------------
 
 
 def init_rank(direction, raw_attr):
@@ -77,7 +78,7 @@ def init_attributes(dataset, thd_supp):
                     lst_attributes.append(temp_attr)
     return lst_attributes
 
-# --------------------- Extract pattern combinations ------------------------------------
+# -------------- Extract patterns from attribute (Graph) combinations -------------------
 
 
 def extract_patterns(lst_attributes, thd_supp, t_size):
