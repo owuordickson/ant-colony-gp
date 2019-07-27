@@ -27,36 +27,6 @@ from algorithms.classes.data_set import DataSet
 from algorithms.classes.node import Node
 
 
-def init_pheromones(lst_items, direction):
-    count = 0
-    support = 0
-    for i in range(len(lst_items)):
-        try:
-            item = lst_items[i]
-            next_item = lst_items[i+1]
-            if (direction == '+') and (item.value < next_item.value):
-                next_item.update_pheromone(1, item.pheromone)
-                if count == 0:
-                    count = count + 2
-                else:
-                    count = count + 1
-            elif (direction == '-') and (item.value > next_item.value):
-                next_item.update_pheromone(1, item.pheromone)
-                if count == 0:
-                    count = count + 2
-                else:
-                    count = count + 1
-            else:
-                next_item.update_pheromone(0, item.pheromone)
-        except IndexError as e:
-            support = count/(len(lst_items))
-            break
-    # for obj in lst_items:
-    #    str_print = [obj.index, obj.value, obj.pheromone]
-    #    print(str_print)
-    return support, lst_items
-
-
 def init_rank(direction, raw_attr):
     lst_tuple = []
     for i in range(len(raw_attr)):

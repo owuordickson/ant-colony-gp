@@ -12,6 +12,10 @@
 
 class Node:
 
+    def __init__(self, index):
+        self.index = index
+        self.pheromone = 0
+
     def __init__(self, index, value):
         self.index = index
         self.value = value
