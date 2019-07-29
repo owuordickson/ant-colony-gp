@@ -83,6 +83,11 @@ def init_attributes(dataset, thd_supp):
 
 def extract_patterns(lst_attributes, thd_supp, t_size):
     patterns = []
+    for obj in lst_attributes:
+        attr = str(obj[0])
+        pattern = (attr + str(obj[1]))
+        G = obj[2]
+        print(pattern)
     return patterns
 
 # --------------------- EXECUTE Ant-Colony GP -------------------------------------------
