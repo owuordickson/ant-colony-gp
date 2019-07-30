@@ -22,6 +22,7 @@ Description:
 import sys
 from optparse import OptionParser
 import networkx as nx
+import numpy as np
 from algorithms.classes.data_set import DataSet
 from algorithms.classes.node import Node
 
@@ -81,14 +82,29 @@ def init_attributes(dataset, thd_supp):
 # -------------- Extract patterns from attribute (Graph) combinations -------------------
 
 
-def extract_patterns(lst_attributes, thd_supp, t_size):
-    patterns = []
-    for obj in lst_attributes:
-        attr = str(obj[0])
-        pattern = (attr + str(obj[1]))
-        G = obj[2]
-        print(pattern)
-    return patterns
+def extract_patterns(lst_graphs, thd_supp, t_size):
+    gp = []
+    n = len(lst_graphs)
+    all_combs = np.zeros((n, n), dtype=bool)
+    for i in range(n):
+        even = True
+        for j in range(i+1, n):
+            if (i % 2 == 0) and even:
+                even = False
+                continue
+            all_combs[i][j] = True
+    print(all_combs)
+    # for obj in lst_graphs:
+    #    attr = str(obj[0])
+    #    pattern = (attr + str(obj[1]))
+        #G = obj[2]
+        #patterns.append(G)
+        #print(pattern)
+    # G = lst_graphs[1][2]  # Age+
+    # H = lst_graphs[3][2]  # Salary+
+    # I = nx.intersection(H, G)
+    # print(I.nodes)
+    return gp
 
 # --------------------- EXECUTE Ant-Colony GP -------------------------------------------
 
