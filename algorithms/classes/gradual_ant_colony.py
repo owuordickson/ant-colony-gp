@@ -26,9 +26,6 @@ class GradualAntColony:
         self.p_matrix = np.ones((len(self.dataset.attributes), len(self.feature)),
                                 dtype=float)
 
-    def evaluate_solution(self, pattern):
-        return 0
-
     def run_ant_colony(self):
         p = self.p_matrix
         all_sols = []
@@ -49,16 +46,53 @@ class GradualAntColony:
                         continue
                     if temp_n not in sol_n:
                         sol_n.append(temp_n)
-                # if sol_n not in all_sols:
-                #    all_sols.append(sol_n)
-                print(sol_n)
-                supp = self.evaluate_solution(sol_n)
-                # test_pattern
-                # update p_matrix
+                if (sol_n != []) and (sol_n not in all_sols):
+                    all_sols.append(sol_n)
+                    # print(sol_n)
+                    supp = self.evaluate_solution(sol_n)
+                    if supp and (supp >= self.thd_supp):
+                        self.update_pheromone(sol_n, supp)
         return sols_win
 
+    def evaluate_solution(self, pattern):
+        # [['2', '+'], ['4', '+']]
+        lst_graph = self.dataset.lst_graph
+        Graphs = []
+        for obj_i in pattern:
+            for obj_j in lst_graph:
+                temp = [obj_j[0], obj_j[1]]
+                if temp == obj_i:
+                    G = obj_j[2]
+                    Graphs.append(G)
+                    # print(temp)
+                    # print(G.edges)
+        if len(Graphs) == len(pattern):
+            supp = GradualAntColony.find_path(Graphs)
+        else:
+            supp = False
+        return supp
+
+    def update_pheromone(self, sol, supp):
+        # [['2', '+'], ['4', '+']], 0.6
+        for obj in sol:
+            attr = int(obj[0])
+            symbol = obj[1]
+            i = attr - 1
+            if symbol == '+':
+                j = 0
+            elif symbol == '-':
+                j = 1
+            else:
+                j = 2
+            for k in range(len(self.p_matrix[i])):
+                if k == j:
+                    self.p_matrix[i][j] += supp
+                # else:
+                #    self.p_matrix[i][k] -= supp
+
     def plot_pheromone_matrix(self):
-        X = np.array(self.p_matrix)
+        x_plot = np.array(self.p_matrix)
+        print(x_plot)
         x_ticks = ['+', '-', 'x']
         x = [0.5, 1.5, 2.5]
         y_ticks = []
@@ -75,6 +109,15 @@ class GradualAntColony:
         plt.ylim(0, len(self.p_matrix))
         plt.xticks(x, x_ticks)
         plt.yticks(y, y_ticks)
-        plt.pcolor(X)
+        plt.pcolor(x_plot, cmap='gray')
         plt.gray()
         plt.show()
+
+    @staticmethod
+    def find_path(lst_Gs):
+        if len(lst_Gs) >= 2:
+            print("Yes")
+            return 0.6
+        else:
+            # print("No")
+            return False

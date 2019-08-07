@@ -30,7 +30,7 @@ class InitData:
             self.time_columns = self.get_time_cols()
             self.column_size = self.get_attribute_no()
             self.size = self.get_size()
-            self.lst_graphs = []
+            self.lst_graph = []
 
     def get_size(self):
         size = len(self.raw_data)
@@ -104,7 +104,7 @@ class InitData:
                     if supp >= thd_supp:
                         temp_attr = [self.title[col][0], d, graph_attr]
                         lst_attributes.append(temp_attr)
-        self.lst_graphs = lst_attributes
+        self.lst_graph = lst_attributes
 
     @staticmethod
     def init_rank(order, raw_attr):
