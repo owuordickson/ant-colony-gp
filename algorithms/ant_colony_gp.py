@@ -23,10 +23,12 @@ import sys
 from optparse import OptionParser
 import networkx as nx
 import numpy as np
+import random as rand
+import matplotlib.pyplot as plt
 from algorithms.classes.data_set import DataSet
 from algorithms.classes.node import Node
 
-# -------------- Arrange rank attributes to generate Graph attribute -------------------
+# -------------- Arrange rank attributes to generate Graph attribute ------------------
 
 
 def init_rank(direction, raw_attr):
@@ -79,42 +81,93 @@ def init_attributes(dataset, thd_supp):
                     lst_attributes.append(temp_attr)
     return lst_attributes
 
-# -------------- Extract patterns from attribute (Graph) combinations -------------------
+# -------------- Extract patterns from attribute (Graph) combinations ----------------
+
+
+def optimize_combs(n):
+    combs = []
+    for i in range(n):
+        even = True
+        for j in range(i + 1, n):
+            if (i % 2 == 0) and even:
+                even = False
+                continue
+            temp = [i, j]
+            combs.append(temp)
+    return combs
 
 
 def extract_patterns(lst_graphs, thd_supp, t_size):
     gp = []
     n = len(lst_graphs)
-    all_combs = np.zeros((n, n), dtype=bool)
-    for i in range(n):
-        even = True
-        for j in range(i+1, n):
-            if (i % 2 == 0) and even:
-                even = False
-                continue
-            all_combs[i][j] = True
-    print(all_combs)
-    # for obj in lst_graphs:
-    #    attr = str(obj[0])
-    #    pattern = (attr + str(obj[1]))
-        #G = obj[2]
-        #patterns.append(G)
-        #print(pattern)
+    all_combs = np.zeros((n, n), dtype=float)
+    combs_index = optimize_combs(n)
+    # print(combs_index)
+    for obj in lst_graphs:
+        attr = str(obj[0])
+        pattern = (attr + str(obj[1]))
+        G = obj[2]
+        print(pattern)
+        print(G.edges)
     # G = lst_graphs[1][2]  # Age+
     # H = lst_graphs[3][2]  # Salary+
     # I = nx.intersection(H, G)
     # print(I.nodes)
     return gp
 
-# --------------------- EXECUTE Ant-Colony GP -------------------------------------------
+# ---------------------- Generate random patterns and pheromone matrix ---------------
+
+
+def run_ant_colony(steps, max_n, attrs, thd_supp):
+    descr = ['+', '-', 'x']
+    p_matrix = np.ones((len(attrs), len(descr)), dtype=float)
+    all_sols = []
+    sols_win = []
+    for t in range(steps):
+        for n in range(max_n):
+            sol_n = []
+            for i in range(len(attrs)):
+                x = (rand.randint(1, max_n)/max_n)
+                pos = p_matrix[i][0]/(p_matrix[i][0]+p_matrix[i][1]+p_matrix[i][2])
+                neg = (p_matrix[i][0]+p_matrix[i][1])/(p_matrix[i][0] +
+                                                       p_matrix[i][1]+p_matrix[i][2])
+                if x < pos:
+                    temp_n = [attrs[i], '+']
+                elif (x >= pos) and x < neg:
+                    temp_n = [attrs[i], '-']
+                else:
+                    # temp_n = 'x'
+                    continue
+                if temp_n not in sol_n:
+                    sol_n.append(temp_n)
+            # if sol_n not in all_sols:
+            #    all_sols.append(sol_n)
+            print(sol_n)
+            # check pattern
+            # update pheromone matrix
+    return sols_win, p_matrix
+
+# --------------------- EXECUTE Ant-Colony GP ----------------------------------------
+
+
+def plot_pheromone_matrix(p_matrix):
+    x_plot = np.array(p_matrix)
+    plt.pcolor(np.reshape(x_plot[i, :], (8, 8)))
+    plt.gray()
+    plt.show()
 
 
 def init_algorithm(f_path, min_supp):
     try:
         dataset = DataSet(f_path)
+        steps = 5
+        max_combs = 5
         if dataset.data:
             lst_attributes = init_attributes(dataset, min_supp)
-            gp_patterns = extract_patterns(lst_attributes, min_supp, dataset.get_size())
+            gp, p = run_ant_colony(steps, max_combs, dataset.attributes, min_supp)
+            plot_pheromone_matrix(p)
+            # gp_patterns = extract_patterns(lst_attributes, min_supp,
+            #                               dataset.get_size())
             # for obj in lst_attributes:
             #    print(obj[0])
             print(dataset.title)
@@ -122,7 +175,7 @@ def init_algorithm(f_path, min_supp):
         print(error)
 
 
-# ------------------------- main method -------------------------------------------------
+# ------------------------- main method ---------------------------------------------
 
 
 if __name__ == "__main__":

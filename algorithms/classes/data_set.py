@@ -24,10 +24,11 @@ class DataSet:
         else:
             self.data = self.raw_data
             self.title = self.get_title()
+            self.attributes = self.get_attributes()
             self.time_columns = self.get_time_cols()
             self.column_size = self.get_attribute_no()
             self.size = self.get_size()
-            self.attributes = []
+            # self.attributes = []
 
     def get_size(self):
         size = len(self.raw_data)
@@ -53,6 +54,13 @@ class DataSet:
                     title.append(sub)
                 del self.data[0]
                 return title
+
+    def get_attributes(self):
+        attr = []
+        for i in range(len(self.title)):
+            temp_attr = self.title[i]
+            attr.append(temp_attr[0])
+        return attr
 
     def get_time_cols(self):
         time_cols = list()
