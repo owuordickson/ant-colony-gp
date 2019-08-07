@@ -12,13 +12,13 @@ import csv
 from dateutil.parser import parse
 import time
 import networkx as nx
-from algorithms.classes.node import Node
+from algorithms.classes.tuple_node import TupleNode
 
 
-class DataSet:
+class InitData:
 
     def __init__(self, file_path):
-        self.raw_data = DataSet.read_csv(file_path)
+        self.raw_data = InitData.read_csv(file_path)
         if len(self.raw_data) == 0:
             self.data = False
             print("Data-set error")
@@ -73,7 +73,7 @@ class DataSet:
         for i in range(len(self.data[0])):  # check every column for time format
             row_data = str(self.data[0][i])
             try:
-                time_ok, t_stamp = DataSet.test_time(row_data)
+                time_ok, t_stamp = InitData.test_time(row_data)
                 if time_ok:
                     time_cols.append(i)
             except ValueError:
@@ -100,7 +100,7 @@ class DataSet:
                     raw_tuples.append(float(temp[row][col]))
                 # rank in ascending order and assign pheromones
                 for d in {'+', '-'}:
-                    supp, graph_attr = DataSet.init_rank(d, raw_tuples)
+                    supp, graph_attr = InitData.init_rank(d, raw_tuples)
                     if supp >= thd_supp:
                         temp_attr = [self.title[col][0], d, graph_attr]
                         lst_attributes.append(temp_attr)
@@ -121,11 +121,11 @@ class DataSet:
         for i in range(len(ordered_tuples)):
             # generate Graph
             try:
-                node = Node(ordered_tuples[i][0], ordered_tuples[i][1])
-                nxt_node = Node(ordered_tuples[i + 1][0], ordered_tuples[i + 1][1])
+                node = TupleNode(ordered_tuples[i][0], ordered_tuples[i][1])
+                nxt_node = TupleNode(ordered_tuples[i + 1][0], ordered_tuples[i + 1][1])
                 while node.value == nxt_node.value:
                     i += 1
-                    nxt_node = Node(ordered_tuples[i + 1][0], ordered_tuples[i + 1][1])
+                    nxt_node = TupleNode(ordered_tuples[i + 1][0], ordered_tuples[i + 1][1])
                 # str_print = [node.index, nxt_node.index]
                 # print(str_print)
                 G.add_edge(node.index, nxt_node.index)

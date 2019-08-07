@@ -22,9 +22,8 @@ Description:
 import sys
 from optparse import OptionParser
 import numpy as np
-import random as rand
-import matplotlib.pyplot as plt
-from algorithms.classes.data_set import DataSet
+from algorithms.classes.init_data import InitData
+from algorithms.classes.gradual_ant_colony import GradualAntColony
 
 # -------------- Extract patterns from attribute (Graph) combinations ----------------
 
@@ -60,78 +59,19 @@ def extract_patterns(lst_graphs, thd_supp, t_size):
     # print(I.nodes)
     return gp
 
-# ---------------------- Generate random patterns and pheromone matrix ---------------
-
-
-def evaluate_solution(pattern, thd_supp):
-    return 0
-
-
-def run_ant_colony(steps, max_n, attrs, thd_supp):
-    descr = ['+', '-', 'x']
-    p_matrix = np.ones((len(attrs), len(descr)), dtype=float)
-    all_sols = []
-    sols_win = []
-    for t in range(steps):
-        for n in range(max_n):
-            sol_n = []
-            for i in range(len(attrs)):
-                x = (rand.randint(1, max_n)/max_n)
-                pos = p_matrix[i][0]/(p_matrix[i][0]+p_matrix[i][1]+p_matrix[i][2])
-                neg = (p_matrix[i][0]+p_matrix[i][1])/(p_matrix[i][0] +
-                                                       p_matrix[i][1]+p_matrix[i][2])
-                if x < pos:
-                    temp_n = [attrs[i], '+']
-                elif (x >= pos) and x < neg:
-                    temp_n = [attrs[i], '-']
-                else:
-                    # temp_n = 'x'
-                    continue
-                if temp_n not in sol_n:
-                    sol_n.append(temp_n)
-            # if sol_n not in all_sols:
-            #    all_sols.append(sol_n)
-            print(sol_n)
-            supp = evaluate_solution(sol_n, thd_supp)
-            # test_pattern
-            # update p_matrix
-    return sols_win, p_matrix
-
 # --------------------- EXECUTE Ant-Colony GP ----------------------------------------
-
-
-def plot_pheromone_matrix(p_matrix, y_attrs):
-    X = np.array(p_matrix)
-    x_ticks = ['+', '-', 'x']
-    x = [0.5, 1.5, 2.5]
-    y_ticks = []
-    y = []
-    for i in range(len(y_attrs)):
-        y.append(i+0.5)
-        y_ticks.append(y_attrs[i][1])
-    # Figure size (width, height) in inches
-    # plt.figure(figsize=(5, 5))
-    plt.title("Attribute Gray Plot")
-    plt.xlabel("+ => increasing; - => decreasing; x => irrelevant")
-    plt.ylabel('Attribute')
-    plt.xlim(0, 3)
-    plt.ylim(0, len(p_matrix))
-    plt.xticks(x, x_ticks)
-    plt.yticks(y, y_ticks)
-    plt.pcolor(X)
-    plt.gray()
-    plt.show()
 
 
 def init_algorithm(f_path, min_supp):
     try:
-        dataset = DataSet(f_path)
+        dataset = InitData(f_path)
         steps = 5
         max_combs = 5
         if dataset.data:
             lst_attributes = dataset.init_attributes(min_supp)
-            gp, p = run_ant_colony(steps, max_combs, dataset.attributes, min_supp)
-            plot_pheromone_matrix(p, dataset.title)
+            ac = GradualAntColony(steps, max_combs, dataset.attributes, min_supp)
+            gp, p = ac.run_ant_colony()
+            ac.plot_pheromone_matrix(p, dataset.title)
             # gp_patterns = extract_patterns(lst_attributes, min_supp,
             #                               dataset.get_size())
             # for obj in lst_attributes:

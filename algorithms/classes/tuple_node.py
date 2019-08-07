@@ -10,7 +10,7 @@
 """
 
 
-class Node:
+class TupleNode:
 
     def __init__(self, index):
         self.index = index
