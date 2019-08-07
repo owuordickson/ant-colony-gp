@@ -21,65 +21,10 @@ Description:
 
 import sys
 from optparse import OptionParser
-import networkx as nx
 import numpy as np
 import random as rand
 import matplotlib.pyplot as plt
 from algorithms.classes.data_set import DataSet
-from algorithms.classes.node import Node
-
-# -------------- Arrange rank attributes to generate Graph attribute ------------------
-
-
-def init_rank(direction, raw_attr):
-    lst_tuple = []
-    for i in range(len(raw_attr)):
-        var_node = [i, raw_attr[i]]
-        lst_tuple.append(var_node)
-    if direction == '+':
-        ordered_tuples = sorted(lst_tuple, key=lambda x: x[1])
-    elif direction == '-':
-        ordered_tuples = sorted(lst_tuple, key=lambda x: x[1], reverse=True)
-    # print(ordered_tuples)
-    G = nx.DiGraph()
-    for i in range(len(ordered_tuples)):
-        # generate Graph
-        try:
-            node = Node(ordered_tuples[i][0], ordered_tuples[i][1])
-            nxt_node = Node(ordered_tuples[i+1][0], ordered_tuples[i+1][1])
-            while node.value == nxt_node.value:
-                i += 1
-                nxt_node = Node(ordered_tuples[i+1][0], ordered_tuples[i+1][1])
-            # str_print = [node.index, nxt_node.index]
-            # print(str_print)
-            G.add_edge(node.index, nxt_node.index)
-        except IndexError as e:
-            break
-    support = len(nx.dag_longest_path(G)) / len(raw_attr)
-    return support, G
-
-
-def init_attributes(dataset, thd_supp):
-    temp = dataset.data
-    cols = dataset.get_attribute_no()
-    time_cols = dataset.get_time_cols()
-    lst_attributes = []
-    for col in range(cols):
-        if time_cols and (col in time_cols):
-            # exclude date-time column
-            continue
-        else:
-            # get all tuples of an attribute/column
-            raw_tuples = []
-            for row in range(len(temp)):
-                raw_tuples.append(float(temp[row][col]))
-            # rank in ascending order and assign pheromones
-            for d in {'+', '-'}:
-                supp, graph_attr = init_rank(d, raw_tuples)
-                if supp >= thd_supp:
-                    temp_attr = [dataset.title[col][0], d, graph_attr]
-                    lst_attributes.append(temp_attr)
-    return lst_attributes
 
 # -------------- Extract patterns from attribute (Graph) combinations ----------------
 
@@ -118,6 +63,10 @@ def extract_patterns(lst_graphs, thd_supp, t_size):
 # ---------------------- Generate random patterns and pheromone matrix ---------------
 
 
+def evaluate_solution(pattern, thd_supp):
+    return 0
+
+
 def run_ant_colony(steps, max_n, attrs, thd_supp):
     descr = ['+', '-', 'x']
     p_matrix = np.ones((len(attrs), len(descr)), dtype=float)
@@ -143,6 +92,7 @@ def run_ant_colony(steps, max_n, attrs, thd_supp):
             # if sol_n not in all_sols:
             #    all_sols.append(sol_n)
             print(sol_n)
+            supp = evaluate_solution(sol_n, thd_supp)
             # test_pattern
             # update p_matrix
     return sols_win, p_matrix
@@ -179,7 +129,7 @@ def init_algorithm(f_path, min_supp):
         steps = 5
         max_combs = 5
         if dataset.data:
-            lst_attributes = init_attributes(dataset, min_supp)
+            lst_attributes = dataset.init_attributes(min_supp)
             gp, p = run_ant_colony(steps, max_combs, dataset.attributes, min_supp)
             plot_pheromone_matrix(p, dataset.title)
             # gp_patterns = extract_patterns(lst_attributes, min_supp,

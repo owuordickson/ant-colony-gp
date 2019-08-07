@@ -11,6 +11,8 @@
 import csv
 from dateutil.parser import parse
 import time
+import networkx as nx
+from algorithms.classes.node import Node
 
 
 class DataSet:
@@ -80,6 +82,57 @@ class DataSet:
             return time_cols
         else:
             return False
+
+# -------------- Arrange rank attributes to generate Graph attribute ------------------
+    def init_attributes(self, thd_supp):
+        temp = self.data
+        cols = self.get_attribute_no()
+        time_cols = self.get_time_cols()
+        lst_attributes = []
+        for col in range(cols):
+            if time_cols and (col in time_cols):
+                # exclude date-time column
+                continue
+            else:
+                # get all tuples of an attribute/column
+                raw_tuples = []
+                for row in range(len(temp)):
+                    raw_tuples.append(float(temp[row][col]))
+                # rank in ascending order and assign pheromones
+                for d in {'+', '-'}:
+                    supp, graph_attr = DataSet.init_rank(d, raw_tuples)
+                    if supp >= thd_supp:
+                        temp_attr = [self.title[col][0], d, graph_attr]
+                        lst_attributes.append(temp_attr)
+        return lst_attributes
+
+    @staticmethod
+    def init_rank(order, raw_attr):
+        lst_tuple = []
+        for i in range(len(raw_attr)):
+            var_node = [i, raw_attr[i]]
+            lst_tuple.append(var_node)
+        if order == '+':
+            ordered_tuples = sorted(lst_tuple, key=lambda x: x[1])
+        elif order == '-':
+            ordered_tuples = sorted(lst_tuple, key=lambda x: x[1], reverse=True)
+        # print(ordered_tuples)
+        G = nx.DiGraph()
+        for i in range(len(ordered_tuples)):
+            # generate Graph
+            try:
+                node = Node(ordered_tuples[i][0], ordered_tuples[i][1])
+                nxt_node = Node(ordered_tuples[i + 1][0], ordered_tuples[i + 1][1])
+                while node.value == nxt_node.value:
+                    i += 1
+                    nxt_node = Node(ordered_tuples[i + 1][0], ordered_tuples[i + 1][1])
+                # str_print = [node.index, nxt_node.index]
+                # print(str_print)
+                G.add_edge(node.index, nxt_node.index)
+            except IndexError as e:
+                break
+        support = len(nx.dag_longest_path(G)) / len(raw_attr)
+        return support, G
 
     @staticmethod
     def read_csv(file):
