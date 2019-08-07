@@ -68,10 +68,10 @@ def init_algorithm(f_path, min_supp):
         steps = 5
         max_combs = 5
         if dataset.data:
-            lst_attributes = dataset.init_attributes(min_supp)
-            ac = GradualAntColony(steps, max_combs, dataset.attributes, min_supp)
-            gp, p = ac.run_ant_colony()
-            ac.plot_pheromone_matrix(p, dataset.title)
+            dataset.init_attributes(min_supp)
+            ac = GradualAntColony(steps, max_combs, dataset, min_supp)
+            list_gp = ac.run_ant_colony()
+            ac.plot_pheromone_matrix()
             # gp_patterns = extract_patterns(lst_attributes, min_supp,
             #                               dataset.get_size())
             # for obj in lst_attributes:
