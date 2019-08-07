@@ -143,16 +143,32 @@ def run_ant_colony(steps, max_n, attrs, thd_supp):
             # if sol_n not in all_sols:
             #    all_sols.append(sol_n)
             print(sol_n)
-            # check pattern
-            # update pheromone matrix
+            # test_pattern
+            # update p_matrix
     return sols_win, p_matrix
 
 # --------------------- EXECUTE Ant-Colony GP ----------------------------------------
 
 
-def plot_pheromone_matrix(p_matrix):
-    x_plot = np.array(p_matrix)
-    plt.pcolor(np.reshape(x_plot[i, :], (8, 8)))
+def plot_pheromone_matrix(p_matrix, y_attrs):
+    X = np.array(p_matrix)
+    x_ticks = ['+', '-', 'x']
+    x = [0.5, 1.5, 2.5]
+    y_ticks = []
+    y = []
+    for i in range(len(y_attrs)):
+        y.append(i+0.5)
+        y_ticks.append(y_attrs[i][1])
+    # Figure size (width, height) in inches
+    # plt.figure(figsize=(5, 5))
+    plt.title("Attribute Gray Plot")
+    plt.xlabel("+ => increasing; - => decreasing; x => irrelevant")
+    plt.ylabel('Attribute')
+    plt.xlim(0, 3)
+    plt.ylim(0, len(p_matrix))
+    plt.xticks(x, x_ticks)
+    plt.yticks(y, y_ticks)
+    plt.pcolor(X)
     plt.gray()
     plt.show()
 
@@ -165,7 +181,7 @@ def init_algorithm(f_path, min_supp):
         if dataset.data:
             lst_attributes = init_attributes(dataset, min_supp)
             gp, p = run_ant_colony(steps, max_combs, dataset.attributes, min_supp)
-            plot_pheromone_matrix(p)
+            plot_pheromone_matrix(p, dataset.title)
             # gp_patterns = extract_patterns(lst_attributes, min_supp,
             #                               dataset.get_size())
             # for obj in lst_attributes:
