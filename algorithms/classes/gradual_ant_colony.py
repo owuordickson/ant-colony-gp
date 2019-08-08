@@ -30,10 +30,10 @@ class GradualAntColony:
     def run_ant_colony(self):
         p = self.p_matrix
         all_sols = []
-        sols_win = []
+        sols_win = list()
         for t in range(self.steps):
             for n in range(self.max_combs):
-                sol_n = []
+                sol_n = list()
                 for i in range(len(self.data.attributes)):
                     x = (rand.randint(1, self.max_combs) / self.max_combs)
                     pos = p[i][0] / (p[i][0] + p[i][1] + p[i][2])
@@ -48,6 +48,9 @@ class GradualAntColony:
                     if temp_n not in sol_n:
                         sol_n.append(temp_n)
                 if (sol_n != []) and (sol_n not in all_sols):
+                    # check for anti-monotony
+                    print(sol_n)
+                    print(sols_win)
                     all_sols.append(sol_n)
                     # print(sol_n)
                     supp = self.evaluate_solution(sol_n)
@@ -129,6 +132,15 @@ class GradualAntColony:
         plt.gray()
         plt.grid()
         plt.show()
+
+    @staticmethod
+    def check_anti_monotony(lst_p, p):
+        result = False
+        for obj in lst_p:
+            result = set(p).issubset(obj)
+            if result:
+                break
+        return result
 
     @staticmethod
     def find_path(lst_GHs, all_len):
