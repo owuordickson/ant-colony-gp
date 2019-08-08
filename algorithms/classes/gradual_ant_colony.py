@@ -51,6 +51,8 @@ class GradualAntColony:
                     # print(sol_n)
                     supp = self.evaluate_solution(sol_n)
                     if supp and (supp >= self.thd_supp):
+                        temp = [supp, sol_n]
+                        sols_win.append(temp)
                         self.update_pheromone(sol_n, supp)
         return sols_win
 
@@ -92,31 +94,37 @@ class GradualAntColony:
 
     def plot_pheromone_matrix(self):
         x_plot = np.array(self.p_matrix)
+        # take care of irrelevant attributes
+        for i in range(len(x_plot)):
+            if x_plot[i][0] == x_plot[i][1] and x_plot[i][1] == x_plot[i][2]:
+                x_plot[i][2] += 1
         print(x_plot)
-        x_ticks = ['+', '-', 'x']
-        x = [0.5, 1.5, 2.5]
-        y_ticks = []
-        y = []
-        for i in range(len(self.dataset.title)):
-            y.append(i + 0.5)
-            y_ticks.append(self.dataset.title[i][1])
         # Figure size (width, height) in inches
-        # plt.figure(figsize=(5, 5))
+        plt.figure(figsize=(4, 4))
         plt.title("Attribute Gray Plot")
-        plt.xlabel("+ => increasing; - => decreasing; x => irrelevant")
-        plt.ylabel('Attribute')
+        plt.xlabel("+: increasing; -: decreasing; x: irrelevant")
+        # plt.ylabel('Attribute')
         plt.xlim(0, 3)
         plt.ylim(0, len(self.p_matrix))
-        plt.xticks(x, x_ticks)
-        plt.yticks(y, y_ticks)
-        plt.pcolor(x_plot, cmap='gray')
+        x = [0, 1, 2]
+        y = []
+        for i in range(len(self.dataset.title)):
+            y.append(i)
+            plt.text(-0.3, (i+0.5), self.dataset.title[i][1][:3])
+        plt.xticks(x, [])
+        plt.yticks(y, [])
+        plt.text(0.5, -0.2, '+')
+        plt.text(1.5, -0.2, '-')
+        plt.text(2.5, -0.2, 'x')
+        plt.pcolor(-x_plot, cmap='gray')
         plt.gray()
+        plt.grid()
         plt.show()
 
     @staticmethod
     def find_path(lst_Gs):
         if len(lst_Gs) >= 2:
-            print("Yes")
+            # print("Yes")
             return 0.6
         else:
             # print("No")

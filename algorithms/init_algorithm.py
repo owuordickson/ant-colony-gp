@@ -71,11 +71,8 @@ def init_algorithm(f_path, min_supp):
             dataset.init_attributes(min_supp)
             ac = GradualAntColony(steps, max_combs, dataset, min_supp)
             list_gp = ac.run_ant_colony()
-            ac.plot_pheromone_matrix()
-            # gp_patterns = extract_patterns(lst_attributes, min_supp,
-            #                               dataset.get_size())
-            # for obj in lst_attributes:
-            #    print(obj[0])
+            # ac.plot_pheromone_matrix()
+            print(list_gp)
             print(dataset.title)
     except Exception as error:
         print(error)
