@@ -107,7 +107,7 @@ class GradualAntColony:
 
     def plot_pheromone_matrix(self):
         x_plot = np.array(self.p_matrix)
-        print(x_plot)
+        print(
         # Figure size (width, height) in inches
         # plt.figure(figsize=(4, 4))
         plt.title("+: increasing; -: decreasing; x: irrelevant")
