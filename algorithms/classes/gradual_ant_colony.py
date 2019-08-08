@@ -109,9 +109,9 @@ class GradualAntColony:
         x_plot = np.array(self.p_matrix)
         print(x_plot)
         # Figure size (width, height) in inches
-        plt.figure(figsize=(4, 4))
-        plt.title("Attribute Gray Plot")
-        plt.xlabel("+: increasing; -: decreasing; x: irrelevant")
+        # plt.figure(figsize=(4, 4))
+        plt.title("+: increasing; -: decreasing; x: irrelevant")
+        # plt.xlabel("+: increasing; -: decreasing; x: irrelevant")
         # plt.ylabel('Attribute')
         plt.xlim(0, 3)
         plt.ylim(0, len(self.p_matrix))
@@ -122,9 +122,9 @@ class GradualAntColony:
             plt.text(-0.3, (i+0.5), self.data.title[i][1][:3])
         plt.xticks(x, [])
         plt.yticks(y, [])
-        plt.text(0.5, -0.2, '+')
-        plt.text(1.5, -0.2, '-')
-        plt.text(2.5, -0.2, 'x')
+        plt.text(0.5, -0.4, '+')
+        plt.text(1.5, -0.4, '-')
+        plt.text(2.5, -0.4, 'x')
         plt.pcolor(-x_plot, cmap='gray')
         plt.gray()
         plt.grid()
@@ -135,8 +135,8 @@ class GradualAntColony:
         lst_Hs = []
         if len(lst_GHs) >= 2:
             G = lst_GHs[0]
-            print("G")
-            print(G.edges)
+            # print("G")
+            # print(G.edges)
             for i in range(1, (len(lst_GHs))):
                 H = lst_GHs[i]
                 lst_Hs.append(H)
@@ -144,7 +144,7 @@ class GradualAntColony:
             #    print(H.edges)
             p_len = GradualAntColony.get_path_length(G, lst_Hs)
             supp = p_len / all_len
-            print("Support: "+str(supp))
+            # print("Support: "+str(supp))
             return supp
         else:
             # print("No")
@@ -164,35 +164,35 @@ class GradualAntColony:
             g_rem = (g_len + 1 - i)
             new_g_arr = g_node_arr[i:].copy()
             if (g_rem > length) and (st_node != lt_node):
-                print(st_node)
+                # print(st_node)
                 # modify by adding paths for other graphs
                 short_len = 0
                 n = 0
                 for H in lst_Hs:
                     n += 1
-                    print("H"+str(n))
-                    print(H.edges)
+                    # print("H"+str(n))
+                    # print(H.edges)
                     try:
                         path_nodes = nx.shortest_path(H, st_node[0], lt_node[1])
                         temp_nodes = set(new_g_arr).intersection(set(path_nodes))
                         temp_l = len(temp_nodes)
-                        print(new_g_arr)
-                        print(path_nodes)
-                        print(temp_nodes)
+                        # print(new_g_arr)
+                        # print(path_nodes)
+                        # print(temp_nodes)
                         # if g_rem < temp_l:
                         #    print("switched")
                         #    temp_l = g_rem
                         if short_len == 0 or temp_l < short_len:
                             # we take the shortest common path
                             short_len = temp_l
-                            print("short path found")
-                            print(temp_nodes)
-                    except nx.NetworkXNoPath:
+                            # print("short path found")
+                            # print(temp_nodes)
+                    except nx.NetworkXException:
                         short_len = 0
-                        print("no path")
+                        # print("no path")
                         break
                 if short_len > length:
-                    print("path found len=" + str(short_len))
+                    # print("path found len=" + str(short_len))
                     length = short_len
             else:
                 break
