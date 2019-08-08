@@ -13,6 +13,7 @@
 import numpy as np
 import random as rand
 import matplotlib.pyplot as plt
+import networkx as nx
 
 
 class GradualAntColony:
@@ -70,18 +71,10 @@ class GradualAntColony:
                     # print(temp)
                     # print(G.edges)
         if len(Graphs) == len(pattern):
-            supp = GradualAntColony.find_path(Graphs)
+            supp = GradualAntColony.find_path(Graphs, self.data.get_size())
         else:
             supp = False
         return supp
-
-    def normalize_pheromone(self):
-        for i in range(len(self.p_matrix)):
-            obj = self.p_matrix[i]
-            if obj[0] == 1.0 and obj[1] == 1.0 and obj[2] == 1.0:
-                self.p_matrix[i][0] = 0
-                self.p_matrix[i][1] = 0
-                self.p_matrix[i][2] = 1
 
     def update_pheromone(self, sol, supp):
         # [['2', '+'], ['4', '+']], 0.6
@@ -103,6 +96,14 @@ class GradualAntColony:
                     self.p_matrix[i][k] -= supp
                     if self.p_matrix[i][k] < 0:
                         self.p_matrix[i][k] = 0
+
+    def normalize_pheromone(self):
+        for i in range(len(self.p_matrix)):
+            obj = self.p_matrix[i]
+            if obj[0] == 1.0 and obj[1] == 1.0 and obj[2] == 1.0:
+                self.p_matrix[i][0] = 0
+                self.p_matrix[i][1] = 0
+                self.p_matrix[i][2] = 1
 
     def plot_pheromone_matrix(self):
         x_plot = np.array(self.p_matrix)
@@ -130,10 +131,69 @@ class GradualAntColony:
         plt.show()
 
     @staticmethod
-    def find_path(lst_Gs):
-        if len(lst_Gs) >= 2:
-            # print("Yes")
-            return 0.6
+    def find_path(lst_GHs, all_len):
+        lst_Hs = []
+        if len(lst_GHs) >= 2:
+            G = lst_GHs[0]
+            print("G")
+            print(G.edges)
+            for i in range(1, (len(lst_GHs))):
+                H = lst_GHs[i]
+                lst_Hs.append(H)
+            #    print("H"+str(i))
+            #    print(H.edges)
+            p_len = GradualAntColony.get_path_length(G, lst_Hs)
+            supp = p_len / all_len
+            print("Support: "+str(supp))
+            return supp
         else:
             # print("No")
             return False
+
+    @staticmethod
+    def get_path_length(G, lst_Hs):
+        length = 0
+        g_edge_arr = list(G.edges)
+        g_node_arr = list(G.nodes)
+        g_len = len(g_edge_arr)
+        k = g_len - 1
+        lt_node = g_edge_arr[k]
+        # print(lt_node)
+        for i in range(g_len):
+            st_node = g_edge_arr[i]
+            g_rem = (g_len + 1 - i)
+            new_g_arr = g_node_arr[i:].copy()
+            if (g_rem > length) and (st_node != lt_node):
+                print(st_node)
+                # modify by adding paths for other graphs
+                short_len = 0
+                n = 0
+                for H in lst_Hs:
+                    n += 1
+                    print("H"+str(n))
+                    print(H.edges)
+                    try:
+                        path_nodes = nx.shortest_path(H, st_node[0], lt_node[1])
+                        temp_nodes = set(new_g_arr).intersection(set(path_nodes))
+                        temp_l = len(temp_nodes)
+                        print(new_g_arr)
+                        print(path_nodes)
+                        print(temp_nodes)
+                        # if g_rem < temp_l:
+                        #    print("switched")
+                        #    temp_l = g_rem
+                        if short_len == 0 or temp_l < short_len:
+                            # we take the shortest common path
+                            short_len = temp_l
+                            print("short path found")
+                            print(temp_nodes)
+                    except nx.NetworkXNoPath:
+                        short_len = 0
+                        print("no path")
+                        break
+                if short_len > length:
+                    print("path found len=" + str(short_len))
+                    length = short_len
+            else:
+                break
+        return length

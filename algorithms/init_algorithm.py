@@ -65,13 +65,13 @@ def extract_patterns(lst_graphs, thd_supp, t_size):
 def init_algorithm(f_path, min_supp):
     try:
         d_set = InitData(f_path)
-        steps = 5
-        max_combs = 5
+        steps = 100
+        max_combs = 100
         if d_set.data:
             d_set.init_attributes(min_supp)
             ac = GradualAntColony(steps, max_combs, d_set, min_supp)
             list_gp = ac.run_ant_colony()
-            ac.plot_pheromone_matrix()
+            # ac.plot_pheromone_matrix()
             print(list_gp)
             print(d_set.title)
     except Exception as error:
