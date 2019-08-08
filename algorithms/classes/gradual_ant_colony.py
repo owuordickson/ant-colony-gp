@@ -17,13 +17,13 @@ import matplotlib.pyplot as plt
 
 class GradualAntColony:
 
-    def __init__(self, steps, max_combs, data, min_supp):
+    def __init__(self, steps, max_combs, d_set, min_supp):
         self.steps = steps
         self.max_combs = max_combs
         self.thd_supp = min_supp
-        self.dataset = data
+        self.data = d_set
         self.feature = ['+', '-', 'x']
-        self.p_matrix = np.ones((len(self.dataset.attributes), len(self.feature)),
+        self.p_matrix = np.ones((len(self.data.attributes), len(self.feature)),
                                 dtype=float)
 
     def run_ant_colony(self):
@@ -33,14 +33,14 @@ class GradualAntColony:
         for t in range(self.steps):
             for n in range(self.max_combs):
                 sol_n = []
-                for i in range(len(self.dataset.attributes)):
+                for i in range(len(self.data.attributes)):
                     x = (rand.randint(1, self.max_combs) / self.max_combs)
                     pos = p[i][0] / (p[i][0] + p[i][1] + p[i][2])
                     neg = (p[i][0] + p[i][1]) / (p[i][0] + p[i][1] + p[i][2])
                     if x < pos:
-                        temp_n = [self.dataset.attributes[i], '+']
+                        temp_n = [self.data.attributes[i], '+']
                     elif (x >= pos) and x < neg:
-                        temp_n = [self.dataset.attributes[i], '-']
+                        temp_n = [self.data.attributes[i], '-']
                     else:
                         # temp_n = 'x'
                         continue
@@ -54,11 +54,12 @@ class GradualAntColony:
                         temp = [supp, sol_n]
                         sols_win.append(temp)
                         self.update_pheromone(sol_n, supp)
+        self.normalize_pheromone()
         return sols_win
 
     def evaluate_solution(self, pattern):
         # [['2', '+'], ['4', '+']]
-        lst_graph = self.dataset.lst_graph
+        lst_graph = self.data.lst_graph
         Graphs = []
         for obj_i in pattern:
             for obj_j in lst_graph:
@@ -73,6 +74,14 @@ class GradualAntColony:
         else:
             supp = False
         return supp
+
+    def normalize_pheromone(self):
+        for i in range(len(self.p_matrix)):
+            obj = self.p_matrix[i]
+            if obj[0] == 1.0 and obj[1] == 1.0 and obj[2] == 1.0:
+                self.p_matrix[i][0] = 0
+                self.p_matrix[i][1] = 0
+                self.p_matrix[i][2] = 1
 
     def update_pheromone(self, sol, supp):
         # [['2', '+'], ['4', '+']], 0.6
@@ -89,15 +98,14 @@ class GradualAntColony:
             for k in range(len(self.p_matrix[i])):
                 if k == j:
                     self.p_matrix[i][j] += supp
-                # else:
-                #    self.p_matrix[i][k] -= supp
+                    self.p_matrix[i][2] = 0
+                elif k != 2:
+                    self.p_matrix[i][k] -= supp
+                    if self.p_matrix[i][k] < 0:
+                        self.p_matrix[i][k] = 0
 
     def plot_pheromone_matrix(self):
         x_plot = np.array(self.p_matrix)
-        # take care of irrelevant attributes
-        for i in range(len(x_plot)):
-            if x_plot[i][0] == x_plot[i][1] and x_plot[i][1] == x_plot[i][2]:
-                x_plot[i][2] += 1
         print(x_plot)
         # Figure size (width, height) in inches
         plt.figure(figsize=(4, 4))
@@ -108,9 +116,9 @@ class GradualAntColony:
         plt.ylim(0, len(self.p_matrix))
         x = [0, 1, 2]
         y = []
-        for i in range(len(self.dataset.title)):
+        for i in range(len(self.data.title)):
             y.append(i)
-            plt.text(-0.3, (i+0.5), self.dataset.title[i][1][:3])
+            plt.text(-0.3, (i+0.5), self.data.title[i][1][:3])
         plt.xticks(x, [])
         plt.yticks(y, [])
         plt.text(0.5, -0.2, '+')
