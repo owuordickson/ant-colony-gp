@@ -23,7 +23,7 @@ class GradualAntColony:
         self.thd_supp = min_supp
         self.data = d_set
         self.feature = ['+', '-', 'x']
-        self.p_factor = 0.5
+        self.e_factor = 0.5
         self.p_matrix = np.ones((len(self.data.attributes), len(self.feature)),
                                 dtype=float)
 
@@ -97,11 +97,10 @@ class GradualAntColony:
             for k in range(len(self.p_matrix[i])):
                 if k == j:
                     old = self.p_matrix[i][j]
-                    self.p_matrix[i][j] = (old*(1-self.p_factor)) + supp
-                    self.p_matrix[i][2] = 0
-                elif k != 2:
+                    self.p_matrix[i][j] = (old * (1 - self.e_factor)) + supp
+                else:
                     old = self.p_matrix[i][k]
-                    self.p_matrix[i][k] = (old*(1-self.p_factor))
+                    self.p_matrix[i][k] = (old * (1 - self.e_factor))
 
     def normalize_pheromone(self):
         for i in range(len(self.p_matrix)):
