@@ -26,12 +26,13 @@ from algorithms.classes.init_data import InitData
 from algorithms.classes.gradual_ant_colony import GradualAntColony
 
 
-def init_algorithm(f_path, min_supp):
+def init_algorithm(f_path, min_supp, steps=False, max_combs=False):
     try:
         d_set = InitData(f_path)
-        steps = 100
-        max_combs = 100
         if d_set.data:
+            if not steps or not max_combs:
+                steps = (d_set.get_attribute_no() * d_set.get_attribute_no())
+                max_combs = (d_set.get_attribute_no() * d_set.get_attribute_no())
             print(d_set.title)
             d_set.init_attributes(min_supp)
             ac = GradualAntColony(steps, max_combs, d_set, min_supp)
