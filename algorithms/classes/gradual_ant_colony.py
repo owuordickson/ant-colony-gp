@@ -48,15 +48,18 @@ class GradualAntColony:
                     if temp_n not in sol_n:
                         sol_n.append(temp_n)
                 if (sol_n != []) and (sol_n not in all_sols):
-                    # check for anti-monotony
-                    print(sol_n)
-                    print(sols_win)
                     all_sols.append(sol_n)
                     # print(sol_n)
+                    if sols_win:
+                        # check for anti-monotony
+                        is_sub = GradualAntColony.check_anti_monotony(sols_win, sol_n)
+                        if is_sub:
+                            continue
                     supp = self.evaluate_solution(sol_n)
                     if supp and (supp >= self.thd_supp):
-                        temp = [supp, sol_n]
-                        sols_win.append(temp)
+                        sol_w = []
+                        [sol_w.append(tuple(obj)) for obj in sol_n]
+                        sols_win.append([supp, sol_w])
                         self.update_pheromone(sol_n, supp)
         self.normalize_pheromone()
         return sols_win
@@ -110,7 +113,7 @@ class GradualAntColony:
 
     def plot_pheromone_matrix(self):
         x_plot = np.array(self.p_matrix)
-        # print(x_plot)
+        print(x_plot)
         # Figure size (width, height) in inches
         # plt.figure(figsize=(4, 4))
         plt.title("+: increasing; -: decreasing; x: irrelevant")
@@ -134,10 +137,14 @@ class GradualAntColony:
         plt.show()
 
     @staticmethod
-    def check_anti_monotony(lst_p, p):
+    def check_anti_monotony(lst_p, p_arr):
         result = False
+        tuple_p = []
+        [tuple_p.append(tuple(obj)) for obj in p_arr]
+        # print(tuple_p)
         for obj in lst_p:
-            result = set(p).issubset(obj)
+            # print(obj[1])
+            result = set(tuple_p).issubset(set(obj[1]))
             if result:
                 break
         return result

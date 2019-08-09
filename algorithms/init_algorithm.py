@@ -68,12 +68,14 @@ def init_algorithm(f_path, min_supp):
         steps = 100
         max_combs = 100
         if d_set.data:
+            print(d_set.title)
             d_set.init_attributes(min_supp)
             ac = GradualAntColony(steps, max_combs, d_set, min_supp)
             list_gp = ac.run_ant_colony()
+            print("\nPATTERNS")
             for obj in list_gp:
                 print(str(obj[1])+' : '+str(obj[0]))
-            print(d_set.title)
+            print("\nPheromone Matrix")
             ac.plot_pheromone_matrix()
     except Exception as error:
         print(error)
