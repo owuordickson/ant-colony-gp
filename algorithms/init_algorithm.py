@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @author: "Dickson Owuor"
-@credits: "Anne Laurent, Joseph Orero"
+@credits: "Thomas Runkler, Edmond Menya, and Anne Laurent,"
 @license: "MIT"
 @version: "1.0"
 @email: "owuordickson@gmail.com"
@@ -24,42 +24,6 @@ from optparse import OptionParser
 import numpy as np
 from algorithms.classes.init_data import InitData
 from algorithms.classes.gradual_ant_colony import GradualAntColony
-
-# -------------- Extract patterns from attribute (Graph) combinations ----------------
-
-
-def optimize_combs(n):
-    combs = []
-    for i in range(n):
-        even = True
-        for j in range(i + 1, n):
-            if (i % 2 == 0) and even:
-                even = False
-                continue
-            temp = [i, j]
-            combs.append(temp)
-    return combs
-
-
-def extract_patterns(lst_graphs, thd_supp, t_size):
-    gp = []
-    n = len(lst_graphs)
-    all_combs = np.zeros((n, n), dtype=float)
-    combs_index = optimize_combs(n)
-    # print(combs_index)
-    for obj in lst_graphs:
-        attr = str(obj[0])
-        pattern = (attr + str(obj[1]))
-        G = obj[2]
-        print(pattern)
-        print(G.edges)
-    # G = lst_graphs[1][2]  # Age+
-    # H = lst_graphs[3][2]  # Salary+
-    # I = nx.intersection(H, G)
-    # print(I.nodes)
-    return gp
-
-# --------------------- EXECUTE Ant-Colony GP ----------------------------------------
 
 
 def init_algorithm(f_path, min_supp):

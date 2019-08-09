@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-
 """
 @author: "Dickson Owuor"
-@credits: "Anne Laurent, Joseph Orero"
+@credits: "Thomas Runkler, Edmond Menya, and Anne Laurent,"
 @license: "MIT"
 @version: "1.0"
 @email: "owuordickson@gmail.com"
@@ -83,8 +82,8 @@ class InitData:
         else:
             return False
 
-# -------------- Arrange rank attributes to generate Graph attribute ------------------
     def init_attributes(self, thd_supp):
+        # Arrange rank attributes to generate Graph attribute
         temp = self.data
         cols = self.get_attribute_no()
         time_cols = self.get_time_cols()
@@ -113,19 +112,19 @@ class InitData:
             var_node = [i, raw_attr[i]]
             lst_tuple.append(var_node)
         if order == '+':
-            ordered_tuples = sorted(lst_tuple, key=lambda x: x[1])
+            ordered_t = sorted(lst_tuple, key=lambda x: x[1])
         elif order == '-':
-            ordered_tuples = sorted(lst_tuple, key=lambda x: x[1], reverse=True)
-        # print(ordered_tuples)
+            ordered_t = sorted(lst_tuple, key=lambda x: x[1], reverse=True)
+        # print(ordered_t)
         G = nx.DiGraph()
-        for i in range(len(ordered_tuples)):
+        for i in range(len(ordered_t)):
             # generate Graph
             try:
-                node = TupleNode(ordered_tuples[i][0], ordered_tuples[i][1])
-                nxt_node = TupleNode(ordered_tuples[i + 1][0], ordered_tuples[i + 1][1])
+                node = TupleNode(ordered_t[i][0], ordered_t[i][1])
+                nxt_node = TupleNode(ordered_t[i + 1][0], ordered_t[i + 1][1])
                 while node.value == nxt_node.value:
                     i += 1
-                    nxt_node = TupleNode(ordered_tuples[i + 1][0], ordered_tuples[i + 1][1])
+                    nxt_node = TupleNode(ordered_t[i + 1][0], ordered_t[i + 1][1])
                 # str_print = [node.index, nxt_node.index]
                 # print(str_print)
                 G.add_edge(node.index, nxt_node.index)

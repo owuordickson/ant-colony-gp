@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-
 """
 @author: "Dickson Owuor"
-@credits: "Anne Laurent, Joseph Orero"
+@credits: "Thomas Runkler, Edmond Menya, and Anne Laurent,"
 @license: "MIT"
 @version: "1.0"
 @email: "owuordickson@gmail.com"
