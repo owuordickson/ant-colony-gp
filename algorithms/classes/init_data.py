@@ -110,13 +110,14 @@ class InitData:
         self.lst_bin = InitData.init_bin_rank(lst_raw_attrs)
         self.attr_data = lst_raw_attrs
         n = len(lst_raw_attrs[0][1])
-        rem_bins = []
+        # rem_bins = []
         for obj in self.lst_bin:
             supp = float(np.sum(obj[1])) / float(n * (n - 1.0) / 2.0)
             if supp < thd_supp:
-                rem_bins.append(obj)
-        for obj in rem_bins:
-            self.lst_bin.remove(obj)
+                # rem_bins.append(obj)
+                self.lst_bin.remove(obj)
+        # for obj in rem_bins:
+        #    self.lst_bin.remove(obj)
 
     def init_graph_attributes(self, thd_supp):
         # Arrange rank attributes to generate Graph attribute
