@@ -26,7 +26,7 @@ from algorithms.classes.init_data import InitData
 from algorithms.classes.gradual_ant_colony import GradualAntColony
 
 
-def init_algorithm(f_path, min_supp, steps=100, max_combs=100):
+def init_algorithm(f_path, min_supp, steps=False, max_combs=False):
     try:
         d_set = InitData(f_path)
         if d_set.data:
@@ -88,9 +88,9 @@ if __name__ == "__main__":
 
         if options.file is None:
             #filePath = '../data/DATASET.csv'
-            filePath = '../data/FluTopicData-testsansdate-blank.csv'
+            #filePath = '../data/FluTopicData-testsansdate-blank.csv'
             #filePath = '../data/annees1970.csv'
-            #filePath = '../data/transfusion.csv'
+            filePath = '../data/transfusion.csv'
             #print("Usage: $python t_graank.py -f filename.csv -c refColumn -s minSup
             # -r minRep")
             #sys.exit('System will exit')
