@@ -55,7 +55,7 @@ class GradualAntColony:
                         is_sub = GradualAntColony.check_anti_monotony(sols_win, sol_n)
                         if is_sub:
                             continue
-                    supp = self.evaluate_solution(sol_n)
+                    supp = self.evaluate_bin_solution(sol_n)
                     if supp and (supp >= self.thd_supp):
                         sol_w = []
                         [sol_w.append(tuple(obj)) for obj in sol_n]
@@ -64,7 +64,23 @@ class GradualAntColony:
         self.normalize_pheromone()
         return sols_win
 
-    def evaluate_solution(self, pattern):
+    def evaluate_bin_solution(self, pattern):
+        # [['2', '+'], ['4', '+']]
+        lst_bin = self.data.lst_bin
+        temp_bins = []
+        for obj_i in pattern:
+            for obj_j in lst_bin:
+                if obj_j[0] == obj_i:
+                    temp_bins.append(obj_j[1])
+                    # print(temp)
+                    # print(G.edges)
+        if len(temp_bins) == len(pattern):
+            supp = GradualAntColony.perform_bin_and(temp_bins, self.data.get_size())
+        else:
+            supp = False
+        return supp
+
+    def evaluate_graph_solution(self, pattern):
         # [['2', '+'], ['4', '+']]
         lst_graph = self.data.lst_graph
         Graphs = []
@@ -147,6 +163,21 @@ class GradualAntColony:
             if result:
                 break
         return result
+
+    @staticmethod
+    def perform_bin_and(lst_bin, n):
+        temp_bin = []
+        if len(lst_bin) >= 2:
+            for obj in lst_bin:
+                if temp_bin != []:
+                    # print(temp_bin)
+                    temp_bin = temp_bin & obj
+                else:
+                    temp_bin = obj
+            supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
+            return supp
+        else:
+            return False
 
     @staticmethod
     def find_graph_path(lst_GHs, all_len):

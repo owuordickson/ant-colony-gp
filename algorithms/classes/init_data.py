@@ -109,7 +109,6 @@ class InitData:
                 lst_raw_attrs.append([self.title[col][0], raw_tuples])
         self.lst_bin = InitData.init_bin_rank(lst_raw_attrs)
         self.attr_data = lst_raw_attrs
-        print(self.attr_data)
         n = len(lst_raw_attrs[0][1])
         rem_bins = []
         for obj in self.lst_bin:
