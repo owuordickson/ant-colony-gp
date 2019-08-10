@@ -33,6 +33,7 @@ class InitData:
             self.attr_data = []
             self.lst_bin = []
             self.lst_graph = []
+            self.p_matrix = np.zeros((len(self.attr_indxs), 3), dtype=float)
 
     def get_size(self):
         size = len(self.raw_data)
@@ -110,14 +111,25 @@ class InitData:
         self.lst_bin = InitData.init_bin_rank(lst_raw_attrs)
         self.attr_data = lst_raw_attrs
         n = len(lst_raw_attrs[0][1])
-        # rem_bins = []
         for obj in self.lst_bin:
             supp = float(np.sum(obj[1])) / float(n * (n - 1.0) / 2.0)
             if supp < thd_supp:
-                # rem_bins.append(obj)
                 self.lst_bin.remove(obj)
-        # for obj in rem_bins:
-        #    self.lst_bin.remove(obj)
+                self.init_pheromone(obj[0], False)
+            else:
+                self.init_pheromone(obj[0], supp)
+
+    def init_pheromone(self, attr, supp):
+        i = (int(attr[0]) - 1)
+        symbol = attr[1]
+        if supp:
+            if symbol == '+':
+                j = 0
+            elif symbol == '-':
+                j = 1
+            self.p_matrix[i][j] = supp
+        else:
+            self.p_matrix[i][2] = 1
 
     def init_graph_attributes(self, thd_supp):
         # Arrange rank attributes to generate Graph attribute

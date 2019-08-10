@@ -22,10 +22,8 @@ class GradualAntColony:
         self.max_combs = max_combs
         self.thd_supp = min_supp
         self.data = d_set
-        self.feature = ['+', '-', 'x']
         self.e_factor = 0.5
-        self.p_matrix = np.ones((len(self.data.attr_indxs), len(self.feature)),
-                                dtype=float)
+        self.p_matrix = d_set.p_matrix
 
     def run_ant_colony(self):
         p = self.p_matrix
@@ -61,7 +59,6 @@ class GradualAntColony:
                         [sol_w.append(tuple(obj)) for obj in sol_n]
                         sols_win.append([supp, sol_w])
                         self.update_pheromone(sol_n, supp)
-        self.normalize_pheromone()
         return sols_win
 
     def evaluate_bin_solution(self, pattern):
@@ -115,14 +112,6 @@ class GradualAntColony:
                 else:
                     old = self.p_matrix[i][k]
                     self.p_matrix[i][k] = (old * (1 - self.e_factor))
-
-    def normalize_pheromone(self):
-        for i in range(len(self.p_matrix)):
-            obj = self.p_matrix[i]
-            if obj[0] == 1.0 and obj[1] == 1.0 and obj[2] == 1.0:
-                self.p_matrix[i][0] = 0
-                self.p_matrix[i][1] = 0
-                self.p_matrix[i][2] = 1
 
     def plot_pheromone_matrix(self):
         x_plot = np.array(self.p_matrix)
