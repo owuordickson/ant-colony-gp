@@ -69,6 +69,12 @@ class InitData:
         # time_cols.append(1)
         # time_cols.append(2)
         # time_cols.append(3)
+        # time_cols.append(4)
+        # time_cols.append(5)
+        # time_cols.append(6)
+        # time_cols.append(7)
+        # time_cols.append(8)
+        # time_cols.append(9)
         for i in range(len(self.data[0])):  # check every column for time format
             row_data = str(self.data[0][i])
             try:
@@ -82,7 +88,7 @@ class InitData:
         else:
             return False
 
-    def init_attributes(self, thd_supp):
+    def init_graph_attributes(self, thd_supp):
         # Arrange rank attributes to generate Graph attribute
         temp = self.data
         cols = self.get_attribute_no()
@@ -99,14 +105,14 @@ class InitData:
                     raw_tuples.append(float(temp[row][col]))
                 # rank in ascending order and assign pheromones
                 for d in {'+', '-'}:
-                    supp, graph_attr = InitData.init_rank(d, raw_tuples)
+                    supp, graph_attr = InitData.init_graph_rank(d, raw_tuples)
                     if supp >= thd_supp:
                         temp_attr = [self.title[col][0], d, graph_attr]
                         lst_attributes.append(temp_attr)
         self.lst_graph = lst_attributes
 
     @staticmethod
-    def init_rank(order, raw_attr):
+    def init_graph_rank(order, raw_attr):
         lst_tuple = []
         for i in range(len(raw_attr)):
             var_node = [i, raw_attr[i]]

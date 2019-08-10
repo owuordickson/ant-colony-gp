@@ -77,7 +77,7 @@ class GradualAntColony:
                     # print(temp)
                     # print(G.edges)
         if len(Graphs) == len(pattern):
-            supp = GradualAntColony.find_path(Graphs, self.data.get_size())
+            supp = GradualAntColony.find_graph_path(Graphs, self.data.get_size())
         else:
             supp = False
         return supp
@@ -149,7 +149,7 @@ class GradualAntColony:
         return result
 
     @staticmethod
-    def find_path(lst_GHs, all_len):
+    def find_graph_path(lst_GHs, all_len):
         lst_Hs = []
         if len(lst_GHs) >= 2:
             G = lst_GHs[0]
@@ -158,9 +158,9 @@ class GradualAntColony:
             for i in range(1, (len(lst_GHs))):
                 H = lst_GHs[i]
                 lst_Hs.append(H)
-            #    print("H"+str(i))
-            #    print(H.edges)
-            p_len = GradualAntColony.get_path_length(G, lst_Hs)
+                # print("H"+str(i))
+                # print(H.edges)
+            p_len = GradualAntColony.get_graph_path_length(G, lst_Hs)
             supp = p_len / all_len
             # print("Support: "+str(supp))
             return supp
@@ -169,7 +169,7 @@ class GradualAntColony:
             return False
 
     @staticmethod
-    def get_path_length(G, lst_Hs):
+    def get_graph_path_length(G, lst_Hs):
         length = 0
         g_edge_arr = list(G.edges)
         g_node_arr = list(G.nodes)
