@@ -72,8 +72,6 @@ class GradualAntColony:
             for obj_j in lst_bin:
                 if obj_j[0] == obj_i:
                     temp_bins.append(obj_j[1])
-                    # print(temp)
-                    # print(G.edges)
         if len(temp_bins) == len(pattern):
             supp = GradualAntColony.perform_bin_and(temp_bins, self.data.get_size())
         else:
