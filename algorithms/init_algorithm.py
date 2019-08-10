@@ -34,14 +34,15 @@ def init_algorithm(f_path, min_supp, steps=100, max_combs=100):
                 steps = (d_set.get_attribute_no() * d_set.get_attribute_no())
                 max_combs = (d_set.get_attribute_no() * d_set.get_attribute_no())
             print(d_set.title)
-            d_set.init_graph_attributes(min_supp)
-            ac = GradualAntColony(steps, max_combs, d_set, min_supp)
-            list_gp = ac.run_ant_colony()
-            print("\nPATTERNS")
-            for obj in list_gp:
-                print(str(obj[1])+' : '+str(obj[0]))
-            print("\nPheromone Matrix")
-            ac.plot_pheromone_matrix()
+            d_set.init_bin_attributes(min_supp)
+            # d_set.init_graph_attributes(min_supp)
+            # ac = GradualAntColony(steps, max_combs, d_set, min_supp)
+            # list_gp = ac.run_ant_colony()
+            # print("\nPATTERNS")
+            # for obj in list_gp:
+            #    print(str(obj[1])+' : '+str(obj[0]))
+            # print("\nPheromone Matrix")
+            # ac.plot_pheromone_matrix()
     except Exception as error:
         print(error)
 
@@ -76,7 +77,7 @@ if __name__ == "__main__":
         optparser.add_option('-s', '--minSupport',
                              dest='minSup',
                              help='minimum support value',
-                             default=0.5,
+                             default=0.62,
                              type='float')
         optparser.add_option('-r', '--minRepresentativity',
                              dest='minRep',
@@ -86,10 +87,10 @@ if __name__ == "__main__":
         (options, args) = optparser.parse_args()
 
         if options.file is None:
-            #filePath = '../data/DATASET.csv'
+            filePath = '../data/DATASET.csv'
             #filePath = '../data/FluTopicData-testsansdate-blank.csv'
             #filePath = '../data/annees1970.csv'
-            filePath = '../data/transfusion.csv'
+            #filePath = '../data/transfusion.csv'
             #print("Usage: $python t_graank.py -f filename.csv -c refColumn -s minSup
             # -r minRep")
             #sys.exit('System will exit')

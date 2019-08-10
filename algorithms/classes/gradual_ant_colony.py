@@ -24,7 +24,7 @@ class GradualAntColony:
         self.data = d_set
         self.feature = ['+', '-', 'x']
         self.e_factor = 0.5
-        self.p_matrix = np.ones((len(self.data.attributes), len(self.feature)),
+        self.p_matrix = np.ones((len(self.data.attr_indxs), len(self.feature)),
                                 dtype=float)
 
     def run_ant_colony(self):
@@ -34,14 +34,14 @@ class GradualAntColony:
         for t in range(self.steps):
             for n in range(self.max_combs):
                 sol_n = list()
-                for i in range(len(self.data.attributes)):
+                for i in range(len(self.data.attr_indxs)):
                     x = (rand.randint(1, self.max_combs) / self.max_combs)
                     pos = p[i][0] / (p[i][0] + p[i][1] + p[i][2])
                     neg = (p[i][0] + p[i][1]) / (p[i][0] + p[i][1] + p[i][2])
                     if x < pos:
-                        temp_n = [self.data.attributes[i], '+']
+                        temp_n = [self.data.attr_indxs[i], '+']
                     elif (x >= pos) and x < neg:
-                        temp_n = [self.data.attributes[i], '-']
+                        temp_n = [self.data.attr_indxs[i], '-']
                     else:
                         # temp_n = 'x'
                         continue
