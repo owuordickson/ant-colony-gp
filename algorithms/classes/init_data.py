@@ -32,8 +32,7 @@ class InitData:
             self.size = self.get_size()
             self.attr_data = []
             self.lst_bin = []
-            self.lst_graph = []
-            self.p_matrix = np.zeros((len(self.attr_indxs), 3), dtype=float)
+            self.p_matrix = np.zeros((self.column_size, 3), dtype=float)
 
     def get_size(self):
         size = len(self.raw_data)
@@ -131,38 +130,14 @@ class InitData:
         else:
             self.p_matrix[i][2] = 1
 
-    def init_graph_attributes(self, thd_supp):
-        # Arrange rank attributes to generate Graph attribute
-        temp = self.data
-        cols = self.get_attribute_no()
-        time_cols = self.get_time_cols()
-        lst_graph_attrs = []
-        for col in range(cols):
-            if time_cols and (col in time_cols):
-                # exclude date-time column
-                continue
-            else:
-                # get all tuples of an attribute/column
-                raw_tuples = []
-                for row in range(len(temp)):
-                    raw_tuples.append(float(temp[row][col]))
-                # rank in ascending order and assign pheromones
-                for d in {'+', '-'}:
-                    supp, graph_attr = InitData.init_graph_rank(d, raw_tuples)
-                    if supp >= thd_supp:
-                        temp_attr = [self.title[col][0], d, graph_attr]
-                        lst_graph_attrs.append(temp_attr)
-        self.lst_graph = lst_graph_attrs
-
     @staticmethod
     def init_bin_rank(raw_attrs, eq=False):
-        # temp_attr = [self.title[col][0], d, graph_attr]
         lst_bin = []
         n = len(raw_attrs[0][1])
         for i in range(len(raw_attrs)):
             attr_data = raw_attrs[i]
-            incr = [attr_data[0], '+']
-            decr = [attr_data[0], '-']
+            incr = tuple([attr_data[0], '+'])
+            decr = tuple([attr_data[0], '-'])
             temp_pos = np.zeros((n, n), dtype='bool')
             temp_neg = np.zeros((n, n), dtype='bool')
             var_tuple = attr_data[1]
@@ -184,34 +159,6 @@ class InitData:
             lst_bin.append([incr, temp_pos])
             lst_bin.append([decr, temp_neg])
         return lst_bin
-
-    @staticmethod
-    def init_graph_rank(order, raw_attr):
-        lst_tuple = []
-        for i in range(len(raw_attr)):
-            var_node = [i, raw_attr[i]]
-            lst_tuple.append(var_node)
-        if order == '+':
-            ordered_t = sorted(lst_tuple, key=lambda x: x[1])
-        elif order == '-':
-            ordered_t = sorted(lst_tuple, key=lambda x: x[1], reverse=True)
-        # print(ordered_t)
-        G = nx.DiGraph()
-        for i in range(len(ordered_t)):
-            # generate Graph
-            try:
-                node = TupleNode(ordered_t[i][0], ordered_t[i][1])
-                nxt_node = TupleNode(ordered_t[i + 1][0], ordered_t[i + 1][1])
-                while node.value == nxt_node.value:
-                    i += 1
-                    nxt_node = TupleNode(ordered_t[i + 1][0], ordered_t[i + 1][1])
-                # str_print = [node.index, nxt_node.index]
-                # print(str_print)
-                G.add_edge(node.index, nxt_node.index)
-            except IndexError as e:
-                break
-        support = len(nx.dag_longest_path(G)) / len(raw_attr)
-        return support, G
 
     @staticmethod
     def read_csv(file):

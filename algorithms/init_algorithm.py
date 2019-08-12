@@ -31,11 +31,11 @@ def init_algorithm(f_path, min_supp, steps=False, max_combs=False):
         d_set = InitData(f_path)
         if d_set.data:
             if not steps or not max_combs:
-                steps = (d_set.get_attribute_no() * d_set.get_attribute_no())
-                max_combs = (d_set.get_attribute_no() * d_set.get_attribute_no())
+                n = d_set.get_attribute_no()
+                steps = (n * n)
+                max_combs = (n * n)
             print(d_set.title)
             d_set.init_bin_attributes(min_supp)
-            # d_set.init_graph_attributes(min_supp)
             ac = GradualAntColony(steps, max_combs, d_set, min_supp)
             list_gp = ac.run_ant_colony()
             print("\nPATTERNS")
