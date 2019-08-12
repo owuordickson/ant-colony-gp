@@ -23,7 +23,7 @@ import sys
 from optparse import OptionParser
 import numpy as np
 from algorithms.classes.init_data import InitData
-from algorithms.classes.gradual_ant_colony import GradualAntColony
+from algorithms.classes.gradual_ant_colony import GradACO
 
 
 def init_algorithm(f_path, min_supp, steps=False, max_combs=False):
@@ -31,12 +31,12 @@ def init_algorithm(f_path, min_supp, steps=False, max_combs=False):
         d_set = InitData(f_path)
         if d_set.data:
             if not steps or not max_combs:
-                n = d_set.get_attribute_no()
-                steps = (n * n)
-                max_combs = (n * n)
+                a = d_set.get_attribute_no()
+                steps = (a * a)
+                max_combs = (a * a)
             print(d_set.title)
             d_set.init_bin_attributes(min_supp)
-            ac = GradualAntColony(steps, max_combs, d_set, min_supp)
+            ac = GradACO(steps, max_combs, d_set, min_supp)
             list_gp = ac.run_ant_colony()
             print("\nPATTERNS")
             for obj in list_gp:

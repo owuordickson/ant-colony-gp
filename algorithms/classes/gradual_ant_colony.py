@@ -15,49 +15,61 @@ import matplotlib.pyplot as plt
 import networkx as nx
 
 
-class GradualAntColony:
+class GradACO:
 
     def __init__(self, steps, max_combs, d_set, min_supp):
         self.steps = steps
         self.max_combs = max_combs
         self.thd_supp = min_supp
         self.data = d_set
-        self.e_factor = 0.5
+        self.e_factor = 0.5  # evaporation factor
         self.p_matrix = d_set.p_matrix
 
     def run_ant_colony(self):
         p = self.p_matrix
-        all_sols = []
-        sols_win = list()
+        print(p)
+        all_sols = list()
+        win_sols = list()
+        loss_sols = list()
         for t in range(self.steps):
             for n in range(self.max_combs):
-                sol_n = list()
-                for i in range(len(self.data.attr_indxs)):
-                    x = (rand.randint(1, self.max_combs) / self.max_combs)
-                    pos = p[i][0] / (p[i][0] + p[i][1] + p[i][2])
-                    neg = (p[i][0] + p[i][1]) / (p[i][0] + p[i][1] + p[i][2])
-                    if x < pos:
-                        temp_n = tuple([self.data.attr_indxs[i], '+'])
-                    elif (x >= pos) and x < neg:
-                        temp_n = tuple([self.data.attr_indxs[i], '-'])
-                    else:
-                        # temp_n = 'x'
-                        continue
-                    if temp_n not in sol_n:
-                        sol_n.append(temp_n)
+                sol_n = self.generate_rand_pattern()
                 if (sol_n != []) and (sol_n not in all_sols):
                     all_sols.append(sol_n)
-                    # print(sol_n)
-                    if sols_win:
-                        # check for anti-monotony
-                        true = GradualAntColony.check_anti_monotony(sols_win, sol_n)
+                    if loss_sols:
+                        # check for super-set anti-monotony
+                        true = GradACO.check_anti_monotony(loss_sols, sol_n, False)
+                        if true:
+                            continue
+                    if win_sols:
+                        # check for sub-set anti-monotony
+                        true = GradACO.check_anti_monotony(win_sols, sol_n, True)
                         if true:
                             continue
                     supp = self.evaluate_bin_solution(sol_n)
                     if supp and (supp >= self.thd_supp):
-                        sols_win.append([supp, sol_n])
+                        win_sols.append([supp, sol_n])
                         self.update_pheromone(sol_n, supp)
-        return sols_win
+                    elif supp and (supp < self.thd_supp):
+                        loss_sols.append([supp, sol_n])
+        return win_sols
+
+    def generate_rand_pattern(self):
+        p = self.p_matrix
+        pattern = list()
+        for i in range(self.data.column_size):
+            x = (rand.randint(1, self.max_combs) / self.max_combs)
+            pos = p[i][0] / (p[i][0] + p[i][1] + p[i][2])
+            neg = (p[i][0] + p[i][1]) / (p[i][0] + p[i][1] + p[i][2])
+            if x < pos:
+                temp = tuple([self.data.attr_indxs[i], '+'])
+            elif (x >= pos) and (x < neg):
+                temp = tuple([self.data.attr_indxs[i], '-'])
+            else:
+                # temp = 'x'
+                continue
+            pattern.append(temp)
+        return pattern
 
     def evaluate_bin_solution(self, pattern):
         # [('2', '+'), ('4', '+')]
@@ -67,11 +79,10 @@ class GradualAntColony:
             for obj_j in lst_bin:
                 if obj_j[0] == obj_i:
                     temp_bins.append(obj_j[1])
-        supp = GradualAntColony.perform_bin_and(temp_bins, self.data.get_size())
+        supp = GradACO.perform_bin_and(temp_bins, self.data.get_size())
         return supp
 
     def update_pheromone(self, sol, supp):
-        # [['2', '+'], ['4', '+']], 0.6
         for obj in sol:
             attr = int(obj[0])
             symbol = obj[1]
@@ -116,12 +127,18 @@ class GradualAntColony:
         plt.show()
 
     @staticmethod
-    def check_anti_monotony(lst_p, p_arr):
+    def check_anti_monotony(lst_p, p_arr, ck_sub):
         result = False
-        for obj in lst_p:
-            result = set(p_arr).issubset(set(obj[1]))
-            if result:
-                break
+        if ck_sub:
+            for obj in lst_p:
+                result = set(p_arr).issubset(set(obj[1]))
+                if result:
+                    break
+        else:
+            for obj in lst_p:
+                result = set(p_arr).issuperset(set(obj[1]))
+                if result:
+                    break
         return result
 
     @staticmethod
