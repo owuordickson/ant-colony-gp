@@ -32,8 +32,8 @@ def init_algorithm(f_path, min_supp, steps=False, max_combs=False):
         if d_set.data:
             if not steps or not max_combs:
                 a = d_set.get_attribute_no()
-                steps = (a * a)
-                max_combs = (a * a)
+                steps = a  # (a * a)
+                max_combs = a  # (a * a)
             print(d_set.title)
             d_set.init_bin_attributes(min_supp)
             ac = GradACO(steps, max_combs, d_set, min_supp)
@@ -87,8 +87,8 @@ if __name__ == "__main__":
         (options, args) = optparser.parse_args()
 
         if options.file is None:
-            #filePath = '../data/DATASET.csv'
-            filePath = '../data/FluTopicData-testsansdate-blank.csv'
+            filePath = '../data/DATASET.csv'
+            #filePath = '../data/FluTopicData-testsansdate-blank.csv'
             #filePath = '../data/transfusion.csv'
             #print("Usage: $python t_graank.py -f filename.csv -c refColumn -s minSup
             # -r minRep")

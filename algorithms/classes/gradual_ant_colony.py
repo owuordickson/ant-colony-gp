@@ -57,6 +57,7 @@ class GradACO:
     def generate_rand_pattern(self):
         p = self.p_matrix
         pattern = list()
+        count = 0
         for i in range(self.data.column_size):
             x = (rand.randint(1, self.max_combs) / self.max_combs)
             pos = p[i][0] / (p[i][0] + p[i][1] + p[i][2])
@@ -69,18 +70,26 @@ class GradACO:
                 # temp = 'x'
                 continue
             pattern.append(temp)
+            count += 1
+        if count <= 1:
+            pattern = []
         return pattern
 
     def evaluate_bin_solution(self, pattern):
         # [('2', '+'), ('4', '+')]
         lst_bin = self.data.lst_bin
         temp_bins = []
+        count = 0
         for obj_i in pattern:
             for obj_j in lst_bin:
                 if obj_j[0] == obj_i:
                     temp_bins.append(obj_j[1])
-        supp = GradACO.perform_bin_and(temp_bins, self.data.get_size())
-        return supp
+                    count += 1
+        if count <= 1:
+            return False
+        else:
+            supp = GradACO.perform_bin_and(temp_bins, self.data.get_size())
+            return supp
 
     def update_pheromone(self, sol, supp):
         for obj in sol:
@@ -144,13 +153,10 @@ class GradACO:
     @staticmethod
     def perform_bin_and(lst_bin, n):
         temp_bin = np.array([])
-        if len(lst_bin) >= 2:
-            for obj in lst_bin:
-                if temp_bin.size != 0:
-                    temp_bin = temp_bin & obj
-                else:
-                    temp_bin = obj
-            supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
-            return supp
-        else:
-            return False
+        for obj in lst_bin:
+            if temp_bin.size != 0:
+                temp_bin = temp_bin & obj
+            else:
+                temp_bin = obj
+        supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
+        return supp
