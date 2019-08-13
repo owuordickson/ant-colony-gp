@@ -22,8 +22,9 @@ class GradACO:
         self.max_combs = max_combs
         self.thd_supp = min_supp
         self.data = d_set
-        self.e_factor = 0.5  # evaporation factor
-        self.p_matrix = d_set.p_matrix
+        self.e_factor = 0  # evaporation factor
+        self.p_matrix = np.ones((self.data.column_size, 3), dtype=float)
+        self.bin_patterns = []
 
     def run_ant_colony(self):
         p = self.p_matrix
@@ -76,20 +77,48 @@ class GradACO:
         return pattern
 
     def evaluate_bin_solution(self, pattern):
-        # [('2', '+'), ('4', '+')]
+        # pattern = [('2', '+'), ('4', '+')]
         lst_bin = self.data.lst_bin
-        temp_bins = []
+        bin_data = []
         count = 0
         for obj_i in pattern:
-            for obj_j in lst_bin:
-                if obj_j[0] == obj_i:
-                    temp_bins.append(obj_j[1])
-                    count += 1
+            if obj_i in self.bin_patterns:
+                # fetch pattern
+                for obj in lst_bin:
+                    if obj[0] == obj_i[0]:
+                        bin_data.append(obj[1])
+                        count += 1
+                        break
+            else:
+                attr_data = False
+                for obj in self.data.attr_data:
+                    if obj[0] == obj_i[0]:
+                        attr_data = obj
+                        break
+                if attr_data:
+                    supp, temp_bin = self.data.get_bin_rank(attr_data, obj_i[1])
+                    self.bin_patterns.append(tuple([obj_i[0], '+']))
+                    self.bin_patterns.append(tuple([obj_i[0], '-']))
+                    if supp < self.thd_supp:
+                        self.update_pheromone(obj_i[0])
+                        return False
+                    else:
+                        bin_data.append(temp_bin)
+                        count += 1
+                else:
+                    # print("binary does not exist")
+                    return False
         if count <= 1:
             return False
         else:
-            supp = GradACO.perform_bin_and(temp_bins, self.data.get_size())
+            supp = GradACO.perform_bin_and(bin_data, self.data.get_size())
             return supp
+
+    def update_pheromone(self, attr):
+        i = (int(attr[0]) - 1)
+        self.p_matrix[i][0] = 0
+        self.p_matrix[i][1] = 0
+        self.p_matrix[i][2] = 1
 
     def update_pheromone(self, sol, supp):
         for obj in sol:
@@ -109,6 +138,7 @@ class GradACO:
                 else:
                     old = self.p_matrix[i][k]
                     self.p_matrix[i][k] = (old * (1 - self.e_factor))
+                    self.p_matrix[i][2] = 0
 
     def plot_pheromone_matrix(self):
         x_plot = np.array(self.p_matrix)
@@ -159,4 +189,5 @@ class GradACO:
             else:
                 temp_bin = obj
         supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
+        # print(supp)
         return supp

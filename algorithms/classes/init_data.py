@@ -32,7 +32,7 @@ class InitData:
             self.size = self.get_size()
             self.attr_data = []
             self.lst_bin = []
-            self.p_matrix = np.zeros((self.column_size, 3), dtype=float)
+            # self.p_matrix = np.zeros((self.column_size, 3), dtype=float)
 
     def get_size(self):
         size = len(self.raw_data)
@@ -107,58 +107,39 @@ class InitData:
                 for row in range(len(temp)):
                     raw_tuples.append(float(temp[row][col]))
                 lst_raw_attrs.append([self.title[col][0], raw_tuples])
-        self.lst_bin = InitData.init_bin_rank(lst_raw_attrs)
         self.attr_data = lst_raw_attrs
-        n = len(lst_raw_attrs[0][1])
-        for obj in self.lst_bin:
-            supp = float(np.sum(obj[1])) / float(n * (n - 1.0) / 2.0)
-            if supp < thd_supp:
-                self.lst_bin.remove(obj)
-                self.init_pheromone(obj[0], False)
-            else:
-                self.init_pheromone(obj[0], supp)
 
-    def init_pheromone(self, attr, supp):
-        i = (int(attr[0]) - 1)
-        symbol = attr[1]
-        if supp:
-            if symbol == '+':
-                j = 0
-            elif symbol == '-':
-                j = 1
-            self.p_matrix[i][j] = supp
-        else:
-            self.p_matrix[i][2] = 1
-
-    @staticmethod
-    def init_bin_rank(raw_attrs, eq=False):
-        lst_bin = []
-        n = len(raw_attrs[0][1])
-        for i in range(len(raw_attrs)):
-            attr_data = raw_attrs[i]
-            incr = tuple([attr_data[0], '+'])
-            decr = tuple([attr_data[0], '-'])
-            temp_pos = np.zeros((n, n), dtype='bool')
-            temp_neg = np.zeros((n, n), dtype='bool')
-            var_tuple = attr_data[1]
-            for j in range(n):
-                for k in range(j + 1, n):
-                    if var_tuple[j] > var_tuple[k]:
-                        temp_pos[j][k] = 1
-                        temp_neg[k][j] = 1
+    def get_bin_rank(self, attr_data, symbol, eq=False):
+        n = len(attr_data[1])
+        incr = tuple([attr_data[0], '+'])
+        decr = tuple([attr_data[0], '-'])
+        temp_pos = np.zeros((n, n), dtype='bool')
+        temp_neg = np.zeros((n, n), dtype='bool')
+        var_tuple = attr_data[1]
+        for j in range(n):
+            for k in range(j + 1, n):
+                if var_tuple[j] > var_tuple[k]:
+                    temp_pos[j][k] = 1
+                    temp_neg[k][j] = 1
+                else:
+                    if var_tuple[j] < var_tuple[k]:
+                        temp_neg[j][k] = 1
+                        temp_pos[k][j] = 1
                     else:
-                        if var_tuple[j] < var_tuple[k]:
+                        if eq:
                             temp_neg[j][k] = 1
                             temp_pos[k][j] = 1
-                        else:
-                            if eq:
-                                temp_neg[j][k] = 1
-                                temp_pos[k][j] = 1
-                                temp_pos[j][k] = 1
-                                temp_neg[k][j] = 1
-            lst_bin.append([incr, temp_pos])
-            lst_bin.append([decr, temp_neg])
-        return lst_bin
+                            temp_pos[j][k] = 1
+                            temp_neg[k][j] = 1
+        self.lst_bin.append([incr, temp_pos])
+        self.lst_bin.append([decr, temp_neg])
+        temp_bin = np.array([])
+        if symbol == '+':
+            temp_bin = temp_pos
+        elif symbol == '-':
+            temp_bin = temp_neg
+        supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
+        return supp, temp_bin
 
     @staticmethod
     def read_csv(file):

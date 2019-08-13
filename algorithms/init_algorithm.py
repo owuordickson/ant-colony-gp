@@ -32,8 +32,8 @@ def init_algorithm(f_path, min_supp, steps=False, max_combs=False):
         if d_set.data:
             if not steps or not max_combs:
                 a = d_set.get_attribute_no()
-                steps = a  # (a * a)
-                max_combs = a  # (a * a)
+                steps = (a * a)
+                max_combs = (a * a)
             print(d_set.title)
             d_set.init_bin_attributes(min_supp)
             ac = GradACO(steps, max_combs, d_set, min_supp)
