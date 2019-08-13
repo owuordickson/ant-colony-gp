@@ -35,19 +35,24 @@ class GradACO:
         for t in range(self.steps):
             for n in range(self.max_combs):
                 sol_n = self.generate_rand_pattern()
+                print(sol_n)
                 if (sol_n != []) and (sol_n not in all_sols):
                     all_sols.append(sol_n)
+                    # print("solution not tested")
                     if loss_sols:
                         # check for super-set anti-monotony
                         true = GradACO.check_anti_monotony(loss_sols, sol_n, False)
                         if true:
+                            print("solution is superset")
                             continue
                     if win_sols:
                         # check for sub-set anti-monotony
                         true = GradACO.check_anti_monotony(win_sols, sol_n, True)
                         if true:
+                            print("solution is subset")
                             continue
                     supp = self.evaluate_bin_solution(sol_n)
+                    print(str(supp) + " evaluated")
                     if supp and (supp >= self.thd_supp):
                         win_sols.append([supp, sol_n])
                         self.update_pheromone(sol_n, supp)
@@ -57,9 +62,10 @@ class GradACO:
 
     def generate_rand_pattern(self):
         p = self.p_matrix
+        n = self.data.column_size
         pattern = list()
         count = 0
-        for i in range(self.data.column_size):
+        for i in range(n):
             x = (rand.randint(1, self.max_combs) / self.max_combs)
             pos = p[i][0] / (p[i][0] + p[i][1] + p[i][2])
             neg = (p[i][0] + p[i][1]) / (p[i][0] + p[i][1] + p[i][2])
@@ -80,12 +86,13 @@ class GradACO:
         # pattern = [('2', '+'), ('4', '+')]
         lst_bin = self.data.lst_bin
         bin_data = []
+        invalid = False
         count = 0
         for obj_i in pattern:
             if obj_i in self.bin_patterns:
                 # fetch pattern
                 for obj in lst_bin:
-                    if obj[0] == obj_i[0]:
+                    if obj[0] == obj_i:
                         bin_data.append(obj[1])
                         count += 1
                         break
@@ -100,21 +107,23 @@ class GradACO:
                     self.bin_patterns.append(tuple([obj_i[0], '+']))
                     self.bin_patterns.append(tuple([obj_i[0], '-']))
                     if supp < self.thd_supp:
-                        self.update_pheromone(obj_i[0])
-                        return False
+                        self.remove_pheromone(obj_i[0])
+                        invalid = True
+                        break
                     else:
+                        self.update_pheromone([obj_i], 0)
                         bin_data.append(temp_bin)
                         count += 1
                 else:
                     # print("binary does not exist")
                     return False
-        if count <= 1:
+        if count <= 1 or invalid:
             return False
         else:
             supp = GradACO.perform_bin_and(bin_data, self.data.get_size())
             return supp
 
-    def update_pheromone(self, attr):
+    def remove_pheromone(self, attr):
         i = (int(attr[0]) - 1)
         self.p_matrix[i][0] = 0
         self.p_matrix[i][1] = 0
