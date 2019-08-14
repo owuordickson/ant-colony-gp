@@ -1,6 +1,6 @@
-## GAG: Gradual Ant-colony Graph-based Pattern Mining
+## GRAANK-ACO
 
-The GAG algorithm applied the pheromone-based ant colony strategy to optimize gradual pattern mining. It's efficiency is tested against the existing GRAANK algorithm.
+The GRAANK-ACO algorithm applied the pheromone-based ant colony strategy to optimize gradual pattern mining. It's efficiency is tested against the existing GRAANK algorithm.
 
 ### License:
 * MIT
