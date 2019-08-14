@@ -22,7 +22,7 @@ class GradACO:
         self.thd_supp = min_supp
         self.data = d_set
         self.e_factor = 0  # evaporation factor
-        self.p_matrix = np.ones((self.data.column_size, 3), dtype=float)
+        self.p_matrix = np.ones((self.data.column_size, 3), dtype=int)
         self.bin_patterns = []
 
     def run_ant_colony(self):
@@ -50,11 +50,14 @@ class GradACO:
                     supp = self.evaluate_bin_solution(sol_n)
                     if supp and (supp >= self.thd_supp):
                         win_sols.append([supp, sol_n])
-                        self.update_pheromone(sol_n, supp)
+                        self.update_pheromone(sol_n)
                     elif supp and (supp < self.thd_supp):
                         loss_sols.append([supp, sol_n])
+                        # self.update_pheromone(sol_n, False)
                     else:
                         invalid_sols.append([supp, sol_n])
+                        # self.update_pheromone(sol_n, False)
+        print(self.p_matrix)
         return win_sols
 
     def generate_rand_pattern(self):
@@ -104,11 +107,11 @@ class GradACO:
                     self.bin_patterns.append(tuple([obj_i[0], '+']))
                     self.bin_patterns.append(tuple([obj_i[0], '-']))
                     if supp < self.thd_supp:
-                        self.update_pheromone([tuple([obj_i[0], 'x'])], 0)
+                        # self.update_pheromone([tuple([obj_i[0], 'x'])], False)
                         invalid = True
                         break
                     else:
-                        self.update_pheromone([obj_i], 0)
+                        # self.update_pheromone([obj_i], True)
                         bin_data.append(temp_bin)
                         count += 1
                 else:
@@ -120,22 +123,22 @@ class GradACO:
             supp = GradACO.perform_bin_and(bin_data, self.data.get_size())
             return supp
 
-    def update_pheromone(self, pattern, supp):
+    def update_pheromone(self, pattern):
+        lst_attr = []
         for obj in pattern:
             attr = int(obj[0])
+            lst_attr.append(attr)
             symbol = obj[1]
             i = attr - 1
             if symbol == '+':
-                # old = self.p_matrix[i][0]
-                self.p_matrix[i][0] += 1  # (old * (1 - self.e_factor)) + supp
-                self.p_matrix[i][2] = 0
+                self.p_matrix[i][0] += 1
             elif symbol == '-':
                 self.p_matrix[i][1] += 1
-                self.p_matrix[i][2] = 0
-            elif symbol == 'x':
-                self.p_matrix[i][0] = 0
-                self.p_matrix[i][1] = 0
-                self.p_matrix[i][2] = 1
+        for index in self.data.attr_index:
+            if int(index) not in lst_attr:
+                # print(obj)
+                i = int(index) - 1
+                self.p_matrix[i][2] += 1
 
     def plot_pheromone_matrix(self):
         x_plot = np.array(self.p_matrix)
