@@ -63,15 +63,15 @@ class GradACO:
         pattern = list()
         count = 0
         for i in range(n):
-            x = (rand.randint(1, self.max_combs) / self.max_combs)
-            pos = p[i][0] / (p[i][0] + p[i][1] + p[i][2])
-            neg = (p[i][0] + p[i][1]) / (p[i][0] + p[i][1] + p[i][2])
+            x = float(rand.randint(1, self.max_combs) / self.max_combs)
+            pos = float(p[i][0] / (p[i][0] + p[i][1] + p[i][2]))
+            neg = float((p[i][0] + p[i][1]) / (p[i][0] + p[i][1] + p[i][2]))
             if x < pos:
                 temp = tuple([self.data.attr_index[i], '+'])
             elif (x >= pos) and (x < neg):
                 temp = tuple([self.data.attr_index[i], '-'])
             else:
-                # temp = 'x'
+                # temp = tuple([self.data.attr_index[i], 'x'])
                 continue
             pattern.append(temp)
             count += 1
