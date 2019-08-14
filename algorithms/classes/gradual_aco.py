@@ -34,7 +34,7 @@ class GradACO:
             for n in range(self.max_combs):
                 sol_n = self.generate_rand_pattern()
                 # print(sol_n)
-                if (sol_n != []) and (sol_n not in all_sols):
+                if sol_n and (sol_n not in all_sols):
                     all_sols.append(sol_n)
                     if loss_sols:
                         # check for super-set anti-monotony
@@ -76,7 +76,7 @@ class GradACO:
             pattern.append(temp)
             count += 1
         if count <= 1:
-            pattern = []
+            pattern = False
         return pattern
 
     def evaluate_bin_solution(self, pattern):
