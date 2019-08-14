@@ -36,7 +36,7 @@ def init_algorithm(f_path, min_supp, eq=False, steps=False, max_combs=False):
             for obj in list_gp:
                 print(str(obj[1])+' : '+str(obj[0]))
             print("\nPheromone Matrix")
-            # ac.plot_pheromone_matrix()
+            ac.plot_pheromone_matrix()
     except Exception as error:
         print(error)
 
@@ -81,8 +81,8 @@ if __name__ == "__main__":
         (options, args) = optparser.parse_args()
 
         if options.file is None:
-            #filePath = '../data/DATASET.csv'
-            filePath = '../data/FluTopicData-testsansdate-blank.csv'
+            filePath = '../data/DATASET.csv'
+            #filePath = '../data/FluTopicData-testsansdate-blank.csv'
             #filePath = '../data/transfusion.csv'
             #print("Usage: $python t_graank.py -f filename.csv -c refColumn -s minSup
             # -r minRep")

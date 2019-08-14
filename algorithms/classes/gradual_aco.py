@@ -57,7 +57,6 @@ class GradACO:
                     else:
                         invalid_sols.append([supp, sol_n])
                         # self.update_pheromone(sol_n, False)
-        print(self.p_matrix)
         return win_sols
 
     def generate_rand_pattern(self):
