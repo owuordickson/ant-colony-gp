@@ -32,6 +32,7 @@ class GradACO:
         all_sols = list()
         win_sols = list()
         loss_sols = list()
+        invalid_sols = list()
         for t in range(self.steps):
             for n in range(self.max_combs):
                 sol_n = self.generate_rand_pattern()
@@ -41,14 +42,15 @@ class GradACO:
                     # print("solution not tested")
                     if loss_sols:
                         # check for super-set anti-monotony
-                        true = GradACO.check_anti_monotony(loss_sols, sol_n, False)
-                        if true:
+                        is_super = GradACO.check_anti_monotony(loss_sols, sol_n, False)
+                        is_invalid = GradACO.check_anti_monotony(invalid_sols, sol_n, False)
+                        if is_super or is_invalid:
                             print("solution is superset")
                             continue
                     if win_sols:
                         # check for sub-set anti-monotony
-                        true = GradACO.check_anti_monotony(win_sols, sol_n, True)
-                        if true:
+                        is_sub = GradACO.check_anti_monotony(win_sols, sol_n, True)
+                        if is_sub:
                             print("solution is subset")
                             continue
                     supp = self.evaluate_bin_solution(sol_n)
@@ -58,6 +60,8 @@ class GradACO:
                         self.update_pheromone(sol_n, supp)
                     elif supp and (supp < self.thd_supp):
                         loss_sols.append([supp, sol_n])
+                    else:
+                        invalid_sols.append([supp, sol_n])
         return win_sols
 
     def generate_rand_pattern(self):
@@ -107,7 +111,8 @@ class GradACO:
                     self.bin_patterns.append(tuple([obj_i[0], '+']))
                     self.bin_patterns.append(tuple([obj_i[0], '-']))
                     if supp < self.thd_supp:
-                        self.remove_pheromone(obj_i[0])
+                        # self.remove_pheromone(obj_i[0])
+                        self.update_pheromone([tuple([obj_i[0], 'x'])], 0)
                         invalid = True
                         break
                     else:
@@ -123,31 +128,25 @@ class GradACO:
             supp = GradACO.perform_bin_and(bin_data, self.data.get_size())
             return supp
 
-    def remove_pheromone(self, attr):
-        i = (int(attr[0]) - 1)
-        self.p_matrix[i][0] = 0
-        self.p_matrix[i][1] = 0
-        self.p_matrix[i][2] = 1
-
     def update_pheromone(self, sol, supp):
         for obj in sol:
             attr = int(obj[0])
             symbol = obj[1]
             i = attr - 1
             if symbol == '+':
-                j = 0
+                old = self.p_matrix[i][0]
+                self.p_matrix[i][0] = (old * (1 - self.e_factor)) + supp
+                # self.p_matrix[i][1] = (old * (1 - self.e_factor))
+                self.p_matrix[i][2] = 0
             elif symbol == '-':
-                j = 1
-            else:
-                j = 2
-            for k in range(len(self.p_matrix[i])):
-                if k == j:
-                    old = self.p_matrix[i][j]
-                    self.p_matrix[i][j] = (old * (1 - self.e_factor)) + supp
-                else:
-                    old = self.p_matrix[i][k]
-                    self.p_matrix[i][k] = (old * (1 - self.e_factor))
-                    self.p_matrix[i][2] = 0
+                old = self.p_matrix[i][0]
+                # self.p_matrix[i][0] = (old * (1 - self.e_factor))
+                self.p_matrix[i][1] = (old * (1 - self.e_factor)) + supp
+                self.p_matrix[i][2] = 0
+            elif symbol == 'x':
+                self.p_matrix[i][0] = 0
+                self.p_matrix[i][1] = 0
+                self.p_matrix[i][2] = 1
 
     def plot_pheromone_matrix(self):
         x_plot = np.array(self.p_matrix)
