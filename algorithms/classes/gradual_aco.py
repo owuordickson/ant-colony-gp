@@ -12,7 +12,6 @@
 import numpy as np
 import random as rand
 import matplotlib.pyplot as plt
-import networkx as nx
 
 
 class GradACO:
@@ -27,8 +26,6 @@ class GradACO:
         self.bin_patterns = []
 
     def run_ant_colony(self):
-        p = self.p_matrix
-        print(p)
         all_sols = list()
         win_sols = list()
         loss_sols = list()
@@ -36,25 +33,21 @@ class GradACO:
         for t in range(self.steps):
             for n in range(self.max_combs):
                 sol_n = self.generate_rand_pattern()
-                print(sol_n)
+                # print(sol_n)
                 if (sol_n != []) and (sol_n not in all_sols):
                     all_sols.append(sol_n)
-                    # print("solution not tested")
                     if loss_sols:
                         # check for super-set anti-monotony
                         is_super = GradACO.check_anti_monotony(loss_sols, sol_n, False)
                         is_invalid = GradACO.check_anti_monotony(invalid_sols, sol_n, False)
                         if is_super or is_invalid:
-                            print("solution is superset")
                             continue
                     if win_sols:
                         # check for sub-set anti-monotony
                         is_sub = GradACO.check_anti_monotony(win_sols, sol_n, True)
                         if is_sub:
-                            print("solution is subset")
                             continue
                     supp = self.evaluate_bin_solution(sol_n)
-                    print(str(supp) + " evaluated")
                     if supp and (supp >= self.thd_supp):
                         win_sols.append([supp, sol_n])
                         self.update_pheromone(sol_n, supp)
@@ -74,9 +67,9 @@ class GradACO:
             pos = p[i][0] / (p[i][0] + p[i][1] + p[i][2])
             neg = (p[i][0] + p[i][1]) / (p[i][0] + p[i][1] + p[i][2])
             if x < pos:
-                temp = tuple([self.data.attr_indxs[i], '+'])
+                temp = tuple([self.data.attr_index[i], '+'])
             elif (x >= pos) and (x < neg):
-                temp = tuple([self.data.attr_indxs[i], '-'])
+                temp = tuple([self.data.attr_index[i], '-'])
             else:
                 # temp = 'x'
                 continue
@@ -111,7 +104,6 @@ class GradACO:
                     self.bin_patterns.append(tuple([obj_i[0], '+']))
                     self.bin_patterns.append(tuple([obj_i[0], '-']))
                     if supp < self.thd_supp:
-                        # self.remove_pheromone(obj_i[0])
                         self.update_pheromone([tuple([obj_i[0], 'x'])], 0)
                         invalid = True
                         break
@@ -120,7 +112,7 @@ class GradACO:
                         bin_data.append(temp_bin)
                         count += 1
                 else:
-                    # print("binary does not exist")
+                    # binary does not exist
                     return False
         if count <= 1 or invalid:
             return False
@@ -128,8 +120,8 @@ class GradACO:
             supp = GradACO.perform_bin_and(bin_data, self.data.get_size())
             return supp
 
-    def update_pheromone(self, sol, supp):
-        for obj in sol:
+    def update_pheromone(self, pattern, supp):
+        for obj in pattern:
             attr = int(obj[0])
             symbol = obj[1]
             i = attr - 1
@@ -197,5 +189,4 @@ class GradACO:
             else:
                 temp_bin = obj
         supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
-        # print(supp)
         return supp

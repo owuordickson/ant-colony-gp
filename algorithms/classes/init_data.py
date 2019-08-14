@@ -11,8 +11,6 @@ import csv
 from dateutil.parser import parse
 import time
 import numpy as np
-import networkx as nx
-from algorithms.classes.tuple_node import TupleNode
 
 
 class InitData:
@@ -26,13 +24,13 @@ class InitData:
         else:
             self.data = self.raw_data
             self.title = self.get_title()
-            self.attr_indxs = self.get_attributes()
+            self.attr_index = self.get_attributes()
             self.time_columns = self.get_time_cols()
             self.column_size = self.get_attribute_no()
             self.size = self.get_size()
+            self.equal = False
             self.attr_data = []
             self.lst_bin = []
-            # self.p_matrix = np.zeros((self.column_size, 3), dtype=float)
 
     def get_size(self):
         size = len(self.raw_data)
@@ -91,8 +89,9 @@ class InitData:
         else:
             return False
 
-    def init_bin_attributes(self, thd_supp):
+    def init_bin_attributes(self, eq):
         # Arrange rank attributes to generate Graph attribute
+        self.equal = eq
         temp = self.data
         cols = self.get_attribute_no()
         time_cols = self.get_time_cols()
@@ -109,7 +108,7 @@ class InitData:
                 lst_raw_attrs.append([self.title[col][0], raw_tuples])
         self.attr_data = lst_raw_attrs
 
-    def get_bin_rank(self, attr_data, symbol, eq=False):
+    def get_bin_rank(self, attr_data, symbol):
         n = len(attr_data[1])
         incr = tuple([attr_data[0], '+'])
         decr = tuple([attr_data[0], '-'])
@@ -126,7 +125,7 @@ class InitData:
                         temp_neg[j][k] = 1
                         temp_pos[k][j] = 1
                     else:
-                        if eq:
+                        if self.equal:
                             temp_neg[j][k] = 1
                             temp_pos[k][j] = 1
                             temp_pos[j][k] = 1
