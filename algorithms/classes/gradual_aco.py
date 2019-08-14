@@ -23,6 +23,7 @@ class GradACO:
         self.data = d_set
         self.e_factor = 0  # evaporation factor
         self.p_matrix = np.ones((self.data.column_size, 3), dtype=int)
+        self.a_matrix = np.ones((self.data.column_size, 1), dtype=float)
         self.bin_patterns = []
 
     def run_ant_colony(self):
@@ -65,9 +66,10 @@ class GradACO:
         pattern = list()
         count = 0
         for i in range(n):
+            a = int(self.a_matrix[i])
             x = float(rand.randint(1, self.max_combs) / self.max_combs)
-            pos = float(p[i][0] / (p[i][0] + p[i][1] + p[i][2]))
-            neg = float((p[i][0] + p[i][1]) / (p[i][0] + p[i][1] + p[i][2]))
+            pos = float((p[i][0] * a) / (p[i][0] + p[i][1] + p[i][2]))
+            neg = float(((p[i][0] + p[i][1]) * a) / (p[i][0] + p[i][1] + p[i][2]))
             if x < pos:
                 temp = tuple([self.data.attr_index[i], '+'])
             elif (x >= pos) and (x < neg):
@@ -107,10 +109,14 @@ class GradACO:
                     self.bin_patterns.append(tuple([obj_i[0], '-']))
                     if supp < self.thd_supp:
                         # self.update_pheromone([tuple([obj_i[0], 'x'])], False)
+                        i = int(obj_i[0])
+                        self.a_matrix[(i - 1)] = 0
                         invalid = True
                         break
                     else:
                         # self.update_pheromone([obj_i], True)
+                        i = int(obj_i[0])
+                        self.a_matrix[(i - 1)] = supp
                         bin_data.append(temp_bin)
                         count += 1
                 else:
