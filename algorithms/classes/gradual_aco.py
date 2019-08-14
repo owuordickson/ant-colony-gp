@@ -126,14 +126,11 @@ class GradACO:
             symbol = obj[1]
             i = attr - 1
             if symbol == '+':
-                old = self.p_matrix[i][0]
-                self.p_matrix[i][0] = (old * (1 - self.e_factor)) + supp
-                # self.p_matrix[i][1] = (old * (1 - self.e_factor))
+                # old = self.p_matrix[i][0]
+                self.p_matrix[i][0] += 1  # (old * (1 - self.e_factor)) + supp
                 self.p_matrix[i][2] = 0
             elif symbol == '-':
-                old = self.p_matrix[i][0]
-                # self.p_matrix[i][0] = (old * (1 - self.e_factor))
-                self.p_matrix[i][1] = (old * (1 - self.e_factor)) + supp
+                self.p_matrix[i][1] += 1
                 self.p_matrix[i][2] = 0
             elif symbol == 'x':
                 self.p_matrix[i][0] = 0
