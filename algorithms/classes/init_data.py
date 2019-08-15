@@ -29,7 +29,7 @@ class InitData:
             self.size = self.get_size()
             self.thd_supp = False
             self.equal = False
-            self.a_matrix = np.ones((self.column_size, 1), dtype=float)
+            self.attr_matrix = np.ones((self.column_size, 1), dtype=float)
             self.attr_data = []
             self.lst_bin = []
 
