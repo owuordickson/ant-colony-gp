@@ -90,6 +90,24 @@ class InitData:
         else:
             return False
 
+    def init_attributes(self, eq):
+        # Arrange rank attributes to generate Graph attribute
+        self.equal = eq
+        temp = self.data
+        cols = self.column_size
+        time_cols = self.get_time_cols()
+        for col in range(cols):
+            if time_cols and (col in time_cols):
+                # exclude date-time column
+                continue
+            else:
+                # get all tuples of an attribute/column
+                raw_tuples = []
+                for row in range(len(temp)):
+                    raw_tuples.append(float(temp[row][col]))
+                attr_data = [self.title[col][0], raw_tuples]
+                self.attr_data.append(attr_data)
+
     def init_bin_attributes(self, min_supp, eq):
         # Arrange rank attributes to generate Graph attribute
         self.thd_supp = min_supp
@@ -107,9 +125,9 @@ class InitData:
                 for row in range(len(temp)):
                     raw_tuples.append(float(temp[row][col]))
                 attr_data = [self.title[col][0], raw_tuples]
+                self.attr_data.append(attr_data)
                 supp, bin_pos, bin_neg = self.init_bin_rank(attr_data)
                 if supp >= min_supp:
-                    self.attr_data.append(attr_data)
                     self.lst_bin.append(bin_pos)
                     self.lst_bin.append(bin_neg)
                     self.a_matrix[col] = supp
@@ -145,7 +163,7 @@ class InitData:
         supp = float(np.sum(temp_pos)) / float(n * (n - 1.0) / 2.0)
         return supp, bin_pos, bin_neg
 
-    def old_get_bin_rank(self, attr_data, symbol):
+    def get_bin_rank(self, attr_data, symbol):
         n = len(attr_data[1])
         incr = tuple([attr_data[0], '+'])
         decr = tuple([attr_data[0], '-'])

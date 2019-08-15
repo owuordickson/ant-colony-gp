@@ -29,9 +29,12 @@ def init_algorithm(f_path, min_supp, eq=False, steps=False, max_combs=False):
                 steps = a  # (a * a)
                 max_combs = a  # (a * a)
             print(d_set.title)
-            d_set.init_bin_attributes(min_supp, eq)
+            # d_set.init_bin_attributes(min_supp, eq)
+            # ac = GradACO(steps, max_combs, d_set)
+            # list_gp = ac.run_ant_colony()
+            d_set.init_attributes(eq)
             ac = GradACO(steps, max_combs, d_set)
-            list_gp = ac.run_ant_colony()
+            list_gp = ac.run_ant_colony(min_supp)
             print("\nPATTERNS")
             for obj in list_gp:
                 print(str(obj[1])+' : '+str(obj[0]))
@@ -81,8 +84,8 @@ if __name__ == "__main__":
         (options, args) = optparser.parse_args()
 
         if options.file is None:
-            filePath = '../data/DATASET.csv'
-            #filePath = '../data/FluTopicData-testsansdate-blank.csv'
+            #filePath = '../data/DATASET.csv'
+            filePath = '../data/FluTopicData-testsansdate-blank.csv'
             #filePath = '../data/transfusion.csv'
             #print("Usage: $python t_graank.py -f filename.csv -c refColumn -s minSup
             # -r minRep")
