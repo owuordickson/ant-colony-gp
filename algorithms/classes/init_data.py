@@ -25,10 +25,11 @@ class InitData:
             self.data = self.raw_data
             self.title = self.get_title()
             self.attr_index = self.get_attributes()
-            self.time_columns = self.get_time_cols()
             self.column_size = self.get_attribute_no()
             self.size = self.get_size()
+            self.thd_supp = False
             self.equal = False
+            self.a_matrix = np.ones((self.column_size, 1), dtype=float)
             self.attr_data = []
             self.lst_bin = []
 
@@ -89,13 +90,13 @@ class InitData:
         else:
             return False
 
-    def init_bin_attributes(self, eq):
+    def init_bin_attributes(self, min_supp, eq):
         # Arrange rank attributes to generate Graph attribute
+        self.thd_supp = min_supp
         self.equal = eq
         temp = self.data
-        cols = self.get_attribute_no()
+        cols = self.column_size
         time_cols = self.get_time_cols()
-        lst_raw_attrs = []
         for col in range(cols):
             if time_cols and (col in time_cols):
                 # exclude date-time column
@@ -105,10 +106,46 @@ class InitData:
                 raw_tuples = []
                 for row in range(len(temp)):
                     raw_tuples.append(float(temp[row][col]))
-                lst_raw_attrs.append([self.title[col][0], raw_tuples])
-        self.attr_data = lst_raw_attrs
+                attr_data = [self.title[col][0], raw_tuples]
+                supp, bin_pos, bin_neg = self.init_bin_rank(attr_data)
+                if supp >= min_supp:
+                    self.attr_data.append(attr_data)
+                    self.lst_bin.append(bin_pos)
+                    self.lst_bin.append(bin_neg)
+                    self.a_matrix[col] = supp
+                else:
+                    self.a_matrix[col] = 0
 
-    def get_bin_rank(self, attr_data, symbol):
+    def init_bin_rank(self, attr_data):
+        # lst_bin_pos = []
+        # lst_bin_neg = []
+        n = len(attr_data[1])
+        incr = tuple([attr_data[0], '+'])
+        decr = tuple([attr_data[0], '-'])
+        temp_pos = np.zeros((n, n), dtype='bool')
+        temp_neg = np.zeros((n, n), dtype='bool')
+        var_tuple = attr_data[1]
+        for j in range(n):
+            for k in range(j + 1, n):
+                if var_tuple[j] > var_tuple[k]:
+                    temp_pos[j][k] = 1
+                    temp_neg[k][j] = 1
+                else:
+                    if var_tuple[j] < var_tuple[k]:
+                        temp_neg[j][k] = 1
+                        temp_pos[k][j] = 1
+                    else:
+                        if self.equal:
+                            temp_neg[j][k] = 1
+                            temp_pos[k][j] = 1
+                            temp_pos[j][k] = 1
+                            temp_neg[k][j] = 1
+        bin_pos = [incr, temp_pos]
+        bin_neg = [decr, temp_neg]
+        supp = float(np.sum(temp_pos)) / float(n * (n - 1.0) / 2.0)
+        return supp, bin_pos, bin_neg
+
+    def old_get_bin_rank(self, attr_data, symbol):
         n = len(attr_data[1])
         incr = tuple([attr_data[0], '+'])
         decr = tuple([attr_data[0], '-'])

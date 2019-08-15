@@ -16,15 +16,13 @@ import matplotlib.pyplot as plt
 
 class GradACO:
 
-    def __init__(self, steps, max_combs, d_set, min_supp):
+    def __init__(self, steps, max_combs, d_set):
         self.steps = steps
         self.max_combs = max_combs
-        self.thd_supp = min_supp
+        self.thd_supp = d_set.thd_supp
         self.data = d_set
         self.e_factor = 0  # evaporation factor
         self.p_matrix = np.ones((self.data.column_size, 3), dtype=int)
-        self.a_matrix = np.ones((self.data.column_size, 1), dtype=float)
-        self.bin_patterns = []
 
     def run_ant_colony(self):
         all_sols = list()
@@ -66,7 +64,7 @@ class GradACO:
         pattern = list()
         count = 0
         for i in range(n):
-            a = int(self.a_matrix[i])
+            a = float(self.data.a_matrix[i])
             x = float(rand.randint(1, self.max_combs) / self.max_combs)
             pos = float((p[i][0] * a) / (p[i][0] + p[i][1] + p[i][2]))
             neg = float(((p[i][0] + p[i][1]) * a) / (p[i][0] + p[i][1] + p[i][2]))
@@ -84,6 +82,24 @@ class GradACO:
         return pattern
 
     def evaluate_bin_solution(self, pattern):
+        # pattern = [('2', '+'), ('4', '+')]
+        lst_bin = self.data.lst_bin
+        bin_data = []
+        count = 0
+        for obj_i in pattern:
+            # fetch pattern
+            for obj_j in lst_bin:
+                if obj_j[0] == obj_i:
+                    bin_data.append(obj_j[1])
+                    count += 1
+                    break
+        if count <= 1:
+            return False
+        else:
+            supp = GradACO.perform_bin_and(bin_data, self.data.get_size())
+            return supp
+
+    def old_evaluate_bin_solution(self, pattern):
         # pattern = [('2', '+'), ('4', '+')]
         lst_bin = self.data.lst_bin
         bin_data = []

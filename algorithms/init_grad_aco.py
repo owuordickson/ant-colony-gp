@@ -29,8 +29,8 @@ def init_algorithm(f_path, min_supp, eq=False, steps=False, max_combs=False):
                 steps = a  # (a * a)
                 max_combs = a  # (a * a)
             print(d_set.title)
-            d_set.init_bin_attributes(eq)
-            ac = GradACO(steps, max_combs, d_set, min_supp)
+            d_set.init_bin_attributes(min_supp, eq)
+            ac = GradACO(steps, max_combs, d_set)
             list_gp = ac.run_ant_colony()
             print("\nPATTERNS")
             for obj in list_gp:
