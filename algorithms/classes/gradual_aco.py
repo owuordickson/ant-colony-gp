@@ -23,6 +23,7 @@ class GradACO:
         self.e_factor = 0  # evaporation factor
         self.p_matrix = np.ones((self.data.column_size, 3), dtype=int)
         self.bin_patterns = []
+        self.invalid_patterns = []
 
     def run_ant_colony(self):
         all_sols = list()
@@ -80,15 +81,15 @@ class GradACO:
                         is_sub = GradACO.check_anti_monotony(win_sols, sol_n, True)
                         if is_sub:
                             continue
-                    supp = self.evaluate_bin_solution(sol_n, min_supp)
+                    supp, sol_gen = self.evaluate_bin_solution(sol_n, min_supp)
                     if supp and (supp >= min_supp):
-                        win_sols.append([supp, sol_n])
-                        self.update_pheromone(sol_n)
+                        win_sols.append([supp, sol_gen])
+                        self.update_pheromone(sol_gen)
                     elif supp and (supp < min_supp):
-                        loss_sols.append([supp, sol_n])
+                        loss_sols.append([supp, sol_gen])
                         # self.update_pheromone(sol_n, False)
                     else:
-                        invalid_sols.append([supp, sol_n])
+                        invalid_sols.append([supp, sol_gen])
                         # self.update_pheromone(sol_n, False)
         return win_sols
 
@@ -98,7 +99,7 @@ class GradACO:
         pattern = list()
         count = 0
         for i in range(n):
-            a = float(self.data.attr_matrix[i])
+            a = 1  # float(self.data.attr_matrix[i])
             x = float(rand.randint(1, self.max_combs) / self.max_combs)
             pos = float((p[i][0] * a) / (p[i][0] + p[i][1] + p[i][2]))
             neg = float(((p[i][0] + p[i][1]) * a) / (p[i][0] + p[i][1] + p[i][2]))
@@ -136,14 +137,18 @@ class GradACO:
     def evaluate_bin_solution(self, pattern, min_supp):
         # pattern = [('2', '+'), ('4', '+')]
         lst_bin = self.data.lst_bin
+        gen_pattern = []
         bin_data = []
-        invalid = False
+        # invalid = False
         count = 0
         for obj_i in pattern:
-            if obj_i in self.bin_patterns:
+            if obj_i in self.invalid_patterns:
+                continue
+            elif obj_i in self.bin_patterns:
                 # fetch pattern
                 for obj in lst_bin:
                     if obj[0] == obj_i:
+                        gen_pattern.append(obj[0])
                         bin_data.append(obj[1])
                         count += 1
                         break
@@ -155,28 +160,36 @@ class GradACO:
                         break
                 if attr_data:
                     supp, temp_bin = self.data.get_bin_rank(attr_data, obj_i[1])
-                    self.bin_patterns.append(tuple([obj_i[0], '+']))
-                    self.bin_patterns.append(tuple([obj_i[0], '-']))
-                    if supp < min_supp:
+                    # self.bin_patterns.append(tuple([obj_i[0], '+']))
+                    # self.bin_patterns.append(tuple([obj_i[0], '-']))
+                    # if supp < min_supp:
                         # self.update_pheromone([tuple([obj_i[0], 'x'])], False)
-                        i = int(obj_i[0])
-                        self.data.attr_matrix[(i - 1)] = 0
-                        invalid = True
-                        break
-                    else:
+                        # i = int(obj_i[0])
+                        # self.data.attr_matrix[(i - 1)] = 0
+                        # invalid = True
+                        # break
+                        # continue
+                    # else:
                         # self.update_pheromone([obj_i], True)
-                        i = int(obj_i[0])
-                        self.data.attr_matrix[(i - 1)] = supp
+                        # i = int(obj_i[0])
+                        # self.data.attr_matrix[(i - 1)] = supp
+                    if supp >= min_supp:
+                        self.bin_patterns.append(tuple([obj_i[0], '+']))
+                        self.bin_patterns.append(tuple([obj_i[0], '-']))
+                        gen_pattern.append(obj_i)
                         bin_data.append(temp_bin)
                         count += 1
+                    else:
+                        self.invalid_patterns.append(tuple([obj_i[0], '+']))
+                        self.invalid_patterns.append(tuple([obj_i[0], '-']))
                 else:
                     # binary does not exist
                     return False
-        if count <= 1 or invalid:
-            return False
+        if count <= 1:
+            return False, False
         else:
             supp = GradACO.perform_bin_and(bin_data, self.data.get_size())
-            return supp
+            return supp, gen_pattern
 
     def update_pheromone(self, pattern):
         lst_attr = []
