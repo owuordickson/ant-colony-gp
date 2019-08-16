@@ -99,10 +99,9 @@ class GradACO:
         pattern = list()
         count = 0
         for i in range(n):
-            a = 1  # float(self.data.attr_matrix[i])
             x = float(rand.randint(1, self.max_combs) / self.max_combs)
-            pos = float((p[i][0] * a) / (p[i][0] + p[i][1] + p[i][2]))
-            neg = float(((p[i][0] + p[i][1]) * a) / (p[i][0] + p[i][1] + p[i][2]))
+            pos = float(p[i][0] / (p[i][0] + p[i][1] + p[i][2]))
+            neg = float((p[i][0] + p[i][1]) / (p[i][0] + p[i][1] + p[i][2]))
             if x < pos:
                 temp = tuple([self.data.attr_index[i], '+'])
             elif (x >= pos) and (x < neg):
@@ -139,7 +138,6 @@ class GradACO:
         lst_bin = self.data.lst_bin
         gen_pattern = []
         bin_data = []
-        # invalid = False
         count = 0
         for obj_i in pattern:
             if obj_i in self.invalid_patterns:
@@ -160,19 +158,6 @@ class GradACO:
                         break
                 if attr_data:
                     supp, temp_bin = self.data.get_bin_rank(attr_data, obj_i[1])
-                    # self.bin_patterns.append(tuple([obj_i[0], '+']))
-                    # self.bin_patterns.append(tuple([obj_i[0], '-']))
-                    # if supp < min_supp:
-                        # self.update_pheromone([tuple([obj_i[0], 'x'])], False)
-                        # i = int(obj_i[0])
-                        # self.data.attr_matrix[(i - 1)] = 0
-                        # invalid = True
-                        # break
-                        # continue
-                    # else:
-                        # self.update_pheromone([obj_i], True)
-                        # i = int(obj_i[0])
-                        # self.data.attr_matrix[(i - 1)] = supp
                     if supp >= min_supp:
                         self.bin_patterns.append(tuple([obj_i[0], '+']))
                         self.bin_patterns.append(tuple([obj_i[0], '-']))
