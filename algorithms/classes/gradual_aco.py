@@ -22,7 +22,7 @@ class GradACO:
         self.data = d_set
         self.e_factor = 0  # evaporation factor
         self.p_matrix = np.ones((self.data.column_size, 3), dtype=int)
-        self.bin_patterns = []
+        self.valid_patterns = []
         self.invalid_patterns = []
 
     def run_ant_colony(self):
@@ -82,14 +82,14 @@ class GradACO:
                         if is_sub:
                             continue
                     supp, sol_gen = self.evaluate_bin_solution(sol_n, min_supp)
-                    if supp and (supp >= min_supp):
+                    if supp and (supp >= min_supp) and (sol_gen not in win_sols):
                         win_sols.append([supp, sol_gen])
                         self.update_pheromone(sol_gen)
-                    elif supp and (supp < min_supp):
+                    elif supp and (supp < min_supp) and (sol_gen not in loss_sols):
                         loss_sols.append([supp, sol_gen])
                         # self.update_pheromone(sol_n, False)
                     else:
-                        invalid_sols.append([supp, sol_gen])
+                        invalid_sols.append([supp, sol_n])
                         # self.update_pheromone(sol_n, False)
         return win_sols
 
@@ -142,7 +142,7 @@ class GradACO:
         for obj_i in pattern:
             if obj_i in self.invalid_patterns:
                 continue
-            elif obj_i in self.bin_patterns:
+            elif obj_i in self.valid_patterns:
                 # fetch pattern
                 for obj in lst_bin:
                     if obj[0] == obj_i:
@@ -159,8 +159,8 @@ class GradACO:
                 if attr_data:
                     supp, temp_bin = self.data.get_bin_rank(attr_data, obj_i[1])
                     if supp >= min_supp:
-                        self.bin_patterns.append(tuple([obj_i[0], '+']))
-                        self.bin_patterns.append(tuple([obj_i[0], '-']))
+                        self.valid_patterns.append(tuple([obj_i[0], '+']))
+                        self.valid_patterns.append(tuple([obj_i[0], '-']))
                         gen_pattern.append(obj_i)
                         bin_data.append(temp_bin)
                         count += 1

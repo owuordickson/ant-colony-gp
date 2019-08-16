@@ -154,7 +154,7 @@ def main(filename1, supmin1, eq=False):
 import time
 start = time.time()
 # main('../data/DATASET.csv', 0.5, False)
-main('../data/FluTopicData-testsansdate-blank.csv', 0.5, False)
-# main('../data/transfusion.csv', 0.5, False)
+# main('../data/FluTopicData-testsansdate-blank.csv', 0.5, False)
+main('../data/transfusion.csv', 0.5, False)
 end = time.time()
 print((end-start))
