@@ -82,6 +82,8 @@ class GradACO:
                         if is_sub:
                             continue
                     supp, sol_gen = self.evaluate_bin_solution(sol_n, min_supp)
+                    print(supp)
+                    print(sol_gen)
                     if supp and (supp >= min_supp) and (sol_gen not in win_sols):
                         win_sols.append([supp, sol_gen])
                         self.update_pheromone(sol_gen)

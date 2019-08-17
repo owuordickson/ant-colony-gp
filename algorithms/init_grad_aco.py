@@ -39,8 +39,8 @@ def init_algorithm(f_path, min_supp, eq=False, steps=False, max_combs=False):
             for obj in list_gp:
                 print(str(obj[1])+' : '+str(obj[0]))
             print("\nPheromone Matrix")
-            # print(ac.p_matrix)
-            ac.plot_pheromone_matrix()
+            print(ac.p_matrix)
+            # ac.plot_pheromone_matrix()
     except Exception as error:
         print(error)
 
@@ -87,7 +87,13 @@ if __name__ == "__main__":
         if options.file is None:
             #filePath = '../data/DATASET.csv'
             #filePath = '../data/FluTopicData-testsansdate-blank.csv'
-            filePath = '../data/transfusion.csv'
+            #filePath = '../data/transfusion.csv'
+            #filePath = '../data/smartphone_activity_dataset.csv'
+            #filePath = '../data/FARSmiss.csv'
+            #filePath = '../data/uspop2.csv'
+            #filePath = '../data/volcano.csv'
+            #filePath = '../data/vehicle_silhouette_dataset.csv'
+            filePath = '../data/horse_colic_dataset.csv'
             #print("Usage: $python t_graank.py -f filename.csv -c refColumn -s minSup
             # -r minRep")
             #sys.exit('System will exit')
