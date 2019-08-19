@@ -29,6 +29,7 @@ def init_algorithm(f_path, min_supp, eq=False, steps=False, max_combs=False):
                 steps = a  # (a * a)
                 max_combs = a  # (a * a)
             print(d_set.title)
+            print("\nFile : " + f_path)
             # d_set.init_bin_attributes(min_supp, eq)
             # ac = GradACO(steps, max_combs, d_set)
             # list_gp = ac.run_ant_colony()
@@ -40,7 +41,7 @@ def init_algorithm(f_path, min_supp, eq=False, steps=False, max_combs=False):
                 print(str(obj[1])+' : '+str(obj[0]))
             print("\nPheromone Matrix")
             print(ac.p_matrix)
-            # ac.plot_pheromone_matrix()
+            #ac.plot_pheromone_matrix()
     except Exception as error:
         print(error)
 
@@ -90,10 +91,10 @@ if __name__ == "__main__":
             #filePath = '../data/transfusion.csv'
             #filePath = '../data/smartphone_activity_dataset.csv'
             #filePath = '../data/FARSmiss.csv'
-            #filePath = '../data/uspop2.csv'
+            filePath = '../data/uspop2.csv'
             #filePath = '../data/volcano.csv'
             #filePath = '../data/vehicle_silhouette_dataset.csv'
-            filePath = '../data/horse_colic_dataset.csv'
+            #filePath = '../data/horse_colic_dataset.csv'
             #print("Usage: $python t_graank.py -f filename.csv -c refColumn -s minSup
             # -r minRep")
             #sys.exit('System will exit')

@@ -184,14 +184,14 @@ class InitData:
                             temp_pos[k][j] = 1
                             temp_pos[j][k] = 1
                             temp_neg[k][j] = 1
-        self.lst_bin.append([incr, temp_pos])
-        self.lst_bin.append([decr, temp_neg])
         temp_bin = np.array([])
         if symbol == '+':
             temp_bin = temp_pos
         elif symbol == '-':
             temp_bin = temp_neg
         supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
+        self.lst_bin.append([incr, temp_pos, supp])
+        self.lst_bin.append([decr, temp_neg, supp])
         return supp, temp_bin
 
     @staticmethod

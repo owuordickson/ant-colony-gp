@@ -22,8 +22,8 @@ class GradACO:
         self.data = d_set
         self.e_factor = 0  # evaporation factor
         self.p_matrix = np.ones((self.data.column_size, 3), dtype=int)
-        self.valid_patterns = []
-        self.invalid_patterns = []
+        self.valid_bins = []
+        self.invalid_bins = []
 
     def run_ant_colony(self):
         all_sols = list()
@@ -82,8 +82,8 @@ class GradACO:
                         if is_sub:
                             continue
                     supp, sol_gen = self.evaluate_bin_solution(sol_n, min_supp)
-                    print(supp)
-                    print(sol_gen)
+                    # print(supp)
+                    # print(sol_gen)
                     if supp and (supp >= min_supp) and (sol_gen not in win_sols):
                         win_sols.append([supp, sol_gen])
                         self.update_pheromone(sol_gen)
@@ -142,14 +142,14 @@ class GradACO:
         bin_data = []
         count = 0
         for obj_i in pattern:
-            if obj_i in self.invalid_patterns:
+            if obj_i in self.invalid_bins:
                 continue
-            elif obj_i in self.valid_patterns:
+            elif obj_i in self.valid_bins:
                 # fetch pattern
                 for obj in lst_bin:
                     if obj[0] == obj_i:
                         gen_pattern.append(obj[0])
-                        bin_data.append(obj[1])
+                        bin_data.append([obj[1], obj[2], obj[0]])
                         count += 1
                         break
             else:
@@ -161,22 +161,22 @@ class GradACO:
                 if attr_data:
                     supp, temp_bin = self.data.get_bin_rank(attr_data, obj_i[1])
                     if supp >= min_supp:
-                        self.valid_patterns.append(tuple([obj_i[0], '+']))
-                        self.valid_patterns.append(tuple([obj_i[0], '-']))
+                        self.valid_bins.append(tuple([obj_i[0], '+']))
+                        self.valid_bins.append(tuple([obj_i[0], '-']))
                         gen_pattern.append(obj_i)
-                        bin_data.append(temp_bin)
+                        bin_data.append([temp_bin, supp, obj_i])
                         count += 1
                     else:
-                        self.invalid_patterns.append(tuple([obj_i[0], '+']))
-                        self.invalid_patterns.append(tuple([obj_i[0], '-']))
+                        self.invalid_bins.append(tuple([obj_i[0], '+']))
+                        self.invalid_bins.append(tuple([obj_i[0], '-']))
                 else:
                     # binary does not exist
                     return False
         if count <= 1:
             return False, False
         else:
-            supp = GradACO.perform_bin_and(bin_data, self.data.get_size())
-            return supp, gen_pattern
+            supp, new_pattern = GradACO.perform_bin_and(bin_data, self.data.get_size(), min_supp)
+            return supp, new_pattern
 
     def update_pheromone(self, pattern):
         lst_attr = []
@@ -236,12 +236,26 @@ class GradACO:
         return result
 
     @staticmethod
-    def perform_bin_and(lst_bin, n):
-        temp_bin = np.array([])
+    def perform_bin_and(unsorted_bins, n, thd_supp):
+        lst_bin = sorted(unsorted_bins, key=lambda x: x[1])
+        final_bin = np.array([])
+        pattern = []
+        count = 0
         for obj in lst_bin:
+            temp_bin = final_bin
             if temp_bin.size != 0:
-                temp_bin = temp_bin & obj
+                temp_bin = temp_bin & obj[0]
+                supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
+                if supp >= thd_supp:
+                    final_bin = temp_bin
+                    pattern.append(obj[2])
+                    count += 1
             else:
-                temp_bin = obj
-        supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
-        return supp
+                final_bin = obj[0]
+                pattern.append(obj[2])
+                count += 1
+        supp = float(np.sum(final_bin)) / float(n * (n - 1.0) / 2.0)
+        if count >= 2:
+            return supp, pattern
+        else:
+            return 0, unsorted_bins
