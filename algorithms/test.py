@@ -14,7 +14,7 @@ import gc
 def Trad(fileName):
     temp = []
     with open(fileName, 'r') as f:
-        reader = csv.reader(f, delimiter=',')
+        reader = csv.reader(f, delimiter=' ')
         temp = list(reader)
     # print(temp)
     if temp[0][0].replace('.', '', 1).isdigit() or temp[0][0].isdigit():
@@ -157,8 +157,8 @@ start = time.time()
 # main('../data/FluTopicData-testsansdate-blank.csv', 0.5, False)
 # main('../data/transfusion.csv', 0.5, False)
 # main('../data/smartphone_activity_dataset.csv', 0.5, False)
-# main('../data/uspop2.csv', 0.5, False)
+main('../data/uspop2.csv', 0.5, False)
 # main('../data/vehicle_silhouette_dataset.csv', 0.5, False)
-main('../data/horse_colic_dataset.csv', 0.5, False)
+#main('../data/horse_colic_dataset.csv', 0.5, False)
 end = time.time()
 print((end-start))

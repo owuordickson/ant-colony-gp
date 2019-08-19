@@ -87,13 +87,13 @@ if __name__ == "__main__":
 
         if options.file is None:
             #filePath = '../data/DATASET.csv'
-            #filePath = '../data/FluTopicData-testsansdate-blank.csv'
+            filePath = '../data/FluTopicData-testsansdate-blank.csv'
             #filePath = '../data/transfusion.csv'
             #filePath = '../data/smartphone_activity_dataset.csv'
             #filePath = '../data/FARSmiss.csv'
-            filePath = '../data/uspop2.csv'
+            #filePath = '../data/uspop2.csv'
             #filePath = '../data/volcano.csv'
-            #filePath = '../data/vehicle_silhouette_dataset.csv'
+            filePath = '../data/vehicle_silhouette_dataset.csv'
             #filePath = '../data/horse_colic_dataset.csv'
             #print("Usage: $python t_graank.py -f filename.csv -c refColumn -s minSup
             # -r minRep")
