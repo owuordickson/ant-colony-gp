@@ -93,6 +93,9 @@ class GradACO:
                     else:
                         invalid_sols.append([supp, sol_n])
                         # self.update_pheromone(sol_n, False)
+        print("All: "+str(len(all_sols)))
+        print("Winner: "+str(len(win_sols)))
+        print("Losers: "+str(len(loss_sols)))
         return win_sols
 
     def generate_rand_pattern(self):

@@ -20,7 +20,7 @@ from algorithms.classes.init_data import InitData
 from algorithms.classes.gradual_aco import GradACO
 
 
-def init_algorithm(f_path, min_supp, eq=False, steps=False, max_combs=False):
+def init_algorithm(f_path, min_supp, eq=False, steps=40, max_combs=40):
     try:
         d_set = InitData(f_path)
         if d_set.data:
@@ -36,12 +36,12 @@ def init_algorithm(f_path, min_supp, eq=False, steps=False, max_combs=False):
             d_set.init_attributes(eq)
             ac = GradACO(steps, max_combs, d_set)
             list_gp = ac.run_ant_colony(min_supp)
-            print("\nPATTERNS")
-            for obj in list_gp:
-                print(str(obj[1])+' : '+str(obj[0]))
-            print("\nPheromone Matrix")
-            print(ac.p_matrix)
-            #ac.plot_pheromone_matrix()
+            # print("\nPATTERNS")
+            # for obj in list_gp:
+            #    print(str(obj[1])+' : '+str(obj[0]))
+            # print("\nPheromone Matrix")
+            # print(ac.p_matrix)
+            # ac.plot_pheromone_matrix()
     except Exception as error:
         print(error)
 
@@ -87,13 +87,13 @@ if __name__ == "__main__":
 
         if options.file is None:
             #filePath = '../data/DATASET.csv'
-            filePath = '../data/FluTopicData-testsansdate-blank.csv'
+            #filePath = '../data/FluTopicData-testsansdate-blank.csv'
             #filePath = '../data/transfusion.csv'
             #filePath = '../data/smartphone_activity_dataset.csv'
-            #filePath = '../data/FARSmiss.csv'
+            filePath = '../data/FARSmiss.csv'
             #filePath = '../data/uspop2.csv'
             #filePath = '../data/volcano.csv'
-            filePath = '../data/vehicle_silhouette_dataset.csv'
+            #filePath = '../data/vehicle_silhouette_dataset.csv'
             #filePath = '../data/horse_colic_dataset.csv'
             #print("Usage: $python t_graank.py -f filename.csv -c refColumn -s minSup
             # -r minRep")
@@ -108,5 +108,5 @@ if __name__ == "__main__":
     start = time.time()
     init_algorithm(filePath, minSup)
     end = time.time()
-    print((end-start))
+    print(str(end-start)+" seconds")
 
