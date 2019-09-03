@@ -6,9 +6,10 @@
 library(dplyr)
 
 # data <- read.csv(file="~owuordickson/PyCharm/ant-colony-gp/R/steps_vs_solns.csv", sep=" ", header=TRUE)
-data <- read.table(file="~owuordickson/PyCharm/ant-colony-gp/R/steps_vs_solns.csv",header=TRUE, sep=" ", colClasses = c(rep("NULL", 3), rep("numeric", 3)))
+# data <- read.table(file="~owuordickson/PyCharm/ant-colony-gp/results/steps_vs_solns.csv",header=TRUE, sep=" ", colClasses = c(rep("NULL", 3), rep("numeric", 3)))
+data <- read.table(file="~owuordickson/PyCharm/ant-colony-gp/results//attr_vs_patterns.csv",header=TRUE, sep=" ", colClasses = c(rep("NULL", 1), rep("numeric", 2)))
 data
-s <- sapply(data[76:78,1:3], function(x) c(#"n" = length(x), 
+s <- sapply(data[10:12,1:2], function(x) c(#"n" = length(x), 
                          #"Minimum" = min(x),
                          #"Maximun" = max(x),
                          "Mean"= mean(x,na.rm=TRUE),
@@ -29,5 +30,5 @@ s
    # time <- data[i, "Runtime"]
   #soln
 library(xtable)
-print(xtable(s), file="~owuordickson/PyCharm/ant-colony-gp/R/temp.tex")
+print(xtable(s), file="~owuordickson/PyCharm/ant-colony-gp/results//temp.tex")
 

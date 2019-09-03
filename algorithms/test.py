@@ -32,7 +32,7 @@ def GraankInit(T, eq=False):
     res = []
     n = len(T[0])
     # print T
-    for i in range(15):#len(T)):
+    for i in range(len(T)):  # (15):
         npl = str(i + 1) + '+'
         nm = str(i + 1) + '-'
         tempp = np.zeros((n, n), dtype='bool')

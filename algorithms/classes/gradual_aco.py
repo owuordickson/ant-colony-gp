@@ -20,6 +20,7 @@ class GradACO:
         self.steps = steps
         self.max_combs = max_combs
         self.data = d_set
+        self.attr_index = self.data.attr_index
         self.e_factor = 0  # evaporation factor
         self.p_matrix = np.ones((self.data.column_size, 3), dtype=int)
         self.valid_bins = []
@@ -84,10 +85,10 @@ class GradACO:
                     supp, sol_gen = self.evaluate_bin_solution(sol_n, min_supp)
                     # print(supp)
                     # print(sol_gen)
-                    if supp and (supp >= min_supp) and (sol_gen not in win_sols):
+                    if supp and (supp >= min_supp) and ([supp, sol_gen] not in win_sols):
                         win_sols.append([supp, sol_gen])
                         self.update_pheromone(sol_gen)
-                    elif supp and (supp < min_supp) and (sol_gen not in loss_sols):
+                    elif supp and (supp < min_supp) and ([supp, sol_gen] not in loss_sols):
                         loss_sols.append([supp, sol_gen])
                         # self.update_pheromone(sol_n, False)
                     else:
@@ -100,7 +101,7 @@ class GradACO:
 
     def generate_rand_pattern(self):
         p = self.p_matrix
-        n = self.data.column_size
+        n = len(self.attr_index)  # self.data.column_size
         pattern = list()
         count = 0
         for i in range(n):
@@ -108,9 +109,9 @@ class GradACO:
             pos = float(p[i][0] / (p[i][0] + p[i][1] + p[i][2]))
             neg = float((p[i][0] + p[i][1]) / (p[i][0] + p[i][1] + p[i][2]))
             if x < pos:
-                temp = tuple([self.data.attr_index[i], '+'])
+                temp = tuple([self.attr_index[i], '+'])
             elif (x >= pos) and (x < neg):
-                temp = tuple([self.data.attr_index[i], '-'])
+                temp = tuple([self.attr_index[i], '-'])
             else:
                 # temp = tuple([self.data.attr_index[i], 'x'])
                 continue

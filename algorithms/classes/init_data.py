@@ -59,13 +59,21 @@ class InitData:
 
     def get_attributes(self):
         attr = []
+        time_cols = self.get_time_cols()
         for i in range(len(self.title)):
             temp_attr = self.title[i]
-            attr.append(temp_attr[0])
+            indx = int(temp_attr[0])
+            if len(time_cols) > 0 and ((indx-1) in time_cols):
+                # exclude date-time column
+                continue
+            else:
+                attr.append(temp_attr[0])
         return attr
 
     def get_time_cols(self):
         time_cols = list()
+        # for k in range(25, len(self.data[0])):
+        #    time_cols.append(k)
         # time_cols.append(0)
         # time_cols.append(1)
         # time_cols.append(2)
@@ -84,10 +92,10 @@ class InitData:
                     time_cols.append(i)
             except ValueError:
                 continue
-        if time_cols:
+        if len(time_cols) > 0:
             return time_cols
         else:
-            return False
+            return []
 
     def init_attributes(self, eq):
         # Arrange rank attributes to generate Graph attribute
@@ -96,7 +104,7 @@ class InitData:
         cols = self.column_size
         time_cols = self.get_time_cols()
         for col in range(cols):
-            if time_cols and (col in time_cols):
+            if len(time_cols) > 0 and (col in time_cols):
                 # exclude date-time column
                 continue
             else:
@@ -115,7 +123,7 @@ class InitData:
         cols = self.column_size
         time_cols = self.get_time_cols()
         for col in range(cols):
-            if time_cols and (col in time_cols):
+            if len(time_cols) > 0 and (col in time_cols):
                 # exclude date-time column
                 continue
             else:

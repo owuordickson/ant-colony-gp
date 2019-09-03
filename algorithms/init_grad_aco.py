@@ -20,7 +20,7 @@ from algorithms.classes.init_data import InitData
 from algorithms.classes.gradual_aco import GradACO
 
 
-def init_algorithm(f_path, min_supp, eq=False, steps=40, max_combs=40):
+def init_algorithm(f_path, min_supp, eq=False, steps=20, max_combs=100):
     try:
         d_set = InitData(f_path)
         if d_set.data:
