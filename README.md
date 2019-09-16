@@ -1,3 +1,5 @@
+https://travis-ci.org/owuordickson/ant-colony-gp.svg?branch=master <br>
+
 ## ACO-GRAANK
 A Python implementation of the <em><strong>ACO</strong>-GRAANK</em> algorithm. The algorithm utilizes a pheromone-based (or probabilistic) strategy to optimize the <em>GRAANK</em> algorithm. 
 <!-- Research paper published at -- link<br> -->
