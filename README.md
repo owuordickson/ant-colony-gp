@@ -3,7 +3,7 @@ A Python implementation of the <em><strong>ACO</strong>-GRAANK</em> algorithm. T
 <!-- Research paper published at -- link<br> -->
 
 ### Requirements:
-You will be required to install the following python dependencies before using <em><strong>ACO</strong>GRAANK</em> algorithm:
+You will be required to install the following python dependencies before using <em><strong>ACO</strong>GRAANK</em> algorithm:<br>
 ```
                    install python (version => 3.0)
 
@@ -15,23 +15,23 @@ You will be required to install the following python dependencies before using <
 ```
 
 ### Usage:
-Use it a command line program with the local package:
+Use it a command line program with the local package:<br>
 ```
 $python3 init_acograd.py -f filename.csv -s minSup -t steps -n combs
 ```
 
 where you specify the input parameters as follows:<br>
-* <strong>filename.csv</strong> - [required] a file with a csv format<br>
-* <strong>minSup</strong> - [optional] minimum support (```default = 0.5```) <br>
+* <strong>filename.csv</strong> - [required] a file with a csv format <br>
+* <strong>minSup</strong> - [optional] minimum support ```default = 0.5``` <br>
+* <strong>steps</strong> - [optional] maximum number of steps ```default = 20``` <br>
+* <strong>combs</strong> - [optional] maximum number of combinations for each step ```default = 100``` <br>
 
-
-
-Example with a sample data-set<br>
+For example we executed the <em><strong>ACO</strong>GRAANK</em> algorithm with a sample data-set<br>
 ```
 python3 init_acograd.py -f ../data/DATASET.csv
 ```
 
-<strong>Output</strong>
+<strong>Output</strong><br>
 ```
 1. Age
 2. Salary
