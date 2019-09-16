@@ -20,7 +20,37 @@ Use it a command line program with the local package:
 $python init_acograd.py -f filename.csv -s minSup -t steps -n combinations
 ```
 
-### Output
+Example with a sample data-set<br>
+```
+python init_acograd.py -f ../data/DATASET.csv
+```
+
+<strong>Output</strong>
+```
+1. Age
+2. Salary
+3. Cars
+4. Expenses
+
+File: ../data/DATASET.csv
+
+Pattern : Support
+[('2', '+'), ('4', '-')] : 0.6
+[('1', '-'), ('2', '-')] : 0.6
+[('1', '-'), ('4', '+')] : 1.0
+[('1', '+'), ('2', '+'), ('4', '-')] : 0.6
+[('1', '+'), ('4', '-')] : 1.0
+[('2', '-'), ('4', '+')] : 0.6
+[('1', '+'), ('2', '+')] : 0.6
+[('1', '-'), ('2', '-'), ('4', '+')] : 0.6
+
+Pheromone Matrix
+[[4 4 3]
+ [4 4 3]
+ [1 1 9]
+ [4 4 3]]
+0.08473014831542969 seconds
+```
 
 ### License:
 * MIT
