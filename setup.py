@@ -29,7 +29,6 @@ setup(
     author_email='owuordickson@ieee.org',
     url='https://github.com/owuordickson/ant-colony-gp',
     packages=find_packages(),
-    #package_dir={'tgraank':'tgraank'},
     include_package_data=True,
     install_requires=requirements,
     license="MIT",
