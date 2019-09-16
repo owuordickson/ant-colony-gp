@@ -3,7 +3,7 @@ A Python implementation of the <em><strong>ACO</strong>-GRAANK</em> algorithm. T
 <!-- Research paper published at -- link<br> -->
 
 ### Requirements:
-You will be required to install the following python dependencies before using <em><strong>ACO</strong>GRAANK</em> algorithm:<br>
+You will be required to install the following python dependencies before using <em><strong>ACO</strong>-GRAANK</em> algorithm:<br>
 ```
                    install python (version => 3.0)
 
@@ -26,7 +26,7 @@ where you specify the input parameters as follows:<br>
 * <strong>steps</strong> - [optional] maximum number of steps ```default = 20``` <br>
 * <strong>combs</strong> - [optional] maximum number of combinations for each step ```default = 100``` <br>
 
-For example we executed the <em><strong>ACO</strong>GRAANK</em> algorithm with a sample data-set<br>
+For example we executed the <em><strong>ACO</strong>-GRAANK</em> algorithm with a sample data-set<br>
 ```
 python3 init_acograd.py -f ../data/DATASET.csv
 ```
