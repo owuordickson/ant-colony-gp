@@ -1,6 +1,3 @@
-csv
-dateutil.parser
-matplotlib.pyplot
+matplotlib
+python-dateutil
 numpy
-random
-time
