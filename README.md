@@ -20,8 +20,10 @@ Use it a command line program with the local package:
 $python3 init_acograd.py -f filename.csv -s minSup -t steps -n combs
 ```
 
-where you specify the input parameters as follows:
-*<strong>filename.csv</strong> - required that you pick a file with a csv format
+where you specify the input parameters as follows:<br>
+* <strong>filename.csv</strong> - [required] a file with a csv format<br>
+* <strong>minSup</strong> - [optional] minimum support (```default = 0.5```) <br>
+
 
 
 Example with a sample data-set<br>
