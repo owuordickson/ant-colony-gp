@@ -5,6 +5,7 @@
 @license: "MIT"
 @version: "1.0"
 @email: "owuordickson@gmail.com"
+@created: "12 July 2019"
 
 """
 
@@ -25,40 +26,6 @@ class GradACO:
         self.p_matrix = np.ones((self.data.column_size, 3), dtype=int)
         self.valid_bins = []
         self.invalid_bins = []
-
-    def run_ant_colony(self):
-        all_sols = list()
-        win_sols = list()
-        loss_sols = list()
-        invalid_sols = list()
-        for t in range(self.steps):
-            for n in range(self.max_combs):
-                sol_n = self.generate_rand_pattern()
-                # print(sol_n)
-                if sol_n and (sol_n not in all_sols):
-                    all_sols.append(sol_n)
-                    if loss_sols:
-                        # check for super-set anti-monotony
-                        is_super = GradACO.check_anti_monotony(loss_sols, sol_n, False)
-                        is_invalid = GradACO.check_anti_monotony(invalid_sols, sol_n, False)
-                        if is_super or is_invalid:
-                            continue
-                    if win_sols:
-                        # check for sub-set anti-monotony
-                        is_sub = GradACO.check_anti_monotony(win_sols, sol_n, True)
-                        if is_sub:
-                            continue
-                    supp = self.evaluate_bin_solution(sol_n)
-                    if supp and (supp >= self.data.thd_supp):
-                        win_sols.append([supp, sol_n])
-                        self.update_pheromone(sol_n)
-                    elif supp and (supp < self.data.thd_supp):
-                        loss_sols.append([supp, sol_n])
-                        # self.update_pheromone(sol_n, False)
-                    else:
-                        invalid_sols.append([supp, sol_n])
-                        # self.update_pheromone(sol_n, False)
-        return win_sols
 
     def run_ant_colony(self, min_supp):
         all_sols = list()
@@ -94,9 +61,9 @@ class GradACO:
                     else:
                         invalid_sols.append([supp, sol_n])
                         # self.update_pheromone(sol_n, False)
-        print("All: "+str(len(all_sols)))
-        print("Winner: "+str(len(win_sols)))
-        print("Losers: "+str(len(loss_sols)))
+        # print("All: "+str(len(all_sols)))
+        # print("Winner: "+str(len(win_sols)))
+        # print("Losers: "+str(len(loss_sols)))
         return win_sols
 
     def generate_rand_pattern(self):
@@ -120,24 +87,6 @@ class GradACO:
         if count <= 1:
             pattern = False
         return pattern
-
-    def evaluate_bin_solution(self, pattern):
-        # pattern = [('2', '+'), ('4', '+')]
-        lst_bin = self.data.lst_bin
-        bin_data = []
-        count = 0
-        for obj_i in pattern:
-            # fetch pattern
-            for obj_j in lst_bin:
-                if obj_j[0] == obj_i:
-                    bin_data.append(obj_j[1])
-                    count += 1
-                    break
-        if count <= 1:
-            return False
-        else:
-            supp = GradACO.perform_bin_and(bin_data, self.data.get_size())
-            return supp
 
     def evaluate_bin_solution(self, pattern, min_supp):
         # pattern = [('2', '+'), ('4', '+')]

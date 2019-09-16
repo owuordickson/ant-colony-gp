@@ -5,6 +5,7 @@
 @license: "MIT"
 @version: "1.0"
 @email: "owuordickson@gmail.com"
+@created: "12 July 2019"
 
 Usage:
     $python init_grad_aco.py -f DATASET.csv -s 0.5
@@ -30,17 +31,14 @@ def init_algorithm(f_path, min_supp, eq=False, steps=20, max_combs=100):
                 max_combs = a  # (a * a)
             print(d_set.title)
             print("\nFile : " + f_path)
-            # d_set.init_bin_attributes(min_supp, eq)
-            # ac = GradACO(steps, max_combs, d_set)
-            # list_gp = ac.run_ant_colony()
             d_set.init_attributes(eq)
             ac = GradACO(steps, max_combs, d_set)
             list_gp = ac.run_ant_colony(min_supp)
-            # print("\nPATTERNS")
-            # for obj in list_gp:
-            #    print(str(obj[1])+' : '+str(obj[0]))
-            # print("\nPheromone Matrix")
-            # print(ac.p_matrix)
+            print("\nPATTERNS")
+            for obj in list_gp:
+                print(str(obj[1])+' : '+str(obj[0]))
+            print("\nPheromone Matrix")
+            print(ac.p_matrix)
             # ac.plot_pheromone_matrix()
     except Exception as error:
         print(error)
@@ -86,11 +84,11 @@ if __name__ == "__main__":
         (options, args) = optparser.parse_args()
 
         if options.file is None:
-            #filePath = '../data/DATASET.csv'
+            filePath = '../data/DATASET.csv'
             #filePath = '../data/FluTopicData-testsansdate-blank.csv'
             #filePath = '../data/transfusion.csv'
             #filePath = '../data/smartphone_activity_dataset.csv'
-            filePath = '../data/FARSmiss.csv'
+            #filePath = '../data/FARSmiss.csv'
             #filePath = '../data/uspop2.csv'
             #filePath = '../data/volcano.csv'
             #filePath = '../data/vehicle_silhouette_dataset.csv'
