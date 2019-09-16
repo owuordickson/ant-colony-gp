@@ -2,6 +2,26 @@
 A Python implementation of the <em><strong>ACO</strong>-GRAANK</em> algorithm. The algorithm utilizes a pheromone-based (or probabilistic) strategy to optimize the <em>GRAANK</em> algorithm. 
 <!-- Research paper published at -- link<br> -->
 
+### Requirements:
+You will be required to install the following python dependencies before using <em><strong>ACO</strong>GRAANK</em> algorithm:
+```
+                   install python (version => 2.7)
+
+```
+
+```
+                    $ pip install numpy python-dateutil matplotlib
+
+```
+
+### Usage:
+Use it a command line program with the local package:
+```
+$python init_acograd.py -f filename.csv -s minSup -t steps -n combinations
+```
+
+### Output
+
 ### License:
 * MIT
 
