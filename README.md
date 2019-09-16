@@ -17,12 +17,12 @@ You will be required to install the following python dependencies before using <
 ### Usage:
 Use it a command line program with the local package:
 ```
-$python init_acograd.py -f filename.csv -s minSup -t steps -n combinations
+$python3 init_acograd.py -f filename.csv -s minSup -t steps -n combinations
 ```
 
 Example with a sample data-set<br>
 ```
-python init_acograd.py -f ../data/DATASET.csv
+python3 init_acograd.py -f ../data/DATASET.csv
 ```
 
 <strong>Output</strong>
