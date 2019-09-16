@@ -5,12 +5,12 @@ A Python implementation of the <em><strong>ACO</strong>-GRAANK</em> algorithm. T
 ### Requirements:
 You will be required to install the following python dependencies before using <em><strong>ACO</strong>GRAANK</em> algorithm:
 ```
-                   install python (version => 2.7)
+                   install python (version => 3.0)
 
 ```
 
 ```
-                    $ pip install numpy python-dateutil matplotlib
+                    $ pip3 install numpy python-dateutil matplotlib
 
 ```
 
