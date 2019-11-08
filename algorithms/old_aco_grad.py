@@ -32,39 +32,35 @@ class GradACO:
         win_sols = list()
         loss_sols = list()
         invalid_sols = list()
-        # for t in range(self.steps):
-        #    for n in range(self.max_combs):
-        sol_n = self.generate_rand_pattern()
-        is_member = GradACO.check_exists(all_sols, sol_n)
-        while not is_member:
-            # print(sol_n)
-            if sol_n and (sol_n not in all_sols):
-                all_sols.append(sol_n)
-                if loss_sols:
-                    # check for super-set anti-monotony
-                    is_super = GradACO.check_anti_monotony(loss_sols, sol_n, False)
-                    is_invalid = GradACO.check_anti_monotony(invalid_sols, sol_n, False)
-                    if is_super or is_invalid:
-                        continue
-                if win_sols:
-                    # check for sub-set anti-monotony
-                    is_sub = GradACO.check_anti_monotony(win_sols, sol_n, True)
-                    if is_sub:
-                        continue
-                supp, sol_gen = self.evaluate_bin_solution(sol_n, min_supp)
-                # print(supp)
-                # print(sol_gen)
-                if supp and (supp >= min_supp) and ([supp, sol_gen] not in win_sols):
-                    win_sols.append([supp, sol_gen])
-                    self.update_pheromone(sol_gen)
-                elif supp and (supp < min_supp) and ([supp, sol_gen] not in loss_sols):
-                    loss_sols.append([supp, sol_gen])
-                    # self.update_pheromone(sol_n, False)
-                else:
-                    invalid_sols.append([supp, sol_n])
-                    # self.update_pheromone(sol_n, False)
-            sol_n = self.generate_rand_pattern()
-            is_member = GradACO.check_exists(win_sols, sol_n)
+        for t in range(self.steps):
+            for n in range(self.max_combs):
+                sol_n = self.generate_rand_pattern()
+                # print(sol_n)
+                if sol_n and (sol_n not in all_sols):
+                    all_sols.append(sol_n)
+                    if loss_sols:
+                        # check for super-set anti-monotony
+                        is_super = GradACO.check_anti_monotony(loss_sols, sol_n, False)
+                        is_invalid = GradACO.check_anti_monotony(invalid_sols, sol_n, False)
+                        if is_super or is_invalid:
+                            continue
+                    if win_sols:
+                        # check for sub-set anti-monotony
+                        is_sub = GradACO.check_anti_monotony(win_sols, sol_n, True)
+                        if is_sub:
+                            continue
+                    supp, sol_gen = self.evaluate_bin_solution(sol_n, min_supp)
+                    # print(supp)
+                    # print(sol_gen)
+                    if supp and (supp >= min_supp) and ([supp, sol_gen] not in win_sols):
+                        win_sols.append([supp, sol_gen])
+                        self.update_pheromone(sol_gen)
+                    elif supp and (supp < min_supp) and ([supp, sol_gen] not in loss_sols):
+                        loss_sols.append([supp, sol_gen])
+                        # self.update_pheromone(sol_n, False)
+                    else:
+                        invalid_sols.append([supp, sol_n])
+                        # self.update_pheromone(sol_n, False)
         # print("All: "+str(len(all_sols)))
         # print("Winner: "+str(len(win_sols)))
         # print("Losers: "+str(len(loss_sols)))
@@ -176,18 +172,6 @@ class GradACO:
         plt.gray()
         plt.grid()
         plt.show()
-
-    @staticmethod
-    def check_exists(lst_p, p_arr,):
-        exists = False
-        if p_arr:
-            for obj in lst_p:
-                if set(p_arr) == set(obj[1]):
-                    exists = True
-                    break
-        print(p_arr)
-        print(exists)
-        return exists
 
     @staticmethod
     def check_anti_monotony(lst_p, p_arr, ck_sub):

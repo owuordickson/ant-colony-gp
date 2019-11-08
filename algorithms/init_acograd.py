@@ -19,8 +19,9 @@ Description:
 
 import sys
 from optparse import OptionParser
-from init_data import InitData
-from aco_grad import GradACO
+from algorithms.init_data import InitData
+from algorithms.aco_grad import GradACO
+# from algorithms.old_aco_grad import GradACO
 
 
 def init_algorithm(f_path, min_supp, steps, max_combs, eq=False):
@@ -59,8 +60,8 @@ if __name__ == "__main__":
         optparser.add_option('-f', '--inputFile',
                              dest='file',
                              help='path to file containing csv',
-                             default=None,
-                             # default='../data/DATASET.csv',
+                             #default=None,
+                             default='../data/DATASET.csv',
                              type='string')
         optparser.add_option('-s', '--minSupport',
                              dest='minSup',
