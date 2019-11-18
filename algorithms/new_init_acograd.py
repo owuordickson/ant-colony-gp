@@ -21,6 +21,7 @@ from optparse import OptionParser
 from algorithms.init_data import InitData
 from algorithms.aco_grad import GradACO
 
+
 def init_algorithm(f_path, min_supp, eq=False):
     try:
         d_set = InitData(f_path)
