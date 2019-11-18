@@ -39,7 +39,7 @@ def init_algorithm(f_path, min_supp, steps, max_combs, eq=False):
             for gp in list_gp:
                 print(str(gp[1])+' : '+str(gp[0]))
             print("\nPheromone Matrix")
-            print(ac.p_matrix)
+            # print(ac.p_matrix)
             # ac.plot_pheromone_matrix()
     except Exception as error:
         print(error)
@@ -60,8 +60,9 @@ if __name__ == "__main__":
         optparser.add_option('-f', '--inputFile',
                              dest='file',
                              help='path to file containing csv',
-                             #default=None,
-                             default='../data/DATASET.csv',
+                             # default=None,
+                             # default='../data/DATASET.csv',
+                             default='../data/FARSmiss.csv',
                              type='string')
         optparser.add_option('-s', '--minSupport',
                              dest='minSup',

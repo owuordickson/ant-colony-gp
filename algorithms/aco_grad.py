@@ -36,9 +36,11 @@ class GradACO:
         #    for n in range(self.max_combs):
         # sol_n = self.generate_rand_pattern()
         repeated = 0
+        count = 0
         # converging = False
         # while not converging:
-        while repeated < 10:
+        while repeated < 5:
+            count += 1
             sol_n = self.generate_rand_pattern()
             # print(sol_n)
             if sol_n and (sol_n not in all_sols):
@@ -69,12 +71,14 @@ class GradACO:
                     invalid_sols.append([supp, sol_n])
                     # self.update_pheromone(sol_n, False)
             else:
-                repeated += 1
+                if sol_n:
+                    repeated += 1
             # converging = self.check_convergence(repeated)
             # is_member = GradACO.check_convergence(win_sols, sol_n)
         # print("All: "+str(len(all_sols)))
         # print("Winner: "+str(len(win_sols)))
         # print("Losers: "+str(len(loss_sols)))
+        print(count)
         return win_sols
 
     def generate_rand_pattern(self):
