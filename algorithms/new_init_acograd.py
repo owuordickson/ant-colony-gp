@@ -5,7 +5,7 @@
 @license: "MIT"
 @version: "1.0"
 @email: "owuordickson@gmail.com"
-@created: "12 July 2019"
+@created: "18 November 2019"
 
 Usage:
     $python init_acograd.py -f ../data/DATASET.csv -s 0.5
@@ -20,8 +20,6 @@ import sys
 from optparse import OptionParser
 from algorithms.init_data import InitData
 from algorithms.aco_grad import GradACO
-# from algorithms.old_aco_grad import GradACO
-
 
 def init_algorithm(f_path, min_supp, eq=False):
     try:
