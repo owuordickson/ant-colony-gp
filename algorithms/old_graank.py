@@ -14,7 +14,7 @@ import gc
 def Trad(fileName):
     temp = []
     with open(fileName, 'r') as f:
-        reader = csv.reader(f, delimiter=',')
+        reader = csv.reader(f, delimiter=' ')
         temp = list(reader)
     # print(temp)
     if temp[0][0].replace('.', '', 1).isdigit() or temp[0][0].isdigit():
@@ -151,4 +151,8 @@ def main(filename1, supmin1, eq=False):
         print(str(D1[i]) + ' : ' + str(S1[i]))
 
 
-main('../data/DATASET.csv', 0.5, False)
+import time
+start = time.time()
+main('../data/FluTopicData-testsansdate-blank.csv', 0.5, False)
+end = time.time()
+print("\n"+str(end-start)+" seconds")
