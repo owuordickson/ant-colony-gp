@@ -73,8 +73,8 @@ class GradACO:
                     repeated += 1
             # converging = self.check_convergence(repeated)
             # is_member = GradACO.check_convergence(win_sols, sol_n)
-        print("All: "+str(len(all_sols)))
-        print("Winner: "+str(len(win_sols)))
+        # print("All: "+str(len(all_sols)))
+        # print("Winner: "+str(len(win_sols)))
         # print("Losers: "+str(len(loss_sols)))
         # print(count)
         return win_sols

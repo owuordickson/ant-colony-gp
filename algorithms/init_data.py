@@ -73,8 +73,8 @@ class InitData:
 
     def get_time_cols(self):
         time_cols = list()
-        for k in range(10, len(self.data[0])):
-            time_cols.append(k)
+        # for k in range(10, len(self.data[0])):
+        #    time_cols.append(k)
         # time_cols.append(0)
         # time_cols.append(1)
         # time_cols.append(2)

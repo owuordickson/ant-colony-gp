@@ -33,13 +33,12 @@ def init_algorithm(f_path, min_supp, eq=False):
 
             d_set.init_attributes(eq)
             ac = GradACO(d_set)
-            ac.run_ant_colony(min_supp)
-            # list_gp = ac.run_ant_colony(min_supp)
-            # print("\nPattern : Support")
-            # for gp in list_gp:
-            #    print(str(gp[1])+' : '+str(gp[0]))
-            # print("\nPheromone Matrix")
-            # print(ac.p_matrix)
+            list_gp = ac.run_ant_colony(min_supp)
+            print("\nPattern : Support")
+            for gp in list_gp:
+                print(str(gp[1])+' : '+str(gp[0]))
+            print("\nPheromone Matrix")
+            print(ac.p_matrix)
             # ac.plot_pheromone_matrix()
     except Exception as error:
         print(error)
