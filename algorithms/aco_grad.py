@@ -17,9 +17,7 @@ import matplotlib.pyplot as plt
 
 class GradACO:
 
-    def __init__(self, steps, max_combs, d_set):
-        self.steps = steps
-        self.max_combs = max_combs
+    def __init__(self, d_set):
         self.data = d_set
         self.attr_index = self.data.attr_index
         self.e_factor = 0  # evaporation factor
@@ -36,11 +34,11 @@ class GradACO:
         #    for n in range(self.max_combs):
         # sol_n = self.generate_rand_pattern()
         repeated = 0
-        count = 0
+        # count = 0
         # converging = False
         # while not converging:
         while repeated < 5:
-            count += 1
+            # count += 1
             sol_n = self.generate_rand_pattern()
             # print(sol_n)
             if sol_n and (sol_n not in all_sols):
@@ -75,10 +73,10 @@ class GradACO:
                     repeated += 1
             # converging = self.check_convergence(repeated)
             # is_member = GradACO.check_convergence(win_sols, sol_n)
-        # print("All: "+str(len(all_sols)))
-        # print("Winner: "+str(len(win_sols)))
+        print("All: "+str(len(all_sols)))
+        print("Winner: "+str(len(win_sols)))
         # print("Losers: "+str(len(loss_sols)))
-        print(count)
+        # print(count)
         return win_sols
 
     def generate_rand_pattern(self):
@@ -87,7 +85,8 @@ class GradACO:
         pattern = list()
         count = 0
         for i in range(n):
-            x = float(rand.randint(1, self.max_combs) / self.max_combs)
+            max_extreme = len(self.attr_index)
+            x = float(rand.randint(1, max_extreme) / max_extreme)
             pos = float(p[i][0] / (p[i][0] + p[i][1] + p[i][2]))
             neg = float((p[i][0] + p[i][1]) / (p[i][0] + p[i][1] + p[i][2]))
             if x < pos:
@@ -188,18 +187,18 @@ class GradACO:
         plt.grid()
         plt.show()
 
-    def check_convergence(self, repeats):
-        conv = 1
-        p_matrix = np.array(self.p_matrix)
-        for r in p_matrix:
-            temp = np.max(r) / np.sum(r)
-            if temp < conv:
-                conv = temp
+    # def check_convergence(self, repeats):
+    #    conv = 1
+    #    p_matrix = np.array(self.p_matrix)
+    #    for r in p_matrix:
+    #        temp = np.max(r) / np.sum(r)
+    #        if temp < conv:
+    #            conv = temp
         # print(conv)
-        if (conv >= 0.8) or (repeats >= 10):
-            return True
-        else:
-            return False
+    #    if (conv >= 0.8) or (repeats >= 10):
+    #        return True
+    #    else:
+    #        return False
         # exists = False
         # if p_arr:
         #    for obj in lst_p:

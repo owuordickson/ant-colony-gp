@@ -8,13 +8,12 @@
 @created: "12 July 2019"
 
 Usage:
-    $python init_acograd.py -f ../data/DATASET.csv -s 0.5 -t 20 -n 100
+    $python init_acograd.py -f ../data/DATASET.csv -s 0.5
 
 Description:
     f -> file path (CSV)
     s -> minimum support
-    t -> maximum steps
-    n -> maximum combinations
+
 """
 
 import sys
@@ -24,7 +23,7 @@ from algorithms.aco_grad import GradACO
 # from algorithms.old_aco_grad import GradACO
 
 
-def init_algorithm(f_path, min_supp, steps, max_combs, eq=False):
+def init_algorithm(f_path, min_supp, eq=False):
     try:
         d_set = InitData(f_path)
         if d_set.data:
@@ -33,12 +32,13 @@ def init_algorithm(f_path, min_supp, steps, max_combs, eq=False):
             print("\nFile: " + f_path)
 
             d_set.init_attributes(eq)
-            ac = GradACO(steps, max_combs, d_set)
-            list_gp = ac.run_ant_colony(min_supp)
-            print("\nPattern : Support")
-            for gp in list_gp:
-                print(str(gp[1])+' : '+str(gp[0]))
-            print("\nPheromone Matrix")
+            ac = GradACO(d_set)
+            ac.run_ant_colony(min_supp)
+            # list_gp = ac.run_ant_colony(min_supp)
+            # print("\nPattern : Support")
+            # for gp in list_gp:
+            #    print(str(gp[1])+' : '+str(gp[0]))
+            # print("\nPheromone Matrix")
             # print(ac.p_matrix)
             # ac.plot_pheromone_matrix()
     except Exception as error:
@@ -52,9 +52,9 @@ if __name__ == "__main__":
     if not sys.argv:
         pType = sys.argv[1]
         filePath = sys.argv[2]
-        refCol = sys.argv[3]
+        # refCol = sys.argv[3]
         minSup = sys.argv[4]
-        minRep = sys.argv[5]
+        # minRep = sys.argv[5]
     else:
         optparser = OptionParser()
         optparser.add_option('-f', '--inputFile',
@@ -74,31 +74,18 @@ if __name__ == "__main__":
                              help='allow equal',
                              default=None,
                              type='int')
-        optparser.add_option('-t', '--maxSteps',
-                             dest='maxSteps',
-                             help='maximum steps',
-                             default=20,
-                             type='int')
-        optparser.add_option('-n', '--maxPatterns',
-                             dest='maxComb',
-                             help='maximum pattern combinations',
-                             default=100,
-                             type='int')
         (options, args) = optparser.parse_args()
 
         if options.file is None:
-            print("Usage: $python init_acograd.py -f filename.csv -s minSup -t steps "
-                  "-n combinations")
+            print("Usage: $python init_acograd.py -f filename.csv -s minSup ")
             sys.exit('System will exit')
         else:
             filePath = options.file
         minSup = options.minSup
         allowEq = options.allowEq
-        maxSteps = options.maxSteps
-        maxComb = options.maxComb
     import time
     start = time.time()
-    init_algorithm(filePath, minSup, maxSteps, maxComb)
+    init_algorithm(filePath, minSup)
     end = time.time()
     print("\n"+str(end-start)+" seconds")
 
