@@ -34,11 +34,15 @@ class GradACO:
         invalid_sols = list()
         # for t in range(self.steps):
         #    for n in range(self.max_combs):
-        sol_n = self.generate_rand_pattern()
-        is_member = GradACO.check_exists(all_sols, sol_n)
-        while not is_member:
+        # sol_n = self.generate_rand_pattern()
+        repeated = 0
+        # converging = False
+        # while not converging:
+        while repeated < 10:
+            sol_n = self.generate_rand_pattern()
             # print(sol_n)
             if sol_n and (sol_n not in all_sols):
+                repeated = 0
                 all_sols.append(sol_n)
                 if loss_sols:
                     # check for super-set anti-monotony
@@ -57,14 +61,17 @@ class GradACO:
                 if supp and (supp >= min_supp) and ([supp, sol_gen] not in win_sols):
                     win_sols.append([supp, sol_gen])
                     self.update_pheromone(sol_gen)
+                    # converging = self.check_convergence()
                 elif supp and (supp < min_supp) and ([supp, sol_gen] not in loss_sols):
                     loss_sols.append([supp, sol_gen])
                     # self.update_pheromone(sol_n, False)
                 else:
                     invalid_sols.append([supp, sol_n])
                     # self.update_pheromone(sol_n, False)
-            sol_n = self.generate_rand_pattern()
-            is_member = GradACO.check_exists(win_sols, sol_n)
+            else:
+                repeated += 1
+            # converging = self.check_convergence(repeated)
+            # is_member = GradACO.check_convergence(win_sols, sol_n)
         # print("All: "+str(len(all_sols)))
         # print("Winner: "+str(len(win_sols)))
         # print("Losers: "+str(len(loss_sols)))
@@ -177,17 +184,27 @@ class GradACO:
         plt.grid()
         plt.show()
 
-    @staticmethod
-    def check_exists(lst_p, p_arr,):
-        exists = False
-        if p_arr:
-            for obj in lst_p:
-                if set(p_arr) == set(obj[1]):
-                    exists = True
-                    break
-        print(p_arr)
-        print(exists)
-        return exists
+    def check_convergence(self, repeats):
+        conv = 1
+        p_matrix = np.array(self.p_matrix)
+        for r in p_matrix:
+            temp = np.max(r) / np.sum(r)
+            if temp < conv:
+                conv = temp
+        # print(conv)
+        if (conv >= 0.8) or (repeats >= 10):
+            return True
+        else:
+            return False
+        # exists = False
+        # if p_arr:
+        #    for obj in lst_p:
+        #        if set(p_arr) == set(obj[1]):
+        #            exists = True
+        #            break
+        # print(p_arr)
+        # print(exists)
+        # return exists
 
     @staticmethod
     def check_anti_monotony(lst_p, p_arr, ck_sub):
