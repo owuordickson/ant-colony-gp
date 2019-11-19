@@ -316,7 +316,7 @@ def getPattenIndices(D):
     return indices
 
 
-def getTimeLags(indices,time_diffs):
+def getTimeLags(indices, time_diffs):
     if len(indices)>0:
         indxs = np.unique(indices[0])
         time_lags = []
