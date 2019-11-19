@@ -4,6 +4,8 @@
 @license: "MIT"
 @version: "1.0"
 @email: "owuordickson@gmail.com"
+@created: "19 October 2018"
+
 
 This code approximates a time period (member) using a fuzzy triangular membership function
 
