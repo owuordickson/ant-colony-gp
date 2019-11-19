@@ -19,8 +19,8 @@ Description:
 
 import sys
 from optparse import OptionParser
-from algorithms.init_data import InitData
-from algorithms.aco_grad import GradACO
+from init_data import InitData
+from aco_grad import GradACO
 
 
 def init_algorithm(f_path, min_supp, steps, max_combs, eq=False):
