@@ -36,10 +36,10 @@ class HandleData:
                 self.lst_bin = []
         else:
             self.raw_data = None
-            self.attr_data = attr_data
+            self.column_size = attr_data[0]
+            self.attr_data = attr_data[1]
             # self.title =
             self.attr_index = self.get_attributes(self.attr_data)
-            self.column_size = self.get_attribute_no(self.attr_data)
             self.size = self.get_size(self.attr_data)
             self.thd_supp = False
             self.equal = False
@@ -52,11 +52,8 @@ class HandleData:
             size = len(attr_data[0][1])
         return size
 
-    def get_attribute_no(self, attr_data=None):
-        if attr_data is None:
-            count = len(self.raw_data[0])
-        else:
-            count = len(attr_data) + 1
+    def get_attribute_no(self):
+        count = len(self.raw_data[0])
         return count
 
     def get_title(self):
