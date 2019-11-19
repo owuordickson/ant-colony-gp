@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/owuordickson/ant-colony-gp.svg?branch=master)](https://travis-ci.org/owuordickson/ant-colony-gp)
+[![Build Status](https://travis-ci.org/owuordickson/ant-colony-gp.svg?branch=update)](https://travis-ci.org/owuordickson/ant-colony-gp)
 
 ## ACO-GRAANK
 A Python implementation of the <em><strong>ACO</strong>-GRAANK</em> algorithm. The algorithm utilizes a pheromone-based (or probabilistic) strategy to optimize the <em>GRAANK</em> algorithm. 
@@ -19,14 +19,12 @@ You will be required to install the following python dependencies before using <
 ### Usage:
 Use it a command line program with the local package:<br>
 ```
-$python3 init_acograd.py -f filename.csv -s minSup -t steps -n combs
+$python3 init_acograd.py -f filename.csv -s minSup
 ```
 
 where you specify the input parameters as follows:<br>
 * <strong>filename.csv</strong> - [required] a file with a csv format <br>
 * <strong>minSup</strong> - [optional] minimum support ```default = 0.5``` <br>
-* <strong>steps</strong> - [optional] maximum number of steps ```default = 20``` <br>
-* <strong>combs</strong> - [optional] maximum number of combinations for each step ```default = 100``` <br>
 
 For example we executed the <em><strong>ACO</strong>-GRAANK</em> algorithm with a sample data-set<br>
 ```
