@@ -21,7 +21,7 @@ from src import HandleData
 
 class TgradACO:
 
-    def __init__(self, d_set, ref_item, min_rep):
+    def __init__(self, d_set, ref_item, min_sup, min_rep):
         # For tgraank
         self.d_set = d_set
         cols = d_set.get_time_cols()
@@ -29,9 +29,10 @@ class TgradACO:
             print("Dataset Ok")
             self.time_ok = True
             self.time_cols = cols
+            self.min_sup = min_sup
             self.ref_item = ref_item
             self.max_step = self.get_max_step(min_rep)
-            self.multi_data = self.split_dataset()
+            # self.multi_data = self.split_dataset()
         else:
             print("Dataset Error")
             self.time_ok = False
@@ -54,46 +55,42 @@ class TgradACO:
                 msg = "Error: Time in row " + str(time_diffs[0]) + " or row " + str(time_diffs[1]) + " is not valid."
                 raise Exception(msg)
             else:
-                ref_column = self.ref_item
-                # 1. Load all the titles
-                first_row = data[0]
+                ref_col = self.ref_item
+                if ref_col in self.time_cols:
+                    msg = "Reference column is a 'date-time' attribute"
+                    raise Exception(msg)
+                elif (ref_col < 0) or (ref_col >= len(self.d_set.title)):
+                    msg = "Reference column does not exist\nselect column between: " \
+                          "0 and "+str(len(self.d_set.title) - 1)
+                    raise Exception(msg)
+                else:
+                    # 1. Split the original data-set into column-tuples
+                    attr_cols = self.d_set.attr_data
 
-                # 2. Creating titles without time column
-                no_columns = (len(first_row) - len(self.time_cols))
-                title_row = [None] * no_columns
-                i = 0
-                for c in range(len(first_row)):
-                    if c in self.time_cols:
-                        continue
-                    title_row[i] = first_row[c]
-                    i += 1
-                ref_name = str(title_row[ref_column])
-                title_row[ref_column] = ref_name + "**"
-                new_dataset = [title_row]
-
-                # 3. Split the original dataset into gradual items
-                gradual_items = self.multi_data
-
-                # 4. Transform the data using (row) n+step
-                for j in range(len(data)):
-                    ref_item = gradual_items[ref_column]
-                    if j < (len(ref_item) - step):
-                        init_array = [ref_item[j]]
-                        for i in range(len(gradual_items)):
-                            if i < len(gradual_items) and i != ref_column:
-                                gradual_item = gradual_items[i]
-                                temp = [gradual_item[j + step]]
-                                temp_array = np.append(init_array, temp, axis=0)
-                                init_array = temp_array
-                        new_dataset.append(list(init_array))
-                return new_dataset, time_diffs
+                    # 2. Transform the data using (row) n+step
+                    new_data = list()
+                    size = len(data)
+                    for obj in attr_cols:
+                        col_index = int(obj[0])
+                        tuples = obj[1]
+                        temp_tuples = list()
+                        if (col_index -1) == ref_col:
+                            # reference attribute (skip)
+                            for i in range(0, (size-step)):
+                                temp_tuples.append(tuples[i])
+                        else:
+                            for i in range(step, size):
+                                temp_tuples.append(tuples[i])
+                        var_attr = [col_index, temp_tuples]
+                        new_data.append(var_attr)
+                    return new_data, time_diffs
         else:
             msg = "Fatal Error: Time format in column could not be processed"
             raise Exception(msg)
 
     def get_representativity(self, step):
-        # 1. Get all rows minus the title row
-        all_rows = (len(self.d_set.data) - 1)
+        # 1. Get all rows minus the title row (already removed)
+        all_rows = len(self.d_set.data)
 
         # 2. Get selected rows
         incl_rows = (all_rows - step)
@@ -110,8 +107,8 @@ class TgradACO:
     def get_max_step(self, minrep):
         # 1. count the number of steps each time comparing the
         # calculated representativity with minimum representativity
-        size = self.d_set.data
-        for i in range(len(size)):
+        size = len(self.d_set.data)
+        for i in range(size):
             check, info = self.get_representativity(i + 1)
             if check:
                 rep = info['Representativity']
@@ -122,9 +119,10 @@ class TgradACO:
 
     def get_time_diffs(self, step):
         data = self.d_set.data
+        size = len(data)
         time_diffs = []
-        for i in range(1, len(data)):
-            if i < (len(data) - step):
+        for i in range(size):
+            if i < (size - step):
                 # temp_1 = self.data[i][0]
                 # temp_2 = self.data[i + step][0]
                 temp_1 = temp_2 = ""
@@ -139,28 +137,6 @@ class TgradACO:
                 time_diffs.append(time_diff)
         # print("Time Diff: " + str(time_diff))
         return True, time_diffs
-
-    def split_dataset(self):
-        # NB: Creates an (array) item for each column
-        # NB: ignore first row (titles) and date-time columns
-        # 1. get no. of columns (ignore date-time columns)
-        data = self.d_set.data
-        no_columns = (len(data[0]) - len(self.time_cols))
-
-        # 2. Create arrays for each gradual column item
-        multi_data = [None] * no_columns
-        i = 0
-        for c in range(len(data[0])):
-            multi_data[i] = []
-            for r in range(1, len(data)):  # ignore title row
-                if c in self.time_cols:
-                    continue  # skip columns with time
-                else:
-                    item = data[r][c]
-                    multi_data[i].append(item)
-            if not (c in self.time_cols):
-                i += 1
-        return multi_data
 
     @staticmethod
     def init_fuzzy_support(test_members, all_members, minsup):
