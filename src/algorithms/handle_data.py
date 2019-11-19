@@ -14,10 +14,10 @@ import time
 import numpy as np
 
 
-class InitData:
+class HandleData:
 
     def __init__(self, file_path):
-        self.raw_data = InitData.read_csv(file_path)
+        self.raw_data = HandleData.read_csv(file_path)
         if len(self.raw_data) == 0:
             self.data = False
             print("Data-set error")
@@ -88,7 +88,7 @@ class InitData:
         for i in range(len(self.data[0])):  # check every column for time format
             row_data = str(self.data[0][i])
             try:
-                time_ok, t_stamp = InitData.test_time(row_data)
+                time_ok, t_stamp = HandleData.test_time(row_data)
                 if time_ok:
                     time_cols.append(i)
             except ValueError:
@@ -99,7 +99,7 @@ class InitData:
             return []
 
     def init_attributes(self, eq):
-        # Arrange rank attributes to generate Graph attribute
+        # re-structure csv data into an array
         self.equal = eq
         temp = self.data
         cols = self.column_size
@@ -117,6 +117,7 @@ class InitData:
                 self.attr_data.append(attr_data)
 
     def get_bin_rank(self, attr_data, symbol):
+        # execute binary rank to calculate support of pattern
         n = len(attr_data[1])
         incr = tuple([attr_data[0], '+'])
         decr = tuple([attr_data[0], '-'])

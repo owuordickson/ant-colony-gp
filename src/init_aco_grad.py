@@ -19,13 +19,13 @@ Description:
 
 import sys
 from optparse import OptionParser
-from init_data import InitData
-from aco_grad import GradACO
+from src import HandleData
+from src import GradACO
 
 
 def init_algorithm(f_path, min_supp, steps, max_combs, eq=False):
     try:
-        d_set = InitData(f_path)
+        d_set = HandleData(f_path)
         if d_set.data:
             for txt in d_set.title:
                 print(str(txt[0]) + '. '+txt[1])
