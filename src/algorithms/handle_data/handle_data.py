@@ -100,7 +100,7 @@ class HandleData:
             return []
 
     def init_attributes(self, eq):
-        # Arrange rank attributes to generate Graph attribute
+        # re-structure csv data into an array
         self.equal = eq
         temp = self.data
         cols = self.column_size
@@ -118,6 +118,7 @@ class HandleData:
                 self.attr_data.append(attr_data)
 
     def get_bin_rank(self, attr_data, symbol):
+        # execute binary rank to calculate support of pattern
         n = len(attr_data[1])
         incr = tuple([attr_data[0], '+'])
         decr = tuple([attr_data[0], '-'])
