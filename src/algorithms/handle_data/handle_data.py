@@ -17,6 +17,7 @@ import numpy as np
 class HandleData:
 
     def __init__(self, file_path):
+        # For aco-grad
         self.raw_data = HandleData.read_csv(file_path)
         if len(self.raw_data) == 0:
             self.data = False
@@ -176,3 +177,14 @@ class HandleData:
                     return True, t_stamp
                 except ValueError:
                     raise ValueError('no valid date-time format found')
+
+    @staticmethod
+    def get_timestamp(time_data):
+        try:
+            ok, stamp = HandleData.test_time(time_data)
+            if ok:
+                return stamp
+            else:
+                return False
+        except ValueError:
+            return False
