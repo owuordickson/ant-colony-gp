@@ -19,8 +19,7 @@ Description:
 
 import sys
 from optparse import OptionParser
-from src import HandleData
-from src import GradACO
+from src import HandleData, GradACO
 
 
 def init_algorithm(f_path, min_supp, steps, max_combs, eq=False):
