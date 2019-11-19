@@ -179,7 +179,6 @@ def Graank(D_in, a, t_diffs, eq=False):
                         del res2[z]
                     else:
                         z = z + 1
-
                 #return fetch indices (array) of G[1] where True
                 t_lag = calculateTimeLag(getPattenIndices(G[i][1]), t_diffs, a)
                 if t_lag != False:
@@ -187,37 +186,6 @@ def Graank(D_in, a, t_diffs, eq=False):
                     res2.append(temp)
                     res3.append(t_lag)
                 i += 1
-                #print(res3)
-                #print("---Space---")
-                #print(res)
-                #print("---Space---")
-                #print(res2)
-                #print("---Space---")
-                #print(indices)
-                #print("------")
-                # print G
-                # res=SetMax(res)
-    #                j=0
-    #                k=0
-    #                test=0
-    #        while(j<len(res)-1):
-    #                test=0
-    #                k=j+1
-    #                while(k<len(res)):
-    #                    if(res[j].issuperset(res[k]) or res[j]==res[k]):
-    #                        del res[k]
-    #                        del res2[k]
-    #                    else:
-    #                        if res[j].issubset(res[k]):
-    #                            del res[j]
-    #                            del res2[j]
-    #                            test=1
-    #                            break
-    #                    k+=1
-    #                if test==1:
-    #                    continue
-    #                j+=1
-    # print res
     return title, res, res2, res3
 
 
@@ -234,32 +202,6 @@ def fuseTrad(L):
     for i in L:
         temp.append(Trad(i))
     return fuse(temp)
-
-
-def allComb(L, supmin, eq=False):
-    ll = L
-    lT = []
-    for i in ll:
-        lT.append(Trad(i))
-    lT.append(fuseTrad(ll))
-    ll.append('all')
-    ld = []
-    for i in range(len(ll)):
-        D1, S1 = Graank(lT[i], supmin, eq)
-        print(ll[i])
-        for i in range(len(D1)):
-            print(str(D1[i]) + ' : ' + str(S1[i]))
-        ld.append(D1)
-    for i in range(len(ll) - 1):
-        for j in range(i + 1, len(ll)):
-            Res = MBDLL(ld[i], ld[j])
-            print(str(ll[j]) + ' vs ' + str(ll[i]))
-            for a in range(len(Res)):
-                print("Bordure " + str(a) + " : L=" + str(Res[a][0]) + ", R=" + str(Res[a][1]))
-            Res = MBDLL(ld[j], ld[i])
-            print(str(ll[i]) + ' vs ' + str(ll[j]))
-            for a in range(len(Res)):
-                print("Bordure " + str(a) + " : L=" + str(Res[a][0]) + ", R=" + str(Res[a][1]))
 
 
 def getSupp(T, s, eq=False):

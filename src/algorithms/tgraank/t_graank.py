@@ -38,7 +38,8 @@ class TgradACO:
             self.time_cols = []
             raise Exception('No date-time data found')
 
-    def run_tgraank(self, min_sup, ref_col, rep):
+    def run_tgraank(self):
+        # implement parallel multi-processing
         data = self.d_set.data
         patterns = list()
         return patterns
