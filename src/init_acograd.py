@@ -18,8 +18,8 @@ Description:
 
 import sys
 from optparse import OptionParser
-from algorithms.handle_data import HandleData
-from algorithms.ant_colony.aco_grad import GradACO
+from src import HandleData
+from src import GradACO
 
 
 def init_algorithm(f_path, min_supp, eq=False):
