@@ -2,7 +2,6 @@ language: python
 
 python:
     - "3.6"
-    - "3.7"
 
 before_install:
   - "pip install -U pip"
@@ -10,4 +9,4 @@ before_install:
 
 install: pip3 install -r requirements.txt
 
-script: python3 algorithms/init_acograd.py -f data/DATASET.csv
+script: python3 algorithms/init_aco_grad.py -f data/DATASET.csv
