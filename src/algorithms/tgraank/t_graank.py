@@ -22,14 +22,14 @@ class TgradACO:
 
     def __init__(self, d_set, ref_item, min_rep):
         # For tgraank
+        self.d_set = d_set
         cols = d_set.get_time_cols()
         if len(cols) > 0:
             print("Dataset Ok")
             self.time_ok = True
             self.time_cols = cols
             self.ref_item = ref_item
-            self.data = d_set
-            # self.max_step = self.get_max_step(min_rep)
+            self.max_step = self.get_max_step(min_rep)
             # self.multi_data = self.split_dataset()
         else:
             print("Dataset Error")
@@ -38,9 +38,38 @@ class TgradACO:
             raise Exception('No date-time data found')
 
     def run_tgraank(self, min_sup, ref_col, rep):
-        data = self.data
+        data = self.d_set.data
         patterns = list()
         return patterns
+
+    def get_representativity(self, step):
+        # 1. Get all rows minus the title row
+        all_rows = (len(self.d_set.data) - 1)
+
+        # 2. Get selected rows
+        incl_rows = (all_rows - step)
+
+        # 3. Calculate representativity
+        if incl_rows > 0:
+            rep = (incl_rows / float(all_rows))
+            info = {"Transformation": "n+"+str(step), "Representativity": rep, "Included Rows": incl_rows,
+                    "Total Rows": all_rows}
+            return True, info
+        else:
+            return False, "Representativity is 0%"
+
+    def get_max_step(self, minrep):
+        # 1. count the number of steps each time comparing the
+        # calculated representativity with minimum representativity
+        size = self.d_set.data
+        for i in range(len(size)):
+            check, info = self.get_representativity(i + 1)
+            if check:
+                rep = info['Representativity']
+                if rep < minrep:
+                    return i
+            else:
+                return 0
 
     @staticmethod
     def init_fuzzy_support(test_members, all_members, minsup):

@@ -95,12 +95,12 @@ class DataTransform:
 
                         for i in range(len(gradual_items)):
                             if i < len(gradual_items) and i != ref_column:
-                                gradual_item = gradual_items[i];
+                                gradual_item = gradual_items[i]
                                 temp = [gradual_item[j + step]]
                                 temp_array = np.append(init_array, temp, axis=0)
                                 init_array = temp_array
                         new_dataset.append(list(init_array))
-                return new_dataset, time_diffs;
+                return new_dataset, time_diffs
         else:
             msg = "Fatal Error: Time format in column could not be processed"
             raise Exception(msg)
