@@ -30,7 +30,7 @@ def init_algorithm(f_path, refItem, minSup, minRep, eq=False):
             titles = d_set.title
             d_set.init_attributes(eq)
             tgp = TgradACO(d_set, refItem, minSup, minRep)
-            data, time_diffs = tgp.transform_data(1)
+            list_tgp = tgp.run_tgraank()
 
             for txt in titles:
                 col = (int(txt[0]) - 1)
@@ -42,7 +42,7 @@ def init_algorithm(f_path, refItem, minSup, minRep, eq=False):
             print(titles)
             print(d_set.data)
             print(d_set.attr_data)
-            print(data)
+            print(list_tgp)
             # print("Next\n")
             # print(tgp.multi_data)
         #    ac = GradACO(d_set)

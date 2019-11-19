@@ -139,7 +139,7 @@ class GradACO:
         if count <= 1:
             return False, False
         else:
-            supp, new_pattern = GradACO.perform_bin_and(bin_data, self.data.get_size(), min_supp)
+            supp, new_pattern = GradACO.perform_bin_and(bin_data, self.data.size, min_supp)
             return supp, new_pattern
 
     def update_pheromone(self, pattern):

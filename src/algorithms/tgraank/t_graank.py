@@ -16,7 +16,7 @@ Description: updated version that uses aco-graank and parallel multi-processing
 
 import skfuzzy as fuzzy
 import numpy as np
-from src import HandleData
+from src import HandleData, GradACO
 
 
 class TgradACO:
@@ -41,9 +41,27 @@ class TgradACO:
 
     def run_tgraank(self):
         # implement parallel multi-processing
-        data = self.d_set.data
         patterns = list()
-        return patterns
+        for s in range(self.max_step):
+            step = s+1  # because for-loop is not inclusive from range: 0 - max_step
+            # 1. Calculate representativity
+            chk_rep, rep_info = self.get_representativity(step)
+            # print(rep_info)
+            if chk_rep:
+                # 2. Transform data
+                data, time_diffs = self.transform_data(step)
+                d_set = HandleData("", attr_data=data)
+
+                # 3. Execute aco-graank for each transformation
+                ac = GradACO(d_set)
+                list_gp = ac.run_ant_colony(self.min_sup)
+                print("\nPattern : Support")
+                for gp in list_gp:
+                    print(str(gp[1]) + ' : ' + str(gp[0]))
+                print("\nPheromone Matrix")
+                print(ac.p_matrix)
+
+        return data
 
     def transform_data(self, step):
         # NB: Restructure dataset based on reference item
@@ -66,15 +84,17 @@ class TgradACO:
                 else:
                     # 1. Split the original data-set into column-tuples
                     attr_cols = self.d_set.attr_data
+                    titles = self.d_set.title
 
                     # 2. Transform the data using (row) n+step
+                    new_titles = list()
                     new_data = list()
                     size = len(data)
                     for obj in attr_cols:
                         col_index = int(obj[0])
                         tuples = obj[1]
                         temp_tuples = list()
-                        if (col_index -1) == ref_col:
+                        if (col_index - 1) == ref_col:
                             # reference attribute (skip)
                             for i in range(0, (size-step)):
                                 temp_tuples.append(tuples[i])
