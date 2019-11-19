@@ -14,10 +14,10 @@ import time
 import numpy as np
 
 
-class InitData:
+class HandleData:
 
     def __init__(self, file_path):
-        self.raw_data = InitData.read_csv(file_path)
+        self.raw_data = HandleData.read_csv(file_path)
         if len(self.raw_data) == 0:
             self.data = False
             print("Data-set error")
@@ -88,7 +88,7 @@ class InitData:
         for i in range(len(self.data[0])):  # check every column for time format
             row_data = str(self.data[0][i])
             try:
-                time_ok, t_stamp = InitData.test_time(row_data)
+                time_ok, t_stamp = HandleData.test_time(row_data)
                 if time_ok:
                     time_cols.append(i)
             except ValueError:

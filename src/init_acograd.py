@@ -18,13 +18,13 @@ Description:
 
 import sys
 from optparse import OptionParser
-from algorithms.ant_colony.init_data import InitData
+from algorithms.handle_data import HandleData
 from algorithms.ant_colony.aco_grad import GradACO
 
 
 def init_algorithm(f_path, min_supp, eq=False):
     try:
-        d_set = InitData(f_path)
+        d_set = HandleData(f_path)
         if d_set.data:
             for txt in d_set.title:
                 print(str(txt[0]) + '. '+txt[1])
