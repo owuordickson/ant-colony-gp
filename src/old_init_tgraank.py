@@ -27,8 +27,6 @@ def algorithm_init(filename, ref_item, minsup, minrep):
     try:
         # 1. Load dataset into program
         dataset = DataTransform(filename, ref_item, minrep)
-        print(dataset.multi_data)
-        print(dataset.data)
 
         # 2. TRANSFORM DATA (for each step)
         patterns = 0
@@ -36,12 +34,12 @@ def algorithm_init(filename, ref_item, minsup, minrep):
             step = s+1  # because for-loop is not inclusive from range: 0 - max_step
             # 3. Calculate representativity
             chk_rep, rep_info = dataset.get_representativity(step)
-            #print(rep_info)
+            # print(rep_info)
 
             if chk_rep:
                 # 4. Transform data
                 data, time_diffs = dataset.transform_data(step)
-                print(data)
+                # print(data)
 
                 # 5. Execute GRAANK for each transformation
                 title, D1, S1, T1 = Graank(Trad(list(data)), minsup, time_diffs, eq=False)
@@ -121,4 +119,8 @@ if __name__ == "__main__":
     min_sup = options.minSup
     min_rep = options.minRep
 
+    import time
+    start = time.time()
     algorithm_init(file_name, ref_col, min_sup, min_rep)
+    end = time.time()
+    print("\n" + str(end - start) + " seconds")

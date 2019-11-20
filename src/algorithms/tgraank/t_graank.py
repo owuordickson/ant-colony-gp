@@ -55,12 +55,11 @@ class TgradACO:
                 # 3. Execute aco-graank for each transformation
                 ac = GradACO(d_set)
                 list_gp = ac.run_ant_colony(self.min_sup)
-                print("\nPattern : Support")
-                for gp in list_gp:
-                    print(str(gp[1]) + ' : ' + str(gp[0]))
-                print("\nPheromone Matrix")
-                print(ac.p_matrix)
-        return data
+                if len(list_gp) > 0:
+                    patterns.append(list_gp)
+                # print("\nPheromone Matrix")
+                # print(ac.p_matrix)
+        return patterns
 
     def transform_data(self, step):
         # NB: Restructure dataset based on reference item

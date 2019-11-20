@@ -39,17 +39,15 @@ def init_algorithm(f_path, refItem, minSup, minRep, eq=False):
                 else:
                     print(str(txt[0]) + '. ' + txt[1])
             print("\nFile: " + f_path)
-            print(titles)
-            print(d_set.data)
-            print(d_set.attr_data)
-            print(list_tgp)
+            # print(titles)
+            # print(d_set.data)
+            # print(d_set.attr_data)
             # print("Next\n")
             # print(tgp.multi_data)
-        #    ac = GradACO(d_set)
-        #    list_gp = ac.run_ant_colony(min_supp)
-        #    print("\nPattern : Support")
-        #    for gp in list_gp:
-        #        print(str(gp[1])+' : '+str(gp[0]))
+            print(list_tgp)
+            print("\nPattern : Support")
+            for gp in list_tgp:
+                print(str(gp[0][1])+' : '+str(gp[0][0]))
         #    print("\nPheromone Matrix")
         #    print(ac.p_matrix)
     except Exception as error:
@@ -99,4 +97,8 @@ if __name__ == "__main__":
         min_sup = options.minSup
         min_rep = options.minRep
 
+    import time
+    start = time.time()
     init_algorithm(file_path, ref_col, min_sup, min_rep)
+    end = time.time()
+    print("\n" + str(end - start) + " seconds")
