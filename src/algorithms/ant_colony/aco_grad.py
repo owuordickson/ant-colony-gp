@@ -249,6 +249,7 @@ class GradACO:
                 t_lag = FuzzyMF.calculate_time_lag(FuzzyMF.get_patten_indices(final_bin), t_diffs, thd_supp)
                 if t_lag:
                     temp_p = [pattern, t_lag]
+                    print(t_lag)
                     return supp, pattern
                 else:
                     return 0, pattern
