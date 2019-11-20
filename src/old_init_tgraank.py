@@ -91,7 +91,7 @@ if __name__ == "__main__":
     optparser.add_option('-c', '--refColumn',
                          dest='refCol',
                          help='reference column',
-                         default=1,
+                         default=0,
                          type='int')
     optparser.add_option('-s', '--minSupport',
                          dest='minSup',

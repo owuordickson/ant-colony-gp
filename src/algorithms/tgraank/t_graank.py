@@ -13,7 +13,8 @@ Description: updated version that uses aco-graank and parallel multi-processing
 
 """
 
-
+from joblib import Parallel, delayed
+import multiprocessing
 from src import HandleData, GradACO
 
 
@@ -39,25 +40,35 @@ class TgradACO:
 
     def run_tgraank(self):
         # implement parallel multi-processing
-        patterns = list()
-        for s in range(self.max_step):
-            step = s+1  # because for-loop is not inclusive from range: 0 - max_step
-            # 1. Calculate representativity
-            chk_rep, rep_info = self.get_representativity(step)
-            # print(rep_info)
-            if chk_rep:
-                # 2. Transform data
-                data, time_diffs = self.transform_data(step)
-                d_set = HandleData("", attr_data=[self.d_set.column_size, data])
-
-                # 3. Execute aco-graank for each transformation
-                ac = GradACO(d_set)
-                list_gp = ac.run_ant_colony(self.min_sup, time_diffs)
-                if len(list_gp) > 0:
-                    patterns.append(list_gp)
-                # print("\nPheromone Matrix")
-                # print(ac.p_matrix)
+        steps = range(self.max_step)
+        num_cores = multiprocessing.cpu_count()
+        patterns = Parallel(n_jobs=num_cores)(delayed(self.fetch_patterns)(s+1) for s in steps)
         return patterns
+        # patterns = list()
+        # for s in range(self.max_step):
+        #    step = s+1  # because for-loop is not inclusive from range: 0 - max_step
+        #    t_pattern = self.fetch_patterns(step)
+        #    if t_pattern:
+        #        patterns.append(t_pattern)
+        # return patterns
+
+    def fetch_patterns(self, step):
+        # 1. Calculate representativity
+        chk_rep, rep_info = self.get_representativity(step)
+        # print(rep_info)
+        if chk_rep:
+            # 2. Transform data
+            data, time_diffs = self.transform_data(step)
+            d_set = HandleData("", attr_data=[self.d_set.column_size, data])
+
+            # 3. Execute aco-graank for each transformation
+            ac = GradACO(d_set)
+            list_gp = ac.run_ant_colony(self.min_sup, time_diffs)
+            # print("\nPheromone Matrix")
+            # print(ac.p_matrix)
+            if len(list_gp) > 0:
+                return list_gp
+        return False
 
     def transform_data(self, step):
         # NB: Restructure dataset based on reference item

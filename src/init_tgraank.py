@@ -47,8 +47,9 @@ def init_algorithm(f_path, refItem, minSup, minRep, eq=False):
             # print(list_tgp)
             print("\nPattern : Support")
             for obj in list_tgp:
-                tgp = obj[0]
-                print(str(tgp[1][0]) + ' : ' + str(tgp[0]) + ' | ' + str(tgp[1][1]))
+                if obj:
+                    tgp = obj[0]
+                    print(str(tgp[1][0]) + ' : ' + str(tgp[0]) + ' | ' + str(tgp[1][1]))
         #    print("\nPheromone Matrix")
         #    print(ac.p_matrix)
     except Exception as error:
@@ -73,7 +74,7 @@ if __name__ == "__main__":
         optparser.add_option('-c', '--refColumn',
                              dest='refCol',
                              help='reference column',
-                             default=2,
+                             default=1,
                              type='int')
         optparser.add_option('-s', '--minSupport',
                              dest='minSup',

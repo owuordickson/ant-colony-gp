@@ -118,6 +118,7 @@ class HandleData:
             return []
 
     def init_attributes(self, eq):
+        # (check) implement parallel multiprocessing
         # re-structure csv data into an array
         self.equal = eq
         temp = self.data
