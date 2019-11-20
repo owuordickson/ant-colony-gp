@@ -14,8 +14,6 @@ Description: updated version that uses aco-graank and parallel multi-processing
 """
 
 
-# import skfuzzy as fuzzy
-# import numpy as np
 from src import HandleData, GradACO
 
 

@@ -29,6 +29,7 @@ class GradACO:
     def run_ant_colony(self, min_supp, time_diffs=None):
         all_sols = list()
         win_sols = list()
+        win_lag_sols = list()
         loss_sols = list()
         invalid_sols = list()
         # count = 0
@@ -54,12 +55,18 @@ class GradACO:
                         is_sub = GradACO.check_anti_monotony(win_sols, sol_n, True)
                         if is_sub:
                             continue
-                    supp, sol_gen = self.evaluate_bin_solution(sol_n, min_supp, time_diffs)
+                    if time_diffs is None:
+                        supp, sol_gen = self.evaluate_bin_solution(sol_n, min_supp, time_diffs)
+                    else:
+                        supp, lag_sols = self.evaluate_bin_solution(sol_n, min_supp, time_diffs)
+                        sol_gen = lag_sols[0]
                     # print(supp)
                     # print(sol_gen)
                     if supp and (supp >= min_supp) and ([supp, sol_gen] not in win_sols):
                         win_sols.append([supp, sol_gen])
                         self.update_pheromone(sol_gen)
+                        if time_diffs is not None:
+                            win_lag_sols.append([supp, lag_sols])
                         # converging = self.check_convergence()
                     elif supp and (supp < min_supp) and ([supp, sol_gen] not in loss_sols):
                         loss_sols.append([supp, sol_gen])
@@ -75,7 +82,10 @@ class GradACO:
         # print("Winner: "+str(len(win_sols)))
         # print("Losers: "+str(len(loss_sols)))
         # print(count)
-        return win_sols
+        if time_diffs is None:
+            return win_sols
+        else:
+            return win_lag_sols
 
     def generate_rand_pattern(self):
         p = self.p_matrix
@@ -249,8 +259,7 @@ class GradACO:
                 t_lag = FuzzyMF.calculate_time_lag(FuzzyMF.get_patten_indices(final_bin), t_diffs, thd_supp)
                 if t_lag:
                     temp_p = [pattern, t_lag]
-                    print(t_lag)
-                    return supp, pattern
+                    return supp, temp_p
                 else:
                     return 0, pattern
         else:

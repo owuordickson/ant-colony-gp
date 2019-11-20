@@ -44,10 +44,11 @@ def init_algorithm(f_path, refItem, minSup, minRep, eq=False):
             # print(d_set.attr_data)
             # print("Next\n")
             # print(tgp.multi_data)
-            print(list_tgp)
+            # print(list_tgp)
             print("\nPattern : Support")
-            for gp in list_tgp:
-                print(str(gp[0][1])+' : '+str(gp[0][0]))
+            for obj in list_tgp:
+                tgp = obj[0]
+                print(str(tgp[1][0]) + ' : ' + str(tgp[0]) + ' | ' + str(tgp[1][1]))
         #    print("\nPheromone Matrix")
         #    print(ac.p_matrix)
     except Exception as error:
