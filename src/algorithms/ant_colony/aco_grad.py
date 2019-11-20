@@ -195,28 +195,6 @@ class GradACO:
         plt.grid()
         plt.show()
 
-    # def check_convergence(self, repeats):
-    #    conv = 1
-    #    p_matrix = np.array(self.p_matrix)
-    #    for r in p_matrix:
-    #        temp = np.max(r) / np.sum(r)
-    #        if temp < conv:
-    #            conv = temp
-        # print(conv)
-    #    if (conv >= 0.8) or (repeats >= 10):
-    #        return True
-    #    else:
-    #        return False
-        # exists = False
-        # if p_arr:
-        #    for obj in lst_p:
-        #        if set(p_arr) == set(obj[1]):
-        #            exists = True
-        #            break
-        # print(p_arr)
-        # print(exists)
-        # return exists
-
     @staticmethod
     def check_anti_monotony(lst_p, p_arr, ck_sub):
         result = False

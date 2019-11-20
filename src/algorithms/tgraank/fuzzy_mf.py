@@ -1,3 +1,15 @@
+# -*- coding: utf-8 -*-
+"""
+@author: "Dickson Owuor"
+@credits: "Anne Laurent and Joseph Orero"
+@license: "MIT"
+@version: "1.0"
+@email: "owuordickson@gmail.com"
+@created: "20 November 2019"
+
+"""
+
+
 import numpy as np
 import skfuzzy as fuzzy
 
