@@ -241,7 +241,7 @@ def calculateTimeLag(indices, time_diffs, minsup):
         msg = ("~ " + time_lag[0] + str(time_lag[1]) + " " + str(time_lag[2]) + " : " + str(sup))
         return msg
     else:
-        #msg = ("~ " + time_lag[0] + str(time_lag[1]) + " " + str(time_lag[2]) + " : < " + str(minsup))
+        # msg = ("~ " + time_lag[0] + str(time_lag[1]) + " " + str(time_lag[2]) + " : < " + str(minsup))
         return False
 
 
@@ -254,7 +254,6 @@ def getPattenIndices(D):
             if D[c][r] == 1:
                 index = [r,c]
                 indices.append(index)
-
     return indices
 
 
@@ -265,7 +264,6 @@ def getTimeLags(indices, time_diffs):
         for i in indxs:
             if (i >= 0) and (i < len(time_diffs)):
                 time_lags.append(time_diffs[i])
-
         return time_lags
     else:
         raise Exception("Error: No pattern found for fetching time-lags")

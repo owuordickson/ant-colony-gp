@@ -13,6 +13,7 @@
 import numpy as np
 import random as rand
 import matplotlib.pyplot as plt
+from src import TgradACO
 
 
 class GradACO:
@@ -25,7 +26,7 @@ class GradACO:
         self.valid_bins = []
         self.invalid_bins = []
 
-    def run_ant_colony(self, min_supp):
+    def run_ant_colony(self, min_supp, time_diffs=None):
         all_sols = list()
         win_sols = list()
         loss_sols = list()
@@ -53,7 +54,7 @@ class GradACO:
                         is_sub = GradACO.check_anti_monotony(win_sols, sol_n, True)
                         if is_sub:
                             continue
-                    supp, sol_gen = self.evaluate_bin_solution(sol_n, min_supp)
+                    supp, sol_gen = self.evaluate_bin_solution(sol_n, min_supp, time_diffs)
                     # print(supp)
                     # print(sol_gen)
                     if supp and (supp >= min_supp) and ([supp, sol_gen] not in win_sols):
@@ -99,7 +100,7 @@ class GradACO:
             pattern = False
         return pattern
 
-    def evaluate_bin_solution(self, pattern, min_supp):
+    def evaluate_bin_solution(self, pattern, min_supp, time_diffs):
         # pattern = [('2', '+'), ('4', '+')]
         lst_bin = self.data.lst_bin
         gen_pattern = []
@@ -139,7 +140,7 @@ class GradACO:
         if count <= 1:
             return False, False
         else:
-            supp, new_pattern = GradACO.perform_bin_and(bin_data, self.data.size, min_supp)
+            supp, new_pattern = GradACO.perform_bin_and(bin_data, self.data.size, min_supp, time_diffs)
             return supp, new_pattern
 
     def update_pheromone(self, pattern):
@@ -222,7 +223,7 @@ class GradACO:
         return result
 
     @staticmethod
-    def perform_bin_and(unsorted_bins, n, thd_supp):
+    def perform_bin_and(unsorted_bins, n, thd_supp, t_diffs):
         lst_bin = sorted(unsorted_bins, key=lambda x: x[1])
         final_bin = np.array([])
         pattern = []
@@ -242,6 +243,14 @@ class GradACO:
                 count += 1
         supp = float(np.sum(final_bin)) / float(n * (n - 1.0) / 2.0)
         if count >= 2:
-            return supp, pattern
+            if t_diffs is None:
+                return supp, pattern
+            else:
+                t_lag = TgradACO.calculate_time_lag(TgradACO.get_patten_indices(final_bin), t_diffs, thd_supp)
+                if t_lag:
+                    temp_p = [pattern, t_lag]
+                    return supp, pattern
+                else:
+                    return 0, pattern
         else:
             return 0, unsorted_bins

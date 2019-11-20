@@ -54,7 +54,7 @@ class TgradACO:
 
                 # 3. Execute aco-graank for each transformation
                 ac = GradACO(d_set)
-                list_gp = ac.run_ant_colony(self.min_sup)
+                list_gp = ac.run_ant_colony(self.min_sup, time_diffs)
                 if len(list_gp) > 0:
                     patterns.append(list_gp)
                 # print("\nPheromone Matrix")
@@ -289,3 +289,37 @@ class TgradACO:
                 return months, "months"
         else:
             return years, "years"
+
+    @staticmethod
+    def calculate_time_lag(indices, time_diffs, minsup):
+        time_lags = TgradACO.get_time_lags(indices, time_diffs)
+        time_lag, sup = TgradACO.init_fuzzy_support(time_lags, time_diffs, minsup)
+        if sup >= minsup:
+            msg = ("~ " + time_lag[0] + str(time_lag[1]) + " " + str(time_lag[2]) + " : " + str(sup))
+            return msg
+        else:
+            return False
+
+    @staticmethod
+    def get_patten_indices(D):
+        indices = []
+        t_rows = len(D)
+        t_columns = len(D[0])
+        for r in range(t_rows):
+            for c in range(t_columns):
+                if D[c][r] == 1:
+                    index = [r, c]
+                    indices.append(index)
+        return indices
+
+    @staticmethod
+    def get_time_lags(indices, time_diffs):
+        if len(indices) > 0:
+            indxs = np.unique(indices[0])
+            time_lags = []
+            for i in indxs:
+                if (i >= 0) and (i < len(time_diffs)):
+                    time_lags.append(time_diffs[i])
+            return time_lags
+        else:
+            raise Exception("Error: No pattern found for fetching time-lags")
