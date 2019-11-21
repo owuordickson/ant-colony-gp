@@ -38,19 +38,21 @@ class TgradACO:
             self.time_cols = []
             raise Exception('No date-time data found')
 
-    def run_tgraank(self):
-        # implement parallel multi-processing
-        steps = range(self.max_step)
-        num_cores = multiprocessing.cpu_count()
-        patterns = Parallel(n_jobs=num_cores)(delayed(self.fetch_patterns)(s+1) for s in steps)
-        return patterns
-        # patterns = list()
-        # for s in range(self.max_step):
-        #    step = s+1  # because for-loop is not inclusive from range: 0 - max_step
-        #    t_pattern = self.fetch_patterns(step)
-        #    if t_pattern:
-        #        patterns.append(t_pattern)
-        # return patterns
+    def run_tgraank(self, parallel=True):
+        if parallel:
+            # implement parallel multi-processing
+            steps = range(self.max_step)
+            num_cores = multiprocessing.cpu_count()
+            patterns = Parallel(n_jobs=num_cores)(delayed(self.fetch_patterns)(s+1) for s in steps)
+            return patterns
+        else:
+            patterns = list()
+            for s in range(self.max_step):
+                step = s+1  # because for-loop is not inclusive from range: 0 - max_step
+                t_pattern = self.fetch_patterns(step)
+                if t_pattern:
+                    patterns.append(t_pattern)
+            return patterns
 
     def fetch_patterns(self, step):
         # 1. Calculate representativity
