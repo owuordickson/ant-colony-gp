@@ -15,10 +15,10 @@ Description: updated version that uses aco-graank and parallel multi-processing
 
 from joblib import Parallel, delayed
 import multiprocessing
-from src import HandleData, graank
+from src import HandleData, GradACO
 
 
-class Tgrad:
+class TgradACO:
 
     def __init__(self, d_set, ref_item, min_sup, min_rep):
         # For tgraank
@@ -50,7 +50,6 @@ class Tgrad:
             for s in range(self.max_step):
                 step = s+1  # because for-loop is not inclusive from range: 0 - max_step
                 t_pattern = self.fetch_patterns(step)
-                # print(t_pattern)
                 if t_pattern:
                     patterns.append(t_pattern)
             return patterns
@@ -65,13 +64,12 @@ class Tgrad:
             d_set = HandleData("", attr_data=[self.d_set.column_size, data])
 
             # 3. Execute aco-graank for each transformation
-            D1, S1, T1 = graank(list(data), self.min_sup, time_diffs, eq=False)
-            if len(D1) > 0:
-                return [D1, S1, T1]
-            # ac = GradACO(d_set)
-            # list_gp = ac.run_ant_colony(self.min_sup, time_diffs)
-            # if len(list_gp) > 0:
-            #    return list_gp
+            ac = GradACO(d_set)
+            list_gp = ac.run_ant_colony(self.min_sup, time_diffs)
+            # print("\nPheromone Matrix")
+            # print(ac.p_matrix)
+            if len(list_gp) > 0:
+                return list_gp
         return False
 
     def transform_data(self, step):

@@ -163,7 +163,6 @@ def Graank(D_in, a, t_diffs, eq=False):
     #            res.append(i[0])
     while G != []:
         G = APRIORIgen(G, a, n)
-        #print(G)
         i = 0
         while i < len(G) and G != []:
             temp = float(np.sum(G[i][1])) / float(n * (n - 1.0) / 2.0)
@@ -179,6 +178,7 @@ def Graank(D_in, a, t_diffs, eq=False):
                         del res2[z]
                     else:
                         z = z + 1
+                #print(G[i][0])
                 #return fetch indices (array) of G[1] where True
                 t_lag = calculateTimeLag(getPattenIndices(G[i][1]), t_diffs, a)
                 if t_lag != False:

@@ -30,6 +30,7 @@ def algorithm_init(filename, ref_item, minsup, minrep):
 
         # 2. TRANSFORM DATA (for each step)
         patterns = 0
+        show_title = False
         for s in range(dataset.max_step):
             step = s+1  # because for-loop is not inclusive from range: 0 - max_step
             # 3. Calculate representativity
@@ -46,10 +47,13 @@ def algorithm_init(filename, ref_item, minsup, minrep):
 
                 pattern_found = check_for_pattern(ref_item, D1)
                 if pattern_found:
-                    print(rep_info)
-                    for line in title:
-                        print(line)
-                    print('Pattern : Support')
+                    # print(rep_info)
+                    if not show_title:
+                        show_title = True
+                        for line in title:
+                            print(line)
+                        print('Pattern : Support')
+
                     for i in range(len(D1)):
                         # D is the Gradual Patterns, S is the support for D and T is time lag
                         if (str(ref_item+1)+'+' in D1[i]) or (str(ref_item+1)+'-' in D1[i]):
@@ -86,8 +90,8 @@ if __name__ == "__main__":
                          dest='file',
                          help='path to file containing csv',
                          # default=None,
-                         # default='../data/DATASET2.csv',
-                         default='../data/x_data.csv',
+                         default='../data/DATASET2.csv',
+                         # default='../data/x_data.csv',
                          type='string')
     optparser.add_option('-c', '--refColumn',
                          dest='refCol',
