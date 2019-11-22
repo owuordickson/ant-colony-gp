@@ -43,6 +43,7 @@ def init_algorithm(f_path, refItem, minSup, minRep, eq=False):
             print("\nFile: " + f_path)
 
             print("\nPattern : Support")
+            print(list_tgp)
             for obj in list_tgp:
                 print(str(obj[0][0]) + ' : ' + str(obj[1][0]) + ' | ' + str(obj[2][0]))
     except Exception as error:

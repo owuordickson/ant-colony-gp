@@ -17,7 +17,7 @@ from src import FuzzyMF
 
 def init_graank(T, eq=False):
     res = []
-    n = len(T[0][1])
+    n = len(T[1])
     for i in range(len(T)):
         npl = str(i + 1) + '+'
         nm = str(i + 1) + '-'
@@ -25,11 +25,11 @@ def init_graank(T, eq=False):
         tempm = np.zeros((n, n), dtype='bool')
         for j in range(n):
             for k in range(j + 1, n):
-                if T[i][1][j] > T[i][1][k]:
+                if T[i][j] > T[i][k]:
                     tempp[j][k] = 1
                     tempm[k][j] = 1
                 else:
-                    if T[i][1][j] < T[i][1][k]:
+                    if T[i][j] < T[i][k]:
                         # print (j,k)
                         tempm[j][k] = 1
                         tempp[k][j] = 1
@@ -59,15 +59,21 @@ def gen_apriori_candidates(R, a, n):
     temp2 = set()
     # print"a"
     I = []
-    if len(R) < 2:
+    if (len(R) < 2):
         return []
     Ck = [x[0] for x in R]
+    # print"b"
     for i in range(len(R) - 1):
+        # print"c"
+        # print len(R)
         for j in range(i + 1, len(R)):
             temp = R[i][0] | R[j][0]
             invtemp = {inv(x) for x in temp}
+            # print invtemp
+            # print"d"+str(j)
             if ((len(temp) == len(R[0][0]) + 1) and (not (I != [] and temp in I)) and (not (I != [] and invtemp in I))):
                 test = 1
+                # print "e"
                 for k in temp:
                     temp2 = temp - set([k])
                     invtemp2 = {inv(x) for x in temp2}
@@ -81,15 +87,15 @@ def gen_apriori_candidates(R, a, n):
                         res.append((temp, m))
                 I.append(temp)
                 gc.collect()
+    # print "z"
     return res
 
 
-def graank(D_in, a, t_diffs=None, eq=False):
-    T = D_in
+def graank(T, a, t_diffs=None, eq=False):
     res = []
     res2 = []
     res3 = []
-    n = len(T[0][1])
+    n = len(T[0])
     G = init_graank(T, eq)
     for i in G:
         temp = float(np.sum(i[1])) / float(n * (n - 1.0) / 2.0)
