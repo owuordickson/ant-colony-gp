@@ -30,8 +30,8 @@ def init_algorithm(f_path, refItem, minSup, minRep, eq=False):
             titles = d_set.title
             d_set.init_attributes(eq)
             tgp = Tgrad(d_set, refItem, minSup, minRep)
-            # list_tgp = tgp.run_tgraank(parallel=True)
-            list_tgp = tgp.run_tgraank()
+            list_tgp = tgp.run_tgraank(parallel=True)
+            # list_tgp = tgp.run_tgraank()
             # list_tgp.sort(key=lambda k: (k[0][0], k[0][1]), reverse=True)
 
             for txt in titles:
@@ -43,9 +43,9 @@ def init_algorithm(f_path, refItem, minSup, minRep, eq=False):
             print("\nFile: " + f_path)
 
             print("\nPattern : Support")
-            print(list_tgp)
             for obj in list_tgp:
-                print(str(obj[0][0]) + ' : ' + str(obj[1][0]) + ' | ' + str(obj[2][0]))
+                for i in range(len(obj[0])):
+                    print(str(obj[0][i]) + ' : ' + str(obj[1][i]) + ' | ' + str(obj[2][i]))
     except Exception as error:
         print(error)
 
@@ -63,8 +63,8 @@ if __name__ == "__main__":
                              dest='file',
                              help='path to file containing csv',
                              # default=None,
-                             default='../data/DATASET2.csv',
-                             # default='../data/x_data.csv',
+                             # default='../data/DATASET2.csv',
+                             default='../data/x_data.csv',
                              type='string')
         optparser.add_option('-c', '--refColumn',
                              dest='refCol',

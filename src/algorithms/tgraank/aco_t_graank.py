@@ -103,7 +103,7 @@ class TgradACO:
                         temp_tuples = list()
                         if (col_index - 1) == ref_col:
                             # reference attribute (skip)
-                            for i in range(0, (size-step)):
+                            for i in range(size-step):
                                 temp_tuples.append(tuples[i])
                         else:
                             for i in range(step, size):

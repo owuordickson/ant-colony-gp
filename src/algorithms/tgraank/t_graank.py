@@ -50,7 +50,6 @@ class Tgrad:
             for s in range(self.max_step):
                 step = s+1  # because for-loop is not inclusive from range: 0 - max_step
                 t_pattern = self.fetch_patterns(step)
-                # print(t_pattern)
                 if t_pattern:
                     patterns.append(t_pattern)
             return patterns
