@@ -30,8 +30,8 @@ def init_algorithm(f_path, refItem, minSup, minRep, eq=False):
             titles = d_set.title
             d_set.init_attributes(eq)
             tgp = TgradACO(d_set, refItem, minSup, minRep)
-            # list_tgp = tgp.run_tgraank()
-            list_tgp = tgp.run_tgraank(parallel=True)
+            list_tgp = tgp.run_tgraank()
+            # list_tgp = tgp.run_tgraank(parallel=True)
             # list_tgp.sort(key=lambda k: (k[0][0], k[0][1]), reverse=True)
 
             for txt in titles:
