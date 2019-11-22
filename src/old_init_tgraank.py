@@ -86,7 +86,8 @@ if __name__ == "__main__":
                          dest='file',
                          help='path to file containing csv',
                          # default=None,
-                         default='../data/DATASET2.csv',
+                         # default='../data/DATASET2.csv',
+                         default='../data/x_data.csv',
                          type='string')
     optparser.add_option('-c', '--refColumn',
                          dest='refCol',

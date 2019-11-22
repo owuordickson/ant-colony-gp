@@ -32,6 +32,7 @@ def init_algorithm(f_path, refItem, minSup, minRep, eq=False):
             tgp = TgradACO(d_set, refItem, minSup, minRep)
             # list_tgp = tgp.run_tgraank(parallel=False)
             list_tgp = tgp.run_tgraank()
+            # list_tgp.sort(key=lambda k: (k[0][0], k[0][1]), reverse=True)
 
             for txt in titles:
                 col = (int(txt[0]) - 1)
@@ -70,7 +71,8 @@ if __name__ == "__main__":
                              dest='file',
                              help='path to file containing csv',
                              # default=None,
-                             default='../data/DATASET2.csv',
+                             # default='../data/DATASET2.csv',
+                             default='../data/x_data.csv',
                              type='string')
         optparser.add_option('-c', '--refColumn',
                              dest='refCol',

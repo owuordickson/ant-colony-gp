@@ -161,7 +161,7 @@ class DataTransform:
         # return true and (list) dataset if it is ok
         # 1. retrieve dataset from file
         with open(filename, 'r') as f:
-            dialect = csv.Sniffer().sniff(f.read(1024), delimiters=";,' '\t")
+            dialect = csv.Sniffer().sniff(f.readline(), delimiters=";,' '\t")
             f.seek(0)
             reader = csv.reader(f, dialect)
             temp = list(reader)
