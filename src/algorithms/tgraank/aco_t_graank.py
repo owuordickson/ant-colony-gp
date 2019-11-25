@@ -15,7 +15,9 @@ Description: updated version that uses aco-graank and parallel multi-processing
 
 from joblib import Parallel, delayed
 import multiprocessing
-from src import HandleData, GradACO
+# from src import HandleData, GradACO
+from algorithms.ant_colony.aco_grad import GradACO
+from algorithms.handle_data.handle_data import HandleData
 
 
 class TgradACO:

@@ -20,7 +20,9 @@ Description:
 
 import sys
 from optparse import OptionParser
-from src import HandleData, TgradACO
+# from src import HandleData, TgradACO
+from algorithms.handle_data.handle_data import HandleData
+from algorithms.tgraank.aco_t_graank import TgradACO
 
 
 def init_algorithm(f_path, refItem, minSup, minRep, eq=False):
