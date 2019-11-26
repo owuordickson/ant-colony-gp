@@ -29,13 +29,13 @@ $python3 init_acotgraank.py -f filename.csv -c refCol -s minSup  -r minRep
 ```
 
 where you specify the input parameters as follows:<br>
-* <strong>filename.csv</strong> - [required] a file with a csv format <br>
+* <strong>filename.csv</strong> - [required] a file in csv format <br>
 * <strong>minSup</strong> - [optional] minimum support ```default = 0.5``` <br>
 * <strong>minRep</strong> - [optional] minimum representativity ```default = 0.5``` <br>
 * <strong>refCol</strong> - [optional] reference column ```default = 1``` <br>
 
 
-For example we executed the <em><strong>ACO</strong>-GRAANK</em> algorithm with a sample data-set<br>
+For example we executed the <em><strong>ACO</strong>-GRAANK</em> algorithm on a sample data-set<br>
 ```
 $python3 init_acograd.py -f ../data/DATASET.csv
 ```
