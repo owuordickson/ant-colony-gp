@@ -8,7 +8,7 @@
 @created: "19 November 2019"
 
 Usage:
-    $python3 init_acotgraank.py -f ../data/DATASET.csv -c 0 -s 0.5 -r 0.5
+    $python3 init_acotgraank.py -f ../data/DATASET.csv -c 0 -s 0.5 -r 0.5 -p 1
 
 Description:
     f -> file path (CSV)
@@ -25,21 +25,23 @@ from algorithms.handle_data.handle_data import HandleData
 from algorithms.tgraank.aco_t_graank import TgradACO
 
 
-def init_algorithm(f_path, refItem, minSup, minRep, alloPara, eq=False):
+def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
     try:
         wr_line = ""
         d_set = HandleData(f_path)
         if d_set.data:
             titles = d_set.title
             d_set.init_attributes(eq)
-            tgp = TgradACO(d_set, refItem, minSup, minRep)
-            if alloPara == 1:
+            tgp = TgradACO(d_set, refItem, minSup, minRep, allowPara)
+            if allowPara >= 1:
                 msg_para = "True"
                 list_tgp = tgp.run_tgraank(parallel=True)
             else:
                 msg_para = "False"
                 list_tgp = tgp.run_tgraank()
-            list_tgp.sort(key=lambda k: (k[0][0], k[0][1]), reverse=True)
+            list_tgp = list(filter(bool, list_tgp))
+            if len(list_tgp) > 5:
+                list_tgp.sort(key=lambda k: (k[0][0], k[0][1]), reverse=True)
 
             wr_line = "Algorithm: ACO-TGRAANK \n"
             wr_line += "Multi-core execution: " + msg_para + '\n\n'
@@ -85,8 +87,7 @@ if __name__ == "__main__":
                              dest='file',
                              help='path to file containing csv',
                              # default=None,
-                             # default='../data/DATASET2.csv',
-                             default='../data/OmniDir.csv',
+                             default='../data/DATASET2.csv',
                              type='string')
         optparser.add_option('-c', '--refColumn',
                              dest='refCol',
@@ -128,5 +129,6 @@ if __name__ == "__main__":
     end = time.time()
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
-    wr_text += res_text
+    wr_text += str(res_text)
     HandleData.write_file(wr_text)
+    print(wr_text)
