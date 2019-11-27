@@ -25,37 +25,48 @@ from algorithms.handle_data.handle_data import HandleData
 from algorithms.tgraank.aco_t_graank import TgradACO
 
 
-def init_algorithm(f_path, refItem, minSup, minRep, eq=False):
+def init_algorithm(f_path, refItem, minSup, minRep, alloPara, eq=False):
     try:
+        wr_line = ""
         d_set = HandleData(f_path)
         if d_set.data:
             titles = d_set.title
             d_set.init_attributes(eq)
             tgp = TgradACO(d_set, refItem, minSup, minRep)
-            # list_tgp = tgp.run_tgraank()
-            list_tgp = tgp.run_tgraank(parallel=True)
-            # list_tgp.sort(key=lambda k: (k[0][0], k[0][1]), reverse=True)
+            if alloPara == 1:
+                msg_para = "True"
+                list_tgp = tgp.run_tgraank(parallel=True)
+            else:
+                msg_para = "False"
+                list_tgp = tgp.run_tgraank()
+            list_tgp.sort(key=lambda k: (k[0][0], k[0][1]), reverse=True)
 
+            wr_line = "Algorithm: ACO-TGRAANK \n"
+            wr_line += "Multi-core execution: " + msg_para + '\n\n'
             for txt in titles:
                 col = (int(txt[0]) - 1)
                 if col == refItem:
-                    print(str(txt[0]) + '. ' + txt[1] + '**')
+                    wr_line += (str(txt[0]) + '. ' + txt[1] + '**' + '\n')
                 else:
-                    print(str(txt[0]) + '. ' + txt[1])
-            print("\nFile: " + f_path)
+                    wr_line += (str(txt[0]) + '. ' + txt[1] + '\n')
+                # csv_data.append(wr_line)
+            wr_line += ("\nFile: " + f_path + '\n')
+            wr_line += ("\nPattern : Support" + '\n')
+
             # print(titles)
             # print(d_set.data)
             # print(d_set.attr_data)
             # print("Next\n")
             # print(tgp.multi_data)
             # print(list_tgp)
-            print("\nPattern : Support")
+
             for obj in list_tgp:
                 if obj:
                     tgp = obj[0]
-                    print(str(tgp[1][0]) + ' : ' + str(tgp[0]) + ' | ' + str(tgp[1][1]))
+                    wr_line += (str(tgp[1][0]) + ' : ' + str(tgp[0]) + ' | ' + str(tgp[1][1]) + '\n')
         #    print("\nPheromone Matrix")
         #    print(ac.p_matrix)
+        return wr_line
     except Exception as error:
         print(error)
 
@@ -67,6 +78,7 @@ if __name__ == "__main__":
         ref_col = sys.argv[2]
         min_sup = sys.argv[3]
         min_rep = sys.argv[4]
+        allow_p = sys.argv[5]
     else:
         optparser = OptionParser()
         optparser.add_option('-f', '--inputFile',
@@ -74,7 +86,7 @@ if __name__ == "__main__":
                              help='path to file containing csv',
                              # default=None,
                              # default='../data/DATASET2.csv',
-                             default='../data/x_data.csv',
+                             default='../data/OmniDir.csv',
                              type='string')
         optparser.add_option('-c', '--refColumn',
                              dest='refCol',
@@ -91,6 +103,11 @@ if __name__ == "__main__":
                              help='minimum representativity',
                              default=0.5,
                              type='float')
+        optparser.add_option('-p', '--allowMultiprocessing',
+                             dest='allowPara',
+                             help='allow multiprocessing',
+                             default=1,
+                             type='int')
         (options, args) = optparser.parse_args()
         inFile = None
         if options.file is None:
@@ -103,9 +120,13 @@ if __name__ == "__main__":
         ref_col = options.refCol
         min_sup = options.minSup
         min_rep = options.minRep
+        allow_p = options.allowPara
 
     import time
     start = time.time()
-    init_algorithm(file_path, ref_col, min_sup, min_rep)
+    res_text = init_algorithm(file_path, ref_col, min_sup, min_rep, allow_p)
     end = time.time()
-    print("\n" + str(end - start) + " seconds")
+
+    wr_text = ("Run-time: " + str(end - start) + " seconds\n")
+    wr_text += res_text
+    HandleData.write_file(wr_text)

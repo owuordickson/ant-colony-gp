@@ -43,6 +43,7 @@ class GradACO:
             # print(sol_n)
             if sol_n:
                 if sol_n not in all_sols:
+                    lag_sols = []
                     repeated = 0
                     all_sols.append(sol_n)
                     if loss_sols:
@@ -60,7 +61,10 @@ class GradACO:
                         supp, sol_gen = self.evaluate_bin_solution(sol_n, min_supp, time_diffs)
                     else:
                         supp, lag_sols = self.evaluate_bin_solution(sol_n, min_supp, time_diffs)
-                        sol_gen = lag_sols[0]
+                        if supp:
+                            sol_gen = lag_sols[0]
+                        else:
+                            sol_gen = False
                     # print(supp)
                     # print(sol_gen)
                     if supp and (supp >= min_supp) and ([supp, sol_gen] not in win_sols):

@@ -181,6 +181,14 @@ class HandleData:
         return temp
 
     @staticmethod
+    def write_file(data):
+        with open('../data/results.txt', 'w') as f:
+            # writer = csv.writer(f)
+            # writer.writerows(csv_data)
+            f.write(data)
+            f.close()
+
+    @staticmethod
     def test_time(date_str):
         # add all the possible formats
         try:
