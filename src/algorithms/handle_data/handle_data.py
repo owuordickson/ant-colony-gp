@@ -181,8 +181,8 @@ class HandleData:
         return temp
 
     @staticmethod
-    def write_file(data):
-        with open('../data/results.txt', 'w') as f:
+    def write_file(data, path):
+        with open(path, 'w') as f:
             # writer = csv.writer(f)
             # writer.writerows(csv_data)
             f.write(data)

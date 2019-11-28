@@ -120,5 +120,5 @@ if __name__ == "__main__":
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
     wr_text += str(res_text)
-    HandleData.write_file(wr_text)
+    HandleData.write_file(wr_text, '../data/res_temp.txt')
     print(wr_text)
