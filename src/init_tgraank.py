@@ -44,7 +44,8 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
                 list_tgp.sort(key=lambda k: (k[0][0], k[0][1]), reverse=True)
 
             wr_line = "Algorithm: T-GRAANK \n"
-            wr_line += "Multi-core execution: " + msg_para + '\n\n'
+            wr_line += "Multi-core execution: " + msg_para + '\n'
+            wr_line += "Number of cores: " + allowPara + '\n\n'
             for txt in titles:
                 col = (int(txt[0]) - 1)
                 if col == refItem:
