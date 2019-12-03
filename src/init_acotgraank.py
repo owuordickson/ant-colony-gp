@@ -132,5 +132,5 @@ if __name__ == "__main__":
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
     wr_text += str(res_text)
     f_name = ('res_aco' + str(end).replace('.', '', 1) + '.txt')
-    HandleData.write_file(wr_text, '../data/' + f_name)
+    HandleData.write_file(wr_text, f_name)
     print(wr_text)
