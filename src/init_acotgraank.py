@@ -71,7 +71,9 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
         #    print(ac.p_matrix)
         return wr_line
     except Exception as error:
+        wr_line = "Failed: " + str(error)
         print(error)
+        return wr_line
 
 
 if __name__ == "__main__":
