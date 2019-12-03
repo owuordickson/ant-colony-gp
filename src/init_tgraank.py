@@ -44,17 +44,17 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
                 list_tgp.sort(key=lambda k: (k[0][0], k[0][1]), reverse=True)
 
             wr_line = "Algorithm: T-GRAANK \n"
-            wr_line += "Multi-core execution: " + msg_para + '\n'
-            wr_line += "Number of cores: " + allowPara + '\n\n'
+            wr_line += "Multi-core execution: " + str(msg_para) + '\n'
+            wr_line += "Number of cores: " + str(allowPara) + '\n\n'
             for txt in titles:
                 col = (int(txt[0]) - 1)
                 if col == refItem:
-                    wr_line += (str(txt[0]) + '. ' + txt[1] + '**' + '\n')
+                    wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '**' + '\n')
                 else:
-                    wr_line += (str(txt[0]) + '. ' + txt[1] + '\n')
+                    wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '\n')
                 # csv_data.append(wr_line)
-            wr_line += ("\nFile: " + f_path + '\n')
-            wr_line += ("\nPattern : Support" + '\n')
+            wr_line += str("\nFile: " + f_path + '\n')
+            wr_line += str("\nPattern : Support" + '\n')
 
             for obj in list_tgp:
                 for i in range(len(obj[0])):
@@ -121,6 +121,6 @@ if __name__ == "__main__":
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
     wr_text += str(res_text)
-    f_name = ('res_temp' + str(end).replace('.', '', 1) + '.txt')
+    f_name = str('res_temp' + str(end).replace('.', '', 1) + '.txt')
     HandleData.write_file(wr_text, f_name)
     print(wr_text)
