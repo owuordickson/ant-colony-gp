@@ -23,7 +23,7 @@ from algorithms.tgraank.graank import graank
 
 class Tgrad:
 
-    def __init__(self, d_set, ref_item, min_sup, min_rep):
+    def __init__(self, d_set, ref_item, min_sup, min_rep, cores):
         # For tgraank
         self.d_set = d_set
         cols = d_set.get_time_cols()
@@ -34,7 +34,7 @@ class Tgrad:
             self.min_sup = min_sup
             self.ref_item = ref_item
             self.max_step = self.get_max_step(min_rep)
-            self.cores = 0
+            self.cores = cores
             # self.multi_data = self.split_dataset()
         else:
             print("Dataset Error")
@@ -45,13 +45,12 @@ class Tgrad:
     def run_tgraank(self, parallel=False):
         if parallel:
             # implement parallel multi-processing
-            # if self.cores > 1:
-            #    num_cores = self.cores
-            # else:
-            #    num_cores = mp.cpu_count()
-            num_cores = Tgrad.get_slurm_cores()
-            if not num_cores:
-                num_cores = mp.cpu_count()
+            if self.cores > 1:
+                num_cores = self.cores
+            else:
+                num_cores = Tgrad.get_slurm_cores()
+                if not num_cores:
+                    num_cores = mp.cpu_count()
             print("No. of cpu cores found: " + str(num_cores))
             print("No. of parallel tasks: " + str(self.max_step))
             self.cores = num_cores

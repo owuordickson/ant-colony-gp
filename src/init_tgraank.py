@@ -32,7 +32,7 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
         if d_set.data:
             titles = d_set.title
             d_set.init_attributes(eq)
-            tgp = Tgrad(d_set, refItem, minSup, minRep)
+            tgp = Tgrad(d_set, refItem, minSup, minRep, allowPara)
             if allowPara >= 1:
                 msg_para = "True"
                 list_tgp = tgp.run_tgraank(parallel=True)
