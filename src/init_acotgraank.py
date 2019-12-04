@@ -32,7 +32,7 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
         if d_set.data:
             titles = d_set.title
             d_set.init_attributes(eq)
-            tgp = TgradACO(d_set, refItem, minSup, minRep, allowPara)
+            tgp = TgradACO(d_set, refItem, minSup, minRep)
             if allowPara >= 1:
                 msg_para = "True"
                 list_tgp = tgp.run_tgraank(parallel=True)
@@ -45,7 +45,7 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
 
             wr_line = "Algorithm: ACO-TGRAANK \n"
             wr_line += "Multi-core execution: " + str(msg_para) + '\n'
-            wr_line += "Number of cores: " + str(allowPara) + '\n\n'
+            wr_line += "Number of cores: " + str(tgp.cores) + '\n\n'
             for txt in titles:
                 col = (int(txt[0]) - 1)
                 if col == refItem:

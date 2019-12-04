@@ -13,8 +13,9 @@ Description: updated version that uses aco-graank and parallel multi-processing
 
 """
 
-from joblib import Parallel, delayed
-import multiprocessing
+# from joblib import Parallel, delayed
+import os
+import multiprocessing as mp
 # from src import HandleData, GradACO
 from algorithms.ant_colony.aco_grad import GradACO
 from algorithms.handle_data.handle_data import HandleData
@@ -22,7 +23,7 @@ from algorithms.handle_data.handle_data import HandleData
 
 class TgradACO:
 
-    def __init__(self, d_set, ref_item, min_sup, min_rep, cores):
+    def __init__(self, d_set, ref_item, min_sup, min_rep):
         # For tgraank
         self.d_set = d_set
         cols = d_set.get_time_cols()
@@ -33,7 +34,7 @@ class TgradACO:
             self.min_sup = min_sup
             self.ref_item = ref_item
             self.max_step = self.get_max_step(min_rep)
-            self.cores = cores
+            self.cores = 0
             # self.multi_data = self.split_dataset()
         else:
             print("Dataset Error")
@@ -44,23 +45,32 @@ class TgradACO:
     def run_tgraank(self, parallel=False):
         if parallel:
             # implement parallel multi-processing
+            # if self.cores > 1:
+            #    num_cores = self.cores
+            # else:
+            #    num_cores = mp.cpu_count()
+            num_cores = TgradACO.get_slurm_cores()
+            if not num_cores:
+                num_cores = mp.cpu_count()
+            print("No. of cpu cores found: " + str(num_cores))
+            print("No. of parallel tasks: " + str(self.max_step))
+            self.cores = num_cores
             steps = range(self.max_step)
-            if self.cores > 1:
-                num_cores = self.cores
-            else:
-                num_cores = multiprocessing.cpu_count()
-            patterns = Parallel(n_jobs=num_cores)(delayed(self.fetch_patterns)(s+1) for s in steps)
+            pool = mp.Pool(num_cores)
+            patterns = pool.map(self.fetch_patterns, steps)
+            # patterns = Parallel(n_jobs=num_cores)(delayed(self.fetch_patterns)(s+1) for s in steps)
+            print("Finished extracting patterns")
             return patterns
         else:
             patterns = list()
-            for s in range(self.max_step):
-                step = s+1  # because for-loop is not inclusive from range: 0 - max_step
+            for step in range(self.max_step):
                 t_pattern = self.fetch_patterns(step)
                 if t_pattern:
                     patterns.append(t_pattern)
             return patterns
 
     def fetch_patterns(self, step):
+        step += 1  # because for-loop is not inclusive from range: 0 - max_step
         # 1. Calculate representativity
         chk_rep, rep_info = self.get_representativity(step)
         # print(rep_info)
@@ -171,3 +181,21 @@ class TgradACO:
                 time_diffs.append(time_diff)
         # print("Time Diff: " + str(time_diff))
         return True, time_diffs
+
+    @staticmethod
+    def get_slurm_cores():
+        try:
+            cores = int(os.environ['SLURM_JOB_CPUS_PER_NODE'])
+            return cores
+        except ValueError:
+            str_cores = str(os.environ['SLURM_JOB_CPUS_PER_NODE'])
+            temp = str_cores.split('(', 1)
+            cpus = int(temp[0])
+            str_nodes = temp[1]
+            temp = str_nodes.split('x', 1)
+            str_temp = str(temp[1]).split(')',1)
+            nodes = int(str_temp[0])
+            cores = cpus * nodes
+            return cores
+        except KeyError:
+            return False
