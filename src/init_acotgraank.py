@@ -45,7 +45,8 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
 
             wr_line = "Algorithm: ACO-TGRAANK \n"
             wr_line += "Multi-core execution: " + str(msg_para) + '\n'
-            wr_line += "Number of cores: " + str(tgp.cores) + '\n\n'
+            wr_line += "Number of cores: " + str(tgp.cores) + '\n'
+            wr_line += "Number of tasks: " + str(tgp.max_step) + '\n\n'
             for txt in titles:
                 col = (int(txt[0]) - 1)
                 if col == refItem:
