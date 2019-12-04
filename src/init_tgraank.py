@@ -53,7 +53,7 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
                     wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '**' + '\n')
                 else:
                     wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '\n')
-                # csv_data.append(wr_line)
+
             wr_line += str("\nFile: " + f_path + '\n')
             wr_line += str("\nPattern : Support" + '\n')
 
