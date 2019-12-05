@@ -18,28 +18,46 @@ Description:
 
 import sys
 from optparse import OptionParser
-from src import HandleData, GradACO
+# from src import HandleData, GradACO
+from algorithms.handle_data.handle_data import HandleData
+from algorithms.ant_colony.aco_grad import GradACO
 
 
 def init_algorithm(f_path, min_supp, eq=False):
     try:
+        wr_line = ""
         d_set = HandleData(f_path)
         if d_set.data:
-            for txt in d_set.title:
-                print(str(txt[0]) + '. '+txt[1])
-            print("\nFile: " + f_path)
-
+            # for txt in d_set.title:
+            #    print(str(txt[0]) + '. '+txt[1])
+            # print("\nFile: " + f_path)
+            titles = d_set.title
             d_set.init_attributes(eq)
             ac = GradACO(d_set)
             list_gp = ac.run_ant_colony(min_supp)
-            print("\nPattern : Support")
+
+            wr_line = "Algorithm: ACO-GRAANK \n"
+            wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
+            wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
+            wr_line += "Number of cores: " + str(ac.cores) + '\n\n'
+
+            for txt in titles:
+                wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '\n')
+
+            wr_line += str("\nFile: " + f_path + '\n')
+            wr_line += str("\nPattern : Support" + '\n')
+
             for gp in list_gp:
-                print(str(gp[1])+' : '+str(gp[0]))
-            print("\nPheromone Matrix")
-            print(ac.p_matrix)
+                wr_line += (str(gp[1]) + ' : ' + str(gp[0]) + '\n')
+
+            wr_line += "\nPheromone Matrix\n"
+            wr_line += str(ac.p_matrix)
             # ac.plot_pheromone_matrix()
+        return wr_line
     except Exception as error:
+        wr_line = "Failed: " + str(error)
         print(error)
+        return wr_line
 
 
 # ------------------------- main method ---------------------------------------------
@@ -81,9 +99,16 @@ if __name__ == "__main__":
             filePath = options.file
         minSup = options.minSup
         allowEq = options.allowEq
+
     import time
+
     start = time.time()
-    init_algorithm(filePath, minSup)
+    res_text = init_algorithm(filePath, minSup)
     end = time.time()
-    print("\n"+str(end-start)+" seconds")
+
+    wr_text = ("Run-time: " + str(end - start) + " seconds\n")
+    wr_text += str(res_text)
+    f_name = str('res_acograd' + str(end).replace('.', '', 1) + '.txt')
+    HandleData.write_file(wr_text, f_name)
+    print(wr_text)
 

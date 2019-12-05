@@ -44,6 +44,8 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
                 list_tgp.sort(key=lambda k: (k[0][0], k[0][1]), reverse=True)
 
             wr_line = "Algorithm: T-GRAANK \n"
+            wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
+            wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
             wr_line += "Multi-core execution: " + str(msg_para) + '\n'
             wr_line += "Number of cores: " + str(tgp.cores) + '\n'
             wr_line += "Number of tasks: " + str(tgp.max_step) + '\n\n'

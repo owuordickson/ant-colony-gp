@@ -14,10 +14,10 @@ Description: updated version that uses aco-graank and parallel multi-processing
 """
 
 # from joblib import Parallel, delayed
-import os
 import multiprocessing as mp
-# from src import HandleData, graank
+# from src import HandleData, GradACO, InitParallel
 from algorithms.handle_data.handle_data import HandleData
+from algorithms.handle_data.multiprocess import InitParallel
 from algorithms.tgraank.graank import graank
 
 
@@ -48,9 +48,8 @@ class Tgrad:
             if self.cores > 1:
                 num_cores = self.cores
             else:
-                num_cores = Tgrad.get_slurm_cores()
-                if not num_cores:
-                    num_cores = mp.cpu_count()
+                num_cores = InitParallel.get_num_cores()
+
             print("No. of cpu cores found: " + str(num_cores))
             print("No. of parallel tasks: " + str(self.max_step))
             self.cores = num_cores
@@ -179,21 +178,3 @@ class Tgrad:
                 time_diffs.append(time_diff)
         # print("Time Diff: " + str(time_diff))
         return True, time_diffs
-
-    @staticmethod
-    def get_slurm_cores():
-        try:
-            cores = int(os.environ['SLURM_JOB_CPUS_PER_NODE'])
-            return cores
-        except ValueError:
-            str_cores = str(os.environ['SLURM_JOB_CPUS_PER_NODE'])
-            temp = str_cores.split('(', 1)
-            cpus = int(temp[0])
-            str_nodes = temp[1]
-            temp = str_nodes.split('x', 1)
-            str_temp = str(temp[1]).split(')', 1)
-            nodes = int(str_temp[0])
-            cores = cpus * nodes
-            return cores
-        except KeyError:
-            return False
