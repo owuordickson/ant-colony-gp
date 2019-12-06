@@ -47,7 +47,7 @@ class GradACO:
                     lag_sols = []
                     repeated = 0
                     all_sols.append(sol_n)
-                    if loss_sols:
+                    if loss_sols or invalid_sols:
                         # check for super-set anti-monotony
                         is_super = GradACO.check_anti_monotony(loss_sols, sol_n, False)
                         is_invalid = GradACO.check_anti_monotony(invalid_sols, sol_n, False)
@@ -67,18 +67,21 @@ class GradACO:
                         else:
                             sol_gen = False
                     # print(supp)
-                    # print(sol_gen)
-                    if supp and (supp >= min_supp) and ([supp, sol_gen] not in win_sols):
-                        win_sols.append([supp, sol_gen])
-                        self.update_pheromone(sol_gen)
-                        if time_diffs is not None:
-                            win_lag_sols.append([supp, lag_sols])
-                        # converging = self.check_convergence()
-                    elif supp and (supp < min_supp) and ([supp, sol_gen] not in loss_sols):
-                        loss_sols.append([supp, sol_gen])
+                    if supp and (supp >= min_supp):  # and ([supp, sol_gen] not in win_sols):
+                        if [supp, sol_gen] not in win_sols:
+                            win_sols.append([supp, sol_gen])
+                            self.update_pheromone(sol_gen)
+                            if time_diffs is not None:
+                                win_lag_sols.append([supp, lag_sols])
+                            # converging = self.check_convergence()
+                    elif supp and (supp < min_supp):  # and ([supp, sol_gen] not in loss_sols):
+                        if [supp, sol_gen] not in loss_sols:
+                            loss_sols.append([supp, sol_gen])
                         # self.update_pheromone(sol_n, False)
                     else:
                         invalid_sols.append([supp, sol_n])
+                        if sol_gen:
+                            invalid_sols.append([supp, sol_gen])
                         # self.update_pheromone(sol_n, False)
                 else:
                     repeated += 1
@@ -95,7 +98,7 @@ class GradACO:
 
     def generate_rand_pattern(self):
         p = self.p_matrix
-        n = len(self.attr_index)  # self.data.column_size
+        n = len(self.attr_index)
         pattern = list()
         count = 0
         for i in range(n):
@@ -152,11 +155,12 @@ class GradACO:
                         self.invalid_bins.append(tuple([obj_i[0], '-']))
                 else:
                     # binary does not exist
-                    return False
+                    return False, False
         if count <= 1:
             return False, False
         else:
-            supp, new_pattern = GradACO.perform_bin_and(bin_data, self.data.size, min_supp, time_diffs)
+            size = len(self.data.attr_data[0][1])
+            supp, new_pattern = GradACO.perform_bin_and(bin_data, size, min_supp, gen_pattern, time_diffs)
             return supp, new_pattern
 
     def update_pheromone(self, pattern):
@@ -217,7 +221,7 @@ class GradACO:
         return result
 
     @staticmethod
-    def perform_bin_and(unsorted_bins, n, thd_supp, t_diffs):
+    def perform_bin_and(unsorted_bins, n, thd_supp, gen_p, t_diffs):
         lst_bin = sorted(unsorted_bins, key=lambda x: x[1])
         final_bin = np.array([])
         pattern = []
@@ -245,6 +249,6 @@ class GradACO:
                     temp_p = [pattern, t_lag]
                     return supp, temp_p
                 else:
-                    return 0, pattern
+                    return -1, pattern
         else:
-            return 0, unsorted_bins
+            return -1, gen_p

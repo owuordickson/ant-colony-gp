@@ -17,7 +17,7 @@ from src import FuzzyMF
 
 def init_graank(T, eq=False):
     res = []
-    n = len(T[1])
+    n = len(T[0])
     for i in range(len(T)):
         npl = str(i + 1) + '+'
         nm = str(i + 1) + '-'

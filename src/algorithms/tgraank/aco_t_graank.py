@@ -34,6 +34,7 @@ class TgradACO:
             self.min_sup = min_sup
             self.ref_item = ref_item
             self.max_step = self.get_max_step(min_rep)
+            self.orig_attr_data = d_set.attr_data
             self.cores = cores
             # self.multi_data = self.split_dataset()
         else:
@@ -73,11 +74,14 @@ class TgradACO:
         # print(rep_info)
         if chk_rep:
             # 2. Transform data
+            self.d_set.attr_data = self.orig_attr_data
             data, time_diffs = self.transform_data(step)
-            d_set = HandleData("", attr_data=[self.d_set.column_size, data])
+            self.d_set.attr_data = data
+            self.d_set.lst_bin = []
+            # d_set = HandleData("", attr_data=[self.d_set.column_size, data])
 
             # 3. Execute aco-graank for each transformation
-            ac = GradACO(d_set)
+            ac = GradACO(self.d_set)
             list_gp = ac.run_ant_colony(self.min_sup, time_diffs)
             # print("\nPheromone Matrix")
             # print(ac.p_matrix)
@@ -115,13 +119,13 @@ class TgradACO:
                         tuples = obj[1]
                         temp_tuples = list()
                         if (col_index - 1) == ref_col:
-                            # reference attribute (skip)
+                            # reference attribute
                             for i in range(size-step):
                                 temp_tuples.append(tuples[i])
                         else:
                             for i in range(step, size):
                                 temp_tuples.append(tuples[i])
-                        var_attr = [col_index, temp_tuples]
+                        var_attr = [str(col_index), temp_tuples]
                         new_data.append(var_attr)
                     return new_data, time_diffs
         else:

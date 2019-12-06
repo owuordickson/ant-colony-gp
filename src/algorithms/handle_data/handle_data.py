@@ -16,42 +16,26 @@ import numpy as np
 
 class HandleData:
 
-    def __init__(self, file_path, attr_data=None):
-        if attr_data is None:
-            # For aco-grad
-            self.raw_data = HandleData.read_csv(file_path)
-            if len(self.raw_data) == 0:
-                self.data = False
-                print("csv file read error")
-                raise Exception("Unable to read csv file")
-            else:
-                print("Data fetched from csv file")
-                self.data = self.raw_data
-                self.title = self.get_title()
-                self.attr_index = self.get_attributes()
-                self.column_size = self.get_attribute_no()
-                self.size = self.get_size()
-                self.thd_supp = False
-                self.equal = False
-                self.attr_data = []
-                self.lst_bin = []
+    def __init__(self, file_path):
+        self.raw_data = HandleData.read_csv(file_path)
+        if len(self.raw_data) == 0:
+            self.data = False
+            print("csv file read error")
+            raise Exception("Unable to read csv file")
         else:
-            print("Dataset copied")
-            self.raw_data = None
-            self.column_size = attr_data[0]
-            self.attr_data = attr_data[1]
-            # self.title =
-            self.attr_index = self.get_attributes(self.attr_data)
-            self.size = self.get_size(self.attr_data)
+            print("Data fetched from csv file")
+            self.data = self.raw_data
+            self.title = self.get_title()
+            self.attr_index = self.get_attributes()
+            self.column_size = self.get_attribute_no()
+            self.size = self.get_size()
             self.thd_supp = False
             self.equal = False
+            self.attr_data = []
             self.lst_bin = []
 
-    def get_size(self, attr_data=None):
-        if attr_data is None:
-            size = len(self.raw_data)
-        else:
-            size = len(attr_data[0][1])
+    def get_size(self):
+        size = len(self.raw_data)
         return size
 
     def get_attribute_no(self):
@@ -75,21 +59,17 @@ class HandleData:
                 del self.data[0]
                 return title
 
-    def get_attributes(self, attr_data=None):
+    def get_attributes(self):
         attr = []
-        if attr_data is None:
-            time_cols = self.get_time_cols()
-            for i in range(len(self.title)):
-                temp_attr = self.title[i]
-                indx = int(temp_attr[0])
-                if len(time_cols) > 0 and ((indx-1) in time_cols):
-                    # exclude date-time column
-                    continue
-                else:
-                    attr.append(temp_attr[0])
-        else:
-            for obj in attr_data:
-                attr.append(obj[0])
+        time_cols = self.get_time_cols()
+        for i in range(len(self.title)):
+            temp_attr = self.title[i]
+            indx = int(temp_attr[0])
+            if len(time_cols) > 0 and ((indx-1) in time_cols):
+                # exclude date-time column
+                continue
+            else:
+                attr.append(temp_attr[0])
         return attr
 
     def get_time_cols(self):
