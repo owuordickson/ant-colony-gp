@@ -1,35 +1,37 @@
 # -*- coding: utf-8 -*-
 """
-@author: "Dickson Owuor"
-@credits: "Joseph Orero and Anne Laurent,"
-@license: "MIT"
-@version: "2.0"
-@email: "owuordickson@gmail.com"
-@created: "19 November 2019"
-@modified: "22 November 2019"
+@author: Olivier + modif MJL+MR 140316
+@created on Fri Jun 12 14:31:16 2015
+
+@modified by D. Owuor 06 December 2019
 
 """
 
 import numpy as np
 import gc
-from src import FuzzyMF
+# from src import FuzzyMF
+from algorithms.tgraank.fuzzy_mf import FuzzyMF
 
 
 def init_graank(T, eq=False):
     res = []
-    n = len(T[0])
+    n = len(T[0][1])
     for i in range(len(T)):
-        npl = str(i + 1) + '+'
-        nm = str(i + 1) + '-'
+        # npl = str(i + 1) + '+'
+        # nm = str(i + 1) + '-'
+        attr = T[i][0]
+        bin = T[i][1]
+        npl = str(attr) + '+'
+        nm = str(attr) + '-'
         tempp = np.zeros((n, n), dtype='bool')
         tempm = np.zeros((n, n), dtype='bool')
         for j in range(n):
             for k in range(j + 1, n):
-                if T[i][j] > T[i][k]:
+                if bin[j] > bin[k]:
                     tempp[j][k] = 1
                     tempm[k][j] = 1
                 else:
-                    if T[i][j] < T[i][k]:
+                    if bin[j] < bin[k]:
                         # print (j,k)
                         tempm[j][k] = 1
                         tempp[k][j] = 1
@@ -39,8 +41,8 @@ def init_graank(T, eq=False):
                             tempp[k][j] = 1
                             tempp[j][k] = 1
                             tempm[k][j] = 1
-        res.append((set([npl]), tempp))
-        res.append((set([nm]), tempm))
+        res.append(({npl}, tempp))
+        res.append(({nm}, tempm))
     return res
 
 
@@ -95,7 +97,7 @@ def graank(T, a, t_diffs=None, eq=False):
     res = []
     res2 = []
     res3 = []
-    n = len(T[0])
+    n = len(T[0][1])
     G = init_graank(T, eq)
     for i in G:
         temp = float(np.sum(i[1])) / float(n * (n - 1.0) / 2.0)

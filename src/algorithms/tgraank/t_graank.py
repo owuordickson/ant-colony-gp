@@ -18,7 +18,7 @@ import multiprocessing as mp
 # from src import HandleData, GradACO, InitParallel
 from algorithms.handle_data.handle_data import HandleData
 from algorithms.handle_data.multiprocess import InitParallel
-from algorithms.tgraank.graank import graank
+from algorithms.ant_colony.graank import graank
 
 
 class Tgrad:
@@ -121,8 +121,8 @@ class Tgrad:
                         else:
                             for i in range(step, size):
                                 temp_tuples.append(tuples[i])
-                        # var_attr = [col_index, temp_tuples]
-                        new_data.append(temp_tuples)
+                        var_attr = [col_index, temp_tuples]
+                        new_data.append(var_attr)
                     return new_data, time_diffs
         else:
             msg = "Fatal Error: Time format in column could not be processed"
