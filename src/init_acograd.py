@@ -19,6 +19,7 @@ Description:
 import sys
 from optparse import OptionParser
 # from src import HandleData, GradACO
+from algorithms.handle_data.multiprocess import InitParallel
 from algorithms.handle_data.handle_data import HandleData
 from algorithms.ant_colony.aco_grad import GradACO
 
@@ -40,7 +41,7 @@ def init_algorithm(f_path, min_supp, eq=False):
             wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
             wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
             wr_line += "Minimum support: " + str(min_supp) + '\n'
-            wr_line += "Number of cores: " + str(ac.cores) + '\n\n'
+            wr_line += "Number of cores: " + str(InitParallel.get_num_cores()) + '\n\n'
 
             for txt in titles:
                 wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '\n')

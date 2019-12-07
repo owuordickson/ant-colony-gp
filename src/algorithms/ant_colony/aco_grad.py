@@ -14,7 +14,6 @@ import random as rand
 # import matplotlib.pyplot as plt
 # from src import FuzzyMF
 from algorithms.tgraank.fuzzy_mf import FuzzyMF
-from algorithms.handle_data.multiprocess import InitParallel
 
 
 class GradACO:
@@ -26,7 +25,6 @@ class GradACO:
         self.p_matrix = np.ones((self.data.column_size, 3), dtype=int)
         self.valid_bins = []
         self.invalid_bins = []
-        self.cores = InitParallel.get_num_cores()
 
     def run_ant_colony(self, min_supp, time_diffs=None):
         all_sols = list()
