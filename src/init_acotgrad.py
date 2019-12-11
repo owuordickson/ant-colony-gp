@@ -8,7 +8,7 @@
 @created: "19 November 2019"
 
 Usage:
-    $python3 init_acotgraank.py -f ../data/DATASET.csv -c 0 -s 0.5 -r 0.5 -p 1
+    $python3 init_acotgrad.py -f ../data/DATASET.csv -c 0 -s 0.5 -r 0.5 -p 1
 
 Description:
     f -> file path (CSV)
@@ -115,7 +115,7 @@ if __name__ == "__main__":
         inFile = None
         if options.file is None:
             print('No data-set filename specified, system with exit')
-            print("Usage: $python3 init_acotgraank.py -f filename.csv -c refColumn -s minSup  -r minRep")
+            print("Usage: $python3 init_acotgrad.py -f filename.csv -c refColumn -s minSup  -r minRep")
             sys.exit('System will exit')
         else:
             inFile = options.file

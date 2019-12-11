@@ -24,24 +24,26 @@ from algorithms.handle_data.handle_data import HandleData
 from algorithms.ant_colony.aco_grad import GradACO
 
 
-def init_algorithm(f_path, min_supp, eq=False):
+def init_algorithm(f_path, min_supp, cores, eq=False):
     try:
         wr_line = ""
         d_set = HandleData(f_path)
         if d_set.data:
-            # for txt in d_set.title:
-            #    print(str(txt[0]) + '. '+txt[1])
-            # print("\nFile: " + f_path)
             titles = d_set.title
             d_set.init_attributes(eq)
             ac = GradACO(d_set)
             list_gp = ac.run_ant_colony(min_supp)
 
+            if cores > 1:
+                num_cores = cores
+            else:
+                num_cores = InitParallel.get_num_cores()
+
             wr_line = "Algorithm: ACO-GRAANK \n"
             wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
             wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
             wr_line += "Minimum support: " + str(min_supp) + '\n'
-            wr_line += "Number of cores: " + str(InitParallel.get_num_cores()) + '\n\n'
+            wr_line += "Number of cores: " + str(num_cores) + '\n\n'
 
             for txt in titles:
                 wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '\n')
@@ -93,6 +95,11 @@ if __name__ == "__main__":
                              help='allow equal',
                              default=None,
                              type='int')
+        optparser.add_option('-c', '--cores',
+                             dest='numCores',
+                             help='number of cores',
+                             default=1,
+                             type='int')
         (options, args) = optparser.parse_args()
 
         if options.file is None:
@@ -102,11 +109,12 @@ if __name__ == "__main__":
             filePath = options.file
         minSup = options.minSup
         allowEq = options.allowEq
+        numCores = options.numCores
 
     import time
 
     start = time.time()
-    res_text = init_algorithm(filePath, minSup)
+    res_text = init_algorithm(filePath, minSup, numCores)
     end = time.time()
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
