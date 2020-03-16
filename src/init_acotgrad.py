@@ -40,8 +40,8 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
                 msg_para = "False"
                 list_tgp = tgp.run_tgraank()
             list_tgp = list(filter(bool, list_tgp))
-            if len(list_tgp) > 5:
-                list_tgp.sort(key=lambda k: (k[0][0], k[0][1]), reverse=True)
+            # if len(list_tgp) > 5:
+            list_tgp.sort(key=lambda k: (k[0][0], k[0][1]), reverse=True)
 
             wr_line = "Algorithm: ACO-TGRAANK \n"
             wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
@@ -63,8 +63,9 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
 
             for obj in list_tgp:
                 if obj:
-                    tgp = obj[0]
-                    wr_line += (str(HandleData.format_gp(tgp[1][0])) + ' : ' + str(tgp[0]) + ' | ' + str(tgp[1][1]) + '\n')
+                    for tgp in obj:
+                        # tgp = obj[0]
+                        wr_line += (str(HandleData.format_gp(tgp[1][0])) + ' : ' + str(tgp[0]) + ' | ' + str(tgp[1][1]) + '\n')
         #    print("\nPheromone Matrix")
         #    print(ac.p_matrix)
         return wr_line
