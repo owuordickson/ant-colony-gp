@@ -52,7 +52,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
             wr_line += str("\nPattern : Support" + '\n')
 
             for gp in list_gp:
-                wr_line += (str(gp[1]) + ' : ' + str(gp[0]) + '\n')
+                wr_line += (str(HandleData.format_gp(gp[1])) + ' : ' + str(gp[0]) + '\n')
 
             wr_line += "\nPheromone Matrix\n"
             wr_line += str(ac.p_matrix)

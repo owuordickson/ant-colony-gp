@@ -196,3 +196,14 @@ class HandleData:
                 return False
         except ValueError:
             return False
+
+    @staticmethod
+    def format_gp(obj_gp):
+        arr_gp = list(obj_gp)
+        new_gp = list()
+        for item in arr_gp:
+            attr = int(item[0])
+            sign = item[1]
+            str_gp = str(attr) + sign
+            new_gp.append(str_gp)
+        return set(new_gp)

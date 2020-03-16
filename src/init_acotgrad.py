@@ -64,7 +64,7 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
             for obj in list_tgp:
                 if obj:
                     tgp = obj[0]
-                    wr_line += (str(tgp[1][0]) + ' : ' + str(tgp[0]) + ' | ' + str(tgp[1][1]) + '\n')
+                    wr_line += (str(HandleData.format_gp(tgp[1][0])) + ' : ' + str(tgp[0]) + ' | ' + str(tgp[1][1]) + '\n')
         #    print("\nPheromone Matrix")
         #    print(ac.p_matrix)
         return wr_line
