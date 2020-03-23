@@ -54,7 +54,7 @@ class HandleData:
                 for i in range(len(data[0])):
                     # sub = (str(i + 1) + ' : ' + data[0][i])
                     # sub = data[0][i]
-                    sub = [str(i+1), data[0][i]]
+                    sub = [str(i), data[0][i]]
                     title.append(sub)
                 del self.data[0]
                 return title
