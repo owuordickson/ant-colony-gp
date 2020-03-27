@@ -11,7 +11,7 @@ TGP: Temporal Gradual Pattern
 
 """
 
-from src.algorithms.handle_data.handle_data import HandleData
+from algorithms.handle_data.handle_data import HandleData
 
 
 class GP:
