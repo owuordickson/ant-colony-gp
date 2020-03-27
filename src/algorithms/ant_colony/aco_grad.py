@@ -3,17 +3,18 @@
 @author: "Dickson Owuor"
 @credits: "Thomas Runkler, Edmond Menya, and Anne Laurent,"
 @license: "MIT"
-@version: "1.0"
+@version: "2.0"
 @email: "owuordickson@gmail.com"
 @created: "12 July 2019"
+@modified: "28 March 2019"
 
 """
 
 import numpy as np
 import random as rand
 # import matplotlib.pyplot as plt
-# from src import FuzzyMF
-from algorithms.tgraank.fuzzy_mf import FuzzyMF
+from src.algorithms.tgraank.fuzzy_mf import FuzzyMF
+from src.algorithms.ant_colony.gp import GP, TGP
 
 
 class GradACO:
@@ -22,11 +23,17 @@ class GradACO:
         self.data = d_set
         self.attr_index = self.data.attr_index
         self.e_factor = 0  # evaporation factor
-        self.p_matrix = np.ones((self.data.column_size, 3), dtype=int)
+        self.p_matrix = np.ones((self.data.column_size, 3), dtype=float)
+        self.steps_matrix = np.zeros((self.data.column_size, 3), dtype=int)
+        self.tstamp_matrix = False
+        self.sup_matrix = []
         self.valid_bins = []
         self.invalid_bins = []
+        self.extracted_patterns = []
 
     def run_ant_colony(self, min_supp, time_diffs=None):
+        col_size = self.data.column_size
+        self.tstamp_matrix = [[[] for i in range(3)] for j in range(col_size)]
         all_sols = list()
         win_sols = list()
         win_lag_sols = list()
@@ -68,9 +75,13 @@ class GradACO:
                     if supp and (supp >= min_supp):  # and ([supp, sol_gen] not in win_sols):
                         if [supp, sol_gen] not in win_sols:
                             win_sols.append([supp, sol_gen])
-                            self.update_pheromone(sol_gen)
+                            # self.update_pheromone(sol_gen, supp)
+                            # print(lag_sols)
                             if time_diffs is not None:
                                 win_lag_sols.append([supp, lag_sols])
+                                self.update_pheromone(sol_gen, supp, lag_sols[2])
+                            else:
+                                self.update_pheromone(sol_gen, supp)
                             # converging = self.check_convergence()
                     elif supp and (supp < min_supp):  # and ([supp, sol_gen] not in loss_sols):
                         if [supp, sol_gen] not in loss_sols:
@@ -90,9 +101,12 @@ class GradACO:
         # print("Losers: "+str(len(loss_sols)))
         # print(count)
         if time_diffs is None:
+            self.tstamp_matrix = False
+            self.extracted_patterns = win_sols
             return GradACO.remove_subsets(win_sols)
             # return win_sols
         else:
+            self.extracted_patterns = win_lag_sols
             return GradACO.remove_subsets(win_lag_sols, True)
             # return win_lag_sols
 
@@ -163,22 +177,27 @@ class GradACO:
             supp, new_pattern = GradACO.perform_bin_and(bin_data, size, min_supp, gen_pattern, time_diffs)
             return supp, new_pattern
 
-    def update_pheromone(self, pattern):
+    def update_pheromone(self, pattern, sup, t_stamp=None):
         lst_attr = []
         for obj in pattern:
+            # print(obj)
             attr = int(obj[0])
             lst_attr.append(attr)
             symbol = obj[1]
             i = attr
             if symbol == '+':
-                self.p_matrix[i][0] += 1
+                self.p_matrix[i][0] += sup
+                self.steps_matrix[i][0] += 1
+                self.tstamp_matrix[i][0].append(t_stamp)
             elif symbol == '-':
-                self.p_matrix[i][1] += 1
+                self.p_matrix[i][1] += sup
+                self.steps_matrix[i][1] += 1
+                self.tstamp_matrix[i][1].append(t_stamp)
         for index in self.data.attr_index:
             if int(index) not in lst_attr:
                 # print(obj)
                 i = int(index) - 1
-                self.p_matrix[i][2] += 1
+                self.p_matrix[i][2] += sup
 
     def plot_pheromone_matrix(self):
         x_plot = np.array(self.p_matrix)
@@ -244,9 +263,9 @@ class GradACO:
             if t_diffs is None:
                 return supp, pattern
             else:
-                t_lag = FuzzyMF.calculate_time_lag(FuzzyMF.get_patten_indices(final_bin), t_diffs, thd_supp)
+                t_lag, t_stamp = FuzzyMF.calculate_time_lag(FuzzyMF.get_patten_indices(final_bin), t_diffs, thd_supp)
                 if t_lag:
-                    temp_p = [pattern, t_lag]
+                    temp_p = [pattern, t_lag, t_stamp]
                     return supp, temp_p
                 else:
                     return -1, pattern
@@ -262,14 +281,18 @@ class GradACO:
                 is_sub = GradACO.check_subset(sol, all_sols)
                 # print(is_sub)
                 if not is_sub:
-                    new_sols.append(item)
+                    if item:
+                        gp = GP(item)
+                        new_sols.append(gp)
         else:
             for item in all_sols:
                 sol = set(item[1][0])
                 is_sub = GradACO.check_subset(sol, all_sols, temporal)
                 # print(is_sub)
                 if not is_sub:
-                    new_sols.append(item)
+                    if item:
+                        tgp = TGP(item)
+                        new_sols.append(tgp)
         # print(new_sols)
         return new_sols
 

@@ -3,9 +3,10 @@
 @author: "Dickson Owuor"
 @credits: "Anne Laurent and Joseph Orero"
 @license: "MIT"
-@version: "1.0"
+@version: "2.0"
 @email: "owuordickson@gmail.com"
 @created: "20 November 2019"
+@modified: "28 March 2019"
 
 """
 
@@ -19,8 +20,8 @@ class FuzzyMF:
     @staticmethod
     def init_fuzzy_support(test_members, all_members, minsup):
         boundaries, extremes = FuzzyMF.get_membership_boundaries(all_members)
-        value, sup = FuzzyMF.approximate_fuzzy_support(minsup, test_members, boundaries, extremes)
-        return value, sup
+        t_stamp, value, sup = FuzzyMF.approximate_fuzzy_support(minsup, test_members, boundaries, extremes)
+        return t_stamp, value, sup
 
     @staticmethod
     def get_membership_boundaries(members):
@@ -65,7 +66,7 @@ class FuzzyMF:
 
             if sup >= minsup:
                 value = FuzzyMF.get_time_format(b)
-                return value, sup
+                return b, value, sup
             else:
                 if not slide_left:
                     # 7. Slide to the left to change boundaries
@@ -99,7 +100,7 @@ class FuzzyMF:
                     expand = True
                 else:
                     value = FuzzyMF.get_time_format(b1)
-                    return value, False
+                    return b1, value, False
 
     @staticmethod
     def calculate_support(memberships):
@@ -155,12 +156,13 @@ class FuzzyMF:
     @staticmethod
     def calculate_time_lag(indices, time_diffs, minsup):
         time_lags = FuzzyMF.get_time_lags(indices, time_diffs)
-        time_lag, sup = FuzzyMF.init_fuzzy_support(time_lags, time_diffs, minsup)
+        t_stamp, time_lag, sup = FuzzyMF.init_fuzzy_support(time_lags, time_diffs, minsup)
         if sup >= minsup:
-            msg = ("~ " + time_lag[0] + str(time_lag[1]) + " " + str(time_lag[2]) + " : " + str(sup))
-            return msg
+            txt = ("~ " + time_lag[0] + str(time_lag[1]) + " " + str(time_lag[2]) + " : " + str(sup))
+            msg = [t_stamp, sup]
+            return txt, msg
         else:
-            return False
+            return False, False
 
     @staticmethod
     def get_patten_indices(D):
