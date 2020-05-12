@@ -20,9 +20,11 @@ Description:
 
 import sys
 from optparse import OptionParser
+import tracemalloc
 # from src import HandleData, TgradACO
 from algorithms.handle_data.handle_data import HandleData
 from algorithms.tgraank.aco_t_graank import TgradACO
+from algorithms.handle_data.multiprocess import InitParallel
 
 
 def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
@@ -127,10 +129,13 @@ if __name__ == "__main__":
 
     import time
     start = time.time()
+    tracemalloc.start()
     res_text = init_algorithm(file_path, ref_col, min_sup, min_rep, allow_p)
+    snapshot = tracemalloc.take_snapshot()
     end = time.time()
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
+    wr_text += (InitParallel.get_quick_mem_use(snapshot) + "\n")
     wr_text += str(res_text)
     f_name = str('res_aco' + str(end).replace('.', '', 1) + '.txt')
     HandleData.write_file(wr_text, f_name)

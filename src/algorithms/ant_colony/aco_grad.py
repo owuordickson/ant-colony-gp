@@ -6,7 +6,7 @@
 @version: "2.0"
 @email: "owuordickson@gmail.com"
 @created: "12 July 2019"
-@modified: "28 March 2019"
+@modified: "12 May 2020"
 
 """
 
@@ -23,17 +23,11 @@ class GradACO:
         self.data = d_set
         self.attr_index = self.data.attr_index
         self.e_factor = 0  # evaporation factor
-        self.p_matrix = np.ones((self.data.column_size, 3), dtype=float)
-        self.steps_matrix = np.zeros((self.data.column_size, 3), dtype=int)
-        self.tstamp_matrix = False
-        self.sup_matrix = []
+        self.p_matrix = np.ones((self.data.column_size, 3), dtype=int)
         self.valid_bins = []
         self.invalid_bins = []
-        self.extracted_patterns = []
 
     def run_ant_colony(self, min_supp, time_diffs=None):
-        col_size = self.data.column_size
-        self.tstamp_matrix = [[[] for i in range(3)] for j in range(col_size)]
         all_sols = list()
         win_sols = list()
         win_lag_sols = list()
@@ -75,13 +69,10 @@ class GradACO:
                     if supp and (supp >= min_supp):  # and ([supp, sol_gen] not in win_sols):
                         if [supp, sol_gen] not in win_sols:
                             win_sols.append([supp, sol_gen])
-                            # self.update_pheromone(sol_gen, supp)
+                            self.update_pheromone(sol_gen)
                             # print(lag_sols)
                             if time_diffs is not None:
                                 win_lag_sols.append([supp, lag_sols])
-                                self.update_pheromone(sol_gen, supp, lag_sols[2])
-                            else:
-                                self.update_pheromone(sol_gen, supp)
                             # converging = self.check_convergence()
                     elif supp and (supp < min_supp):  # and ([supp, sol_gen] not in loss_sols):
                         if [supp, sol_gen] not in loss_sols:
@@ -101,12 +92,9 @@ class GradACO:
         # print("Losers: "+str(len(loss_sols)))
         # print(count)
         if time_diffs is None:
-            self.tstamp_matrix = False
-            self.extracted_patterns = win_sols
             return GradACO.remove_subsets(win_sols)
             # return win_sols
         else:
-            self.extracted_patterns = win_lag_sols
             return GradACO.remove_subsets(win_lag_sols, True)
             # return win_lag_sols
 
@@ -177,7 +165,7 @@ class GradACO:
             supp, new_pattern = GradACO.perform_bin_and(bin_data, size, min_supp, gen_pattern, time_diffs)
             return supp, new_pattern
 
-    def update_pheromone(self, pattern, sup, t_stamp=None):
+    def update_pheromone(self, pattern):
         lst_attr = []
         for obj in pattern:
             # print(obj)
@@ -186,18 +174,14 @@ class GradACO:
             symbol = obj[1]
             i = attr
             if symbol == '+':
-                self.p_matrix[i][0] += sup
-                self.steps_matrix[i][0] += 1
-                self.tstamp_matrix[i][0].append(t_stamp)
+                self.p_matrix[i][0] += 1
             elif symbol == '-':
-                self.p_matrix[i][1] += sup
-                self.steps_matrix[i][1] += 1
-                self.tstamp_matrix[i][1].append(t_stamp)
+                self.p_matrix[i][1] += 1
         for index in self.data.attr_index:
             if int(index) not in lst_attr:
                 # print(obj)
                 i = int(index) - 1
-                self.p_matrix[i][2] += sup
+                self.p_matrix[i][2] += 1
 
     def plot_pheromone_matrix(self):
         x_plot = np.array(self.p_matrix)
