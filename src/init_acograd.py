@@ -18,8 +18,7 @@ Description:
 
 import sys
 from optparse import OptionParser
-import tracemalloc
-# from src import HandleData, GradACO
+# import tracemalloc
 from algorithms.handle_data.multiprocess import InitParallel
 from algorithms.handle_data.handle_data import HandleData
 from algorithms.ant_colony.aco_grad import GradACO
@@ -115,15 +114,15 @@ if __name__ == "__main__":
     import time
 
     start = time.time()
-    tracemalloc.start()
+    #tracemalloc.start()
     res_text = init_algorithm(filePath, minSup, numCores)
-    snapshot = tracemalloc.take_snapshot()
+    #snapshot = tracemalloc.take_snapshot()
     end = time.time()
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
-    wr_text += (InitParallel.get_quick_mem_use(snapshot) + "\n")
+    #wr_text += (InitParallel.get_quick_mem_use(snapshot) + "\n")
     wr_text += str(res_text)
     f_name = str('res_acograd' + str(end).replace('.', '', 1) + '.txt')
-    HandleData.write_file(wr_text, f_name)
+    #HandleData.write_file(wr_text, f_name)
     print(wr_text)
 

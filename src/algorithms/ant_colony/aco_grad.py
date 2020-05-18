@@ -37,7 +37,7 @@ class GradACO:
         # converging = False
         # while not converging:
         repeated = 0
-        while repeated < 5:
+        while repeated < 1:
             # count += 1
             sol_n = self.generate_rand_pattern()
             # print(sol_n)

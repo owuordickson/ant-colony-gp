@@ -57,6 +57,7 @@ class HandleData:
                     sub = [str(i), data[0][i]]
                     title.append(sub)
                 del self.data[0]
+                print(title)
                 return title
 
     def get_attributes(self):
@@ -65,11 +66,12 @@ class HandleData:
         for i in range(len(self.title)):
             temp_attr = self.title[i]
             indx = int(temp_attr[0])
-            if len(time_cols) > 0 and ((indx-1) in time_cols):
+            if len(time_cols) > 0 and (indx in time_cols):
                 # exclude date-time column
                 continue
             else:
                 attr.append(temp_attr[0])
+        print(attr)
         return attr
 
     def get_time_cols(self):
