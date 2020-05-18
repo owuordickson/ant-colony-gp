@@ -19,7 +19,7 @@ class Dataset:
     def __init__(self, file_path):
         data = Dataset.read_csv(file_path)
         if len(data) == 0:
-            self.data = False
+            self.data = np.array()
             print("csv file read error")
             raise Exception("Unable to read csv file")
         else:
@@ -36,27 +36,30 @@ class Dataset:
             self.lst_bin = []
 
     def get_size(self):
-        size = len(self.data)
+        size = self.data.shape[0]
         if self.title.size > 0:
             size += 1
         return size
 
     def get_attribute_no(self):
-        count = len(self.data[0])
+        count = self.data.shape[1]
         return count
 
     def get_title(self):
         # data = self.raw_data
         if self.data[0][0].replace('.', '', 1).isdigit() or self.data[0][0].isdigit():
-            return False
+            self.data = np.asarray(self.data)
+            return np.array()
         else:
             if self.data[0][1].replace('.', '', 1).isdigit() or self.data[0][1].isdigit():
-                return False
+                self.data = np.asarray(self.data)
+                return np.array()
             else:
                 keys = np.arange(len(self.data[0]))
                 values = self.data[0]
                 title = np.rec.fromarrays((keys, values), names=('key', 'value'))
                 del self.data[0]
+                self.data = np.asarray(self.data)
                 return title
 
     def get_attributes(self):
@@ -95,17 +98,7 @@ class Dataset:
         # (check) implement parallel multiprocessing
         # re-structure csv data into an array
         self.equal = eq
-        for col in range(self.column_size):
-            if self.time_cols.size > 0 and (col in self.time_cols):
-                # exclude date-time column
-                continue
-            else:
-                # get all tuples of an attribute/column
-                raw_tuples = []
-                for row in range(len(self.data)):
-                    raw_tuples.append(float(self.data[row][col]))
-                attr_data = [self.title[col].key, raw_tuples]
-                self.attr_data.append(attr_data)
+        self.attr_data = np.transpose(self.data)
 
     def get_bin_rank(self, attr_data, symbol):
         # execute binary rank to calculate support of pattern

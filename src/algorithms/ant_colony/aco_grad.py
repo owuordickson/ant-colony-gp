@@ -139,12 +139,15 @@ class GradACO:
                         count += 1
                         break
             else:
-                attr_data = False
-                for obj in self.data.attr_data:
-                    if obj[0] == obj_i[0]:
-                        attr_data = obj
-                        break
-                if attr_data:
+                #attr_data = False
+                try:
+                    attr_data = [obj_i[0], self.data.attr_data[obj_i[0]]]
+                #print(attr_data)
+                #for obj in self.data.attr_data:
+                #    if obj[0] == obj_i[0]:
+                #        attr_data = obj
+                #        break
+                #if attr_data:
                     supp, temp_bin = self.data.get_bin_rank(attr_data, obj_i[1])
                     if supp >= min_supp:
                         self.valid_bins.append(tuple([obj_i[0], '+']))
@@ -155,13 +158,14 @@ class GradACO:
                     else:
                         self.invalid_bins.append(tuple([obj_i[0], '+']))
                         self.invalid_bins.append(tuple([obj_i[0], '-']))
-                else:
+                except IndexError:
                     # binary does not exist
                     return False, False
         if count <= 1:
             return False, False
         else:
-            size = len(self.data.attr_data[0][1])
+            #size = len(self.data.attr_data[0][1])
+            size = self.data.attr_data.shape[1]
             supp, new_pattern = GradACO.perform_bin_and(bin_data, size, min_supp, gen_pattern, time_diffs)
             return supp, new_pattern
 

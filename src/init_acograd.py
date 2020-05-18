@@ -28,7 +28,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
     try:
         wr_line = ""
         d_set = Dataset(f_path)
-        if d_set.data:
+        if d_set.data.size > 0:
             titles = d_set.title
             d_set.init_attributes(eq)
             ac = GradACO(d_set)
