@@ -19,15 +19,15 @@ Description:
 import sys
 from optparse import OptionParser
 import tracemalloc
-from src.algorithms.handle_data.multiprocess import InitParallel
-from src.algorithms.handle_data.handle_data import HandleData
+from src.algorithms.common.profile import Profile
+from src.algorithms.common.dataset import Dataset
 from src.algorithms.ant_colony.aco_grad import GradACO
 
 
 def init_algorithm(f_path, min_supp, cores, eq=False):
     try:
         wr_line = ""
-        d_set = HandleData(f_path)
+        d_set = Dataset(f_path)
         if d_set.data:
             titles = d_set.title
             d_set.init_attributes(eq)
@@ -37,7 +37,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
             if cores > 1:
                 num_cores = cores
             else:
-                num_cores = InitParallel.get_num_cores()
+                num_cores = Profile.get_num_cores()
 
             wr_line = "Algorithm: ACO-GRAANK \n"
             wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'

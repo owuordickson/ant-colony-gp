@@ -24,8 +24,8 @@ modules = cythonize("src/algorithms/handle_data/cyt_handle_data.pyx", annotate=T
 
 
 setup(
-    name='aco-graank',
-    version='1.0',
+    name='aco-grad',
+    version='2.0',
     description="A Python implementation of ant colony optimization of the GRAANK algorithm.",
     long_description=readme + '\n\n' + history,
     author="Dickson Owuor",
@@ -37,7 +37,7 @@ setup(
     ext_modules=modules,
     license="MIT",
     zip_safe=False,
-    keywords='aco, graank',
+    keywords='aco, graank, gradual patterns',
     classifiers=[
         'Development Status :: 1 - Production/Stable',
         'Intended Audience :: Developers',

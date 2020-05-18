@@ -16,8 +16,8 @@ Description: updated version that uses aco-graank and parallel multi-processing
 # from joblib import Parallel, delayed
 import multiprocessing as mp
 # from src import HandleData, GradACO, InitParallel
-from src.algorithms.handle_data.handle_data import HandleData
-from src.algorithms.handle_data.multiprocess import InitParallel
+from src.algorithms.common.dataset import Dataset
+from src.algorithms.common.profile import Profile
 from src.algorithms.ant_colony.graank import graank
 
 
@@ -48,7 +48,7 @@ class Tgrad:
             if self.cores > 1:
                 num_cores = self.cores
             else:
-                num_cores = InitParallel.get_num_cores()
+                num_cores = Profile.get_num_cores()
 
             print("No. of cpu cores found: " + str(num_cores))
             print("No. of parallel tasks: " + str(self.max_step))
@@ -170,8 +170,8 @@ class Tgrad:
                     temp_1 = " "+str(data[i][int(col)])
                     temp_2 = " "+str(data[i + step][int(col)])
                     break
-                stamp_1 = HandleData.get_timestamp(temp_1)
-                stamp_2 = HandleData.get_timestamp(temp_2)
+                stamp_1 = Dataset.get_timestamp(temp_1)
+                stamp_2 = Dataset.get_timestamp(temp_2)
                 if (not stamp_1) or (not stamp_2):
                     return False, [i + 1, i + step + 1]
                 time_diff = (stamp_2 - stamp_1)

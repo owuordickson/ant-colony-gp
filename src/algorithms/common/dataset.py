@@ -6,7 +6,6 @@
 @version: "1.0"
 @email: "owuordickson@gmail.com"
 @created: "12 July 2019"
-@modified: "18 May 2020"
 
 """
 import csv
@@ -15,10 +14,10 @@ import time
 import numpy as np
 
 
-cdef class HandleData:
+class Dataset:
 
     def __init__(self, file_path):
-        data = HandleData.read_csv(file_path)
+        data = Dataset.read_csv(file_path)
         if len(data) == 0:
             self.data = False
             print("csv file read error")
@@ -37,13 +36,13 @@ cdef class HandleData:
             self.lst_bin = []
 
     def get_size(self):
-        cdef int size = len(self.data)
+        size = len(self.data)
         if self.title:
             size += 1
         return size
 
     def get_attribute_no(self):
-        cdef int count = len(self.data[0])
+        count = len(self.data[0])
         return count
 
     def get_title(self):
@@ -92,7 +91,7 @@ cdef class HandleData:
         for i in range(len(self.data[0])):  # check every column for time format
             row_data = str(self.data[0][i])
             try:
-                time_ok, t_stamp = HandleData.test_time(row_data)
+                time_ok, t_stamp = Dataset.test_time(row_data)
                 if time_ok:
                     time_cols.append(i)
             except ValueError:
@@ -189,7 +188,7 @@ cdef class HandleData:
     @staticmethod
     def get_timestamp(time_data):
         try:
-            ok, stamp = HandleData.test_time(time_data)
+            ok, stamp = Dataset.test_time(time_data)
             if ok:
                 return stamp
             else:
