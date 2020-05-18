@@ -21,7 +21,7 @@ class GradACO:
 
     def __init__(self, d_set):
         self.data = d_set
-        self.attr_index = self.data.attr_index
+        self.attr_index = self.data.attr_cols
         self.e_factor = 0  # evaporation factor
         self.p_matrix = np.ones((self.data.column_size, 3), dtype=int)
         self.valid_bins = []
@@ -177,7 +177,7 @@ class GradACO:
                 self.p_matrix[i][0] += 1
             elif symbol == '-':
                 self.p_matrix[i][1] += 1
-        for index in self.data.attr_index:
+        for index in self.data.attr_cols:
             if int(index) not in lst_attr:
                 # print(obj)
                 i = int(index) - 1

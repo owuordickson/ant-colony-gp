@@ -17,16 +17,17 @@ import numpy as np
 class HandleData:
 
     def __init__(self, file_path):
-        self.raw_data = HandleData.read_csv(file_path)
-        if len(self.raw_data) == 0:
+        data = HandleData.read_csv(file_path)
+        if len(data) == 0:
             self.data = False
             print("csv file read error")
             raise Exception("Unable to read csv file")
         else:
             print("Data fetched from csv file")
-            self.data = self.raw_data
+            self.data = data
             self.title = self.get_title()
-            self.attr_index = self.get_attributes()
+            self.time_cols = self.get_time_cols()
+            self.attr_cols = self.get_attributes()
             self.column_size = self.get_attribute_no()
             self.size = self.get_size()
             self.thd_supp = False
@@ -35,43 +36,42 @@ class HandleData:
             self.lst_bin = []
 
     def get_size(self):
-        size = len(self.raw_data)
+        size = len(self.data)
+        if self.title:
+            size += 1
         return size
 
     def get_attribute_no(self):
-        count = len(self.raw_data[0])
+        count = len(self.data[0])
         return count
 
     def get_title(self):
-        data = self.raw_data
-        if data[0][0].replace('.', '', 1).isdigit() or data[0][0].isdigit():
+        # data = self.raw_data
+        if self.data[0][0].replace('.', '', 1).isdigit() or self.data[0][0].isdigit():
             return False
         else:
-            if data[0][1].replace('.', '', 1).isdigit() or data[0][1].isdigit():
+            if self.data[0][1].replace('.', '', 1).isdigit() or self.data[0][1].isdigit():
                 return False
             else:
                 title = []
-                for i in range(len(data[0])):
+                for i in range(len(self.data[0])):
                     # sub = (str(i + 1) + ' : ' + data[0][i])
                     # sub = data[0][i]
-                    sub = [str(i), data[0][i]]
+                    sub = [str(i), self.data[0][i]]
                     title.append(sub)
                 del self.data[0]
-                print(title)
                 return title
 
     def get_attributes(self):
         attr = []
-        time_cols = self.get_time_cols()
         for i in range(len(self.title)):
             temp_attr = self.title[i]
             indx = int(temp_attr[0])
-            if len(time_cols) > 0 and (indx in time_cols):
+            if len(self.time_cols) > 0 and (indx in self.time_cols):
                 # exclude date-time column
                 continue
             else:
                 attr.append(temp_attr[0])
-        print(attr)
         return attr
 
     def get_time_cols(self):
@@ -105,18 +105,15 @@ class HandleData:
         # (check) implement parallel multiprocessing
         # re-structure csv data into an array
         self.equal = eq
-        temp = self.data
-        cols = self.column_size
-        time_cols = self.get_time_cols()
-        for col in range(cols):
-            if len(time_cols) > 0 and (col in time_cols):
+        for col in range(self.column_size):
+            if len(self.time_cols) > 0 and (col in self.time_cols):
                 # exclude date-time column
                 continue
             else:
                 # get all tuples of an attribute/column
                 raw_tuples = []
-                for row in range(len(temp)):
-                    raw_tuples.append(float(temp[row][col]))
+                for row in range(len(self.data)):
+                    raw_tuples.append(float(self.data[row][col]))
                 attr_data = [self.title[col][0], raw_tuples]
                 self.attr_data.append(attr_data)
 
