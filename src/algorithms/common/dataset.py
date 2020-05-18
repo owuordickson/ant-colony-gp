@@ -25,11 +25,11 @@ class Dataset:
         else:
             print("Data fetched from csv file")
             self.data = data
-            self.title = self.get_title()  # optimized
-            self.time_cols = self.get_time_cols()
-            self.attr_cols = self.get_attributes()
-            self.column_size = self.get_attribute_no()  # optimized
-            self.size = self.get_size()  # optimized
+            self.title = self.get_title()  # optimized (numpy)
+            self.time_cols = self.get_time_cols()  # optimized (numpy)
+            self.attr_cols = self.get_attributes()  # optimized (numpy)
+            self.column_size = self.get_attribute_no()  # optimized (cdef)
+            self.size = self.get_size()  # optimized (cdef)
             self.thd_supp = False
             self.equal = False
             self.attr_data = []
@@ -60,16 +60,9 @@ class Dataset:
                 return title
 
     def get_attributes(self):
-        attr = []
-        for i in range(len(self.title)):
-            temp_attr = self.title[i]
-            indx = int(temp_attr[0])
-            if len(self.time_cols) > 0 and (indx in self.time_cols):
-                # exclude date-time column
-                continue
-            else:
-                attr.append(temp_attr[0])
-        return attr
+        keys = np.array(self.title.key, dtype=int)
+        attr_cols = np.delete(keys, self.time_cols)
+        return attr_cols
 
     def get_time_cols(self):
         time_cols = list()
@@ -94,16 +87,16 @@ class Dataset:
             except ValueError:
                 continue
         if len(time_cols) > 0:
-            return time_cols
+            return np.array(time_cols)
         else:
-            return []
+            return np.array()
 
     def init_attributes(self, eq):
         # (check) implement parallel multiprocessing
         # re-structure csv data into an array
         self.equal = eq
         for col in range(self.column_size):
-            if len(self.time_cols) > 0 and (col in self.time_cols):
+            if self.time_cols.size > 0 and (col in self.time_cols):
                 # exclude date-time column
                 continue
             else:
@@ -111,7 +104,7 @@ class Dataset:
                 raw_tuples = []
                 for row in range(len(self.data)):
                     raw_tuples.append(float(self.data[row][col]))
-                attr_data = [self.title[col][0], raw_tuples]
+                attr_data = [self.title[col].key, raw_tuples]
                 self.attr_data.append(attr_data)
 
     def get_bin_rank(self, attr_data, symbol):
