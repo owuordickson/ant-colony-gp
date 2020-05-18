@@ -13,8 +13,8 @@
 import numpy as np
 import random as rand
 # import matplotlib.pyplot as plt
-from algorithms.tgraank.fuzzy_mf import FuzzyMF
-from algorithms.ant_colony.gp import GP, TGP
+from src.algorithms.tgraank.fuzzy_mf import FuzzyMF
+from src.algorithms.ant_colony.gp import GP, TGP
 
 
 class GradACO:

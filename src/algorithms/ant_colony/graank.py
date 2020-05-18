@@ -10,7 +10,7 @@
 import numpy as np
 import gc
 # from src import FuzzyMF
-from algorithms.tgraank.fuzzy_mf import FuzzyMF
+from src.algorithms.tgraank.fuzzy_mf import FuzzyMF
 
 
 def init_graank(T, eq=False):
