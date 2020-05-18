@@ -18,10 +18,10 @@ Description:
 
 import sys
 from optparse import OptionParser
-# import tracemalloc
-from algorithms.handle_data.multiprocess import InitParallel
-from algorithms.handle_data.handle_data import HandleData
-from algorithms.ant_colony.aco_grad import GradACO
+import tracemalloc
+from src.algorithms.handle_data.multiprocess import InitParallel
+from src.algorithms.handle_data.handle_data import HandleData
+from src.algorithms.ant_colony.aco_grad import GradACO
 
 
 def init_algorithm(f_path, min_supp, cores, eq=False):

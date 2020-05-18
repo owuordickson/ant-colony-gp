@@ -5,6 +5,7 @@ try:
     from setuptools import setup, find_packages
 except ImportError:
     from distutils.core import setup
+from Cython.Build import cythonize
 
 with open('README.md') as readme_file:
     readme = readme_file.read()
@@ -19,6 +20,8 @@ test_requirements = [
     # TODO: put package test requirements here
 ]
 
+modules = cythonize("src/algorithms/handle_data/cyt_handle_data.pyx", annotate=True)
+
 
 setup(
     name='aco-graank',
@@ -31,9 +34,10 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=requirements,
+    ext_modules=modules,
     license="MIT",
     zip_safe=False,
-    keywords='aco-graank',
+    keywords='aco, graank',
     classifiers=[
         'Development Status :: 1 - Production/Stable',
         'Intended Audience :: Developers',
