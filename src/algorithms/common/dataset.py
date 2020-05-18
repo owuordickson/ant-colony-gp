@@ -25,11 +25,11 @@ class Dataset:
         else:
             print("Data fetched from csv file")
             self.data = data
-            self.title = self.get_title()
+            self.title = self.get_title()  # optimized
             self.time_cols = self.get_time_cols()
             self.attr_cols = self.get_attributes()
-            self.column_size = self.get_attribute_no()
-            self.size = self.get_size()
+            self.column_size = self.get_attribute_no()  # optimized
+            self.size = self.get_size()  # optimized
             self.thd_supp = False
             self.equal = False
             self.attr_data = []
@@ -37,7 +37,7 @@ class Dataset:
 
     def get_size(self):
         size = len(self.data)
-        if self.title:
+        if self.title.size > 0:
             size += 1
         return size
 
@@ -53,12 +53,9 @@ class Dataset:
             if self.data[0][1].replace('.', '', 1).isdigit() or self.data[0][1].isdigit():
                 return False
             else:
-                title = []
-                for i in range(len(self.data[0])):
-                    # sub = (str(i + 1) + ' : ' + data[0][i])
-                    # sub = data[0][i]
-                    sub = [str(i), self.data[0][i]]
-                    title.append(sub)
+                keys = np.arange(len(self.data[0]))
+                values = self.data[0]
+                title = np.rec.fromarrays((keys, values), names=('key', 'value'))
                 del self.data[0]
                 return title
 

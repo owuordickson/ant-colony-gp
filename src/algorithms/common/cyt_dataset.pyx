@@ -15,7 +15,7 @@ import time
 import numpy as np
 
 
-class Dataset:
+cdef class Dataset:
 
     def __init__(self, file_path):
         data = Dataset.read_csv(file_path)
@@ -36,18 +36,19 @@ class Dataset:
             self.attr_data = []
             self.lst_bin = []
 
+    #cdef int get_size(self):
     def get_size(self):
-        size = len(self.data)
+        cdef int size = len(self.data)
         if self.title:
             size += 1
         return size
 
+    #cdef int get_attribute_no(self):
     def get_attribute_no(self):
-        count = len(self.data[0])
+        cdef int count = len(self.data[0])
         return count
 
     def get_title(self):
-        # data = self.raw_data
         if self.data[0][0].replace('.', '', 1).isdigit() or self.data[0][0].isdigit():
             return False
         else:
@@ -55,7 +56,8 @@ class Dataset:
                 return False
             else:
                 title = []
-                for i in range(len(self.data[0])):
+                size = len(self.data[0])
+                for i in range(size):
                     # sub = (str(i + 1) + ' : ' + data[0][i])
                     # sub = data[0][i]
                     sub = [str(i), self.data[0][i]]
@@ -77,18 +79,6 @@ class Dataset:
 
     def get_time_cols(self):
         time_cols = list()
-        # for k in range(10, len(self.data[0])):
-        #    time_cols.append(k)
-        # time_cols.append(0)
-        # time_cols.append(1)
-        # time_cols.append(2)
-        # time_cols.append(3)
-        # time_cols.append(4)
-        # time_cols.append(5)
-        # time_cols.append(6)
-        # time_cols.append(7)
-        # time_cols.append(8)
-        # time_cols.append(9)
         for i in range(len(self.data[0])):  # check every column for time format
             row_data = str(self.data[0][i])
             try:

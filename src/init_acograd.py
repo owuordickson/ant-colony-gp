@@ -46,7 +46,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
             wr_line += "Number of cores: " + str(num_cores) + '\n\n'
 
             for txt in titles:
-                wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '\n')
+                wr_line += (str(txt.key) + '. ' + str(txt.value) + '\n')
 
             wr_line += str("\nFile: " + f_path + '\n')
             wr_line += str("\nPattern : Support" + '\n')
@@ -58,7 +58,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
             wr_line += str(ac.p_matrix)
             # ac.plot_pheromone_matrix()
         return wr_line
-    except Exception as error:
+    except ArithmeticError as error:
         wr_line = "Failed: " + str(error)
         print(error)
         return wr_line
