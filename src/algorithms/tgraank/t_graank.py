@@ -18,7 +18,7 @@ import multiprocessing as mp
 # from src import HandleData, GradACO, InitParallel
 from src.algorithms.common.dataset import Dataset
 from src.algorithms.common.profile import Profile
-from src.algorithms.ant_colony.graank import graank
+from src.algorithms.graank.graank import graank
 
 
 class Tgrad:

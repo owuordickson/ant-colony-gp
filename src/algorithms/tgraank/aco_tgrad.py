@@ -76,7 +76,7 @@ class TgradACO:
             self.d_set.attr_data = self.orig_attr_data
             data, time_diffs = self.transform_data(step)
             self.d_set.attr_data = data
-            self.d_set.lst_bin = []
+            self.d_set.arr_bins = []
             # d_set = HandleData("", attr_data=[self.d_set.column_size, data])
 
             # 3. Execute aco-graank for each transformation

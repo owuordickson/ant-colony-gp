@@ -12,14 +12,14 @@ import csv
 from dateutil.parser import parse
 import time
 import numpy as np
-
+from numba import numba, prange
 
 class Dataset:
 
     def __init__(self, file_path):
         data = Dataset.read_csv(file_path)
         if len(data) == 0:
-            self.data = np.array()
+            self.data = np.array([])
             print("csv file read error")
             raise Exception("Unable to read csv file")
         else:
@@ -32,8 +32,9 @@ class Dataset:
             self.size = self.get_size()  # optimized (cdef)
             self.thd_supp = False
             self.equal = False
-            self.attr_data = []
-            self.lst_bin = []
+            self.attr_data = np.array([])  # optimized (numpy)
+            # self.lst_bin = []
+            self.arr_bins = np.array([])
 
     def get_size(self):
         size = self.data.shape[0]
@@ -48,17 +49,20 @@ class Dataset:
     def get_title(self):
         # data = self.raw_data
         if self.data[0][0].replace('.', '', 1).isdigit() or self.data[0][0].isdigit():
+            # convert csv data into array
             self.data = np.asarray(self.data)
-            return np.array()
+            return np.array([])
         else:
             if self.data[0][1].replace('.', '', 1).isdigit() or self.data[0][1].isdigit():
+                # convert csv data into array
                 self.data = np.asarray(self.data)
-                return np.array()
+                return np.array([])
             else:
                 keys = np.arange(len(self.data[0]))
                 values = self.data[0]
                 title = np.rec.fromarrays((keys, values), names=('key', 'value'))
                 del self.data[0]
+                # convert csv data into array
                 self.data = np.asarray(self.data)
                 return title
 
@@ -92,46 +96,57 @@ class Dataset:
         if len(time_cols) > 0:
             return np.array(time_cols)
         else:
-            return np.array()
+            return np.array([])
 
     def init_attributes(self, eq):
         # (check) implement parallel multiprocessing
-        # re-structure csv data into an array
+        # transpose csv array data
         self.equal = eq
         self.attr_data = np.transpose(self.data)
 
     def get_bin_rank(self, attr_data, symbol):
         # execute binary rank to calculate support of pattern
-        n = len(attr_data[1])
-        incr = tuple([attr_data[0], '+'])
-        decr = tuple([attr_data[0], '-'])
-        temp_pos = np.zeros((n, n), dtype='bool')
-        temp_neg = np.zeros((n, n), dtype='bool')
-        var_tuple = attr_data[1]
-        for j in range(n):
-            for k in range(j + 1, n):
-                if var_tuple[j] > var_tuple[k]:
-                    temp_pos[j][k] = 1
-                    temp_neg[k][j] = 1
-                else:
-                    if var_tuple[j] < var_tuple[k]:
-                        temp_neg[j][k] = 1
-                        temp_pos[k][j] = 1
-                    else:
-                        if self.equal:
-                            temp_neg[j][k] = 1
-                            temp_pos[k][j] = 1
-                            temp_pos[j][k] = 1
-                            temp_neg[k][j] = 1
-        temp_bin = np.array([])
+        # print(attr_data[1].shape)
+        # temp_pos_neg = np.diag(attr_data[1])
+        key = attr_data[0]
+        data = attr_data[1]
+        incr = tuple([key, '+'])
+        decr = tuple([key, '-'])
+        n = len(data)
+        temp = np.zeros((n, n), dtype='bool')
+        temp_pos, temp_neg = Dataset.bin_rank(data, n, temp, equal=self.equal)
+
         if symbol == '+':
             temp_bin = temp_pos
         elif symbol == '-':
             temp_bin = temp_neg
+        else:
+            temp_bin = np.array([])
         supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
-        self.lst_bin.append([incr, temp_pos, supp])
-        self.lst_bin.append([decr, temp_neg, supp])
+
+        if self.arr_bins.size > 0:
+            self.arr_bins = np.vstack((self.arr_bins, np.array([[incr, temp_pos, supp]])))
+            self.arr_bins = np.vstack((self.arr_bins, np.array([[decr, temp_neg, supp]])))
+        else:
+            self.arr_bins = np.array([[incr, temp_pos, supp]])
+            self.arr_bins = np.vstack((self.arr_bins, np.array([[decr, temp_neg, supp]])))
         return supp, temp_bin
+
+    @staticmethod
+    @numba.jit(nopython=True, parallel=True)  # Set "nopython" mode for best performance, equivalent to @njit
+    def bin_rank(arr, n, temp_pos, equal=False):
+        if not equal:
+            for i in prange(n):
+                for j in prange(i+1, n, 1):
+                    temp_pos[i, j] = arr[i] > arr[j]
+                    temp_pos[j, i] = arr[i] < arr[j]
+        else:
+            for i in prange(n):
+                for j in prange(i+1, n, 1):
+                    temp_pos[i, j] = arr[i] >= arr[j]
+                    temp_pos[j, i] = arr[i] < arr[j]
+        temp_neg = np.transpose(temp_pos)
+        return temp_pos, temp_neg
 
     @staticmethod
     def read_csv(file):
@@ -189,3 +204,4 @@ class Dataset:
             str_gp = str(attr) + sign
             new_gp.append(str_gp)
         return set(new_gp)
+

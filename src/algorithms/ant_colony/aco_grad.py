@@ -22,8 +22,8 @@ class GradACO:
     def __init__(self, d_set):
         self.data = d_set
         self.attr_index = self.data.attr_cols
-        self.e_factor = 0  # evaporation factor
-        self.p_matrix = np.ones((self.data.column_size, 3), dtype=int)
+        self.e_factor = 0.1  # evaporation factor
+        self.p_matrix = np.ones((self.data.column_size, 3), dtype=float)
         self.valid_bins = []
         self.invalid_bins = []
 
@@ -77,7 +77,9 @@ class GradACO:
                     elif supp and (supp < min_supp):  # and ([supp, sol_gen] not in loss_sols):
                         if [supp, sol_gen] not in loss_sols:
                             loss_sols.append([supp, sol_gen])
-                        # self.update_pheromone(sol_n, False)
+                            # self.update_pheromone(sol_n, False)
+                            # update pheromone as irrelevant with loss_sols
+                            # self.negate_pheromone(sol_gen)
                     else:
                         invalid_sols.append([supp, sol_n])
                         if sol_gen:
@@ -104,7 +106,7 @@ class GradACO:
         pattern = list()
         count = 0
         for i in range(n):
-            max_extreme = len(self.attr_index)
+            max_extreme = len(self.attr_index) * 10
             x = float(rand.randint(1, max_extreme) / max_extreme)
             pos = float(p[i][0] / (p[i][0] + p[i][1] + p[i][2]))
             neg = float((p[i][0] + p[i][1]) / (p[i][0] + p[i][1] + p[i][2]))
@@ -123,7 +125,7 @@ class GradACO:
 
     def evaluate_bin_solution(self, pattern, min_supp, time_diffs):
         # pattern = [('2', '+'), ('4', '+')]
-        lst_bin = self.data.lst_bin
+        lst_bin = self.data.arr_bins
         gen_pattern = []
         bin_data = []
         count = 0
@@ -133,21 +135,21 @@ class GradACO:
             elif obj_i in self.valid_bins:
                 # fetch pattern
                 for obj in lst_bin:
+                    #print(obj)
                     if obj[0] == obj_i:
                         gen_pattern.append(obj[0])
                         bin_data.append([obj[1], obj[2], obj[0]])
                         count += 1
                         break
             else:
-                #attr_data = False
+                # attr_data = False
                 try:
-                    attr_data = [obj_i[0], self.data.attr_data[obj_i[0]]]
-                #print(attr_data)
-                #for obj in self.data.attr_data:
+                    attr_data = [obj_i[0], np.array(self.data.attr_data[obj_i[0]], dtype=float)]
+                # for obj in self.data.attr_data:
                 #    if obj[0] == obj_i[0]:
                 #        attr_data = obj
                 #        break
-                #if attr_data:
+                # if attr_data:
                     supp, temp_bin = self.data.get_bin_rank(attr_data, obj_i[1])
                     if supp >= min_supp:
                         self.valid_bins.append(tuple([obj_i[0], '+']))
@@ -164,7 +166,7 @@ class GradACO:
         if count <= 1:
             return False, False
         else:
-            #size = len(self.data.attr_data[0][1])
+            # size = len(self.data.attr_data[0][1])
             size = self.data.attr_data.shape[1]
             supp, new_pattern = GradACO.perform_bin_and(bin_data, size, min_supp, gen_pattern, time_diffs)
             return supp, new_pattern
@@ -186,6 +188,20 @@ class GradACO:
                 # print(obj)
                 i = int(index) - 1
                 self.p_matrix[i][2] += 1
+
+    def negate_pheromone(self, pattern):
+        lst_attr = []
+        for obj in pattern:
+            # print(obj)
+            attr = int(obj[0])
+            lst_attr.append(attr)
+            symbol = obj[1]
+            i = attr
+            if symbol == '+':
+                self.p_matrix[i][0] *= self.e_factor
+            elif symbol == '-':
+                self.p_matrix[i][1] *= self.e_factor
+        print(self.p_matrix)
 
     def plot_pheromone_matrix(self):
         x_plot = np.array(self.p_matrix)
