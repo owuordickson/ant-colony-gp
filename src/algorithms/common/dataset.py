@@ -12,7 +12,22 @@ import csv
 from dateutil.parser import parse
 import time
 import numpy as np
-from numba import numba, prange
+
+'''
+spec = [
+    ('data', char[:, :]),
+    ('size', int32),
+    ('title', char[:]),
+    ('equal', boolean),
+    ('time_cols', int32[:]),
+    ('attr_cols', int32[:]),
+    ('column_size', int32),
+    ('thd_supp', float64),
+    ('attr_data', char[:]),
+    ('arr_bins', )
+]
+'''
+
 
 class Dataset:
 
@@ -34,7 +49,7 @@ class Dataset:
             self.equal = False
             self.attr_data = np.array([])  # optimized (numpy)
             # self.lst_bin = []
-            self.arr_bins = np.array([])
+            self.arr_bins = np.array([])  # optimized (numpy & numba)
 
     def get_size(self):
         size = self.data.shape[0]
@@ -49,22 +64,29 @@ class Dataset:
     def get_title(self):
         # data = self.raw_data
         if self.data[0][0].replace('.', '', 1).isdigit() or self.data[0][0].isdigit():
-            # convert csv data into array
-            self.data = np.asarray(self.data)
-            return np.array([])
+            title = self.convert_data_to_array()
+            return title
         else:
             if self.data[0][1].replace('.', '', 1).isdigit() or self.data[0][1].isdigit():
-                # convert csv data into array
-                self.data = np.asarray(self.data)
-                return np.array([])
-            else:
-                keys = np.arange(len(self.data[0]))
-                values = self.data[0]
-                title = np.rec.fromarrays((keys, values), names=('key', 'value'))
-                del self.data[0]
-                # convert csv data into array
-                self.data = np.asarray(self.data)
+                title = self.convert_data_to_array()
                 return title
+            else:
+                title = self.convert_data_to_array(has_title=True)
+                return title
+
+    def convert_data_to_array(self, has_title=False):
+        # convert csv data into array
+        if has_title:
+            keys = np.arange(len(self.data[0]))
+            values = self.data[0]
+            title = np.rec.fromarrays((keys, values), names=('key', 'value'))
+            del self.data[0]
+            # convert csv data into array
+            self.data = np.asarray(self.data)
+            return title
+        else:
+            self.data = np.asarray(self.data)
+            return np.array([])
 
     def get_attributes(self):
         keys = np.array(self.title.key, dtype=int)
@@ -106,8 +128,6 @@ class Dataset:
 
     def get_bin_rank(self, attr_data, symbol):
         # execute binary rank to calculate support of pattern
-        # print(attr_data[1].shape)
-        # temp_pos_neg = np.diag(attr_data[1])
         key = attr_data[0]
         data = attr_data[1]
         incr = tuple([key, '+'])
@@ -133,16 +153,16 @@ class Dataset:
         return supp, temp_bin
 
     @staticmethod
-    @numba.jit(nopython=True, parallel=True)  # Set "nopython" mode for best performance, equivalent to @njit
+    # @numba.jit(nopython=True, parallel=True)
     def bin_rank(arr, n, temp_pos, equal=False):
         if not equal:
-            for i in prange(n):
-                for j in prange(i+1, n, 1):
+            for i in range(n):
+                for j in range(i+1, n, 1):
                     temp_pos[i, j] = arr[i] > arr[j]
                     temp_pos[j, i] = arr[i] < arr[j]
         else:
-            for i in prange(n):
-                for j in prange(i+1, n, 1):
+            for i in range(n):
+                for j in range(i+1, n, 1):
                     temp_pos[i, j] = arr[i] >= arr[j]
                     temp_pos[j, i] = arr[i] < arr[j]
         temp_neg = np.transpose(temp_pos)
