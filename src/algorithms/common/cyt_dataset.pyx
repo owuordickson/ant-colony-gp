@@ -3,10 +3,9 @@
 @author: "Dickson Owuor"
 @credits: "Thomas Runkler, Edmond Menya, and Anne Laurent"
 @license: "MIT"
-@version: "2.0"
+@version: "1.0"
 @email: "owuordickson@gmail.com"
 @created: "12 July 2019"
-@modified: "18 May 2020"
 
 """
 import csv
@@ -14,71 +13,100 @@ from dateutil.parser import parse
 import time
 import numpy as np
 
+'''
+spec = [
+    ('data', char[:, :]),
+    ('size', int32),
+    ('title', char[:]),
+    ('equal', boolean),
+    ('time_cols', int32[:]),
+    ('attr_cols', int32[:]),
+    ('column_size', int32),
+    ('thd_supp', float64),
+    ('attr_data', char[:]),
+    ('arr_bins', )
+]
+'''
 
-cdef class Dataset:
+
+class Dataset:
 
     def __init__(self, file_path):
         data = Dataset.read_csv(file_path)
         if len(data) == 0:
-            self.data = False
+            self.data = np.array([])
             print("csv file read error")
             raise Exception("Unable to read csv file")
         else:
             print("Data fetched from csv file")
             self.data = data
-            self.title = self.get_title()
-            self.time_cols = self.get_time_cols()
-            self.attr_cols = self.get_attributes()
-            self.column_size = self.get_attribute_no()
-            self.size = self.get_size()
+            self.title = self.get_title()  # optimized (numpy)
+            self.time_cols = self.get_time_cols()  # optimized (numpy)
+            self.attr_cols = self.get_attributes()  # optimized (numpy)
+            self.column_size = self.get_attribute_no()  # optimized (cdef)
+            self.size = self.get_size()  # optimized (cdef)
             self.thd_supp = False
             self.equal = False
-            self.attr_data = []
-            self.lst_bin = []
+            self.attr_data = np.array([])  # optimized (numpy)
+            # self.lst_bin = []
+            self.arr_bins = np.array([])  # optimized (numpy & numba)
 
-    #cdef int get_size(self):
     def get_size(self):
-        cdef int size = len(self.data)
-        if self.title:
+        size = self.data.shape[0]
+        if self.title.size > 0:
             size += 1
         return size
 
-    #cdef int get_attribute_no(self):
     def get_attribute_no(self):
-        cdef int count = len(self.data[0])
+        count = self.data.shape[1]
         return count
 
     def get_title(self):
+        # data = self.raw_data
         if self.data[0][0].replace('.', '', 1).isdigit() or self.data[0][0].isdigit():
-            return False
+            title = self.convert_data_to_array()
+            return title
         else:
             if self.data[0][1].replace('.', '', 1).isdigit() or self.data[0][1].isdigit():
-                return False
+                title = self.convert_data_to_array()
+                return title
             else:
-                title = []
-                size = len(self.data[0])
-                for i in range(size):
-                    # sub = (str(i + 1) + ' : ' + data[0][i])
-                    # sub = data[0][i]
-                    sub = [str(i), self.data[0][i]]
-                    title.append(sub)
-                del self.data[0]
+                title = self.convert_data_to_array(has_title=True)
                 return title
 
+    def convert_data_to_array(self, has_title=False):
+        # convert csv data into array
+        if has_title:
+            keys = np.arange(len(self.data[0]))
+            values = self.data[0]
+            title = np.rec.fromarrays((keys, values), names=('key', 'value'))
+            del self.data[0]
+            # convert csv data into array
+            self.data = np.asarray(self.data)
+            return title
+        else:
+            self.data = np.asarray(self.data)
+            return np.array([])
+
     def get_attributes(self):
-        attr = []
-        for i in range(len(self.title)):
-            temp_attr = self.title[i]
-            indx = int(temp_attr[0])
-            if len(self.time_cols) > 0 and (indx in self.time_cols):
-                # exclude date-time column
-                continue
-            else:
-                attr.append(temp_attr[0])
-        return attr
+        keys = np.array(self.title.key, dtype=int)
+        attr_cols = np.delete(keys, self.time_cols)
+        return attr_cols
 
     def get_time_cols(self):
         time_cols = list()
+        # for k in range(10, len(self.data[0])):
+        #    time_cols.append(k)
+        # time_cols.append(0)
+        # time_cols.append(1)
+        # time_cols.append(2)
+        # time_cols.append(3)
+        # time_cols.append(4)
+        # time_cols.append(5)
+        # time_cols.append(6)
+        # time_cols.append(7)
+        # time_cols.append(8)
+        # time_cols.append(9)
         for i in range(len(self.data[0])):  # check every column for time format
             row_data = str(self.data[0][i])
             try:
@@ -88,58 +116,57 @@ cdef class Dataset:
             except ValueError:
                 continue
         if len(time_cols) > 0:
-            return time_cols
+            return np.array(time_cols)
         else:
-            return []
+            return np.array([])
 
     def init_attributes(self, eq):
         # (check) implement parallel multiprocessing
-        # re-structure csv data into an array
+        # transpose csv array data
         self.equal = eq
-        for col in range(self.column_size):
-            if len(self.time_cols) > 0 and (col in self.time_cols):
-                # exclude date-time column
-                continue
-            else:
-                # get all tuples of an attribute/column
-                raw_tuples = []
-                for row in range(len(self.data)):
-                    raw_tuples.append(float(self.data[row][col]))
-                attr_data = [self.title[col][0], raw_tuples]
-                self.attr_data.append(attr_data)
+        self.attr_data = np.transpose(self.data)
 
     def get_bin_rank(self, attr_data, symbol):
         # execute binary rank to calculate support of pattern
-        n = len(attr_data[1])
-        incr = tuple([attr_data[0], '+'])
-        decr = tuple([attr_data[0], '-'])
-        temp_pos = np.zeros((n, n), dtype='bool')
-        temp_neg = np.zeros((n, n), dtype='bool')
-        var_tuple = attr_data[1]
-        for j in range(n):
-            for k in range(j + 1, n):
-                if var_tuple[j] > var_tuple[k]:
-                    temp_pos[j][k] = 1
-                    temp_neg[k][j] = 1
-                else:
-                    if var_tuple[j] < var_tuple[k]:
-                        temp_neg[j][k] = 1
-                        temp_pos[k][j] = 1
-                    else:
-                        if self.equal:
-                            temp_neg[j][k] = 1
-                            temp_pos[k][j] = 1
-                            temp_pos[j][k] = 1
-                            temp_neg[k][j] = 1
-        temp_bin = np.array([])
+        key = attr_data[0]
+        data = attr_data[1]
+        incr = tuple([key, '+'])
+        decr = tuple([key, '-'])
+        n = len(data)
+        temp = np.zeros((n, n), dtype='bool')
+        temp_pos, temp_neg = Dataset.bin_rank(data, n, temp, equal=self.equal)
+
         if symbol == '+':
             temp_bin = temp_pos
         elif symbol == '-':
             temp_bin = temp_neg
+        else:
+            temp_bin = np.array([])
         supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
-        self.lst_bin.append([incr, temp_pos, supp])
-        self.lst_bin.append([decr, temp_neg, supp])
+
+        if self.arr_bins.size > 0:
+            self.arr_bins = np.vstack((self.arr_bins, np.array([[incr, temp_pos, supp]])))
+            self.arr_bins = np.vstack((self.arr_bins, np.array([[decr, temp_neg, supp]])))
+        else:
+            self.arr_bins = np.array([[incr, temp_pos, supp]])
+            self.arr_bins = np.vstack((self.arr_bins, np.array([[decr, temp_neg, supp]])))
         return supp, temp_bin
+
+    @staticmethod
+    # @numba.jit(nopython=True, parallel=True)
+    def bin_rank(arr, n, temp_pos, equal=False):
+        if not equal:
+            for i in range(n):
+                for j in range(i+1, n, 1):
+                    temp_pos[i, j] = arr[i] > arr[j]
+                    temp_pos[j, i] = arr[i] < arr[j]
+        else:
+            for i in range(n):
+                for j in range(i+1, n, 1):
+                    temp_pos[i, j] = arr[i] >= arr[j]
+                    temp_pos[j, i] = arr[i] < arr[j]
+        temp_neg = np.transpose(temp_pos)
+        return temp_pos, temp_neg
 
     @staticmethod
     def read_csv(file):
@@ -197,3 +224,4 @@ cdef class Dataset:
             str_gp = str(attr) + sign
             new_gp.append(str_gp)
         return set(new_gp)
+

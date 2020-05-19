@@ -13,21 +13,6 @@ from dateutil.parser import parse
 import time
 import numpy as np
 
-'''
-spec = [
-    ('data', char[:, :]),
-    ('size', int32),
-    ('title', char[:]),
-    ('equal', boolean),
-    ('time_cols', int32[:]),
-    ('attr_cols', int32[:]),
-    ('column_size', int32),
-    ('thd_supp', float64),
-    ('attr_data', char[:]),
-    ('arr_bins', )
-]
-'''
-
 
 class Dataset:
 
