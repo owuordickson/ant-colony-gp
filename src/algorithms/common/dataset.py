@@ -142,7 +142,6 @@ class Dataset:
         return supp, temp_bin
 
     @staticmethod
-    # @numba.jit(nopython=True, parallel=True)
     def bin_rank(arr, n, temp_pos, equal=False):
         if not equal:
             for i in range(n):
