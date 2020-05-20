@@ -40,6 +40,7 @@ cdef class Dataset:
     cdef public np.ndarray arr_bins
 
     def __init__(self, file_path):
+        cdef list data
         data = Dataset.read_csv(file_path)
         if len(data) == 0:
             self.data = np.array([])
