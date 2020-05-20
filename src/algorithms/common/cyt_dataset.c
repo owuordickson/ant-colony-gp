@@ -1101,7 +1101,7 @@ struct __pyx_t_3src_10algorithms_6common_11cyt_dataset_title_struct {
   char value[20];
 };
 
-/* "src/algorithms/common/cyt_dataset.pyx":91
+/* "src/algorithms/common/cyt_dataset.pyx":90
  *                 return self.convert_data_to_array(data, has_title=True)
  * 
  *     cdef np.ndarray convert_data_to_array(self, list data, bint has_title=False):             # <<<<<<<<<<<<<<
@@ -2360,8 +2360,8 @@ static PyObject *__pyx_codeobj__32;
  *     cdef public np.ndarray arr_bins
  * 
  *     def __init__(self, file_path):             # <<<<<<<<<<<<<<
- *         cdef list data
  *         data = Dataset.read_csv(file_path)
+ *         if len(data) == 0:
  */
 
 /* Python wrapper */
@@ -2415,7 +2415,7 @@ static int __pyx_pw_3src_10algorithms_6common_11cyt_dataset_7Dataset_1__init__(P
 }
 
 static int __pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset___init__(struct __pyx_obj_3src_10algorithms_6common_11cyt_dataset_Dataset *__pyx_v_self, PyObject *__pyx_v_file_path) {
-  PyObject *__pyx_v_data = 0;
+  PyObject *__pyx_v_data = NULL;
   int __pyx_r;
   __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
@@ -2428,14 +2428,14 @@ static int __pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset___init__(st
   __Pyx_RefNannySetupContext("__init__", 0);
   __Pyx_TraceCall("__init__", __pyx_f[0], 42, 0, __PYX_ERR(0, 42, __pyx_L1_error));
 
-  /* "src/algorithms/common/cyt_dataset.pyx":44
+  /* "src/algorithms/common/cyt_dataset.pyx":43
+ * 
  *     def __init__(self, file_path):
- *         cdef list data
  *         data = Dataset.read_csv(file_path)             # <<<<<<<<<<<<<<
  *         if len(data) == 0:
  *             self.data = np.array([])
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset), __pyx_n_s_read_csv); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 44, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset), __pyx_n_s_read_csv); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 43, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
@@ -2449,41 +2449,36 @@ static int __pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset___init__(st
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_file_path) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_file_path);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 44, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 43, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 44, __pyx_L1_error)
-  __pyx_v_data = ((PyObject*)__pyx_t_1);
+  __pyx_v_data = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":45
- *         cdef list data
+  /* "src/algorithms/common/cyt_dataset.pyx":44
+ *     def __init__(self, file_path):
  *         data = Dataset.read_csv(file_path)
  *         if len(data) == 0:             # <<<<<<<<<<<<<<
  *             self.data = np.array([])
  *             print("csv file read error")
  */
-  if (unlikely(__pyx_v_data == Py_None)) {
-    PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-    __PYX_ERR(0, 45, __pyx_L1_error)
-  }
-  __pyx_t_4 = PyList_GET_SIZE(__pyx_v_data); if (unlikely(__pyx_t_4 == ((Py_ssize_t)-1))) __PYX_ERR(0, 45, __pyx_L1_error)
+  __pyx_t_4 = PyObject_Length(__pyx_v_data); if (unlikely(__pyx_t_4 == ((Py_ssize_t)-1))) __PYX_ERR(0, 44, __pyx_L1_error)
   __pyx_t_5 = ((__pyx_t_4 == 0) != 0);
   if (__pyx_t_5) {
 
-    /* "src/algorithms/common/cyt_dataset.pyx":46
+    /* "src/algorithms/common/cyt_dataset.pyx":45
  *         data = Dataset.read_csv(file_path)
  *         if len(data) == 0:
  *             self.data = np.array([])             # <<<<<<<<<<<<<<
  *             print("csv file read error")
  *             raise Exception("Unable to read csv file")
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 46, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 45, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_array); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 46, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_array); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 45, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 46, __pyx_L1_error)
+    __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 45, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_t_6 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -2498,40 +2493,40 @@ static int __pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset___init__(st
     __pyx_t_1 = (__pyx_t_6) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_6, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2);
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 46, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 45, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 46, __pyx_L1_error)
+    if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 45, __pyx_L1_error)
     __Pyx_GIVEREF(__pyx_t_1);
     __Pyx_GOTREF(__pyx_v_self->data);
     __Pyx_DECREF(((PyObject *)__pyx_v_self->data));
     __pyx_v_self->data = ((PyArrayObject *)__pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":47
+    /* "src/algorithms/common/cyt_dataset.pyx":46
  *         if len(data) == 0:
  *             self.data = np.array([])
  *             print("csv file read error")             # <<<<<<<<<<<<<<
  *             raise Exception("Unable to read csv file")
  *         else:
  */
-    if (__Pyx_PrintOne(0, __pyx_kp_s_csv_file_read_error) < 0) __PYX_ERR(0, 47, __pyx_L1_error)
+    if (__Pyx_PrintOne(0, __pyx_kp_s_csv_file_read_error) < 0) __PYX_ERR(0, 46, __pyx_L1_error)
 
-    /* "src/algorithms/common/cyt_dataset.pyx":48
+    /* "src/algorithms/common/cyt_dataset.pyx":47
  *             self.data = np.array([])
  *             print("csv file read error")
  *             raise Exception("Unable to read csv file")             # <<<<<<<<<<<<<<
  *         else:
  *             print("Data fetched from csv file")
  */
-    __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])), __pyx_tuple_, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 48, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])), __pyx_tuple_, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 47, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_Raise(__pyx_t_1, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __PYX_ERR(0, 48, __pyx_L1_error)
+    __PYX_ERR(0, 47, __pyx_L1_error)
 
-    /* "src/algorithms/common/cyt_dataset.pyx":45
- *         cdef list data
+    /* "src/algorithms/common/cyt_dataset.pyx":44
+ *     def __init__(self, file_path):
  *         data = Dataset.read_csv(file_path)
  *         if len(data) == 0:             # <<<<<<<<<<<<<<
  *             self.data = np.array([])
@@ -2539,7 +2534,7 @@ static int __pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset___init__(st
  */
   }
 
-  /* "src/algorithms/common/cyt_dataset.pyx":50
+  /* "src/algorithms/common/cyt_dataset.pyx":49
  *             raise Exception("Unable to read csv file")
  *         else:
  *             print("Data fetched from csv file")             # <<<<<<<<<<<<<<
@@ -2547,21 +2542,21 @@ static int __pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset___init__(st
  *             self.title = self.get_title(data)  # optimized (numpy)
  */
   /*else*/ {
-    if (__Pyx_PrintOne(0, __pyx_kp_s_Data_fetched_from_csv_file) < 0) __PYX_ERR(0, 50, __pyx_L1_error)
+    if (__Pyx_PrintOne(0, __pyx_kp_s_Data_fetched_from_csv_file) < 0) __PYX_ERR(0, 49, __pyx_L1_error)
 
-    /* "src/algorithms/common/cyt_dataset.pyx":51
+    /* "src/algorithms/common/cyt_dataset.pyx":50
  *         else:
  *             print("Data fetched from csv file")
  *             self.data = np.array([])             # <<<<<<<<<<<<<<
  *             self.title = self.get_title(data)  # optimized (numpy)
  *             self.time_cols = self.get_time_cols()  # optimized (numpy)
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 51, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 50, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_array); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 51, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_array); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 50, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 51, __pyx_L1_error)
+    __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 50, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_6 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -2576,24 +2571,25 @@ static int __pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset___init__(st
     __pyx_t_1 = (__pyx_t_6) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_6, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3);
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 51, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 50, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 51, __pyx_L1_error)
+    if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 50, __pyx_L1_error)
     __Pyx_GIVEREF(__pyx_t_1);
     __Pyx_GOTREF(__pyx_v_self->data);
     __Pyx_DECREF(((PyObject *)__pyx_v_self->data));
     __pyx_v_self->data = ((PyArrayObject *)__pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":52
+    /* "src/algorithms/common/cyt_dataset.pyx":51
  *             print("Data fetched from csv file")
  *             self.data = np.array([])
  *             self.title = self.get_title(data)  # optimized (numpy)             # <<<<<<<<<<<<<<
  *             self.time_cols = self.get_time_cols()  # optimized (numpy)
  *             self.attr_cols = self.get_attributes()  # optimized (numpy)
  */
-    __pyx_t_1 = ((PyObject *)((struct __pyx_vtabstruct_3src_10algorithms_6common_11cyt_dataset_Dataset *)__pyx_v_self->__pyx_vtab)->get_title(__pyx_v_self, __pyx_v_data)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 52, __pyx_L1_error)
+    if (!(likely(PyList_CheckExact(__pyx_v_data))||((__pyx_v_data) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_v_data)->tp_name), 0))) __PYX_ERR(0, 51, __pyx_L1_error)
+    __pyx_t_1 = ((PyObject *)((struct __pyx_vtabstruct_3src_10algorithms_6common_11cyt_dataset_Dataset *)__pyx_v_self->__pyx_vtab)->get_title(__pyx_v_self, ((PyObject*)__pyx_v_data))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 51, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_GIVEREF(__pyx_t_1);
     __Pyx_GOTREF(__pyx_v_self->title);
@@ -2601,14 +2597,14 @@ static int __pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset___init__(st
     __pyx_v_self->title = ((PyArrayObject *)__pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":53
+    /* "src/algorithms/common/cyt_dataset.pyx":52
  *             self.data = np.array([])
  *             self.title = self.get_title(data)  # optimized (numpy)
  *             self.time_cols = self.get_time_cols()  # optimized (numpy)             # <<<<<<<<<<<<<<
  *             self.attr_cols = self.get_attributes()  # optimized (numpy)
  *             self.column_size = self.get_attribute_no()  # optimized (cdef)
  */
-    __pyx_t_1 = ((PyObject *)((struct __pyx_vtabstruct_3src_10algorithms_6common_11cyt_dataset_Dataset *)__pyx_v_self->__pyx_vtab)->get_time_cols(__pyx_v_self)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 53, __pyx_L1_error)
+    __pyx_t_1 = ((PyObject *)((struct __pyx_vtabstruct_3src_10algorithms_6common_11cyt_dataset_Dataset *)__pyx_v_self->__pyx_vtab)->get_time_cols(__pyx_v_self)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 52, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_GIVEREF(__pyx_t_1);
     __Pyx_GOTREF(__pyx_v_self->time_cols);
@@ -2616,14 +2612,14 @@ static int __pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset___init__(st
     __pyx_v_self->time_cols = ((PyArrayObject *)__pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":54
+    /* "src/algorithms/common/cyt_dataset.pyx":53
  *             self.title = self.get_title(data)  # optimized (numpy)
  *             self.time_cols = self.get_time_cols()  # optimized (numpy)
  *             self.attr_cols = self.get_attributes()  # optimized (numpy)             # <<<<<<<<<<<<<<
  *             self.column_size = self.get_attribute_no()  # optimized (cdef)
  *             self.size = self.get_size()  # optimized (cdef)
  */
-    __pyx_t_1 = ((PyObject *)((struct __pyx_vtabstruct_3src_10algorithms_6common_11cyt_dataset_Dataset *)__pyx_v_self->__pyx_vtab)->get_attributes(__pyx_v_self)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 54, __pyx_L1_error)
+    __pyx_t_1 = ((PyObject *)((struct __pyx_vtabstruct_3src_10algorithms_6common_11cyt_dataset_Dataset *)__pyx_v_self->__pyx_vtab)->get_attributes(__pyx_v_self)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 53, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_GIVEREF(__pyx_t_1);
     __Pyx_GOTREF(__pyx_v_self->attr_cols);
@@ -2631,7 +2627,7 @@ static int __pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset___init__(st
     __pyx_v_self->attr_cols = ((PyArrayObject *)__pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":55
+    /* "src/algorithms/common/cyt_dataset.pyx":54
  *             self.time_cols = self.get_time_cols()  # optimized (numpy)
  *             self.attr_cols = self.get_attributes()  # optimized (numpy)
  *             self.column_size = self.get_attribute_no()  # optimized (cdef)             # <<<<<<<<<<<<<<
@@ -2640,7 +2636,7 @@ static int __pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset___init__(st
  */
     __pyx_v_self->column_size = ((struct __pyx_vtabstruct_3src_10algorithms_6common_11cyt_dataset_Dataset *)__pyx_v_self->__pyx_vtab)->get_attribute_no(__pyx_v_self);
 
-    /* "src/algorithms/common/cyt_dataset.pyx":56
+    /* "src/algorithms/common/cyt_dataset.pyx":55
  *             self.attr_cols = self.get_attributes()  # optimized (numpy)
  *             self.column_size = self.get_attribute_no()  # optimized (cdef)
  *             self.size = self.get_size()  # optimized (cdef)             # <<<<<<<<<<<<<<
@@ -2649,7 +2645,7 @@ static int __pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset___init__(st
  */
     __pyx_v_self->size = ((struct __pyx_vtabstruct_3src_10algorithms_6common_11cyt_dataset_Dataset *)__pyx_v_self->__pyx_vtab)->get_size(__pyx_v_self);
 
-    /* "src/algorithms/common/cyt_dataset.pyx":57
+    /* "src/algorithms/common/cyt_dataset.pyx":56
  *             self.column_size = self.get_attribute_no()  # optimized (cdef)
  *             self.size = self.get_size()  # optimized (cdef)
  *             self.thd_supp = False             # <<<<<<<<<<<<<<
@@ -2658,7 +2654,7 @@ static int __pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset___init__(st
  */
     __pyx_v_self->thd_supp = 0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":58
+    /* "src/algorithms/common/cyt_dataset.pyx":57
  *             self.size = self.get_size()  # optimized (cdef)
  *             self.thd_supp = False
  *             self.equal = False             # <<<<<<<<<<<<<<
@@ -2667,19 +2663,19 @@ static int __pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset___init__(st
  */
     __pyx_v_self->equal = 0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":59
+    /* "src/algorithms/common/cyt_dataset.pyx":58
  *             self.thd_supp = False
  *             self.equal = False
  *             self.attr_data = np.array([])  # optimized (numpy)             # <<<<<<<<<<<<<<
  *             # self.lst_bin = []
  *             self.arr_bins = np.array([])  # optimized (numpy & numba)
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 59, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_array); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 59, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_array); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 59, __pyx_L1_error)
+    __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_t_6 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -2694,29 +2690,29 @@ static int __pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset___init__(st
     __pyx_t_1 = (__pyx_t_6) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_6, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2);
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 59, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 59, __pyx_L1_error)
+    if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GIVEREF(__pyx_t_1);
     __Pyx_GOTREF(__pyx_v_self->attr_data);
     __Pyx_DECREF(((PyObject *)__pyx_v_self->attr_data));
     __pyx_v_self->attr_data = ((PyArrayObject *)__pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":61
+    /* "src/algorithms/common/cyt_dataset.pyx":60
  *             self.attr_data = np.array([])  # optimized (numpy)
  *             # self.lst_bin = []
  *             self.arr_bins = np.array([])  # optimized (numpy & numba)             # <<<<<<<<<<<<<<
  * 
  *     cdef int get_size(self):
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 61, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 60, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_array); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 61, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_array); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 60, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 61, __pyx_L1_error)
+    __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 60, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_6 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -2731,10 +2727,10 @@ static int __pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset___init__(st
     __pyx_t_1 = (__pyx_t_6) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_6, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3);
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 61, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 60, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 61, __pyx_L1_error)
+    if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 60, __pyx_L1_error)
     __Pyx_GIVEREF(__pyx_t_1);
     __Pyx_GOTREF(__pyx_v_self->arr_bins);
     __Pyx_DECREF(((PyObject *)__pyx_v_self->arr_bins));
@@ -2746,8 +2742,8 @@ static int __pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset___init__(st
  *     cdef public np.ndarray arr_bins
  * 
  *     def __init__(self, file_path):             # <<<<<<<<<<<<<<
- *         cdef list data
  *         data = Dataset.read_csv(file_path)
+ *         if len(data) == 0:
  */
 
   /* function exit code */
@@ -2767,7 +2763,7 @@ static int __pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset___init__(st
   return __pyx_r;
 }
 
-/* "src/algorithms/common/cyt_dataset.pyx":63
+/* "src/algorithms/common/cyt_dataset.pyx":62
  *             self.arr_bins = np.array([])  # optimized (numpy & numba)
  * 
  *     cdef int get_size(self):             # <<<<<<<<<<<<<<
@@ -2784,9 +2780,9 @@ static int __pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_size(str
   PyObject *__pyx_t_2 = NULL;
   int __pyx_t_3;
   __Pyx_RefNannySetupContext("get_size", 0);
-  __Pyx_TraceCall("get_size", __pyx_f[0], 63, 0, __PYX_ERR(0, 63, __pyx_L1_error));
+  __Pyx_TraceCall("get_size", __pyx_f[0], 62, 0, __PYX_ERR(0, 62, __pyx_L1_error));
 
-  /* "src/algorithms/common/cyt_dataset.pyx":65
+  /* "src/algorithms/common/cyt_dataset.pyx":64
  *     cdef int get_size(self):
  *         cdef int size
  *         size = self.data.shape[0]             # <<<<<<<<<<<<<<
@@ -2795,22 +2791,22 @@ static int __pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_size(str
  */
   __pyx_v_size = (__pyx_v_self->data->dimensions[0]);
 
-  /* "src/algorithms/common/cyt_dataset.pyx":66
+  /* "src/algorithms/common/cyt_dataset.pyx":65
  *         cdef int size
  *         size = self.data.shape[0]
  *         if self.title.size > 0:             # <<<<<<<<<<<<<<
  *             size += 1
  *         return size
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self->title), __pyx_n_s_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 66, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self->title), __pyx_n_s_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 65, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyObject_RichCompare(__pyx_t_1, __pyx_int_0, Py_GT); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 66, __pyx_L1_error)
+  __pyx_t_2 = PyObject_RichCompare(__pyx_t_1, __pyx_int_0, Py_GT); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 65, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 66, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 65, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   if (__pyx_t_3) {
 
-    /* "src/algorithms/common/cyt_dataset.pyx":67
+    /* "src/algorithms/common/cyt_dataset.pyx":66
  *         size = self.data.shape[0]
  *         if self.title.size > 0:
  *             size += 1             # <<<<<<<<<<<<<<
@@ -2819,7 +2815,7 @@ static int __pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_size(str
  */
     __pyx_v_size = (__pyx_v_size + 1);
 
-    /* "src/algorithms/common/cyt_dataset.pyx":66
+    /* "src/algorithms/common/cyt_dataset.pyx":65
  *         cdef int size
  *         size = self.data.shape[0]
  *         if self.title.size > 0:             # <<<<<<<<<<<<<<
@@ -2828,7 +2824,7 @@ static int __pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_size(str
  */
   }
 
-  /* "src/algorithms/common/cyt_dataset.pyx":68
+  /* "src/algorithms/common/cyt_dataset.pyx":67
  *         if self.title.size > 0:
  *             size += 1
  *         return size             # <<<<<<<<<<<<<<
@@ -2838,7 +2834,7 @@ static int __pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_size(str
   __pyx_r = __pyx_v_size;
   goto __pyx_L0;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":63
+  /* "src/algorithms/common/cyt_dataset.pyx":62
  *             self.arr_bins = np.array([])  # optimized (numpy & numba)
  * 
  *     cdef int get_size(self):             # <<<<<<<<<<<<<<
@@ -2858,7 +2854,7 @@ static int __pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_size(str
   return __pyx_r;
 }
 
-/* "src/algorithms/common/cyt_dataset.pyx":70
+/* "src/algorithms/common/cyt_dataset.pyx":69
  *         return size
  * 
  *     cdef int get_attribute_no(self):             # <<<<<<<<<<<<<<
@@ -2872,9 +2868,9 @@ static int __pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_attribut
   __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_attribute_no", 0);
-  __Pyx_TraceCall("get_attribute_no", __pyx_f[0], 70, 0, __PYX_ERR(0, 70, __pyx_L1_error));
+  __Pyx_TraceCall("get_attribute_no", __pyx_f[0], 69, 0, __PYX_ERR(0, 69, __pyx_L1_error));
 
-  /* "src/algorithms/common/cyt_dataset.pyx":72
+  /* "src/algorithms/common/cyt_dataset.pyx":71
  *     cdef int get_attribute_no(self):
  *         cdef int count
  *         count = self.data.shape[1]             # <<<<<<<<<<<<<<
@@ -2883,7 +2879,7 @@ static int __pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_attribut
  */
   __pyx_v_count = (__pyx_v_self->data->dimensions[1]);
 
-  /* "src/algorithms/common/cyt_dataset.pyx":73
+  /* "src/algorithms/common/cyt_dataset.pyx":72
  *         cdef int count
  *         count = self.data.shape[1]
  *         return count             # <<<<<<<<<<<<<<
@@ -2893,7 +2889,7 @@ static int __pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_attribut
   __pyx_r = __pyx_v_count;
   goto __pyx_L0;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":70
+  /* "src/algorithms/common/cyt_dataset.pyx":69
  *         return size
  * 
  *     cdef int get_attribute_no(self):             # <<<<<<<<<<<<<<
@@ -2911,7 +2907,7 @@ static int __pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_attribut
   return __pyx_r;
 }
 
-/* "src/algorithms/common/cyt_dataset.pyx":75
+/* "src/algorithms/common/cyt_dataset.pyx":74
  *         return count
  * 
  *     cdef np.ndarray get_attributes(self):             # <<<<<<<<<<<<<<
@@ -2931,21 +2927,21 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
   PyObject *__pyx_t_4 = NULL;
   int __pyx_t_5;
   __Pyx_RefNannySetupContext("get_attributes", 0);
-  __Pyx_TraceCall("get_attributes", __pyx_f[0], 75, 0, __PYX_ERR(0, 75, __pyx_L1_error));
+  __Pyx_TraceCall("get_attributes", __pyx_f[0], 74, 0, __PYX_ERR(0, 74, __pyx_L1_error));
 
-  /* "src/algorithms/common/cyt_dataset.pyx":77
+  /* "src/algorithms/common/cyt_dataset.pyx":76
  *     cdef np.ndarray get_attributes(self):
  *         cdef np.ndarray all_cols, attr_cols
  *         all_cols = np.arange(self.get_attribute_no())             # <<<<<<<<<<<<<<
  *         attr_cols = np.delete(all_cols, self.time_cols)
  *         return attr_cols
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 77, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 76, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_arange); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 77, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_arange); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 76, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyInt_From_int(((struct __pyx_vtabstruct_3src_10algorithms_6common_11cyt_dataset_Dataset *)__pyx_v_self->__pyx_vtab)->get_attribute_no(__pyx_v_self)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 77, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(((struct __pyx_vtabstruct_3src_10algorithms_6common_11cyt_dataset_Dataset *)__pyx_v_self->__pyx_vtab)->get_attribute_no(__pyx_v_self)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 76, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -2960,23 +2956,23 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
   __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2);
   __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 77, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 76, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 77, __pyx_L1_error)
+  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 76, __pyx_L1_error)
   __pyx_v_all_cols = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":78
+  /* "src/algorithms/common/cyt_dataset.pyx":77
  *         cdef np.ndarray all_cols, attr_cols
  *         all_cols = np.arange(self.get_attribute_no())
  *         attr_cols = np.delete(all_cols, self.time_cols)             # <<<<<<<<<<<<<<
  *         return attr_cols
  * 
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 78, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 77, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_delete); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 78, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_delete); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 77, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_t_3 = NULL;
@@ -2994,7 +2990,7 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_2)) {
     PyObject *__pyx_temp[3] = {__pyx_t_3, ((PyObject *)__pyx_v_all_cols), ((PyObject *)__pyx_v_self->time_cols)};
-    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_5, 2+__pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_5, 2+__pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 77, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else
@@ -3002,13 +2998,13 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
     PyObject *__pyx_temp[3] = {__pyx_t_3, ((PyObject *)__pyx_v_all_cols), ((PyObject *)__pyx_v_self->time_cols)};
-    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_5, 2+__pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_5, 2+__pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 77, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else
   #endif
   {
-    __pyx_t_4 = PyTuple_New(2+__pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __pyx_t_4 = PyTuple_New(2+__pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 77, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     if (__pyx_t_3) {
       __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_3); __pyx_t_3 = NULL;
@@ -3019,16 +3015,16 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
     __Pyx_INCREF(((PyObject *)__pyx_v_self->time_cols));
     __Pyx_GIVEREF(((PyObject *)__pyx_v_self->time_cols));
     PyTuple_SET_ITEM(__pyx_t_4, 1+__pyx_t_5, ((PyObject *)__pyx_v_self->time_cols));
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 77, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   }
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 78, __pyx_L1_error)
+  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 77, __pyx_L1_error)
   __pyx_v_attr_cols = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":79
+  /* "src/algorithms/common/cyt_dataset.pyx":78
  *         all_cols = np.arange(self.get_attribute_no())
  *         attr_cols = np.delete(all_cols, self.time_cols)
  *         return attr_cols             # <<<<<<<<<<<<<<
@@ -3040,7 +3036,7 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
   __pyx_r = __pyx_v_attr_cols;
   goto __pyx_L0;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":75
+  /* "src/algorithms/common/cyt_dataset.pyx":74
  *         return count
  * 
  *     cdef np.ndarray get_attributes(self):             # <<<<<<<<<<<<<<
@@ -3065,7 +3061,7 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
   return __pyx_r;
 }
 
-/* "src/algorithms/common/cyt_dataset.pyx":81
+/* "src/algorithms/common/cyt_dataset.pyx":80
  *         return attr_cols
  * 
  *     cdef np.ndarray get_title(self, list data):             # <<<<<<<<<<<<<<
@@ -3084,9 +3080,9 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
   int __pyx_t_5;
   struct __pyx_opt_args_3src_10algorithms_6common_11cyt_dataset_7Dataset_convert_data_to_array __pyx_t_6;
   __Pyx_RefNannySetupContext("get_title", 0);
-  __Pyx_TraceCall("get_title", __pyx_f[0], 81, 0, __PYX_ERR(0, 81, __pyx_L1_error));
+  __Pyx_TraceCall("get_title", __pyx_f[0], 80, 0, __PYX_ERR(0, 80, __pyx_L1_error));
 
-  /* "src/algorithms/common/cyt_dataset.pyx":83
+  /* "src/algorithms/common/cyt_dataset.pyx":82
  *     cdef np.ndarray get_title(self, list data):
  *         # data = self.raw_data
  *         if data[0][0].replace('.', '', 1).isdigit() or data[0][0].isdigit():             # <<<<<<<<<<<<<<
@@ -3095,17 +3091,17 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
  */
   if (unlikely(__pyx_v_data == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 83, __pyx_L1_error)
+    __PYX_ERR(0, 82, __pyx_L1_error)
   }
-  __pyx_t_3 = __Pyx_GetItemInt(PyList_GET_ITEM(__pyx_v_data, 0), 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 83, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_GetItemInt(PyList_GET_ITEM(__pyx_v_data, 0), 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 82, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_replace); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 83, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_replace); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 82, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 83, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 82, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_isdigit); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 83, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_isdigit); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 82, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_t_3 = NULL;
@@ -3120,10 +3116,10 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
   }
   __pyx_t_2 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 83, __pyx_L1_error)
+  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 82, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 83, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 82, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   if (!__pyx_t_5) {
   } else {
@@ -3132,11 +3128,11 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
   }
   if (unlikely(__pyx_v_data == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 83, __pyx_L1_error)
+    __PYX_ERR(0, 82, __pyx_L1_error)
   }
-  __pyx_t_4 = __Pyx_GetItemInt(PyList_GET_ITEM(__pyx_v_data, 0), 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 83, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_GetItemInt(PyList_GET_ITEM(__pyx_v_data, 0), 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 82, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_isdigit); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 83, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_isdigit); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 82, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_t_4 = NULL;
@@ -3151,16 +3147,16 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
   }
   __pyx_t_2 = (__pyx_t_4) ? __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4) : __Pyx_PyObject_CallNoArg(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 83, __pyx_L1_error)
+  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 82, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 83, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 82, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_1 = __pyx_t_5;
   __pyx_L4_bool_binop_done:;
   if (__pyx_t_1) {
 
-    /* "src/algorithms/common/cyt_dataset.pyx":84
+    /* "src/algorithms/common/cyt_dataset.pyx":83
  *         # data = self.raw_data
  *         if data[0][0].replace('.', '', 1).isdigit() or data[0][0].isdigit():
  *             return self.convert_data_to_array(data)             # <<<<<<<<<<<<<<
@@ -3168,13 +3164,13 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
  *             if data[0][1].replace('.', '', 1).isdigit() or data[0][1].isdigit():
  */
     __Pyx_XDECREF(((PyObject *)__pyx_r));
-    __pyx_t_2 = ((PyObject *)((struct __pyx_vtabstruct_3src_10algorithms_6common_11cyt_dataset_Dataset *)__pyx_v_self->__pyx_vtab)->convert_data_to_array(__pyx_v_self, __pyx_v_data, NULL)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 84, __pyx_L1_error)
+    __pyx_t_2 = ((PyObject *)((struct __pyx_vtabstruct_3src_10algorithms_6common_11cyt_dataset_Dataset *)__pyx_v_self->__pyx_vtab)->convert_data_to_array(__pyx_v_self, __pyx_v_data, NULL)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 83, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_r = ((PyArrayObject *)__pyx_t_2);
     __pyx_t_2 = 0;
     goto __pyx_L0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":83
+    /* "src/algorithms/common/cyt_dataset.pyx":82
  *     cdef np.ndarray get_title(self, list data):
  *         # data = self.raw_data
  *         if data[0][0].replace('.', '', 1).isdigit() or data[0][0].isdigit():             # <<<<<<<<<<<<<<
@@ -3183,7 +3179,7 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
  */
   }
 
-  /* "src/algorithms/common/cyt_dataset.pyx":86
+  /* "src/algorithms/common/cyt_dataset.pyx":85
  *             return self.convert_data_to_array(data)
  *         else:
  *             if data[0][1].replace('.', '', 1).isdigit() or data[0][1].isdigit():             # <<<<<<<<<<<<<<
@@ -3193,17 +3189,17 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
   /*else*/ {
     if (unlikely(__pyx_v_data == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 86, __pyx_L1_error)
+      __PYX_ERR(0, 85, __pyx_L1_error)
     }
-    __pyx_t_3 = __Pyx_GetItemInt(PyList_GET_ITEM(__pyx_v_data, 0), 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 86, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_GetItemInt(PyList_GET_ITEM(__pyx_v_data, 0), 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 85, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_replace); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 86, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_replace); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 85, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 86, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 85, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_isdigit); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 86, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_isdigit); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 85, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_t_3 = NULL;
@@ -3218,10 +3214,10 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
     }
     __pyx_t_2 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_4);
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 86, __pyx_L1_error)
+    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 85, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 86, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 85, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     if (!__pyx_t_5) {
     } else {
@@ -3230,11 +3226,11 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
     }
     if (unlikely(__pyx_v_data == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 86, __pyx_L1_error)
+      __PYX_ERR(0, 85, __pyx_L1_error)
     }
-    __pyx_t_4 = __Pyx_GetItemInt(PyList_GET_ITEM(__pyx_v_data, 0), 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 86, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_GetItemInt(PyList_GET_ITEM(__pyx_v_data, 0), 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 85, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_isdigit); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 86, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_isdigit); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 85, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_t_4 = NULL;
@@ -3249,16 +3245,16 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
     }
     __pyx_t_2 = (__pyx_t_4) ? __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4) : __Pyx_PyObject_CallNoArg(__pyx_t_3);
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 86, __pyx_L1_error)
+    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 85, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 86, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 85, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_t_1 = __pyx_t_5;
     __pyx_L7_bool_binop_done:;
     if (__pyx_t_1) {
 
-      /* "src/algorithms/common/cyt_dataset.pyx":87
+      /* "src/algorithms/common/cyt_dataset.pyx":86
  *         else:
  *             if data[0][1].replace('.', '', 1).isdigit() or data[0][1].isdigit():
  *                 return self.convert_data_to_array(data)             # <<<<<<<<<<<<<<
@@ -3266,13 +3262,13 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
  *                 return self.convert_data_to_array(data, has_title=True)
  */
       __Pyx_XDECREF(((PyObject *)__pyx_r));
-      __pyx_t_2 = ((PyObject *)((struct __pyx_vtabstruct_3src_10algorithms_6common_11cyt_dataset_Dataset *)__pyx_v_self->__pyx_vtab)->convert_data_to_array(__pyx_v_self, __pyx_v_data, NULL)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 87, __pyx_L1_error)
+      __pyx_t_2 = ((PyObject *)((struct __pyx_vtabstruct_3src_10algorithms_6common_11cyt_dataset_Dataset *)__pyx_v_self->__pyx_vtab)->convert_data_to_array(__pyx_v_self, __pyx_v_data, NULL)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 86, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       __pyx_r = ((PyArrayObject *)__pyx_t_2);
       __pyx_t_2 = 0;
       goto __pyx_L0;
 
-      /* "src/algorithms/common/cyt_dataset.pyx":86
+      /* "src/algorithms/common/cyt_dataset.pyx":85
  *             return self.convert_data_to_array(data)
  *         else:
  *             if data[0][1].replace('.', '', 1).isdigit() or data[0][1].isdigit():             # <<<<<<<<<<<<<<
@@ -3281,7 +3277,7 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
  */
     }
 
-    /* "src/algorithms/common/cyt_dataset.pyx":89
+    /* "src/algorithms/common/cyt_dataset.pyx":88
  *                 return self.convert_data_to_array(data)
  *             else:
  *                 return self.convert_data_to_array(data, has_title=True)             # <<<<<<<<<<<<<<
@@ -3292,7 +3288,7 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
       __Pyx_XDECREF(((PyObject *)__pyx_r));
       __pyx_t_6.__pyx_n = 1;
       __pyx_t_6.has_title = 1;
-      __pyx_t_2 = ((PyObject *)((struct __pyx_vtabstruct_3src_10algorithms_6common_11cyt_dataset_Dataset *)__pyx_v_self->__pyx_vtab)->convert_data_to_array(__pyx_v_self, __pyx_v_data, &__pyx_t_6)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 89, __pyx_L1_error)
+      __pyx_t_2 = ((PyObject *)((struct __pyx_vtabstruct_3src_10algorithms_6common_11cyt_dataset_Dataset *)__pyx_v_self->__pyx_vtab)->convert_data_to_array(__pyx_v_self, __pyx_v_data, &__pyx_t_6)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 88, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       __pyx_r = ((PyArrayObject *)__pyx_t_2);
       __pyx_t_2 = 0;
@@ -3300,7 +3296,7 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
     }
   }
 
-  /* "src/algorithms/common/cyt_dataset.pyx":81
+  /* "src/algorithms/common/cyt_dataset.pyx":80
  *         return attr_cols
  * 
  *     cdef np.ndarray get_title(self, list data):             # <<<<<<<<<<<<<<
@@ -3322,7 +3318,7 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
   return __pyx_r;
 }
 
-/* "src/algorithms/common/cyt_dataset.pyx":91
+/* "src/algorithms/common/cyt_dataset.pyx":90
  *                 return self.convert_data_to_array(data, has_title=True)
  * 
  *     cdef np.ndarray convert_data_to_array(self, list data, bint has_title=False):             # <<<<<<<<<<<<<<
@@ -3346,14 +3342,14 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_c
   PyObject *__pyx_t_5 = NULL;
   PyObject *__pyx_t_6 = NULL;
   __Pyx_RefNannySetupContext("convert_data_to_array", 0);
-  __Pyx_TraceCall("convert_data_to_array", __pyx_f[0], 91, 0, __PYX_ERR(0, 91, __pyx_L1_error));
+  __Pyx_TraceCall("convert_data_to_array", __pyx_f[0], 90, 0, __PYX_ERR(0, 90, __pyx_L1_error));
   if (__pyx_optional_args) {
     if (__pyx_optional_args->__pyx_n > 0) {
       __pyx_v_has_title = __pyx_optional_args->has_title;
     }
   }
 
-  /* "src/algorithms/common/cyt_dataset.pyx":96
+  /* "src/algorithms/common/cyt_dataset.pyx":95
  *         cdef np.ndarray keys
  *         cdef list values
  *         if has_title:             # <<<<<<<<<<<<<<
@@ -3363,7 +3359,7 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_c
   __pyx_t_1 = (__pyx_v_has_title != 0);
   if (__pyx_t_1) {
 
-    /* "src/algorithms/common/cyt_dataset.pyx":97
+    /* "src/algorithms/common/cyt_dataset.pyx":96
  *         cdef list values
  *         if has_title:
  *             size = len(data[0])             # <<<<<<<<<<<<<<
@@ -3372,27 +3368,27 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_c
  */
     if (unlikely(__pyx_v_data == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 97, __pyx_L1_error)
+      __PYX_ERR(0, 96, __pyx_L1_error)
     }
     __pyx_t_2 = PyList_GET_ITEM(__pyx_v_data, 0);
     __Pyx_INCREF(__pyx_t_2);
-    __pyx_t_3 = PyObject_Length(__pyx_t_2); if (unlikely(__pyx_t_3 == ((Py_ssize_t)-1))) __PYX_ERR(0, 97, __pyx_L1_error)
+    __pyx_t_3 = PyObject_Length(__pyx_t_2); if (unlikely(__pyx_t_3 == ((Py_ssize_t)-1))) __PYX_ERR(0, 96, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_v_size = __pyx_t_3;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":98
+    /* "src/algorithms/common/cyt_dataset.pyx":97
  *         if has_title:
  *             size = len(data[0])
  *             keys = np.arange(size)             # <<<<<<<<<<<<<<
  *             values = data[0]
  *             title = np.rec.fromarrays((keys, values), names=('key', 'value'))
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 98, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 97, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_arange); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 98, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_arange); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 97, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_size); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 98, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_size); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 97, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_6 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_5))) {
@@ -3407,14 +3403,14 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_c
     __pyx_t_2 = (__pyx_t_6) ? __Pyx_PyObject_Call2Args(__pyx_t_5, __pyx_t_6, __pyx_t_4) : __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_4);
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 98, __pyx_L1_error)
+    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 97, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 98, __pyx_L1_error)
+    if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 97, __pyx_L1_error)
     __pyx_v_keys = ((PyArrayObject *)__pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":99
+    /* "src/algorithms/common/cyt_dataset.pyx":98
  *             size = len(data[0])
  *             keys = np.arange(size)
  *             values = data[0]             # <<<<<<<<<<<<<<
@@ -3423,30 +3419,30 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_c
  */
     if (unlikely(__pyx_v_data == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 99, __pyx_L1_error)
+      __PYX_ERR(0, 98, __pyx_L1_error)
     }
-    if (!(likely(PyList_CheckExact(PyList_GET_ITEM(__pyx_v_data, 0)))||((PyList_GET_ITEM(__pyx_v_data, 0)) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(PyList_GET_ITEM(__pyx_v_data, 0))->tp_name), 0))) __PYX_ERR(0, 99, __pyx_L1_error)
+    if (!(likely(PyList_CheckExact(PyList_GET_ITEM(__pyx_v_data, 0)))||((PyList_GET_ITEM(__pyx_v_data, 0)) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(PyList_GET_ITEM(__pyx_v_data, 0))->tp_name), 0))) __PYX_ERR(0, 98, __pyx_L1_error)
     __pyx_t_2 = PyList_GET_ITEM(__pyx_v_data, 0);
     __Pyx_INCREF(__pyx_t_2);
     __pyx_v_values = ((PyObject*)__pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":100
+    /* "src/algorithms/common/cyt_dataset.pyx":99
  *             keys = np.arange(size)
  *             values = data[0]
  *             title = np.rec.fromarrays((keys, values), names=('key', 'value'))             # <<<<<<<<<<<<<<
  *             del data[0]
  *             # convert csv data into array
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 100, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 99, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_rec); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 100, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_rec); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 99, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_fromarrays); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 100, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_fromarrays); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 99, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 100, __pyx_L1_error)
+    __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 99, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_INCREF(((PyObject *)__pyx_v_keys));
     __Pyx_GIVEREF(((PyObject *)__pyx_v_keys));
@@ -3454,15 +3450,15 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_c
     __Pyx_INCREF(__pyx_v_values);
     __Pyx_GIVEREF(__pyx_v_values);
     PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_v_values);
-    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 100, __pyx_L1_error)
+    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 99, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_GIVEREF(__pyx_t_5);
     PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_5);
     __pyx_t_5 = 0;
-    __pyx_t_5 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 100, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 99, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_names, __pyx_tuple__5) < 0) __PYX_ERR(0, 100, __pyx_L1_error)
-    __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_4, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 100, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_names, __pyx_tuple__5) < 0) __PYX_ERR(0, 99, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_4, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 99, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -3470,7 +3466,7 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_c
     __pyx_v_title = __pyx_t_6;
     __pyx_t_6 = 0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":101
+    /* "src/algorithms/common/cyt_dataset.pyx":100
  *             values = data[0]
  *             title = np.rec.fromarrays((keys, values), names=('key', 'value'))
  *             del data[0]             # <<<<<<<<<<<<<<
@@ -3479,20 +3475,20 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_c
  */
     if (unlikely(__pyx_v_data == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 101, __pyx_L1_error)
+      __PYX_ERR(0, 100, __pyx_L1_error)
     }
-    if (unlikely(__Pyx_DelItemInt(__pyx_v_data, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 0) < 0)) __PYX_ERR(0, 101, __pyx_L1_error)
+    if (unlikely(__Pyx_DelItemInt(__pyx_v_data, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 0) < 0)) __PYX_ERR(0, 100, __pyx_L1_error)
 
-    /* "src/algorithms/common/cyt_dataset.pyx":103
+    /* "src/algorithms/common/cyt_dataset.pyx":102
  *             del data[0]
  *             # convert csv data into array
  *             self.data = np.asarray(data)             # <<<<<<<<<<<<<<
  *             return np.asarray(title)
  *         else:
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 103, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 102, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_asarray); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 103, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_asarray); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 102, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_t_5 = NULL;
@@ -3507,17 +3503,17 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_c
     }
     __pyx_t_6 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_5, __pyx_v_data) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_v_data);
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 103, __pyx_L1_error)
+    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 102, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (!(likely(((__pyx_t_6) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_6, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 103, __pyx_L1_error)
+    if (!(likely(((__pyx_t_6) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_6, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 102, __pyx_L1_error)
     __Pyx_GIVEREF(__pyx_t_6);
     __Pyx_GOTREF(__pyx_v_self->data);
     __Pyx_DECREF(((PyObject *)__pyx_v_self->data));
     __pyx_v_self->data = ((PyArrayObject *)__pyx_t_6);
     __pyx_t_6 = 0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":104
+    /* "src/algorithms/common/cyt_dataset.pyx":103
  *             # convert csv data into array
  *             self.data = np.asarray(data)
  *             return np.asarray(title)             # <<<<<<<<<<<<<<
@@ -3525,9 +3521,9 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_c
  *             self.data = np.asarray(data)
  */
     __Pyx_XDECREF(((PyObject *)__pyx_r));
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 104, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 103, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_asarray); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 104, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_asarray); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 103, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_t_4 = NULL;
@@ -3542,15 +3538,15 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_c
     }
     __pyx_t_6 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_5, __pyx_t_4, __pyx_v_title) : __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_v_title);
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 104, __pyx_L1_error)
+    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 103, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (!(likely(((__pyx_t_6) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_6, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 104, __pyx_L1_error)
+    if (!(likely(((__pyx_t_6) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_6, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 103, __pyx_L1_error)
     __pyx_r = ((PyArrayObject *)__pyx_t_6);
     __pyx_t_6 = 0;
     goto __pyx_L0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":96
+    /* "src/algorithms/common/cyt_dataset.pyx":95
  *         cdef np.ndarray keys
  *         cdef list values
  *         if has_title:             # <<<<<<<<<<<<<<
@@ -3559,7 +3555,7 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_c
  */
   }
 
-  /* "src/algorithms/common/cyt_dataset.pyx":106
+  /* "src/algorithms/common/cyt_dataset.pyx":105
  *             return np.asarray(title)
  *         else:
  *             self.data = np.asarray(data)             # <<<<<<<<<<<<<<
@@ -3567,9 +3563,9 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_c
  * 
  */
   /*else*/ {
-    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 106, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 105, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_asarray); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 106, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_asarray); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 105, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_t_5 = NULL;
@@ -3584,17 +3580,17 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_c
     }
     __pyx_t_6 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_5, __pyx_v_data) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_v_data);
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 106, __pyx_L1_error)
+    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 105, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (!(likely(((__pyx_t_6) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_6, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 106, __pyx_L1_error)
+    if (!(likely(((__pyx_t_6) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_6, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 105, __pyx_L1_error)
     __Pyx_GIVEREF(__pyx_t_6);
     __Pyx_GOTREF(__pyx_v_self->data);
     __Pyx_DECREF(((PyObject *)__pyx_v_self->data));
     __pyx_v_self->data = ((PyArrayObject *)__pyx_t_6);
     __pyx_t_6 = 0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":107
+    /* "src/algorithms/common/cyt_dataset.pyx":106
  *         else:
  *             self.data = np.asarray(data)
  *             return np.array([])             # <<<<<<<<<<<<<<
@@ -3602,12 +3598,12 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_c
  *     cdef np.ndarray get_time_cols(self):
  */
     __Pyx_XDECREF(((PyObject *)__pyx_r));
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 107, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 106, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_array); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 107, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_array); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 106, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 107, __pyx_L1_error)
+    __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 106, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_2 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_5))) {
@@ -3622,16 +3618,16 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_c
     __pyx_t_6 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_5, __pyx_t_2, __pyx_t_4) : __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_4);
     __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 107, __pyx_L1_error)
+    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 106, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (!(likely(((__pyx_t_6) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_6, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 107, __pyx_L1_error)
+    if (!(likely(((__pyx_t_6) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_6, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 106, __pyx_L1_error)
     __pyx_r = ((PyArrayObject *)__pyx_t_6);
     __pyx_t_6 = 0;
     goto __pyx_L0;
   }
 
-  /* "src/algorithms/common/cyt_dataset.pyx":91
+  /* "src/algorithms/common/cyt_dataset.pyx":90
  *                 return self.convert_data_to_array(data, has_title=True)
  * 
  *     cdef np.ndarray convert_data_to_array(self, list data, bint has_title=False):             # <<<<<<<<<<<<<<
@@ -3657,7 +3653,7 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_c
   return __pyx_r;
 }
 
-/* "src/algorithms/common/cyt_dataset.pyx":109
+/* "src/algorithms/common/cyt_dataset.pyx":108
  *             return np.array([])
  * 
  *     cdef np.ndarray get_time_cols(self):             # <<<<<<<<<<<<<<
@@ -3688,21 +3684,21 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
   int __pyx_t_12;
   int __pyx_t_13;
   __Pyx_RefNannySetupContext("get_time_cols", 0);
-  __Pyx_TraceCall("get_time_cols", __pyx_f[0], 109, 0, __PYX_ERR(0, 109, __pyx_L1_error));
+  __Pyx_TraceCall("get_time_cols", __pyx_f[0], 108, 0, __PYX_ERR(0, 108, __pyx_L1_error));
 
-  /* "src/algorithms/common/cyt_dataset.pyx":111
+  /* "src/algorithms/common/cyt_dataset.pyx":110
  *     cdef np.ndarray get_time_cols(self):
  *         cdef np.ndarray time_cols
  *         time_cols = np.array([])             # <<<<<<<<<<<<<<
  *         for i in range(len(self.data[0])):  # check every column for time format
  *             row_data = str(self.data[0][i])
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 111, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 110, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_array); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 111, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_array); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 110, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 111, __pyx_L1_error)
+  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 110, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -3717,47 +3713,47 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
   __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2);
   __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 111, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 110, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 111, __pyx_L1_error)
+  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 110, __pyx_L1_error)
   __pyx_v_time_cols = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":112
+  /* "src/algorithms/common/cyt_dataset.pyx":111
  *         cdef np.ndarray time_cols
  *         time_cols = np.array([])
  *         for i in range(len(self.data[0])):  # check every column for time format             # <<<<<<<<<<<<<<
  *             row_data = str(self.data[0][i])
  *             try:
  */
-  __pyx_t_1 = __Pyx_GetItemInt(((PyObject *)__pyx_v_self->data), 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 112, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetItemInt(((PyObject *)__pyx_v_self->data), 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 111, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_5 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_5 == ((Py_ssize_t)-1))) __PYX_ERR(0, 112, __pyx_L1_error)
+  __pyx_t_5 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_5 == ((Py_ssize_t)-1))) __PYX_ERR(0, 111, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_6 = __pyx_t_5;
   for (__pyx_t_7 = 0; __pyx_t_7 < __pyx_t_6; __pyx_t_7+=1) {
     __pyx_v_i = __pyx_t_7;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":113
+    /* "src/algorithms/common/cyt_dataset.pyx":112
  *         time_cols = np.array([])
  *         for i in range(len(self.data[0])):  # check every column for time format
  *             row_data = str(self.data[0][i])             # <<<<<<<<<<<<<<
  *             try:
  *                 time_ok, t_stamp = Dataset.test_time(row_data)
  */
-    __pyx_t_1 = __Pyx_GetItemInt(((PyObject *)__pyx_v_self->data), 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 113, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt(((PyObject *)__pyx_v_self->data), 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 112, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_3 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_i, Py_ssize_t, 1, PyInt_FromSsize_t, 0, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 113, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_i, Py_ssize_t, 1, PyInt_FromSsize_t, 0, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 112, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyString_Type)), __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 113, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyString_Type)), __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 112, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_XDECREF_SET(__pyx_v_row_data, __pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":114
+    /* "src/algorithms/common/cyt_dataset.pyx":113
  *         for i in range(len(self.data[0])):  # check every column for time format
  *             row_data = str(self.data[0][i])
  *             try:             # <<<<<<<<<<<<<<
@@ -3773,14 +3769,14 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
       __Pyx_XGOTREF(__pyx_t_10);
       /*try:*/ {
 
-        /* "src/algorithms/common/cyt_dataset.pyx":115
+        /* "src/algorithms/common/cyt_dataset.pyx":114
  *             row_data = str(self.data[0][i])
  *             try:
  *                 time_ok, t_stamp = Dataset.test_time(row_data)             # <<<<<<<<<<<<<<
  *                 if time_ok:
  *                     if time_cols.size > 0:
  */
-        __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset), __pyx_n_s_test_time); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 115, __pyx_L5_error)
+        __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset), __pyx_n_s_test_time); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 114, __pyx_L5_error)
         __Pyx_GOTREF(__pyx_t_3);
         __pyx_t_2 = NULL;
         if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
@@ -3794,7 +3790,7 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
         }
         __pyx_t_1 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_2, __pyx_v_row_data) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_row_data);
         __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 115, __pyx_L5_error)
+        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 114, __pyx_L5_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
         if ((likely(PyTuple_CheckExact(__pyx_t_1))) || (PyList_CheckExact(__pyx_t_1))) {
@@ -3803,7 +3799,7 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
           if (unlikely(size != 2)) {
             if (size > 2) __Pyx_RaiseTooManyValuesError(2);
             else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-            __PYX_ERR(0, 115, __pyx_L5_error)
+            __PYX_ERR(0, 114, __pyx_L5_error)
           }
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
           if (likely(PyTuple_CheckExact(sequence))) {
@@ -3816,15 +3812,15 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
           __Pyx_INCREF(__pyx_t_3);
           __Pyx_INCREF(__pyx_t_2);
           #else
-          __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 115, __pyx_L5_error)
+          __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 114, __pyx_L5_error)
           __Pyx_GOTREF(__pyx_t_3);
-          __pyx_t_2 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 115, __pyx_L5_error)
+          __pyx_t_2 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 114, __pyx_L5_error)
           __Pyx_GOTREF(__pyx_t_2);
           #endif
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         } else {
           Py_ssize_t index = -1;
-          __pyx_t_4 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 115, __pyx_L5_error)
+          __pyx_t_4 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 114, __pyx_L5_error)
           __Pyx_GOTREF(__pyx_t_4);
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
           __pyx_t_11 = Py_TYPE(__pyx_t_4)->tp_iternext;
@@ -3832,7 +3828,7 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
           __Pyx_GOTREF(__pyx_t_3);
           index = 1; __pyx_t_2 = __pyx_t_11(__pyx_t_4); if (unlikely(!__pyx_t_2)) goto __pyx_L13_unpacking_failed;
           __Pyx_GOTREF(__pyx_t_2);
-          if (__Pyx_IternextUnpackEndCheck(__pyx_t_11(__pyx_t_4), 2) < 0) __PYX_ERR(0, 115, __pyx_L5_error)
+          if (__Pyx_IternextUnpackEndCheck(__pyx_t_11(__pyx_t_4), 2) < 0) __PYX_ERR(0, 114, __pyx_L5_error)
           __pyx_t_11 = NULL;
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
           goto __pyx_L14_unpacking_done;
@@ -3840,7 +3836,7 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
           __pyx_t_11 = NULL;
           if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-          __PYX_ERR(0, 115, __pyx_L5_error)
+          __PYX_ERR(0, 114, __pyx_L5_error)
           __pyx_L14_unpacking_done:;
         }
         __Pyx_XDECREF_SET(__pyx_v_time_ok, __pyx_t_3);
@@ -3848,46 +3844,46 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
         __Pyx_XDECREF_SET(__pyx_v_t_stamp, __pyx_t_2);
         __pyx_t_2 = 0;
 
-        /* "src/algorithms/common/cyt_dataset.pyx":116
+        /* "src/algorithms/common/cyt_dataset.pyx":115
  *             try:
  *                 time_ok, t_stamp = Dataset.test_time(row_data)
  *                 if time_ok:             # <<<<<<<<<<<<<<
  *                     if time_cols.size > 0:
  *                         time_cols = np.hstack((time_cols, i))
  */
-        __pyx_t_12 = __Pyx_PyObject_IsTrue(__pyx_v_time_ok); if (unlikely(__pyx_t_12 < 0)) __PYX_ERR(0, 116, __pyx_L5_error)
+        __pyx_t_12 = __Pyx_PyObject_IsTrue(__pyx_v_time_ok); if (unlikely(__pyx_t_12 < 0)) __PYX_ERR(0, 115, __pyx_L5_error)
         if (__pyx_t_12) {
 
-          /* "src/algorithms/common/cyt_dataset.pyx":117
+          /* "src/algorithms/common/cyt_dataset.pyx":116
  *                 time_ok, t_stamp = Dataset.test_time(row_data)
  *                 if time_ok:
  *                     if time_cols.size > 0:             # <<<<<<<<<<<<<<
  *                         time_cols = np.hstack((time_cols, i))
  *                     else:
  */
-          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_time_cols), __pyx_n_s_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 117, __pyx_L5_error)
+          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_time_cols), __pyx_n_s_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 116, __pyx_L5_error)
           __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_2 = PyObject_RichCompare(__pyx_t_1, __pyx_int_0, Py_GT); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 117, __pyx_L5_error)
+          __pyx_t_2 = PyObject_RichCompare(__pyx_t_1, __pyx_int_0, Py_GT); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 116, __pyx_L5_error)
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __pyx_t_12 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_12 < 0)) __PYX_ERR(0, 117, __pyx_L5_error)
+          __pyx_t_12 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_12 < 0)) __PYX_ERR(0, 116, __pyx_L5_error)
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
           if (__pyx_t_12) {
 
-            /* "src/algorithms/common/cyt_dataset.pyx":118
+            /* "src/algorithms/common/cyt_dataset.pyx":117
  *                 if time_ok:
  *                     if time_cols.size > 0:
  *                         time_cols = np.hstack((time_cols, i))             # <<<<<<<<<<<<<<
  *                     else:
  *                         time_cols = np.array([i])
  */
-            __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 118, __pyx_L5_error)
+            __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 117, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_1);
-            __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_hstack); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 118, __pyx_L5_error)
+            __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_hstack); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 117, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_3);
             __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-            __pyx_t_1 = PyInt_FromSsize_t(__pyx_v_i); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 118, __pyx_L5_error)
+            __pyx_t_1 = PyInt_FromSsize_t(__pyx_v_i); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 117, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_1);
-            __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 118, __pyx_L5_error)
+            __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 117, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_4);
             __Pyx_INCREF(((PyObject *)__pyx_v_time_cols));
             __Pyx_GIVEREF(((PyObject *)__pyx_v_time_cols));
@@ -3908,14 +3904,14 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
             __pyx_t_2 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_1, __pyx_t_4) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4);
             __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
             __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-            if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 118, __pyx_L5_error)
+            if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 117, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_2);
             __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 118, __pyx_L5_error)
+            if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 117, __pyx_L5_error)
             __Pyx_DECREF_SET(__pyx_v_time_cols, ((PyArrayObject *)__pyx_t_2));
             __pyx_t_2 = 0;
 
-            /* "src/algorithms/common/cyt_dataset.pyx":117
+            /* "src/algorithms/common/cyt_dataset.pyx":116
  *                 time_ok, t_stamp = Dataset.test_time(row_data)
  *                 if time_ok:
  *                     if time_cols.size > 0:             # <<<<<<<<<<<<<<
@@ -3925,7 +3921,7 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
             goto __pyx_L16;
           }
 
-          /* "src/algorithms/common/cyt_dataset.pyx":120
+          /* "src/algorithms/common/cyt_dataset.pyx":119
  *                         time_cols = np.hstack((time_cols, i))
  *                     else:
  *                         time_cols = np.array([i])             # <<<<<<<<<<<<<<
@@ -3933,14 +3929,14 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
  *                 continue
  */
           /*else*/ {
-            __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 120, __pyx_L5_error)
+            __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 119, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_3);
-            __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_array); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 120, __pyx_L5_error)
+            __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_array); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 119, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_4);
             __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __pyx_t_3 = PyInt_FromSsize_t(__pyx_v_i); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 120, __pyx_L5_error)
+            __pyx_t_3 = PyInt_FromSsize_t(__pyx_v_i); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 119, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_3);
-            __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 120, __pyx_L5_error)
+            __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 119, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_1);
             __Pyx_GIVEREF(__pyx_t_3);
             PyList_SET_ITEM(__pyx_t_1, 0, __pyx_t_3);
@@ -3958,16 +3954,16 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
             __pyx_t_2 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_3, __pyx_t_1) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_1);
             __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
             __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-            if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 120, __pyx_L5_error)
+            if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 119, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_2);
             __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-            if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 120, __pyx_L5_error)
+            if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 119, __pyx_L5_error)
             __Pyx_DECREF_SET(__pyx_v_time_cols, ((PyArrayObject *)__pyx_t_2));
             __pyx_t_2 = 0;
           }
           __pyx_L16:;
 
-          /* "src/algorithms/common/cyt_dataset.pyx":116
+          /* "src/algorithms/common/cyt_dataset.pyx":115
  *             try:
  *                 time_ok, t_stamp = Dataset.test_time(row_data)
  *                 if time_ok:             # <<<<<<<<<<<<<<
@@ -3976,7 +3972,7 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
  */
         }
 
-        /* "src/algorithms/common/cyt_dataset.pyx":114
+        /* "src/algorithms/common/cyt_dataset.pyx":113
  *         for i in range(len(self.data[0])):  # check every column for time format
  *             row_data = str(self.data[0][i])
  *             try:             # <<<<<<<<<<<<<<
@@ -3994,7 +3990,7 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
       __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-      /* "src/algorithms/common/cyt_dataset.pyx":121
+      /* "src/algorithms/common/cyt_dataset.pyx":120
  *                     else:
  *                         time_cols = np.array([i])
  *             except ValueError:             # <<<<<<<<<<<<<<
@@ -4004,12 +4000,12 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
       __pyx_t_13 = __Pyx_PyErr_ExceptionMatches(__pyx_builtin_ValueError);
       if (__pyx_t_13) {
         __Pyx_AddTraceback("src.algorithms.common.cyt_dataset.Dataset.get_time_cols", __pyx_clineno, __pyx_lineno, __pyx_filename);
-        if (__Pyx_GetException(&__pyx_t_2, &__pyx_t_4, &__pyx_t_1) < 0) __PYX_ERR(0, 121, __pyx_L7_except_error)
+        if (__Pyx_GetException(&__pyx_t_2, &__pyx_t_4, &__pyx_t_1) < 0) __PYX_ERR(0, 120, __pyx_L7_except_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_GOTREF(__pyx_t_1);
 
-        /* "src/algorithms/common/cyt_dataset.pyx":122
+        /* "src/algorithms/common/cyt_dataset.pyx":121
  *                         time_cols = np.array([i])
  *             except ValueError:
  *                 continue             # <<<<<<<<<<<<<<
@@ -4026,7 +4022,7 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
       goto __pyx_L7_except_error;
       __pyx_L7_except_error:;
 
-      /* "src/algorithms/common/cyt_dataset.pyx":114
+      /* "src/algorithms/common/cyt_dataset.pyx":113
  *         for i in range(len(self.data[0])):  # check every column for time format
  *             row_data = str(self.data[0][i])
  *             try:             # <<<<<<<<<<<<<<
@@ -4049,18 +4045,18 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
     __pyx_L3_continue:;
   }
 
-  /* "src/algorithms/common/cyt_dataset.pyx":123
+  /* "src/algorithms/common/cyt_dataset.pyx":122
  *             except ValueError:
  *                 continue
  *         if len(time_cols) > 0:             # <<<<<<<<<<<<<<
  *             return np.array(time_cols)
  *         else:
  */
-  __pyx_t_5 = PyObject_Length(((PyObject *)__pyx_v_time_cols)); if (unlikely(__pyx_t_5 == ((Py_ssize_t)-1))) __PYX_ERR(0, 123, __pyx_L1_error)
+  __pyx_t_5 = PyObject_Length(((PyObject *)__pyx_v_time_cols)); if (unlikely(__pyx_t_5 == ((Py_ssize_t)-1))) __PYX_ERR(0, 122, __pyx_L1_error)
   __pyx_t_12 = ((__pyx_t_5 > 0) != 0);
   if (__pyx_t_12) {
 
-    /* "src/algorithms/common/cyt_dataset.pyx":124
+    /* "src/algorithms/common/cyt_dataset.pyx":123
  *                 continue
  *         if len(time_cols) > 0:
  *             return np.array(time_cols)             # <<<<<<<<<<<<<<
@@ -4068,9 +4064,9 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
  *             return np.array([])
  */
     __Pyx_XDECREF(((PyObject *)__pyx_r));
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 124, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 123, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_array); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 124, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_array); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 123, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_t_4 = NULL;
@@ -4085,15 +4081,15 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
     }
     __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_4, ((PyObject *)__pyx_v_time_cols)) : __Pyx_PyObject_CallOneArg(__pyx_t_2, ((PyObject *)__pyx_v_time_cols));
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 124, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 123, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 124, __pyx_L1_error)
+    if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 123, __pyx_L1_error)
     __pyx_r = ((PyArrayObject *)__pyx_t_1);
     __pyx_t_1 = 0;
     goto __pyx_L0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":123
+    /* "src/algorithms/common/cyt_dataset.pyx":122
  *             except ValueError:
  *                 continue
  *         if len(time_cols) > 0:             # <<<<<<<<<<<<<<
@@ -4102,7 +4098,7 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
  */
   }
 
-  /* "src/algorithms/common/cyt_dataset.pyx":126
+  /* "src/algorithms/common/cyt_dataset.pyx":125
  *             return np.array(time_cols)
  *         else:
  *             return np.array([])             # <<<<<<<<<<<<<<
@@ -4111,12 +4107,12 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
  */
   /*else*/ {
     __Pyx_XDECREF(((PyObject *)__pyx_r));
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 126, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 125, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_array); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 126, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_array); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 125, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 126, __pyx_L1_error)
+    __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 125, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_t_3 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_4))) {
@@ -4131,16 +4127,16 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
     __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_3, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_2);
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 126, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 125, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 126, __pyx_L1_error)
+    if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 125, __pyx_L1_error)
     __pyx_r = ((PyArrayObject *)__pyx_t_1);
     __pyx_t_1 = 0;
     goto __pyx_L0;
   }
 
-  /* "src/algorithms/common/cyt_dataset.pyx":109
+  /* "src/algorithms/common/cyt_dataset.pyx":108
  *             return np.array([])
  * 
  *     cdef np.ndarray get_time_cols(self):             # <<<<<<<<<<<<<<
@@ -4167,7 +4163,7 @@ static PyArrayObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_g
   return __pyx_r;
 }
 
-/* "src/algorithms/common/cyt_dataset.pyx":128
+/* "src/algorithms/common/cyt_dataset.pyx":127
  *             return np.array([])
  * 
  *     cpdef void init_attributes(self, bint eq):             # <<<<<<<<<<<<<<
@@ -4185,7 +4181,7 @@ static void __pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_init_attrib
   PyObject *__pyx_t_4 = NULL;
   PyObject *__pyx_t_5 = NULL;
   __Pyx_RefNannySetupContext("init_attributes", 0);
-  __Pyx_TraceCall("init_attributes", __pyx_f[0], 128, 0, __PYX_ERR(0, 128, __pyx_L1_error));
+  __Pyx_TraceCall("init_attributes", __pyx_f[0], 127, 0, __PYX_ERR(0, 127, __pyx_L1_error));
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -4195,10 +4191,10 @@ static void __pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_init_attrib
     if (unlikely(!__Pyx_object_dict_version_matches(((PyObject *)__pyx_v_self), __pyx_tp_dict_version, __pyx_obj_dict_version))) {
       PY_UINT64_T __pyx_type_dict_guard = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_init_attributes); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 128, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_init_attributes); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 127, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_3src_10algorithms_6common_11cyt_dataset_7Dataset_3init_attributes)) {
-        __pyx_t_3 = __Pyx_PyBool_FromLong(__pyx_v_eq); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 128, __pyx_L1_error)
+        __pyx_t_3 = __Pyx_PyBool_FromLong(__pyx_v_eq); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 127, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_4 = __pyx_t_1; __pyx_t_5 = NULL;
@@ -4214,7 +4210,7 @@ static void __pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_init_attrib
         __pyx_t_2 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_5, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3);
         __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 128, __pyx_L1_error)
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 127, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -4234,7 +4230,7 @@ static void __pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_init_attrib
     #endif
   }
 
-  /* "src/algorithms/common/cyt_dataset.pyx":131
+  /* "src/algorithms/common/cyt_dataset.pyx":130
  *         # (check) implement parallel multiprocessing
  *         # transpose csv array data
  *         self.equal = eq             # <<<<<<<<<<<<<<
@@ -4243,16 +4239,16 @@ static void __pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_init_attrib
  */
   __pyx_v_self->equal = __pyx_v_eq;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":132
+  /* "src/algorithms/common/cyt_dataset.pyx":131
  *         # transpose csv array data
  *         self.equal = eq
  *         self.attr_data = np.transpose(self.data)             # <<<<<<<<<<<<<<
  * 
  *     cpdef get_bin_rank(self, attr_data, symbol):
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 132, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 131, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_transpose); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 132, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_transpose); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 131, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_2 = NULL;
@@ -4267,17 +4263,17 @@ static void __pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_init_attrib
   }
   __pyx_t_1 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_2, ((PyObject *)__pyx_v_self->data)) : __Pyx_PyObject_CallOneArg(__pyx_t_4, ((PyObject *)__pyx_v_self->data));
   __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 132, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 131, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 132, __pyx_L1_error)
+  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 131, __pyx_L1_error)
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v_self->attr_data);
   __Pyx_DECREF(((PyObject *)__pyx_v_self->attr_data));
   __pyx_v_self->attr_data = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":128
+  /* "src/algorithms/common/cyt_dataset.pyx":127
  *             return np.array([])
  * 
  *     cpdef void init_attributes(self, bint eq):             # <<<<<<<<<<<<<<
@@ -4307,7 +4303,7 @@ static PyObject *__pyx_pw_3src_10algorithms_6common_11cyt_dataset_7Dataset_3init
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("init_attributes (wrapper)", 0);
   assert(__pyx_arg_eq); {
-    __pyx_v_eq = __Pyx_PyObject_IsTrue(__pyx_arg_eq); if (unlikely((__pyx_v_eq == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 128, __pyx_L3_error)
+    __pyx_v_eq = __Pyx_PyObject_IsTrue(__pyx_arg_eq); if (unlikely((__pyx_v_eq == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 127, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -4328,9 +4324,9 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_2init
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("init_attributes", 0);
-  __Pyx_TraceCall("init_attributes (wrapper)", __pyx_f[0], 128, 0, __PYX_ERR(0, 128, __pyx_L1_error));
+  __Pyx_TraceCall("init_attributes (wrapper)", __pyx_f[0], 127, 0, __PYX_ERR(0, 127, __pyx_L1_error));
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_void_to_None(__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_init_attributes(__pyx_v_self, __pyx_v_eq, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 128, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_void_to_None(__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_init_attributes(__pyx_v_self, __pyx_v_eq, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 127, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4348,7 +4344,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_2init
   return __pyx_r;
 }
 
-/* "src/algorithms/common/cyt_dataset.pyx":134
+/* "src/algorithms/common/cyt_dataset.pyx":133
  *         self.attr_data = np.transpose(self.data)
  * 
  *     cpdef get_bin_rank(self, attr_data, symbol):             # <<<<<<<<<<<<<<
@@ -4383,7 +4379,7 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
   double __pyx_t_10;
   PyObject *__pyx_t_11 = NULL;
   __Pyx_RefNannySetupContext("get_bin_rank", 0);
-  __Pyx_TraceCall("get_bin_rank", __pyx_f[0], 134, 0, __PYX_ERR(0, 134, __pyx_L1_error));
+  __Pyx_TraceCall("get_bin_rank", __pyx_f[0], 133, 0, __PYX_ERR(0, 133, __pyx_L1_error));
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -4393,7 +4389,7 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
     if (unlikely(!__Pyx_object_dict_version_matches(((PyObject *)__pyx_v_self), __pyx_tp_dict_version, __pyx_obj_dict_version))) {
       PY_UINT64_T __pyx_type_dict_guard = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get_bin_rank); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 134, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get_bin_rank); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 133, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_3src_10algorithms_6common_11cyt_dataset_7Dataset_5get_bin_rank)) {
         __Pyx_XDECREF(__pyx_r);
@@ -4413,7 +4409,7 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
         #if CYTHON_FAST_PYCALL
         if (PyFunction_Check(__pyx_t_3)) {
           PyObject *__pyx_temp[3] = {__pyx_t_4, __pyx_v_attr_data, __pyx_v_symbol};
-          __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_5, 2+__pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 134, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_5, 2+__pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 133, __pyx_L1_error)
           __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
           __Pyx_GOTREF(__pyx_t_2);
         } else
@@ -4421,13 +4417,13 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
         #if CYTHON_FAST_PYCCALL
         if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
           PyObject *__pyx_temp[3] = {__pyx_t_4, __pyx_v_attr_data, __pyx_v_symbol};
-          __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_5, 2+__pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 134, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_5, 2+__pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 133, __pyx_L1_error)
           __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
           __Pyx_GOTREF(__pyx_t_2);
         } else
         #endif
         {
-          __pyx_t_6 = PyTuple_New(2+__pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 134, __pyx_L1_error)
+          __pyx_t_6 = PyTuple_New(2+__pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 133, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_6);
           if (__pyx_t_4) {
             __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_4); __pyx_t_4 = NULL;
@@ -4438,7 +4434,7 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
           __Pyx_INCREF(__pyx_v_symbol);
           __Pyx_GIVEREF(__pyx_v_symbol);
           PyTuple_SET_ITEM(__pyx_t_6, 1+__pyx_t_5, __pyx_v_symbol);
-          __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 134, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 133, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
         }
@@ -4461,42 +4457,42 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
     #endif
   }
 
-  /* "src/algorithms/common/cyt_dataset.pyx":139
+  /* "src/algorithms/common/cyt_dataset.pyx":138
  *         cdef float supp
  *         cdef np.ndarray data, temp, temp_pos, temp_neg, temp_bin
  *         key = attr_data[0]             # <<<<<<<<<<<<<<
  *         data = attr_data[1]
  *         incr = tuple([key, '+'])
  */
-  __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_attr_data, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 139, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_attr_data, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 138, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_5 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 139, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 138, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_key = __pyx_t_5;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":140
+  /* "src/algorithms/common/cyt_dataset.pyx":139
  *         cdef np.ndarray data, temp, temp_pos, temp_neg, temp_bin
  *         key = attr_data[0]
  *         data = attr_data[1]             # <<<<<<<<<<<<<<
  *         incr = tuple([key, '+'])
  *         decr = tuple([key, '-'])
  */
-  __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_attr_data, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 140, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_attr_data, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 139, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 140, __pyx_L1_error)
+  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 139, __pyx_L1_error)
   __pyx_v_data = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":141
+  /* "src/algorithms/common/cyt_dataset.pyx":140
  *         key = attr_data[0]
  *         data = attr_data[1]
  *         incr = tuple([key, '+'])             # <<<<<<<<<<<<<<
  *         decr = tuple([key, '-'])
  *         n = len(data)
  */
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_key); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 141, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_key); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 140, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyList_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 141, __pyx_L1_error)
+  __pyx_t_2 = PyList_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 140, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_GIVEREF(__pyx_t_1);
   PyList_SET_ITEM(__pyx_t_2, 0, __pyx_t_1);
@@ -4504,22 +4500,22 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
   __Pyx_GIVEREF(__pyx_kp_s__6);
   PyList_SET_ITEM(__pyx_t_2, 1, __pyx_kp_s__6);
   __pyx_t_1 = 0;
-  __pyx_t_1 = PyList_AsTuple(((PyObject*)__pyx_t_2)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 141, __pyx_L1_error)
+  __pyx_t_1 = PyList_AsTuple(((PyObject*)__pyx_t_2)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 140, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_incr = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":142
+  /* "src/algorithms/common/cyt_dataset.pyx":141
  *         data = attr_data[1]
  *         incr = tuple([key, '+'])
  *         decr = tuple([key, '-'])             # <<<<<<<<<<<<<<
  *         n = len(data)
  *         temp = np.zeros((n, n), dtype='bool')
  */
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_key); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 142, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_key); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 141, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyList_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 142, __pyx_L1_error)
+  __pyx_t_2 = PyList_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 141, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_GIVEREF(__pyx_t_1);
   PyList_SET_ITEM(__pyx_t_2, 0, __pyx_t_1);
@@ -4527,39 +4523,39 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
   __Pyx_GIVEREF(__pyx_kp_s__7);
   PyList_SET_ITEM(__pyx_t_2, 1, __pyx_kp_s__7);
   __pyx_t_1 = 0;
-  __pyx_t_1 = PyList_AsTuple(((PyObject*)__pyx_t_2)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 142, __pyx_L1_error)
+  __pyx_t_1 = PyList_AsTuple(((PyObject*)__pyx_t_2)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 141, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_decr = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":143
+  /* "src/algorithms/common/cyt_dataset.pyx":142
  *         incr = tuple([key, '+'])
  *         decr = tuple([key, '-'])
  *         n = len(data)             # <<<<<<<<<<<<<<
  *         temp = np.zeros((n, n), dtype='bool')
  *         temp_pos, temp_neg = Dataset.bin_rank(data, n, temp, equal=self.equal)
  */
-  __pyx_t_7 = PyObject_Length(((PyObject *)__pyx_v_data)); if (unlikely(__pyx_t_7 == ((Py_ssize_t)-1))) __PYX_ERR(0, 143, __pyx_L1_error)
+  __pyx_t_7 = PyObject_Length(((PyObject *)__pyx_v_data)); if (unlikely(__pyx_t_7 == ((Py_ssize_t)-1))) __PYX_ERR(0, 142, __pyx_L1_error)
   __pyx_v_n = __pyx_t_7;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":144
+  /* "src/algorithms/common/cyt_dataset.pyx":143
  *         decr = tuple([key, '-'])
  *         n = len(data)
  *         temp = np.zeros((n, n), dtype='bool')             # <<<<<<<<<<<<<<
  *         temp_pos, temp_neg = Dataset.bin_rank(data, n, temp, equal=self.equal)
  * 
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 144, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 143, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_zeros); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 144, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_zeros); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 143, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_n); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 144, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_n); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 143, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_n); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 144, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_n); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 143, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 144, __pyx_L1_error)
+  __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 143, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_1);
@@ -4567,35 +4563,35 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
   PyTuple_SET_ITEM(__pyx_t_6, 1, __pyx_t_3);
   __pyx_t_1 = 0;
   __pyx_t_3 = 0;
-  __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 144, __pyx_L1_error)
+  __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 143, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_GIVEREF(__pyx_t_6);
   PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_6);
   __pyx_t_6 = 0;
-  __pyx_t_6 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 144, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 143, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_dtype, __pyx_n_s_bool) < 0) __PYX_ERR(0, 144, __pyx_L1_error)
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_3, __pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 144, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_dtype, __pyx_n_s_bool) < 0) __PYX_ERR(0, 143, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_3, __pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 143, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 144, __pyx_L1_error)
+  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 143, __pyx_L1_error)
   __pyx_v_temp = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":145
+  /* "src/algorithms/common/cyt_dataset.pyx":144
  *         n = len(data)
  *         temp = np.zeros((n, n), dtype='bool')
  *         temp_pos, temp_neg = Dataset.bin_rank(data, n, temp, equal=self.equal)             # <<<<<<<<<<<<<<
  * 
  *         if symbol == '+':
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset), __pyx_n_s_bin_rank); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 145, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset), __pyx_n_s_bin_rank); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 144, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_n); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 145, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_n); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 144, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_3 = PyTuple_New(3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 145, __pyx_L1_error)
+  __pyx_t_3 = PyTuple_New(3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 144, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_INCREF(((PyObject *)__pyx_v_data));
   __Pyx_GIVEREF(((PyObject *)__pyx_v_data));
@@ -4606,13 +4602,13 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
   __Pyx_GIVEREF(((PyObject *)__pyx_v_temp));
   PyTuple_SET_ITEM(__pyx_t_3, 2, ((PyObject *)__pyx_v_temp));
   __pyx_t_6 = 0;
-  __pyx_t_6 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 145, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 144, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->equal); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 145, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->equal); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 144, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_equal, __pyx_t_2) < 0) __PYX_ERR(0, 145, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_equal, __pyx_t_2) < 0) __PYX_ERR(0, 144, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_3, __pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 145, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_3, __pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 144, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -4623,7 +4619,7 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
     if (unlikely(size != 2)) {
       if (size > 2) __Pyx_RaiseTooManyValuesError(2);
       else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-      __PYX_ERR(0, 145, __pyx_L1_error)
+      __PYX_ERR(0, 144, __pyx_L1_error)
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
     if (likely(PyTuple_CheckExact(sequence))) {
@@ -4636,15 +4632,15 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
     __Pyx_INCREF(__pyx_t_6);
     __Pyx_INCREF(__pyx_t_3);
     #else
-    __pyx_t_6 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 145, __pyx_L1_error)
+    __pyx_t_6 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 144, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_3 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 145, __pyx_L1_error)
+    __pyx_t_3 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 144, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     #endif
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   } else {
     Py_ssize_t index = -1;
-    __pyx_t_1 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 145, __pyx_L1_error)
+    __pyx_t_1 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 144, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_t_8 = Py_TYPE(__pyx_t_1)->tp_iternext;
@@ -4652,7 +4648,7 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
     __Pyx_GOTREF(__pyx_t_6);
     index = 1; __pyx_t_3 = __pyx_t_8(__pyx_t_1); if (unlikely(!__pyx_t_3)) goto __pyx_L3_unpacking_failed;
     __Pyx_GOTREF(__pyx_t_3);
-    if (__Pyx_IternextUnpackEndCheck(__pyx_t_8(__pyx_t_1), 2) < 0) __PYX_ERR(0, 145, __pyx_L1_error)
+    if (__Pyx_IternextUnpackEndCheck(__pyx_t_8(__pyx_t_1), 2) < 0) __PYX_ERR(0, 144, __pyx_L1_error)
     __pyx_t_8 = NULL;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     goto __pyx_L4_unpacking_done;
@@ -4660,27 +4656,27 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_t_8 = NULL;
     if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-    __PYX_ERR(0, 145, __pyx_L1_error)
+    __PYX_ERR(0, 144, __pyx_L1_error)
     __pyx_L4_unpacking_done:;
   }
-  if (!(likely(((__pyx_t_6) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_6, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 145, __pyx_L1_error)
-  if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 145, __pyx_L1_error)
+  if (!(likely(((__pyx_t_6) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_6, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 144, __pyx_L1_error)
+  if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 144, __pyx_L1_error)
   __pyx_v_temp_pos = ((PyArrayObject *)__pyx_t_6);
   __pyx_t_6 = 0;
   __pyx_v_temp_neg = ((PyArrayObject *)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":147
+  /* "src/algorithms/common/cyt_dataset.pyx":146
  *         temp_pos, temp_neg = Dataset.bin_rank(data, n, temp, equal=self.equal)
  * 
  *         if symbol == '+':             # <<<<<<<<<<<<<<
  *             temp_bin = temp_pos
  *         elif symbol == '-':
  */
-  __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_symbol, __pyx_kp_s__6, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 147, __pyx_L1_error)
+  __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_symbol, __pyx_kp_s__6, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 146, __pyx_L1_error)
   if (__pyx_t_9) {
 
-    /* "src/algorithms/common/cyt_dataset.pyx":148
+    /* "src/algorithms/common/cyt_dataset.pyx":147
  * 
  *         if symbol == '+':
  *             temp_bin = temp_pos             # <<<<<<<<<<<<<<
@@ -4690,7 +4686,7 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
     __Pyx_INCREF(((PyObject *)__pyx_v_temp_pos));
     __pyx_v_temp_bin = __pyx_v_temp_pos;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":147
+    /* "src/algorithms/common/cyt_dataset.pyx":146
  *         temp_pos, temp_neg = Dataset.bin_rank(data, n, temp, equal=self.equal)
  * 
  *         if symbol == '+':             # <<<<<<<<<<<<<<
@@ -4700,17 +4696,17 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
     goto __pyx_L5;
   }
 
-  /* "src/algorithms/common/cyt_dataset.pyx":149
+  /* "src/algorithms/common/cyt_dataset.pyx":148
  *         if symbol == '+':
  *             temp_bin = temp_pos
  *         elif symbol == '-':             # <<<<<<<<<<<<<<
  *             temp_bin = temp_neg
  *         else:
  */
-  __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_symbol, __pyx_kp_s__7, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 149, __pyx_L1_error)
+  __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_symbol, __pyx_kp_s__7, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 148, __pyx_L1_error)
   if (__pyx_t_9) {
 
-    /* "src/algorithms/common/cyt_dataset.pyx":150
+    /* "src/algorithms/common/cyt_dataset.pyx":149
  *             temp_bin = temp_pos
  *         elif symbol == '-':
  *             temp_bin = temp_neg             # <<<<<<<<<<<<<<
@@ -4720,7 +4716,7 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
     __Pyx_INCREF(((PyObject *)__pyx_v_temp_neg));
     __pyx_v_temp_bin = __pyx_v_temp_neg;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":149
+    /* "src/algorithms/common/cyt_dataset.pyx":148
  *         if symbol == '+':
  *             temp_bin = temp_pos
  *         elif symbol == '-':             # <<<<<<<<<<<<<<
@@ -4730,7 +4726,7 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
     goto __pyx_L5;
   }
 
-  /* "src/algorithms/common/cyt_dataset.pyx":152
+  /* "src/algorithms/common/cyt_dataset.pyx":151
  *             temp_bin = temp_neg
  *         else:
  *             temp_bin = np.array([])             # <<<<<<<<<<<<<<
@@ -4738,12 +4734,12 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
  * 
  */
   /*else*/ {
-    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 152, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 151, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_array); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 152, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_array); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 151, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 152, __pyx_L1_error)
+    __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 151, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_1 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_6))) {
@@ -4758,25 +4754,25 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
     __pyx_t_2 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_6, __pyx_t_1, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_3);
     __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 152, __pyx_L1_error)
+    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 151, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 152, __pyx_L1_error)
+    if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 151, __pyx_L1_error)
     __pyx_v_temp_bin = ((PyArrayObject *)__pyx_t_2);
     __pyx_t_2 = 0;
   }
   __pyx_L5:;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":153
+  /* "src/algorithms/common/cyt_dataset.pyx":152
  *         else:
  *             temp_bin = np.array([])
  *         supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)             # <<<<<<<<<<<<<<
  * 
  *         if self.arr_bins.size > 0:
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 153, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 152, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_sum); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 153, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_sum); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 152, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __pyx_t_6 = NULL;
@@ -4791,48 +4787,48 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
   }
   __pyx_t_2 = (__pyx_t_6) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_6, ((PyObject *)__pyx_v_temp_bin)) : __Pyx_PyObject_CallOneArg(__pyx_t_3, ((PyObject *)__pyx_v_temp_bin));
   __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 153, __pyx_L1_error)
+  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 152, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_10 = __Pyx_PyObject_AsDouble(__pyx_t_2); if (unlikely(__pyx_t_10 == ((double)((double)-1)) && PyErr_Occurred())) __PYX_ERR(0, 153, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_PyObject_AsDouble(__pyx_t_2); if (unlikely(__pyx_t_10 == ((double)((double)-1)) && PyErr_Occurred())) __PYX_ERR(0, 152, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_supp = (__pyx_t_10 / ((__pyx_v_n * (__pyx_v_n - 1.0)) / 2.0));
 
-  /* "src/algorithms/common/cyt_dataset.pyx":155
+  /* "src/algorithms/common/cyt_dataset.pyx":154
  *         supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
  * 
  *         if self.arr_bins.size > 0:             # <<<<<<<<<<<<<<
  *             self.arr_bins = np.vstack((self.arr_bins, np.array([[incr, temp_pos, supp]])))
  *             self.arr_bins = np.vstack((self.arr_bins, np.array([[decr, temp_neg, supp]])))
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self->arr_bins), __pyx_n_s_size); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 155, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self->arr_bins), __pyx_n_s_size); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 154, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyObject_RichCompare(__pyx_t_2, __pyx_int_0, Py_GT); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 155, __pyx_L1_error)
+  __pyx_t_3 = PyObject_RichCompare(__pyx_t_2, __pyx_int_0, Py_GT); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 154, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 155, __pyx_L1_error)
+  __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 154, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   if (__pyx_t_9) {
 
-    /* "src/algorithms/common/cyt_dataset.pyx":156
+    /* "src/algorithms/common/cyt_dataset.pyx":155
  * 
  *         if self.arr_bins.size > 0:
  *             self.arr_bins = np.vstack((self.arr_bins, np.array([[incr, temp_pos, supp]])))             # <<<<<<<<<<<<<<
  *             self.arr_bins = np.vstack((self.arr_bins, np.array([[decr, temp_neg, supp]])))
  *         else:
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 156, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 155, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_vstack); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 156, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_vstack); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 155, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 156, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 155, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_array); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 156, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_array); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 155, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = PyFloat_FromDouble(__pyx_v_supp); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 156, __pyx_L1_error)
+    __pyx_t_1 = PyFloat_FromDouble(__pyx_v_supp); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 155, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_11 = PyList_New(3); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 156, __pyx_L1_error)
+    __pyx_t_11 = PyList_New(3); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 155, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
     __Pyx_INCREF(__pyx_v_incr);
     __Pyx_GIVEREF(__pyx_v_incr);
@@ -4843,7 +4839,7 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
     __Pyx_GIVEREF(__pyx_t_1);
     PyList_SET_ITEM(__pyx_t_11, 2, __pyx_t_1);
     __pyx_t_1 = 0;
-    __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 156, __pyx_L1_error)
+    __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 155, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_GIVEREF(__pyx_t_11);
     PyList_SET_ITEM(__pyx_t_1, 0, __pyx_t_11);
@@ -4861,10 +4857,10 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
     __pyx_t_2 = (__pyx_t_11) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_11, __pyx_t_1) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_1);
     __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 156, __pyx_L1_error)
+    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 155, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 156, __pyx_L1_error)
+    __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 155, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_INCREF(((PyObject *)__pyx_v_self->arr_bins));
     __Pyx_GIVEREF(((PyObject *)__pyx_v_self->arr_bins));
@@ -4885,36 +4881,36 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
     __pyx_t_3 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_6, __pyx_t_2, __pyx_t_4) : __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_4);
     __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 156, __pyx_L1_error)
+    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 155, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 156, __pyx_L1_error)
+    if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 155, __pyx_L1_error)
     __Pyx_GIVEREF(__pyx_t_3);
     __Pyx_GOTREF(__pyx_v_self->arr_bins);
     __Pyx_DECREF(((PyObject *)__pyx_v_self->arr_bins));
     __pyx_v_self->arr_bins = ((PyArrayObject *)__pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":157
+    /* "src/algorithms/common/cyt_dataset.pyx":156
  *         if self.arr_bins.size > 0:
  *             self.arr_bins = np.vstack((self.arr_bins, np.array([[incr, temp_pos, supp]])))
  *             self.arr_bins = np.vstack((self.arr_bins, np.array([[decr, temp_neg, supp]])))             # <<<<<<<<<<<<<<
  *         else:
  *             self.arr_bins = np.array([[incr, temp_pos, supp]])
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 157, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 156, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_vstack); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 157, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_vstack); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 156, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 157, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 156, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_array); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 157, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_array); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 156, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = PyFloat_FromDouble(__pyx_v_supp); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 157, __pyx_L1_error)
+    __pyx_t_2 = PyFloat_FromDouble(__pyx_v_supp); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 156, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_11 = PyList_New(3); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 157, __pyx_L1_error)
+    __pyx_t_11 = PyList_New(3); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 156, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
     __Pyx_INCREF(__pyx_v_decr);
     __Pyx_GIVEREF(__pyx_v_decr);
@@ -4925,7 +4921,7 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
     __Pyx_GIVEREF(__pyx_t_2);
     PyList_SET_ITEM(__pyx_t_11, 2, __pyx_t_2);
     __pyx_t_2 = 0;
-    __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 157, __pyx_L1_error)
+    __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 156, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_GIVEREF(__pyx_t_11);
     PyList_SET_ITEM(__pyx_t_2, 0, __pyx_t_11);
@@ -4943,10 +4939,10 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
     __pyx_t_6 = (__pyx_t_11) ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_11, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_2);
     __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 157, __pyx_L1_error)
+    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 156, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 157, __pyx_L1_error)
+    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 156, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_INCREF(((PyObject *)__pyx_v_self->arr_bins));
     __Pyx_GIVEREF(((PyObject *)__pyx_v_self->arr_bins));
@@ -4967,17 +4963,17 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
     __pyx_t_3 = (__pyx_t_6) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_6, __pyx_t_1) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_1);
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 157, __pyx_L1_error)
+    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 156, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 157, __pyx_L1_error)
+    if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 156, __pyx_L1_error)
     __Pyx_GIVEREF(__pyx_t_3);
     __Pyx_GOTREF(__pyx_v_self->arr_bins);
     __Pyx_DECREF(((PyObject *)__pyx_v_self->arr_bins));
     __pyx_v_self->arr_bins = ((PyArrayObject *)__pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":155
+    /* "src/algorithms/common/cyt_dataset.pyx":154
  *         supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
  * 
  *         if self.arr_bins.size > 0:             # <<<<<<<<<<<<<<
@@ -4987,7 +4983,7 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
     goto __pyx_L6;
   }
 
-  /* "src/algorithms/common/cyt_dataset.pyx":159
+  /* "src/algorithms/common/cyt_dataset.pyx":158
  *             self.arr_bins = np.vstack((self.arr_bins, np.array([[decr, temp_neg, supp]])))
  *         else:
  *             self.arr_bins = np.array([[incr, temp_pos, supp]])             # <<<<<<<<<<<<<<
@@ -4995,14 +4991,14 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
  *         return supp, temp_bin
  */
   /*else*/ {
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 159, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 158, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_array); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 159, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_array); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 158, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = PyFloat_FromDouble(__pyx_v_supp); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 159, __pyx_L1_error)
+    __pyx_t_4 = PyFloat_FromDouble(__pyx_v_supp); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 158, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_6 = PyList_New(3); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 159, __pyx_L1_error)
+    __pyx_t_6 = PyList_New(3); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 158, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_INCREF(__pyx_v_incr);
     __Pyx_GIVEREF(__pyx_v_incr);
@@ -5013,7 +5009,7 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
     __Pyx_GIVEREF(__pyx_t_4);
     PyList_SET_ITEM(__pyx_t_6, 2, __pyx_t_4);
     __pyx_t_4 = 0;
-    __pyx_t_4 = PyList_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 159, __pyx_L1_error)
+    __pyx_t_4 = PyList_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 158, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_GIVEREF(__pyx_t_6);
     PyList_SET_ITEM(__pyx_t_4, 0, __pyx_t_6);
@@ -5031,36 +5027,36 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
     __pyx_t_3 = (__pyx_t_6) ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_6, __pyx_t_4) : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_4);
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 159, __pyx_L1_error)
+    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 158, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 159, __pyx_L1_error)
+    if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 158, __pyx_L1_error)
     __Pyx_GIVEREF(__pyx_t_3);
     __Pyx_GOTREF(__pyx_v_self->arr_bins);
     __Pyx_DECREF(((PyObject *)__pyx_v_self->arr_bins));
     __pyx_v_self->arr_bins = ((PyArrayObject *)__pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":160
+    /* "src/algorithms/common/cyt_dataset.pyx":159
  *         else:
  *             self.arr_bins = np.array([[incr, temp_pos, supp]])
  *             self.arr_bins = np.vstack((self.arr_bins, np.array([[decr, temp_neg, supp]])))             # <<<<<<<<<<<<<<
  *         return supp, temp_bin
  * 
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 160, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 159, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_vstack); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 160, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_vstack); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 159, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 160, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 159, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_array); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 160, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_array); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 159, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __pyx_t_6 = PyFloat_FromDouble(__pyx_v_supp); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 160, __pyx_L1_error)
+    __pyx_t_6 = PyFloat_FromDouble(__pyx_v_supp); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 159, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_11 = PyList_New(3); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 160, __pyx_L1_error)
+    __pyx_t_11 = PyList_New(3); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 159, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
     __Pyx_INCREF(__pyx_v_decr);
     __Pyx_GIVEREF(__pyx_v_decr);
@@ -5071,7 +5067,7 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
     __Pyx_GIVEREF(__pyx_t_6);
     PyList_SET_ITEM(__pyx_t_11, 2, __pyx_t_6);
     __pyx_t_6 = 0;
-    __pyx_t_6 = PyList_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 160, __pyx_L1_error)
+    __pyx_t_6 = PyList_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 159, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_GIVEREF(__pyx_t_11);
     PyList_SET_ITEM(__pyx_t_6, 0, __pyx_t_11);
@@ -5089,10 +5085,10 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
     __pyx_t_1 = (__pyx_t_11) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_11, __pyx_t_6) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_6);
     __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 160, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 159, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 160, __pyx_L1_error)
+    __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 159, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_INCREF(((PyObject *)__pyx_v_self->arr_bins));
     __Pyx_GIVEREF(((PyObject *)__pyx_v_self->arr_bins));
@@ -5113,10 +5109,10 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
     __pyx_t_3 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_1, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_2);
     __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 160, __pyx_L1_error)
+    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 159, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 160, __pyx_L1_error)
+    if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 159, __pyx_L1_error)
     __Pyx_GIVEREF(__pyx_t_3);
     __Pyx_GOTREF(__pyx_v_self->arr_bins);
     __Pyx_DECREF(((PyObject *)__pyx_v_self->arr_bins));
@@ -5125,7 +5121,7 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
   }
   __pyx_L6:;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":161
+  /* "src/algorithms/common/cyt_dataset.pyx":160
  *             self.arr_bins = np.array([[incr, temp_pos, supp]])
  *             self.arr_bins = np.vstack((self.arr_bins, np.array([[decr, temp_neg, supp]])))
  *         return supp, temp_bin             # <<<<<<<<<<<<<<
@@ -5133,9 +5129,9 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
  *     @staticmethod
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_3 = PyFloat_FromDouble(__pyx_v_supp); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 161, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble(__pyx_v_supp); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 160, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 161, __pyx_L1_error)
+  __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 160, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_GIVEREF(__pyx_t_3);
   PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_3);
@@ -5147,7 +5143,7 @@ static PyObject *__pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bi
   __pyx_t_4 = 0;
   goto __pyx_L0;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":134
+  /* "src/algorithms/common/cyt_dataset.pyx":133
  *         self.attr_data = np.transpose(self.data)
  * 
  *     cpdef get_bin_rank(self, attr_data, symbol):             # <<<<<<<<<<<<<<
@@ -5210,11 +5206,11 @@ static PyObject *__pyx_pw_3src_10algorithms_6common_11cyt_dataset_7Dataset_5get_
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_symbol)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("get_bin_rank", 1, 2, 2, 1); __PYX_ERR(0, 134, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("get_bin_rank", 1, 2, 2, 1); __PYX_ERR(0, 133, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "get_bin_rank") < 0)) __PYX_ERR(0, 134, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "get_bin_rank") < 0)) __PYX_ERR(0, 133, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -5227,7 +5223,7 @@ static PyObject *__pyx_pw_3src_10algorithms_6common_11cyt_dataset_7Dataset_5get_
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("get_bin_rank", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 134, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("get_bin_rank", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 133, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("src.algorithms.common.cyt_dataset.Dataset.get_bin_rank", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -5246,9 +5242,9 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_4get_
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("get_bin_rank", 0);
-  __Pyx_TraceCall("get_bin_rank (wrapper)", __pyx_f[0], 134, 0, __PYX_ERR(0, 134, __pyx_L1_error));
+  __Pyx_TraceCall("get_bin_rank (wrapper)", __pyx_f[0], 133, 0, __PYX_ERR(0, 133, __pyx_L1_error));
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bin_rank(__pyx_v_self, __pyx_v_attr_data, __pyx_v_symbol, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 134, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_10algorithms_6common_11cyt_dataset_7Dataset_get_bin_rank(__pyx_v_self, __pyx_v_attr_data, __pyx_v_symbol, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 133, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -5266,7 +5262,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_4get_
   return __pyx_r;
 }
 
-/* "src/algorithms/common/cyt_dataset.pyx":165
+/* "src/algorithms/common/cyt_dataset.pyx":164
  *     @staticmethod
  *     # @numba.jit(nopython=True, parallel=True)
  *     def bin_rank(arr, n, temp_pos, equal=False):             # <<<<<<<<<<<<<<
@@ -5313,13 +5309,13 @@ static PyObject *__pyx_pw_3src_10algorithms_6common_11cyt_dataset_7Dataset_7bin_
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_n)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("bin_rank", 0, 3, 4, 1); __PYX_ERR(0, 165, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("bin_rank", 0, 3, 4, 1); __PYX_ERR(0, 164, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_temp_pos)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("bin_rank", 0, 3, 4, 2); __PYX_ERR(0, 165, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("bin_rank", 0, 3, 4, 2); __PYX_ERR(0, 164, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
@@ -5329,7 +5325,7 @@ static PyObject *__pyx_pw_3src_10algorithms_6common_11cyt_dataset_7Dataset_7bin_
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "bin_rank") < 0)) __PYX_ERR(0, 165, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "bin_rank") < 0)) __PYX_ERR(0, 164, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -5349,7 +5345,7 @@ static PyObject *__pyx_pw_3src_10algorithms_6common_11cyt_dataset_7Dataset_7bin_
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("bin_rank", 0, 3, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 165, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("bin_rank", 0, 3, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 164, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("src.algorithms.common.cyt_dataset.Dataset.bin_rank", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -5382,35 +5378,35 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
   PyObject *__pyx_t_11 = NULL;
   __Pyx_TraceFrameInit(__pyx_codeobj__8)
   __Pyx_RefNannySetupContext("bin_rank", 0);
-  __Pyx_TraceCall("bin_rank", __pyx_f[0], 165, 0, __PYX_ERR(0, 165, __pyx_L1_error));
+  __Pyx_TraceCall("bin_rank", __pyx_f[0], 164, 0, __PYX_ERR(0, 164, __pyx_L1_error));
 
-  /* "src/algorithms/common/cyt_dataset.pyx":166
+  /* "src/algorithms/common/cyt_dataset.pyx":165
  *     # @numba.jit(nopython=True, parallel=True)
  *     def bin_rank(arr, n, temp_pos, equal=False):
  *         if not equal:             # <<<<<<<<<<<<<<
  *             for i in range(n):
  *                 for j in range(i+1, n, 1):
  */
-  __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_v_equal); if (unlikely(__pyx_t_1 < 0)) __PYX_ERR(0, 166, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_v_equal); if (unlikely(__pyx_t_1 < 0)) __PYX_ERR(0, 165, __pyx_L1_error)
   __pyx_t_2 = ((!__pyx_t_1) != 0);
   if (__pyx_t_2) {
 
-    /* "src/algorithms/common/cyt_dataset.pyx":167
+    /* "src/algorithms/common/cyt_dataset.pyx":166
  *     def bin_rank(arr, n, temp_pos, equal=False):
  *         if not equal:
  *             for i in range(n):             # <<<<<<<<<<<<<<
  *                 for j in range(i+1, n, 1):
  *                     temp_pos[i, j] = arr[i] > arr[j]
  */
-    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_range, __pyx_v_n); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 167, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_range, __pyx_v_n); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 166, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     if (likely(PyList_CheckExact(__pyx_t_3)) || PyTuple_CheckExact(__pyx_t_3)) {
       __pyx_t_4 = __pyx_t_3; __Pyx_INCREF(__pyx_t_4); __pyx_t_5 = 0;
       __pyx_t_6 = NULL;
     } else {
-      __pyx_t_5 = -1; __pyx_t_4 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 167, __pyx_L1_error)
+      __pyx_t_5 = -1; __pyx_t_4 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 166, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_6 = Py_TYPE(__pyx_t_4)->tp_iternext; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 167, __pyx_L1_error)
+      __pyx_t_6 = Py_TYPE(__pyx_t_4)->tp_iternext; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 166, __pyx_L1_error)
     }
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     for (;;) {
@@ -5418,17 +5414,17 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
         if (likely(PyList_CheckExact(__pyx_t_4))) {
           if (__pyx_t_5 >= PyList_GET_SIZE(__pyx_t_4)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_3 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_5); __Pyx_INCREF(__pyx_t_3); __pyx_t_5++; if (unlikely(0 < 0)) __PYX_ERR(0, 167, __pyx_L1_error)
+          __pyx_t_3 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_5); __Pyx_INCREF(__pyx_t_3); __pyx_t_5++; if (unlikely(0 < 0)) __PYX_ERR(0, 166, __pyx_L1_error)
           #else
-          __pyx_t_3 = PySequence_ITEM(__pyx_t_4, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 167, __pyx_L1_error)
+          __pyx_t_3 = PySequence_ITEM(__pyx_t_4, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 166, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_3);
           #endif
         } else {
           if (__pyx_t_5 >= PyTuple_GET_SIZE(__pyx_t_4)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_3 = PyTuple_GET_ITEM(__pyx_t_4, __pyx_t_5); __Pyx_INCREF(__pyx_t_3); __pyx_t_5++; if (unlikely(0 < 0)) __PYX_ERR(0, 167, __pyx_L1_error)
+          __pyx_t_3 = PyTuple_GET_ITEM(__pyx_t_4, __pyx_t_5); __Pyx_INCREF(__pyx_t_3); __pyx_t_5++; if (unlikely(0 < 0)) __PYX_ERR(0, 166, __pyx_L1_error)
           #else
-          __pyx_t_3 = PySequence_ITEM(__pyx_t_4, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 167, __pyx_L1_error)
+          __pyx_t_3 = PySequence_ITEM(__pyx_t_4, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 166, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_3);
           #endif
         }
@@ -5438,7 +5434,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(0, 167, __pyx_L1_error)
+            else __PYX_ERR(0, 166, __pyx_L1_error)
           }
           break;
         }
@@ -5447,16 +5443,16 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
       __Pyx_XDECREF_SET(__pyx_v_i, __pyx_t_3);
       __pyx_t_3 = 0;
 
-      /* "src/algorithms/common/cyt_dataset.pyx":168
+      /* "src/algorithms/common/cyt_dataset.pyx":167
  *         if not equal:
  *             for i in range(n):
  *                 for j in range(i+1, n, 1):             # <<<<<<<<<<<<<<
  *                     temp_pos[i, j] = arr[i] > arr[j]
  *                     temp_pos[j, i] = arr[i] < arr[j]
  */
-      __pyx_t_3 = __Pyx_PyInt_AddObjC(__pyx_v_i, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 168, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyInt_AddObjC(__pyx_v_i, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 167, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_7 = PyTuple_New(3); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 168, __pyx_L1_error)
+      __pyx_t_7 = PyTuple_New(3); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 167, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_GIVEREF(__pyx_t_3);
       PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_3);
@@ -5467,16 +5463,16 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
       __Pyx_GIVEREF(__pyx_int_1);
       PyTuple_SET_ITEM(__pyx_t_7, 2, __pyx_int_1);
       __pyx_t_3 = 0;
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_7, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 168, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_7, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 167, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       if (likely(PyList_CheckExact(__pyx_t_3)) || PyTuple_CheckExact(__pyx_t_3)) {
         __pyx_t_7 = __pyx_t_3; __Pyx_INCREF(__pyx_t_7); __pyx_t_8 = 0;
         __pyx_t_9 = NULL;
       } else {
-        __pyx_t_8 = -1; __pyx_t_7 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 168, __pyx_L1_error)
+        __pyx_t_8 = -1; __pyx_t_7 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 167, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
-        __pyx_t_9 = Py_TYPE(__pyx_t_7)->tp_iternext; if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 168, __pyx_L1_error)
+        __pyx_t_9 = Py_TYPE(__pyx_t_7)->tp_iternext; if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 167, __pyx_L1_error)
       }
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       for (;;) {
@@ -5484,17 +5480,17 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
           if (likely(PyList_CheckExact(__pyx_t_7))) {
             if (__pyx_t_8 >= PyList_GET_SIZE(__pyx_t_7)) break;
             #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            __pyx_t_3 = PyList_GET_ITEM(__pyx_t_7, __pyx_t_8); __Pyx_INCREF(__pyx_t_3); __pyx_t_8++; if (unlikely(0 < 0)) __PYX_ERR(0, 168, __pyx_L1_error)
+            __pyx_t_3 = PyList_GET_ITEM(__pyx_t_7, __pyx_t_8); __Pyx_INCREF(__pyx_t_3); __pyx_t_8++; if (unlikely(0 < 0)) __PYX_ERR(0, 167, __pyx_L1_error)
             #else
-            __pyx_t_3 = PySequence_ITEM(__pyx_t_7, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 168, __pyx_L1_error)
+            __pyx_t_3 = PySequence_ITEM(__pyx_t_7, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 167, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_3);
             #endif
           } else {
             if (__pyx_t_8 >= PyTuple_GET_SIZE(__pyx_t_7)) break;
             #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            __pyx_t_3 = PyTuple_GET_ITEM(__pyx_t_7, __pyx_t_8); __Pyx_INCREF(__pyx_t_3); __pyx_t_8++; if (unlikely(0 < 0)) __PYX_ERR(0, 168, __pyx_L1_error)
+            __pyx_t_3 = PyTuple_GET_ITEM(__pyx_t_7, __pyx_t_8); __Pyx_INCREF(__pyx_t_3); __pyx_t_8++; if (unlikely(0 < 0)) __PYX_ERR(0, 167, __pyx_L1_error)
             #else
-            __pyx_t_3 = PySequence_ITEM(__pyx_t_7, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 168, __pyx_L1_error)
+            __pyx_t_3 = PySequence_ITEM(__pyx_t_7, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 167, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_3);
             #endif
           }
@@ -5504,7 +5500,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
             PyObject* exc_type = PyErr_Occurred();
             if (exc_type) {
               if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-              else __PYX_ERR(0, 168, __pyx_L1_error)
+              else __PYX_ERR(0, 167, __pyx_L1_error)
             }
             break;
           }
@@ -5513,21 +5509,21 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
         __Pyx_XDECREF_SET(__pyx_v_j, __pyx_t_3);
         __pyx_t_3 = 0;
 
-        /* "src/algorithms/common/cyt_dataset.pyx":169
+        /* "src/algorithms/common/cyt_dataset.pyx":168
  *             for i in range(n):
  *                 for j in range(i+1, n, 1):
  *                     temp_pos[i, j] = arr[i] > arr[j]             # <<<<<<<<<<<<<<
  *                     temp_pos[j, i] = arr[i] < arr[j]
  *         else:
  */
-        __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_arr, __pyx_v_i); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 169, __pyx_L1_error)
+        __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_arr, __pyx_v_i); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 168, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
-        __pyx_t_10 = __Pyx_PyObject_GetItem(__pyx_v_arr, __pyx_v_j); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 169, __pyx_L1_error)
+        __pyx_t_10 = __Pyx_PyObject_GetItem(__pyx_v_arr, __pyx_v_j); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 168, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_11 = PyObject_RichCompare(__pyx_t_3, __pyx_t_10, Py_GT); __Pyx_XGOTREF(__pyx_t_11); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 169, __pyx_L1_error)
+        __pyx_t_11 = PyObject_RichCompare(__pyx_t_3, __pyx_t_10, Py_GT); __Pyx_XGOTREF(__pyx_t_11); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 168, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 169, __pyx_L1_error)
+        __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 168, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         __Pyx_INCREF(__pyx_v_i);
         __Pyx_GIVEREF(__pyx_v_i);
@@ -5535,25 +5531,25 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
         __Pyx_INCREF(__pyx_v_j);
         __Pyx_GIVEREF(__pyx_v_j);
         PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_v_j);
-        if (unlikely(PyObject_SetItem(__pyx_v_temp_pos, __pyx_t_10, __pyx_t_11) < 0)) __PYX_ERR(0, 169, __pyx_L1_error)
+        if (unlikely(PyObject_SetItem(__pyx_v_temp_pos, __pyx_t_10, __pyx_t_11) < 0)) __PYX_ERR(0, 168, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-        /* "src/algorithms/common/cyt_dataset.pyx":170
+        /* "src/algorithms/common/cyt_dataset.pyx":169
  *                 for j in range(i+1, n, 1):
  *                     temp_pos[i, j] = arr[i] > arr[j]
  *                     temp_pos[j, i] = arr[i] < arr[j]             # <<<<<<<<<<<<<<
  *         else:
  *             for i in range(n):
  */
-        __pyx_t_11 = __Pyx_PyObject_GetItem(__pyx_v_arr, __pyx_v_i); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 170, __pyx_L1_error)
+        __pyx_t_11 = __Pyx_PyObject_GetItem(__pyx_v_arr, __pyx_v_i); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 169, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
-        __pyx_t_10 = __Pyx_PyObject_GetItem(__pyx_v_arr, __pyx_v_j); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 170, __pyx_L1_error)
+        __pyx_t_10 = __Pyx_PyObject_GetItem(__pyx_v_arr, __pyx_v_j); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 169, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_3 = PyObject_RichCompare(__pyx_t_11, __pyx_t_10, Py_LT); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 170, __pyx_L1_error)
+        __pyx_t_3 = PyObject_RichCompare(__pyx_t_11, __pyx_t_10, Py_LT); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 169, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 170, __pyx_L1_error)
+        __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 169, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         __Pyx_INCREF(__pyx_v_j);
         __Pyx_GIVEREF(__pyx_v_j);
@@ -5561,11 +5557,11 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
         __Pyx_INCREF(__pyx_v_i);
         __Pyx_GIVEREF(__pyx_v_i);
         PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_v_i);
-        if (unlikely(PyObject_SetItem(__pyx_v_temp_pos, __pyx_t_10, __pyx_t_3) < 0)) __PYX_ERR(0, 170, __pyx_L1_error)
+        if (unlikely(PyObject_SetItem(__pyx_v_temp_pos, __pyx_t_10, __pyx_t_3) < 0)) __PYX_ERR(0, 169, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-        /* "src/algorithms/common/cyt_dataset.pyx":168
+        /* "src/algorithms/common/cyt_dataset.pyx":167
  *         if not equal:
  *             for i in range(n):
  *                 for j in range(i+1, n, 1):             # <<<<<<<<<<<<<<
@@ -5575,7 +5571,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
       }
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-      /* "src/algorithms/common/cyt_dataset.pyx":167
+      /* "src/algorithms/common/cyt_dataset.pyx":166
  *     def bin_rank(arr, n, temp_pos, equal=False):
  *         if not equal:
  *             for i in range(n):             # <<<<<<<<<<<<<<
@@ -5585,7 +5581,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
     }
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":166
+    /* "src/algorithms/common/cyt_dataset.pyx":165
  *     # @numba.jit(nopython=True, parallel=True)
  *     def bin_rank(arr, n, temp_pos, equal=False):
  *         if not equal:             # <<<<<<<<<<<<<<
@@ -5595,7 +5591,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
     goto __pyx_L3;
   }
 
-  /* "src/algorithms/common/cyt_dataset.pyx":172
+  /* "src/algorithms/common/cyt_dataset.pyx":171
  *                     temp_pos[j, i] = arr[i] < arr[j]
  *         else:
  *             for i in range(n):             # <<<<<<<<<<<<<<
@@ -5603,15 +5599,15 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
  *                     temp_pos[i, j] = arr[i] >= arr[j]
  */
   /*else*/ {
-    __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_builtin_range, __pyx_v_n); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 172, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_builtin_range, __pyx_v_n); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 171, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     if (likely(PyList_CheckExact(__pyx_t_4)) || PyTuple_CheckExact(__pyx_t_4)) {
       __pyx_t_7 = __pyx_t_4; __Pyx_INCREF(__pyx_t_7); __pyx_t_5 = 0;
       __pyx_t_6 = NULL;
     } else {
-      __pyx_t_5 = -1; __pyx_t_7 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 172, __pyx_L1_error)
+      __pyx_t_5 = -1; __pyx_t_7 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 171, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_6 = Py_TYPE(__pyx_t_7)->tp_iternext; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 172, __pyx_L1_error)
+      __pyx_t_6 = Py_TYPE(__pyx_t_7)->tp_iternext; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 171, __pyx_L1_error)
     }
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     for (;;) {
@@ -5619,17 +5615,17 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
         if (likely(PyList_CheckExact(__pyx_t_7))) {
           if (__pyx_t_5 >= PyList_GET_SIZE(__pyx_t_7)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_4 = PyList_GET_ITEM(__pyx_t_7, __pyx_t_5); __Pyx_INCREF(__pyx_t_4); __pyx_t_5++; if (unlikely(0 < 0)) __PYX_ERR(0, 172, __pyx_L1_error)
+          __pyx_t_4 = PyList_GET_ITEM(__pyx_t_7, __pyx_t_5); __Pyx_INCREF(__pyx_t_4); __pyx_t_5++; if (unlikely(0 < 0)) __PYX_ERR(0, 171, __pyx_L1_error)
           #else
-          __pyx_t_4 = PySequence_ITEM(__pyx_t_7, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 172, __pyx_L1_error)
+          __pyx_t_4 = PySequence_ITEM(__pyx_t_7, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 171, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_4);
           #endif
         } else {
           if (__pyx_t_5 >= PyTuple_GET_SIZE(__pyx_t_7)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_7, __pyx_t_5); __Pyx_INCREF(__pyx_t_4); __pyx_t_5++; if (unlikely(0 < 0)) __PYX_ERR(0, 172, __pyx_L1_error)
+          __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_7, __pyx_t_5); __Pyx_INCREF(__pyx_t_4); __pyx_t_5++; if (unlikely(0 < 0)) __PYX_ERR(0, 171, __pyx_L1_error)
           #else
-          __pyx_t_4 = PySequence_ITEM(__pyx_t_7, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 172, __pyx_L1_error)
+          __pyx_t_4 = PySequence_ITEM(__pyx_t_7, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 171, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_4);
           #endif
         }
@@ -5639,7 +5635,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(0, 172, __pyx_L1_error)
+            else __PYX_ERR(0, 171, __pyx_L1_error)
           }
           break;
         }
@@ -5648,16 +5644,16 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
       __Pyx_XDECREF_SET(__pyx_v_i, __pyx_t_4);
       __pyx_t_4 = 0;
 
-      /* "src/algorithms/common/cyt_dataset.pyx":173
+      /* "src/algorithms/common/cyt_dataset.pyx":172
  *         else:
  *             for i in range(n):
  *                 for j in range(i+1, n, 1):             # <<<<<<<<<<<<<<
  *                     temp_pos[i, j] = arr[i] >= arr[j]
  *                     temp_pos[j, i] = arr[i] < arr[j]
  */
-      __pyx_t_4 = __Pyx_PyInt_AddObjC(__pyx_v_i, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 173, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_PyInt_AddObjC(__pyx_v_i, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 172, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_3 = PyTuple_New(3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 173, __pyx_L1_error)
+      __pyx_t_3 = PyTuple_New(3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 172, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_GIVEREF(__pyx_t_4);
       PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_4);
@@ -5668,16 +5664,16 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
       __Pyx_GIVEREF(__pyx_int_1);
       PyTuple_SET_ITEM(__pyx_t_3, 2, __pyx_int_1);
       __pyx_t_4 = 0;
-      __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_3, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 173, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_3, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 172, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       if (likely(PyList_CheckExact(__pyx_t_4)) || PyTuple_CheckExact(__pyx_t_4)) {
         __pyx_t_3 = __pyx_t_4; __Pyx_INCREF(__pyx_t_3); __pyx_t_8 = 0;
         __pyx_t_9 = NULL;
       } else {
-        __pyx_t_8 = -1; __pyx_t_3 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 173, __pyx_L1_error)
+        __pyx_t_8 = -1; __pyx_t_3 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 172, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
-        __pyx_t_9 = Py_TYPE(__pyx_t_3)->tp_iternext; if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 173, __pyx_L1_error)
+        __pyx_t_9 = Py_TYPE(__pyx_t_3)->tp_iternext; if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 172, __pyx_L1_error)
       }
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       for (;;) {
@@ -5685,17 +5681,17 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
           if (likely(PyList_CheckExact(__pyx_t_3))) {
             if (__pyx_t_8 >= PyList_GET_SIZE(__pyx_t_3)) break;
             #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            __pyx_t_4 = PyList_GET_ITEM(__pyx_t_3, __pyx_t_8); __Pyx_INCREF(__pyx_t_4); __pyx_t_8++; if (unlikely(0 < 0)) __PYX_ERR(0, 173, __pyx_L1_error)
+            __pyx_t_4 = PyList_GET_ITEM(__pyx_t_3, __pyx_t_8); __Pyx_INCREF(__pyx_t_4); __pyx_t_8++; if (unlikely(0 < 0)) __PYX_ERR(0, 172, __pyx_L1_error)
             #else
-            __pyx_t_4 = PySequence_ITEM(__pyx_t_3, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 173, __pyx_L1_error)
+            __pyx_t_4 = PySequence_ITEM(__pyx_t_3, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 172, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_4);
             #endif
           } else {
             if (__pyx_t_8 >= PyTuple_GET_SIZE(__pyx_t_3)) break;
             #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_3, __pyx_t_8); __Pyx_INCREF(__pyx_t_4); __pyx_t_8++; if (unlikely(0 < 0)) __PYX_ERR(0, 173, __pyx_L1_error)
+            __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_3, __pyx_t_8); __Pyx_INCREF(__pyx_t_4); __pyx_t_8++; if (unlikely(0 < 0)) __PYX_ERR(0, 172, __pyx_L1_error)
             #else
-            __pyx_t_4 = PySequence_ITEM(__pyx_t_3, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 173, __pyx_L1_error)
+            __pyx_t_4 = PySequence_ITEM(__pyx_t_3, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 172, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_4);
             #endif
           }
@@ -5705,7 +5701,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
             PyObject* exc_type = PyErr_Occurred();
             if (exc_type) {
               if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-              else __PYX_ERR(0, 173, __pyx_L1_error)
+              else __PYX_ERR(0, 172, __pyx_L1_error)
             }
             break;
           }
@@ -5714,21 +5710,21 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
         __Pyx_XDECREF_SET(__pyx_v_j, __pyx_t_4);
         __pyx_t_4 = 0;
 
-        /* "src/algorithms/common/cyt_dataset.pyx":174
+        /* "src/algorithms/common/cyt_dataset.pyx":173
  *             for i in range(n):
  *                 for j in range(i+1, n, 1):
  *                     temp_pos[i, j] = arr[i] >= arr[j]             # <<<<<<<<<<<<<<
  *                     temp_pos[j, i] = arr[i] < arr[j]
  *         temp_neg = np.transpose(temp_pos)
  */
-        __pyx_t_4 = __Pyx_PyObject_GetItem(__pyx_v_arr, __pyx_v_i); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 174, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_PyObject_GetItem(__pyx_v_arr, __pyx_v_i); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 173, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
-        __pyx_t_10 = __Pyx_PyObject_GetItem(__pyx_v_arr, __pyx_v_j); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 174, __pyx_L1_error)
+        __pyx_t_10 = __Pyx_PyObject_GetItem(__pyx_v_arr, __pyx_v_j); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 173, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_11 = PyObject_RichCompare(__pyx_t_4, __pyx_t_10, Py_GE); __Pyx_XGOTREF(__pyx_t_11); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 174, __pyx_L1_error)
+        __pyx_t_11 = PyObject_RichCompare(__pyx_t_4, __pyx_t_10, Py_GE); __Pyx_XGOTREF(__pyx_t_11); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 173, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 174, __pyx_L1_error)
+        __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 173, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         __Pyx_INCREF(__pyx_v_i);
         __Pyx_GIVEREF(__pyx_v_i);
@@ -5736,25 +5732,25 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
         __Pyx_INCREF(__pyx_v_j);
         __Pyx_GIVEREF(__pyx_v_j);
         PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_v_j);
-        if (unlikely(PyObject_SetItem(__pyx_v_temp_pos, __pyx_t_10, __pyx_t_11) < 0)) __PYX_ERR(0, 174, __pyx_L1_error)
+        if (unlikely(PyObject_SetItem(__pyx_v_temp_pos, __pyx_t_10, __pyx_t_11) < 0)) __PYX_ERR(0, 173, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-        /* "src/algorithms/common/cyt_dataset.pyx":175
+        /* "src/algorithms/common/cyt_dataset.pyx":174
  *                 for j in range(i+1, n, 1):
  *                     temp_pos[i, j] = arr[i] >= arr[j]
  *                     temp_pos[j, i] = arr[i] < arr[j]             # <<<<<<<<<<<<<<
  *         temp_neg = np.transpose(temp_pos)
  *         return temp_pos, temp_neg
  */
-        __pyx_t_11 = __Pyx_PyObject_GetItem(__pyx_v_arr, __pyx_v_i); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 175, __pyx_L1_error)
+        __pyx_t_11 = __Pyx_PyObject_GetItem(__pyx_v_arr, __pyx_v_i); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 174, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
-        __pyx_t_10 = __Pyx_PyObject_GetItem(__pyx_v_arr, __pyx_v_j); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 175, __pyx_L1_error)
+        __pyx_t_10 = __Pyx_PyObject_GetItem(__pyx_v_arr, __pyx_v_j); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 174, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_4 = PyObject_RichCompare(__pyx_t_11, __pyx_t_10, Py_LT); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 175, __pyx_L1_error)
+        __pyx_t_4 = PyObject_RichCompare(__pyx_t_11, __pyx_t_10, Py_LT); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 174, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 175, __pyx_L1_error)
+        __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 174, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         __Pyx_INCREF(__pyx_v_j);
         __Pyx_GIVEREF(__pyx_v_j);
@@ -5762,11 +5758,11 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
         __Pyx_INCREF(__pyx_v_i);
         __Pyx_GIVEREF(__pyx_v_i);
         PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_v_i);
-        if (unlikely(PyObject_SetItem(__pyx_v_temp_pos, __pyx_t_10, __pyx_t_4) < 0)) __PYX_ERR(0, 175, __pyx_L1_error)
+        if (unlikely(PyObject_SetItem(__pyx_v_temp_pos, __pyx_t_10, __pyx_t_4) < 0)) __PYX_ERR(0, 174, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-        /* "src/algorithms/common/cyt_dataset.pyx":173
+        /* "src/algorithms/common/cyt_dataset.pyx":172
  *         else:
  *             for i in range(n):
  *                 for j in range(i+1, n, 1):             # <<<<<<<<<<<<<<
@@ -5776,7 +5772,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
       }
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-      /* "src/algorithms/common/cyt_dataset.pyx":172
+      /* "src/algorithms/common/cyt_dataset.pyx":171
  *                     temp_pos[j, i] = arr[i] < arr[j]
  *         else:
  *             for i in range(n):             # <<<<<<<<<<<<<<
@@ -5788,16 +5784,16 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
   }
   __pyx_L3:;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":176
+  /* "src/algorithms/common/cyt_dataset.pyx":175
  *                     temp_pos[i, j] = arr[i] >= arr[j]
  *                     temp_pos[j, i] = arr[i] < arr[j]
  *         temp_neg = np.transpose(temp_pos)             # <<<<<<<<<<<<<<
  *         return temp_pos, temp_neg
  * 
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 176, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 175, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_transpose); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 176, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_transpose); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 175, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_t_3 = NULL;
@@ -5812,13 +5808,13 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
   }
   __pyx_t_7 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_3, __pyx_v_temp_pos) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_v_temp_pos);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 176, __pyx_L1_error)
+  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 175, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_v_temp_neg = __pyx_t_7;
   __pyx_t_7 = 0;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":177
+  /* "src/algorithms/common/cyt_dataset.pyx":176
  *                     temp_pos[j, i] = arr[i] < arr[j]
  *         temp_neg = np.transpose(temp_pos)
  *         return temp_pos, temp_neg             # <<<<<<<<<<<<<<
@@ -5826,7 +5822,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
  *     @staticmethod
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_7 = PyTuple_New(2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 177, __pyx_L1_error)
+  __pyx_t_7 = PyTuple_New(2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 176, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_INCREF(__pyx_v_temp_pos);
   __Pyx_GIVEREF(__pyx_v_temp_pos);
@@ -5838,7 +5834,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
   __pyx_t_7 = 0;
   goto __pyx_L0;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":165
+  /* "src/algorithms/common/cyt_dataset.pyx":164
  *     @staticmethod
  *     # @numba.jit(nopython=True, parallel=True)
  *     def bin_rank(arr, n, temp_pos, equal=False):             # <<<<<<<<<<<<<<
@@ -5865,7 +5861,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_6bin_
   return __pyx_r;
 }
 
-/* "src/algorithms/common/cyt_dataset.pyx":180
+/* "src/algorithms/common/cyt_dataset.pyx":179
  * 
  *     @staticmethod
  *     def read_csv(file):             # <<<<<<<<<<<<<<
@@ -5900,7 +5896,7 @@ static PyObject *__pyx_pw_3src_10algorithms_6common_11cyt_dataset_7Dataset_9read
         else goto __pyx_L5_argtuple_error;
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "read_csv") < 0)) __PYX_ERR(0, 180, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "read_csv") < 0)) __PYX_ERR(0, 179, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 1) {
       goto __pyx_L5_argtuple_error;
@@ -5911,7 +5907,7 @@ static PyObject *__pyx_pw_3src_10algorithms_6common_11cyt_dataset_7Dataset_9read
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("read_csv", 1, 1, 1, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 180, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("read_csv", 1, 1, 1, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 179, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("src.algorithms.common.cyt_dataset.Dataset.read_csv", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -5946,9 +5942,9 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_8read
   int __pyx_t_12;
   __Pyx_TraceFrameInit(__pyx_codeobj__9)
   __Pyx_RefNannySetupContext("read_csv", 0);
-  __Pyx_TraceCall("read_csv", __pyx_f[0], 180, 0, __PYX_ERR(0, 180, __pyx_L1_error));
+  __Pyx_TraceCall("read_csv", __pyx_f[0], 179, 0, __PYX_ERR(0, 179, __pyx_L1_error));
 
-  /* "src/algorithms/common/cyt_dataset.pyx":182
+  /* "src/algorithms/common/cyt_dataset.pyx":181
  *     def read_csv(file):
  *         # 1. retrieve data-set from file
  *         with open(file, 'r') as f:             # <<<<<<<<<<<<<<
@@ -5956,7 +5952,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_8read
  *             f.seek(0)
  */
   /*with:*/ {
-    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 182, __pyx_L1_error)
+    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 181, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_INCREF(__pyx_v_file);
     __Pyx_GIVEREF(__pyx_v_file);
@@ -5964,12 +5960,12 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_8read
     __Pyx_INCREF(__pyx_n_s_r);
     __Pyx_GIVEREF(__pyx_n_s_r);
     PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_n_s_r);
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_open, __pyx_t_1, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 182, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_open, __pyx_t_1, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 181, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_3 = __Pyx_PyObject_LookupSpecial(__pyx_t_2, __pyx_n_s_exit); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 182, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_LookupSpecial(__pyx_t_2, __pyx_n_s_exit); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 181, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_4 = __Pyx_PyObject_LookupSpecial(__pyx_t_2, __pyx_n_s_enter); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 182, __pyx_L3_error)
+    __pyx_t_4 = __Pyx_PyObject_LookupSpecial(__pyx_t_2, __pyx_n_s_enter); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 181, __pyx_L3_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_5 = NULL;
     if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_4))) {
@@ -5983,7 +5979,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_8read
     }
     __pyx_t_1 = (__pyx_t_5) ? __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_5) : __Pyx_PyObject_CallNoArg(__pyx_t_4);
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 182, __pyx_L3_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 181, __pyx_L3_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_t_4 = __pyx_t_1;
@@ -6001,16 +5997,16 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_8read
           __pyx_v_f = __pyx_t_4;
           __pyx_t_4 = 0;
 
-          /* "src/algorithms/common/cyt_dataset.pyx":183
+          /* "src/algorithms/common/cyt_dataset.pyx":182
  *         # 1. retrieve data-set from file
  *         with open(file, 'r') as f:
  *             dialect = csv.Sniffer().sniff(f.readline(), delimiters=";,' '\t")             # <<<<<<<<<<<<<<
  *             f.seek(0)
  *             reader = csv.reader(f, dialect)
  */
-          __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_csv); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 183, __pyx_L7_error)
+          __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_csv); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 182, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_2);
-          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_Sniffer); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 183, __pyx_L7_error)
+          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_Sniffer); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 182, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_1);
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
           __pyx_t_2 = NULL;
@@ -6025,13 +6021,13 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_8read
           }
           __pyx_t_4 = (__pyx_t_2) ? __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_2) : __Pyx_PyObject_CallNoArg(__pyx_t_1);
           __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-          if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 183, __pyx_L7_error)
+          if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 182, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_4);
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_sniff); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 183, __pyx_L7_error)
+          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_sniff); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 182, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_1);
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_readline); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 183, __pyx_L7_error)
+          __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_readline); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 182, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_2);
           __pyx_t_5 = NULL;
           if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
@@ -6045,18 +6041,18 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_8read
           }
           __pyx_t_4 = (__pyx_t_5) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_5) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
           __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-          if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 183, __pyx_L7_error)
+          if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 182, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_4);
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-          __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 183, __pyx_L7_error)
+          __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 182, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_GIVEREF(__pyx_t_4);
           PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_4);
           __pyx_t_4 = 0;
-          __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 183, __pyx_L7_error)
+          __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 182, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_4);
-          if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_delimiters, __pyx_kp_s__10) < 0) __PYX_ERR(0, 183, __pyx_L7_error)
-          __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 183, __pyx_L7_error)
+          if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_delimiters, __pyx_kp_s__10) < 0) __PYX_ERR(0, 182, __pyx_L7_error)
+          __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 182, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_5);
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -6064,14 +6060,14 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_8read
           __pyx_v_dialect = __pyx_t_5;
           __pyx_t_5 = 0;
 
-          /* "src/algorithms/common/cyt_dataset.pyx":184
+          /* "src/algorithms/common/cyt_dataset.pyx":183
  *         with open(file, 'r') as f:
  *             dialect = csv.Sniffer().sniff(f.readline(), delimiters=";,' '\t")
  *             f.seek(0)             # <<<<<<<<<<<<<<
  *             reader = csv.reader(f, dialect)
  *             temp = list(reader)
  */
-          __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_seek); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 184, __pyx_L7_error)
+          __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_seek); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 183, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_4);
           __pyx_t_2 = NULL;
           if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_4))) {
@@ -6085,21 +6081,21 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_8read
           }
           __pyx_t_5 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_2, __pyx_int_0) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_int_0);
           __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 184, __pyx_L7_error)
+          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 183, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_5);
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-          /* "src/algorithms/common/cyt_dataset.pyx":185
+          /* "src/algorithms/common/cyt_dataset.pyx":184
  *             dialect = csv.Sniffer().sniff(f.readline(), delimiters=";,' '\t")
  *             f.seek(0)
  *             reader = csv.reader(f, dialect)             # <<<<<<<<<<<<<<
  *             temp = list(reader)
  *             f.close()
  */
-          __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_csv); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 185, __pyx_L7_error)
+          __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_csv); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 184, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_4);
-          __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_reader); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 185, __pyx_L7_error)
+          __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_reader); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 184, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
           __pyx_t_4 = NULL;
@@ -6117,7 +6113,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_8read
           #if CYTHON_FAST_PYCALL
           if (PyFunction_Check(__pyx_t_2)) {
             PyObject *__pyx_temp[3] = {__pyx_t_4, __pyx_v_f, __pyx_v_dialect};
-            __pyx_t_5 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_9, 2+__pyx_t_9); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 185, __pyx_L7_error)
+            __pyx_t_5 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_9, 2+__pyx_t_9); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 184, __pyx_L7_error)
             __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
             __Pyx_GOTREF(__pyx_t_5);
           } else
@@ -6125,13 +6121,13 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_8read
           #if CYTHON_FAST_PYCCALL
           if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
             PyObject *__pyx_temp[3] = {__pyx_t_4, __pyx_v_f, __pyx_v_dialect};
-            __pyx_t_5 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_9, 2+__pyx_t_9); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 185, __pyx_L7_error)
+            __pyx_t_5 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_9, 2+__pyx_t_9); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 184, __pyx_L7_error)
             __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
             __Pyx_GOTREF(__pyx_t_5);
           } else
           #endif
           {
-            __pyx_t_1 = PyTuple_New(2+__pyx_t_9); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 185, __pyx_L7_error)
+            __pyx_t_1 = PyTuple_New(2+__pyx_t_9); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 184, __pyx_L7_error)
             __Pyx_GOTREF(__pyx_t_1);
             if (__pyx_t_4) {
               __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_4); __pyx_t_4 = NULL;
@@ -6142,7 +6138,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_8read
             __Pyx_INCREF(__pyx_v_dialect);
             __Pyx_GIVEREF(__pyx_v_dialect);
             PyTuple_SET_ITEM(__pyx_t_1, 1+__pyx_t_9, __pyx_v_dialect);
-            __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_1, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 185, __pyx_L7_error)
+            __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_1, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 184, __pyx_L7_error)
             __Pyx_GOTREF(__pyx_t_5);
             __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
           }
@@ -6150,26 +6146,26 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_8read
           __pyx_v_reader = __pyx_t_5;
           __pyx_t_5 = 0;
 
-          /* "src/algorithms/common/cyt_dataset.pyx":186
+          /* "src/algorithms/common/cyt_dataset.pyx":185
  *             f.seek(0)
  *             reader = csv.reader(f, dialect)
  *             temp = list(reader)             # <<<<<<<<<<<<<<
  *             f.close()
  *         return temp
  */
-          __pyx_t_5 = PySequence_List(__pyx_v_reader); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 186, __pyx_L7_error)
+          __pyx_t_5 = PySequence_List(__pyx_v_reader); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 185, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_5);
           __pyx_v_temp = ((PyObject*)__pyx_t_5);
           __pyx_t_5 = 0;
 
-          /* "src/algorithms/common/cyt_dataset.pyx":187
+          /* "src/algorithms/common/cyt_dataset.pyx":186
  *             reader = csv.reader(f, dialect)
  *             temp = list(reader)
  *             f.close()             # <<<<<<<<<<<<<<
  *         return temp
  * 
  */
-          __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_close); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 187, __pyx_L7_error)
+          __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_close); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 186, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_2);
           __pyx_t_1 = NULL;
           if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
@@ -6183,12 +6179,12 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_8read
           }
           __pyx_t_5 = (__pyx_t_1) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_1) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
           __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 187, __pyx_L7_error)
+          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 186, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_5);
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-          /* "src/algorithms/common/cyt_dataset.pyx":182
+          /* "src/algorithms/common/cyt_dataset.pyx":181
  *     def read_csv(file):
  *         # 1. retrieve data-set from file
  *         with open(file, 'r') as f:             # <<<<<<<<<<<<<<
@@ -6207,20 +6203,20 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_8read
         __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
         /*except:*/ {
           __Pyx_AddTraceback("src.algorithms.common.cyt_dataset.Dataset.read_csv", __pyx_clineno, __pyx_lineno, __pyx_filename);
-          if (__Pyx_GetException(&__pyx_t_5, &__pyx_t_2, &__pyx_t_1) < 0) __PYX_ERR(0, 182, __pyx_L9_except_error)
+          if (__Pyx_GetException(&__pyx_t_5, &__pyx_t_2, &__pyx_t_1) < 0) __PYX_ERR(0, 181, __pyx_L9_except_error)
           __Pyx_GOTREF(__pyx_t_5);
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_4 = PyTuple_Pack(3, __pyx_t_5, __pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 182, __pyx_L9_except_error)
+          __pyx_t_4 = PyTuple_Pack(3, __pyx_t_5, __pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 181, __pyx_L9_except_error)
           __Pyx_GOTREF(__pyx_t_4);
           __pyx_t_10 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_4, NULL);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 182, __pyx_L9_except_error)
+          if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 181, __pyx_L9_except_error)
           __Pyx_GOTREF(__pyx_t_10);
           __pyx_t_11 = __Pyx_PyObject_IsTrue(__pyx_t_10);
           __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          if (__pyx_t_11 < 0) __PYX_ERR(0, 182, __pyx_L9_except_error)
+          if (__pyx_t_11 < 0) __PYX_ERR(0, 181, __pyx_L9_except_error)
           __pyx_t_12 = ((!(__pyx_t_11 != 0)) != 0);
           if (__pyx_t_12) {
             __Pyx_GIVEREF(__pyx_t_5);
@@ -6228,7 +6224,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_8read
             __Pyx_XGIVEREF(__pyx_t_1);
             __Pyx_ErrRestoreWithState(__pyx_t_5, __pyx_t_2, __pyx_t_1);
             __pyx_t_5 = 0; __pyx_t_2 = 0; __pyx_t_1 = 0; 
-            __PYX_ERR(0, 182, __pyx_L9_except_error)
+            __PYX_ERR(0, 181, __pyx_L9_except_error)
           }
           __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
           __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -6254,7 +6250,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_8read
         if (__pyx_t_3) {
           __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__11, NULL);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 182, __pyx_L1_error)
+          if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 181, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_8);
           __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
         }
@@ -6269,7 +6265,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_8read
     __pyx_L16:;
   }
 
-  /* "src/algorithms/common/cyt_dataset.pyx":188
+  /* "src/algorithms/common/cyt_dataset.pyx":187
  *             temp = list(reader)
  *             f.close()
  *         return temp             # <<<<<<<<<<<<<<
@@ -6277,12 +6273,12 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_8read
  *     @staticmethod
  */
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_temp)) { __Pyx_RaiseUnboundLocalError("temp"); __PYX_ERR(0, 188, __pyx_L1_error) }
+  if (unlikely(!__pyx_v_temp)) { __Pyx_RaiseUnboundLocalError("temp"); __PYX_ERR(0, 187, __pyx_L1_error) }
   __Pyx_INCREF(__pyx_v_temp);
   __pyx_r = __pyx_v_temp;
   goto __pyx_L0;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":180
+  /* "src/algorithms/common/cyt_dataset.pyx":179
  * 
  *     @staticmethod
  *     def read_csv(file):             # <<<<<<<<<<<<<<
@@ -6309,7 +6305,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_8read
   return __pyx_r;
 }
 
-/* "src/algorithms/common/cyt_dataset.pyx":191
+/* "src/algorithms/common/cyt_dataset.pyx":190
  * 
  *     @staticmethod
  *     def write_file(data, path):             # <<<<<<<<<<<<<<
@@ -6349,11 +6345,11 @@ static PyObject *__pyx_pw_3src_10algorithms_6common_11cyt_dataset_7Dataset_11wri
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_path)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("write_file", 1, 2, 2, 1); __PYX_ERR(0, 191, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("write_file", 1, 2, 2, 1); __PYX_ERR(0, 190, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "write_file") < 0)) __PYX_ERR(0, 191, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "write_file") < 0)) __PYX_ERR(0, 190, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -6366,7 +6362,7 @@ static PyObject *__pyx_pw_3src_10algorithms_6common_11cyt_dataset_7Dataset_11wri
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("write_file", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 191, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("write_file", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 190, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("src.algorithms.common.cyt_dataset.Dataset.write_file", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -6397,9 +6393,9 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_10wri
   int __pyx_t_11;
   __Pyx_TraceFrameInit(__pyx_codeobj__12)
   __Pyx_RefNannySetupContext("write_file", 0);
-  __Pyx_TraceCall("write_file", __pyx_f[0], 191, 0, __PYX_ERR(0, 191, __pyx_L1_error));
+  __Pyx_TraceCall("write_file", __pyx_f[0], 190, 0, __PYX_ERR(0, 190, __pyx_L1_error));
 
-  /* "src/algorithms/common/cyt_dataset.pyx":192
+  /* "src/algorithms/common/cyt_dataset.pyx":191
  *     @staticmethod
  *     def write_file(data, path):
  *         with open(path, 'w') as f:             # <<<<<<<<<<<<<<
@@ -6407,7 +6403,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_10wri
  *             f.close()
  */
   /*with:*/ {
-    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 192, __pyx_L1_error)
+    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 191, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_INCREF(__pyx_v_path);
     __Pyx_GIVEREF(__pyx_v_path);
@@ -6415,12 +6411,12 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_10wri
     __Pyx_INCREF(__pyx_n_s_w);
     __Pyx_GIVEREF(__pyx_n_s_w);
     PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_n_s_w);
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_open, __pyx_t_1, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 192, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_open, __pyx_t_1, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 191, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_3 = __Pyx_PyObject_LookupSpecial(__pyx_t_2, __pyx_n_s_exit); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 192, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_LookupSpecial(__pyx_t_2, __pyx_n_s_exit); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 191, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_4 = __Pyx_PyObject_LookupSpecial(__pyx_t_2, __pyx_n_s_enter); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 192, __pyx_L3_error)
+    __pyx_t_4 = __Pyx_PyObject_LookupSpecial(__pyx_t_2, __pyx_n_s_enter); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 191, __pyx_L3_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_5 = NULL;
     if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_4))) {
@@ -6434,7 +6430,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_10wri
     }
     __pyx_t_1 = (__pyx_t_5) ? __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_5) : __Pyx_PyObject_CallNoArg(__pyx_t_4);
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 192, __pyx_L3_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 191, __pyx_L3_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_t_4 = __pyx_t_1;
@@ -6452,14 +6448,14 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_10wri
           __pyx_v_f = __pyx_t_4;
           __pyx_t_4 = 0;
 
-          /* "src/algorithms/common/cyt_dataset.pyx":193
+          /* "src/algorithms/common/cyt_dataset.pyx":192
  *     def write_file(data, path):
  *         with open(path, 'w') as f:
  *             f.write(data)             # <<<<<<<<<<<<<<
  *             f.close()
  * 
  */
-          __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 193, __pyx_L7_error)
+          __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 192, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_2);
           __pyx_t_1 = NULL;
           if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
@@ -6473,19 +6469,19 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_10wri
           }
           __pyx_t_4 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_1, __pyx_v_data) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_data);
           __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-          if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 193, __pyx_L7_error)
+          if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 192, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_4);
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-          /* "src/algorithms/common/cyt_dataset.pyx":194
+          /* "src/algorithms/common/cyt_dataset.pyx":193
  *         with open(path, 'w') as f:
  *             f.write(data)
  *             f.close()             # <<<<<<<<<<<<<<
  * 
  *     @staticmethod
  */
-          __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_close); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 194, __pyx_L7_error)
+          __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_close); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 193, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_2);
           __pyx_t_1 = NULL;
           if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
@@ -6499,12 +6495,12 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_10wri
           }
           __pyx_t_4 = (__pyx_t_1) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_1) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
           __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-          if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 194, __pyx_L7_error)
+          if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 193, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_4);
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-          /* "src/algorithms/common/cyt_dataset.pyx":192
+          /* "src/algorithms/common/cyt_dataset.pyx":191
  *     @staticmethod
  *     def write_file(data, path):
  *         with open(path, 'w') as f:             # <<<<<<<<<<<<<<
@@ -6523,20 +6519,20 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_10wri
         __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
         /*except:*/ {
           __Pyx_AddTraceback("src.algorithms.common.cyt_dataset.Dataset.write_file", __pyx_clineno, __pyx_lineno, __pyx_filename);
-          if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_2, &__pyx_t_1) < 0) __PYX_ERR(0, 192, __pyx_L9_except_error)
+          if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_2, &__pyx_t_1) < 0) __PYX_ERR(0, 191, __pyx_L9_except_error)
           __Pyx_GOTREF(__pyx_t_4);
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_5 = PyTuple_Pack(3, __pyx_t_4, __pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 192, __pyx_L9_except_error)
+          __pyx_t_5 = PyTuple_Pack(3, __pyx_t_4, __pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 191, __pyx_L9_except_error)
           __Pyx_GOTREF(__pyx_t_5);
           __pyx_t_9 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-          if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 192, __pyx_L9_except_error)
+          if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 191, __pyx_L9_except_error)
           __Pyx_GOTREF(__pyx_t_9);
           __pyx_t_10 = __Pyx_PyObject_IsTrue(__pyx_t_9);
           __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-          if (__pyx_t_10 < 0) __PYX_ERR(0, 192, __pyx_L9_except_error)
+          if (__pyx_t_10 < 0) __PYX_ERR(0, 191, __pyx_L9_except_error)
           __pyx_t_11 = ((!(__pyx_t_10 != 0)) != 0);
           if (__pyx_t_11) {
             __Pyx_GIVEREF(__pyx_t_4);
@@ -6544,7 +6540,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_10wri
             __Pyx_XGIVEREF(__pyx_t_1);
             __Pyx_ErrRestoreWithState(__pyx_t_4, __pyx_t_2, __pyx_t_1);
             __pyx_t_4 = 0; __pyx_t_2 = 0; __pyx_t_1 = 0; 
-            __PYX_ERR(0, 192, __pyx_L9_except_error)
+            __PYX_ERR(0, 191, __pyx_L9_except_error)
           }
           __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
           __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -6570,7 +6566,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_10wri
         if (__pyx_t_3) {
           __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__11, NULL);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 192, __pyx_L1_error)
+          if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 191, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_8);
           __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
         }
@@ -6585,7 +6581,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_10wri
     __pyx_L16:;
   }
 
-  /* "src/algorithms/common/cyt_dataset.pyx":191
+  /* "src/algorithms/common/cyt_dataset.pyx":190
  * 
  *     @staticmethod
  *     def write_file(data, path):             # <<<<<<<<<<<<<<
@@ -6611,7 +6607,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_10wri
   return __pyx_r;
 }
 
-/* "src/algorithms/common/cyt_dataset.pyx":197
+/* "src/algorithms/common/cyt_dataset.pyx":196
  * 
  *     @staticmethod
  *     def test_time(date_str):             # <<<<<<<<<<<<<<
@@ -6646,7 +6642,7 @@ static PyObject *__pyx_pw_3src_10algorithms_6common_11cyt_dataset_7Dataset_13tes
         else goto __pyx_L5_argtuple_error;
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "test_time") < 0)) __PYX_ERR(0, 197, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "test_time") < 0)) __PYX_ERR(0, 196, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 1) {
       goto __pyx_L5_argtuple_error;
@@ -6657,7 +6653,7 @@ static PyObject *__pyx_pw_3src_10algorithms_6common_11cyt_dataset_7Dataset_13tes
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("test_time", 1, 1, 1, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 197, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("test_time", 1, 1, 1, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 196, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("src.algorithms.common.cyt_dataset.Dataset.test_time", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -6700,9 +6696,9 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_12tes
   PyObject *__pyx_t_22 = NULL;
   __Pyx_TraceFrameInit(__pyx_codeobj__13)
   __Pyx_RefNannySetupContext("test_time", 0);
-  __Pyx_TraceCall("test_time", __pyx_f[0], 197, 0, __PYX_ERR(0, 197, __pyx_L1_error));
+  __Pyx_TraceCall("test_time", __pyx_f[0], 196, 0, __PYX_ERR(0, 196, __pyx_L1_error));
 
-  /* "src/algorithms/common/cyt_dataset.pyx":199
+  /* "src/algorithms/common/cyt_dataset.pyx":198
  *     def test_time(date_str):
  *         # add all the possible formats
  *         try:             # <<<<<<<<<<<<<<
@@ -6718,20 +6714,20 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_12tes
     __Pyx_XGOTREF(__pyx_t_3);
     /*try:*/ {
 
-      /* "src/algorithms/common/cyt_dataset.pyx":200
+      /* "src/algorithms/common/cyt_dataset.pyx":199
  *         # add all the possible formats
  *         try:
  *             if type(int(date_str)):             # <<<<<<<<<<<<<<
  *                 return False, False
  *         except ValueError:
  */
-      __pyx_t_4 = __Pyx_PyNumber_Int(__pyx_v_date_str); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 200, __pyx_L3_error)
+      __pyx_t_4 = __Pyx_PyNumber_Int(__pyx_v_date_str); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 199, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_5 = __Pyx_PyObject_IsTrue(((PyObject *)Py_TYPE(__pyx_t_4))); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 200, __pyx_L3_error)
+      __pyx_t_5 = __Pyx_PyObject_IsTrue(((PyObject *)Py_TYPE(__pyx_t_4))); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 199, __pyx_L3_error)
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       if (__pyx_t_5) {
 
-        /* "src/algorithms/common/cyt_dataset.pyx":201
+        /* "src/algorithms/common/cyt_dataset.pyx":200
  *         try:
  *             if type(int(date_str)):
  *                 return False, False             # <<<<<<<<<<<<<<
@@ -6743,7 +6739,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_12tes
         __pyx_r = __pyx_tuple__14;
         goto __pyx_L7_try_return;
 
-        /* "src/algorithms/common/cyt_dataset.pyx":200
+        /* "src/algorithms/common/cyt_dataset.pyx":199
  *         # add all the possible formats
  *         try:
  *             if type(int(date_str)):             # <<<<<<<<<<<<<<
@@ -6752,7 +6748,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_12tes
  */
       }
 
-      /* "src/algorithms/common/cyt_dataset.pyx":199
+      /* "src/algorithms/common/cyt_dataset.pyx":198
  *     def test_time(date_str):
  *         # add all the possible formats
  *         try:             # <<<<<<<<<<<<<<
@@ -6767,7 +6763,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_12tes
     __pyx_L3_error:;
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":202
+    /* "src/algorithms/common/cyt_dataset.pyx":201
  *             if type(int(date_str)):
  *                 return False, False
  *         except ValueError:             # <<<<<<<<<<<<<<
@@ -6777,12 +6773,12 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_12tes
     __pyx_t_6 = __Pyx_PyErr_ExceptionMatches(__pyx_builtin_ValueError);
     if (__pyx_t_6) {
       __Pyx_AddTraceback("src.algorithms.common.cyt_dataset.Dataset.test_time", __pyx_clineno, __pyx_lineno, __pyx_filename);
-      if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_7, &__pyx_t_8) < 0) __PYX_ERR(0, 202, __pyx_L5_except_error)
+      if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_7, &__pyx_t_8) < 0) __PYX_ERR(0, 201, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_GOTREF(__pyx_t_8);
 
-      /* "src/algorithms/common/cyt_dataset.pyx":203
+      /* "src/algorithms/common/cyt_dataset.pyx":202
  *                 return False, False
  *         except ValueError:
  *             try:             # <<<<<<<<<<<<<<
@@ -6798,20 +6794,20 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_12tes
         __Pyx_XGOTREF(__pyx_t_11);
         /*try:*/ {
 
-          /* "src/algorithms/common/cyt_dataset.pyx":204
+          /* "src/algorithms/common/cyt_dataset.pyx":203
  *         except ValueError:
  *             try:
  *                 if type(float(date_str)):             # <<<<<<<<<<<<<<
  *                     return False, False
  *             except ValueError:
  */
-          __pyx_t_12 = __Pyx_PyNumber_Float(__pyx_v_date_str); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 204, __pyx_L12_error)
+          __pyx_t_12 = __Pyx_PyNumber_Float(__pyx_v_date_str); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 203, __pyx_L12_error)
           __Pyx_GOTREF(__pyx_t_12);
-          __pyx_t_5 = __Pyx_PyObject_IsTrue(((PyObject *)Py_TYPE(__pyx_t_12))); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 204, __pyx_L12_error)
+          __pyx_t_5 = __Pyx_PyObject_IsTrue(((PyObject *)Py_TYPE(__pyx_t_12))); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 203, __pyx_L12_error)
           __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
           if (__pyx_t_5) {
 
-            /* "src/algorithms/common/cyt_dataset.pyx":205
+            /* "src/algorithms/common/cyt_dataset.pyx":204
  *             try:
  *                 if type(float(date_str)):
  *                     return False, False             # <<<<<<<<<<<<<<
@@ -6826,7 +6822,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_12tes
             __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
             goto __pyx_L16_try_return;
 
-            /* "src/algorithms/common/cyt_dataset.pyx":204
+            /* "src/algorithms/common/cyt_dataset.pyx":203
  *         except ValueError:
  *             try:
  *                 if type(float(date_str)):             # <<<<<<<<<<<<<<
@@ -6835,7 +6831,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_12tes
  */
           }
 
-          /* "src/algorithms/common/cyt_dataset.pyx":203
+          /* "src/algorithms/common/cyt_dataset.pyx":202
  *                 return False, False
  *         except ValueError:
  *             try:             # <<<<<<<<<<<<<<
@@ -6850,7 +6846,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_12tes
         __pyx_L12_error:;
         __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
 
-        /* "src/algorithms/common/cyt_dataset.pyx":206
+        /* "src/algorithms/common/cyt_dataset.pyx":205
  *                 if type(float(date_str)):
  *                     return False, False
  *             except ValueError:             # <<<<<<<<<<<<<<
@@ -6860,12 +6856,12 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_12tes
         __pyx_t_6 = __Pyx_PyErr_ExceptionMatches(__pyx_builtin_ValueError);
         if (__pyx_t_6) {
           __Pyx_AddTraceback("src.algorithms.common.cyt_dataset.Dataset.test_time", __pyx_clineno, __pyx_lineno, __pyx_filename);
-          if (__Pyx_GetException(&__pyx_t_12, &__pyx_t_13, &__pyx_t_14) < 0) __PYX_ERR(0, 206, __pyx_L14_except_error)
+          if (__Pyx_GetException(&__pyx_t_12, &__pyx_t_13, &__pyx_t_14) < 0) __PYX_ERR(0, 205, __pyx_L14_except_error)
           __Pyx_GOTREF(__pyx_t_12);
           __Pyx_GOTREF(__pyx_t_13);
           __Pyx_GOTREF(__pyx_t_14);
 
-          /* "src/algorithms/common/cyt_dataset.pyx":207
+          /* "src/algorithms/common/cyt_dataset.pyx":206
  *                     return False, False
  *             except ValueError:
  *                 try:             # <<<<<<<<<<<<<<
@@ -6881,14 +6877,14 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_12tes
             __Pyx_XGOTREF(__pyx_t_17);
             /*try:*/ {
 
-              /* "src/algorithms/common/cyt_dataset.pyx":208
+              /* "src/algorithms/common/cyt_dataset.pyx":207
  *             except ValueError:
  *                 try:
  *                     date_time = parse(date_str)             # <<<<<<<<<<<<<<
  *                     t_stamp = time.mktime(date_time.timetuple())
  *                     return True, t_stamp
  */
-              __Pyx_GetModuleGlobalName(__pyx_t_19, __pyx_n_s_parse); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 208, __pyx_L23_error)
+              __Pyx_GetModuleGlobalName(__pyx_t_19, __pyx_n_s_parse); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 207, __pyx_L23_error)
               __Pyx_GOTREF(__pyx_t_19);
               __pyx_t_20 = NULL;
               if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_19))) {
@@ -6902,25 +6898,25 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_12tes
               }
               __pyx_t_18 = (__pyx_t_20) ? __Pyx_PyObject_Call2Args(__pyx_t_19, __pyx_t_20, __pyx_v_date_str) : __Pyx_PyObject_CallOneArg(__pyx_t_19, __pyx_v_date_str);
               __Pyx_XDECREF(__pyx_t_20); __pyx_t_20 = 0;
-              if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 208, __pyx_L23_error)
+              if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 207, __pyx_L23_error)
               __Pyx_GOTREF(__pyx_t_18);
               __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
               __pyx_v_date_time = __pyx_t_18;
               __pyx_t_18 = 0;
 
-              /* "src/algorithms/common/cyt_dataset.pyx":209
+              /* "src/algorithms/common/cyt_dataset.pyx":208
  *                 try:
  *                     date_time = parse(date_str)
  *                     t_stamp = time.mktime(date_time.timetuple())             # <<<<<<<<<<<<<<
  *                     return True, t_stamp
  *                 except ValueError:
  */
-              __Pyx_GetModuleGlobalName(__pyx_t_19, __pyx_n_s_time); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 209, __pyx_L23_error)
+              __Pyx_GetModuleGlobalName(__pyx_t_19, __pyx_n_s_time); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 208, __pyx_L23_error)
               __Pyx_GOTREF(__pyx_t_19);
-              __pyx_t_20 = __Pyx_PyObject_GetAttrStr(__pyx_t_19, __pyx_n_s_mktime); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 209, __pyx_L23_error)
+              __pyx_t_20 = __Pyx_PyObject_GetAttrStr(__pyx_t_19, __pyx_n_s_mktime); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 208, __pyx_L23_error)
               __Pyx_GOTREF(__pyx_t_20);
               __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
-              __pyx_t_21 = __Pyx_PyObject_GetAttrStr(__pyx_v_date_time, __pyx_n_s_timetuple); if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 209, __pyx_L23_error)
+              __pyx_t_21 = __Pyx_PyObject_GetAttrStr(__pyx_v_date_time, __pyx_n_s_timetuple); if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 208, __pyx_L23_error)
               __Pyx_GOTREF(__pyx_t_21);
               __pyx_t_22 = NULL;
               if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_21))) {
@@ -6934,7 +6930,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_12tes
               }
               __pyx_t_19 = (__pyx_t_22) ? __Pyx_PyObject_CallOneArg(__pyx_t_21, __pyx_t_22) : __Pyx_PyObject_CallNoArg(__pyx_t_21);
               __Pyx_XDECREF(__pyx_t_22); __pyx_t_22 = 0;
-              if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 209, __pyx_L23_error)
+              if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 208, __pyx_L23_error)
               __Pyx_GOTREF(__pyx_t_19);
               __Pyx_DECREF(__pyx_t_21); __pyx_t_21 = 0;
               __pyx_t_21 = NULL;
@@ -6950,13 +6946,13 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_12tes
               __pyx_t_18 = (__pyx_t_21) ? __Pyx_PyObject_Call2Args(__pyx_t_20, __pyx_t_21, __pyx_t_19) : __Pyx_PyObject_CallOneArg(__pyx_t_20, __pyx_t_19);
               __Pyx_XDECREF(__pyx_t_21); __pyx_t_21 = 0;
               __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
-              if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 209, __pyx_L23_error)
+              if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 208, __pyx_L23_error)
               __Pyx_GOTREF(__pyx_t_18);
               __Pyx_DECREF(__pyx_t_20); __pyx_t_20 = 0;
               __pyx_v_t_stamp = __pyx_t_18;
               __pyx_t_18 = 0;
 
-              /* "src/algorithms/common/cyt_dataset.pyx":210
+              /* "src/algorithms/common/cyt_dataset.pyx":209
  *                     date_time = parse(date_str)
  *                     t_stamp = time.mktime(date_time.timetuple())
  *                     return True, t_stamp             # <<<<<<<<<<<<<<
@@ -6964,7 +6960,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_12tes
  *                     raise ValueError('no valid date-time format found')
  */
               __Pyx_XDECREF(__pyx_r);
-              __pyx_t_18 = PyTuple_New(2); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 210, __pyx_L23_error)
+              __pyx_t_18 = PyTuple_New(2); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 209, __pyx_L23_error)
               __Pyx_GOTREF(__pyx_t_18);
               __Pyx_INCREF(Py_True);
               __Pyx_GIVEREF(Py_True);
@@ -6982,7 +6978,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_12tes
               __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
               goto __pyx_L27_try_return;
 
-              /* "src/algorithms/common/cyt_dataset.pyx":207
+              /* "src/algorithms/common/cyt_dataset.pyx":206
  *                     return False, False
  *             except ValueError:
  *                 try:             # <<<<<<<<<<<<<<
@@ -6997,7 +6993,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_12tes
             __Pyx_XDECREF(__pyx_t_21); __pyx_t_21 = 0;
             __Pyx_XDECREF(__pyx_t_22); __pyx_t_22 = 0;
 
-            /* "src/algorithms/common/cyt_dataset.pyx":211
+            /* "src/algorithms/common/cyt_dataset.pyx":210
  *                     t_stamp = time.mktime(date_time.timetuple())
  *                     return True, t_stamp
  *                 except ValueError:             # <<<<<<<<<<<<<<
@@ -7007,28 +7003,28 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_12tes
             __pyx_t_6 = __Pyx_PyErr_ExceptionMatches(__pyx_builtin_ValueError);
             if (__pyx_t_6) {
               __Pyx_AddTraceback("src.algorithms.common.cyt_dataset.Dataset.test_time", __pyx_clineno, __pyx_lineno, __pyx_filename);
-              if (__Pyx_GetException(&__pyx_t_18, &__pyx_t_20, &__pyx_t_19) < 0) __PYX_ERR(0, 211, __pyx_L25_except_error)
+              if (__Pyx_GetException(&__pyx_t_18, &__pyx_t_20, &__pyx_t_19) < 0) __PYX_ERR(0, 210, __pyx_L25_except_error)
               __Pyx_GOTREF(__pyx_t_18);
               __Pyx_GOTREF(__pyx_t_20);
               __Pyx_GOTREF(__pyx_t_19);
 
-              /* "src/algorithms/common/cyt_dataset.pyx":212
+              /* "src/algorithms/common/cyt_dataset.pyx":211
  *                     return True, t_stamp
  *                 except ValueError:
  *                     raise ValueError('no valid date-time format found')             # <<<<<<<<<<<<<<
  * 
  *     @staticmethod
  */
-              __pyx_t_21 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__15, NULL); if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 212, __pyx_L25_except_error)
+              __pyx_t_21 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__15, NULL); if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 211, __pyx_L25_except_error)
               __Pyx_GOTREF(__pyx_t_21);
               __Pyx_Raise(__pyx_t_21, 0, 0, 0);
               __Pyx_DECREF(__pyx_t_21); __pyx_t_21 = 0;
-              __PYX_ERR(0, 212, __pyx_L25_except_error)
+              __PYX_ERR(0, 211, __pyx_L25_except_error)
             }
             goto __pyx_L25_except_error;
             __pyx_L25_except_error:;
 
-            /* "src/algorithms/common/cyt_dataset.pyx":207
+            /* "src/algorithms/common/cyt_dataset.pyx":206
  *                     return False, False
  *             except ValueError:
  *                 try:             # <<<<<<<<<<<<<<
@@ -7051,7 +7047,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_12tes
         goto __pyx_L14_except_error;
         __pyx_L14_except_error:;
 
-        /* "src/algorithms/common/cyt_dataset.pyx":203
+        /* "src/algorithms/common/cyt_dataset.pyx":202
  *                 return False, False
  *         except ValueError:
  *             try:             # <<<<<<<<<<<<<<
@@ -7085,7 +7081,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_12tes
     goto __pyx_L5_except_error;
     __pyx_L5_except_error:;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":199
+    /* "src/algorithms/common/cyt_dataset.pyx":198
  *     def test_time(date_str):
  *         # add all the possible formats
  *         try:             # <<<<<<<<<<<<<<
@@ -7117,7 +7113,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_12tes
     __pyx_L8_try_end:;
   }
 
-  /* "src/algorithms/common/cyt_dataset.pyx":197
+  /* "src/algorithms/common/cyt_dataset.pyx":196
  * 
  *     @staticmethod
  *     def test_time(date_str):             # <<<<<<<<<<<<<<
@@ -7151,7 +7147,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_12tes
   return __pyx_r;
 }
 
-/* "src/algorithms/common/cyt_dataset.pyx":215
+/* "src/algorithms/common/cyt_dataset.pyx":214
  * 
  *     @staticmethod
  *     def get_timestamp(time_data):             # <<<<<<<<<<<<<<
@@ -7186,7 +7182,7 @@ static PyObject *__pyx_pw_3src_10algorithms_6common_11cyt_dataset_7Dataset_15get
         else goto __pyx_L5_argtuple_error;
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "get_timestamp") < 0)) __PYX_ERR(0, 215, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "get_timestamp") < 0)) __PYX_ERR(0, 214, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 1) {
       goto __pyx_L5_argtuple_error;
@@ -7197,7 +7193,7 @@ static PyObject *__pyx_pw_3src_10algorithms_6common_11cyt_dataset_7Dataset_15get
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("get_timestamp", 1, 1, 1, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 215, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("get_timestamp", 1, 1, 1, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 214, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("src.algorithms.common.cyt_dataset.Dataset.get_timestamp", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -7228,9 +7224,9 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_14get
   int __pyx_t_10;
   __Pyx_TraceFrameInit(__pyx_codeobj__16)
   __Pyx_RefNannySetupContext("get_timestamp", 0);
-  __Pyx_TraceCall("get_timestamp", __pyx_f[0], 215, 0, __PYX_ERR(0, 215, __pyx_L1_error));
+  __Pyx_TraceCall("get_timestamp", __pyx_f[0], 214, 0, __PYX_ERR(0, 214, __pyx_L1_error));
 
-  /* "src/algorithms/common/cyt_dataset.pyx":216
+  /* "src/algorithms/common/cyt_dataset.pyx":215
  *     @staticmethod
  *     def get_timestamp(time_data):
  *         try:             # <<<<<<<<<<<<<<
@@ -7246,14 +7242,14 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_14get
     __Pyx_XGOTREF(__pyx_t_3);
     /*try:*/ {
 
-      /* "src/algorithms/common/cyt_dataset.pyx":217
+      /* "src/algorithms/common/cyt_dataset.pyx":216
  *     def get_timestamp(time_data):
  *         try:
  *             ok, stamp = Dataset.test_time(time_data)             # <<<<<<<<<<<<<<
  *             if ok:
  *                 return stamp
  */
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset), __pyx_n_s_test_time); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 217, __pyx_L3_error)
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset), __pyx_n_s_test_time); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 216, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_5);
       __pyx_t_6 = NULL;
       if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_5))) {
@@ -7267,7 +7263,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_14get
       }
       __pyx_t_4 = (__pyx_t_6) ? __Pyx_PyObject_Call2Args(__pyx_t_5, __pyx_t_6, __pyx_v_time_data) : __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_v_time_data);
       __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 217, __pyx_L3_error)
+      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 216, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       if ((likely(PyTuple_CheckExact(__pyx_t_4))) || (PyList_CheckExact(__pyx_t_4))) {
@@ -7276,7 +7272,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_14get
         if (unlikely(size != 2)) {
           if (size > 2) __Pyx_RaiseTooManyValuesError(2);
           else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-          __PYX_ERR(0, 217, __pyx_L3_error)
+          __PYX_ERR(0, 216, __pyx_L3_error)
         }
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
         if (likely(PyTuple_CheckExact(sequence))) {
@@ -7289,15 +7285,15 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_14get
         __Pyx_INCREF(__pyx_t_5);
         __Pyx_INCREF(__pyx_t_6);
         #else
-        __pyx_t_5 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 217, __pyx_L3_error)
+        __pyx_t_5 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 216, __pyx_L3_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_6 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 217, __pyx_L3_error)
+        __pyx_t_6 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 216, __pyx_L3_error)
         __Pyx_GOTREF(__pyx_t_6);
         #endif
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       } else {
         Py_ssize_t index = -1;
-        __pyx_t_7 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 217, __pyx_L3_error)
+        __pyx_t_7 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 216, __pyx_L3_error)
         __Pyx_GOTREF(__pyx_t_7);
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
         __pyx_t_8 = Py_TYPE(__pyx_t_7)->tp_iternext;
@@ -7305,7 +7301,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_14get
         __Pyx_GOTREF(__pyx_t_5);
         index = 1; __pyx_t_6 = __pyx_t_8(__pyx_t_7); if (unlikely(!__pyx_t_6)) goto __pyx_L9_unpacking_failed;
         __Pyx_GOTREF(__pyx_t_6);
-        if (__Pyx_IternextUnpackEndCheck(__pyx_t_8(__pyx_t_7), 2) < 0) __PYX_ERR(0, 217, __pyx_L3_error)
+        if (__Pyx_IternextUnpackEndCheck(__pyx_t_8(__pyx_t_7), 2) < 0) __PYX_ERR(0, 216, __pyx_L3_error)
         __pyx_t_8 = NULL;
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
         goto __pyx_L10_unpacking_done;
@@ -7313,7 +7309,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_14get
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
         __pyx_t_8 = NULL;
         if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-        __PYX_ERR(0, 217, __pyx_L3_error)
+        __PYX_ERR(0, 216, __pyx_L3_error)
         __pyx_L10_unpacking_done:;
       }
       __pyx_v_ok = __pyx_t_5;
@@ -7321,17 +7317,17 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_14get
       __pyx_v_stamp = __pyx_t_6;
       __pyx_t_6 = 0;
 
-      /* "src/algorithms/common/cyt_dataset.pyx":218
+      /* "src/algorithms/common/cyt_dataset.pyx":217
  *         try:
  *             ok, stamp = Dataset.test_time(time_data)
  *             if ok:             # <<<<<<<<<<<<<<
  *                 return stamp
  *             else:
  */
-      __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_v_ok); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 218, __pyx_L3_error)
+      __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_v_ok); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 217, __pyx_L3_error)
       if (__pyx_t_9) {
 
-        /* "src/algorithms/common/cyt_dataset.pyx":219
+        /* "src/algorithms/common/cyt_dataset.pyx":218
  *             ok, stamp = Dataset.test_time(time_data)
  *             if ok:
  *                 return stamp             # <<<<<<<<<<<<<<
@@ -7343,7 +7339,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_14get
         __pyx_r = __pyx_v_stamp;
         goto __pyx_L7_try_return;
 
-        /* "src/algorithms/common/cyt_dataset.pyx":218
+        /* "src/algorithms/common/cyt_dataset.pyx":217
  *         try:
  *             ok, stamp = Dataset.test_time(time_data)
  *             if ok:             # <<<<<<<<<<<<<<
@@ -7352,7 +7348,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_14get
  */
       }
 
-      /* "src/algorithms/common/cyt_dataset.pyx":221
+      /* "src/algorithms/common/cyt_dataset.pyx":220
  *                 return stamp
  *             else:
  *                 return False             # <<<<<<<<<<<<<<
@@ -7366,7 +7362,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_14get
         goto __pyx_L7_try_return;
       }
 
-      /* "src/algorithms/common/cyt_dataset.pyx":216
+      /* "src/algorithms/common/cyt_dataset.pyx":215
  *     @staticmethod
  *     def get_timestamp(time_data):
  *         try:             # <<<<<<<<<<<<<<
@@ -7380,7 +7376,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_14get
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":222
+    /* "src/algorithms/common/cyt_dataset.pyx":221
  *             else:
  *                 return False
  *         except ValueError:             # <<<<<<<<<<<<<<
@@ -7390,12 +7386,12 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_14get
     __pyx_t_10 = __Pyx_PyErr_ExceptionMatches(__pyx_builtin_ValueError);
     if (__pyx_t_10) {
       __Pyx_AddTraceback("src.algorithms.common.cyt_dataset.Dataset.get_timestamp", __pyx_clineno, __pyx_lineno, __pyx_filename);
-      if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_6, &__pyx_t_5) < 0) __PYX_ERR(0, 222, __pyx_L5_except_error)
+      if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_6, &__pyx_t_5) < 0) __PYX_ERR(0, 221, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_GOTREF(__pyx_t_5);
 
-      /* "src/algorithms/common/cyt_dataset.pyx":223
+      /* "src/algorithms/common/cyt_dataset.pyx":222
  *                 return False
  *         except ValueError:
  *             return False             # <<<<<<<<<<<<<<
@@ -7413,7 +7409,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_14get
     goto __pyx_L5_except_error;
     __pyx_L5_except_error:;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":216
+    /* "src/algorithms/common/cyt_dataset.pyx":215
  *     @staticmethod
  *     def get_timestamp(time_data):
  *         try:             # <<<<<<<<<<<<<<
@@ -7439,7 +7435,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_14get
     goto __pyx_L0;
   }
 
-  /* "src/algorithms/common/cyt_dataset.pyx":215
+  /* "src/algorithms/common/cyt_dataset.pyx":214
  * 
  *     @staticmethod
  *     def get_timestamp(time_data):             # <<<<<<<<<<<<<<
@@ -7464,7 +7460,7 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_14get
   return __pyx_r;
 }
 
-/* "src/algorithms/common/cyt_dataset.pyx":226
+/* "src/algorithms/common/cyt_dataset.pyx":225
  * 
  *     @staticmethod
  *     def format_gp(obj_gp):             # <<<<<<<<<<<<<<
@@ -7499,7 +7495,7 @@ static PyObject *__pyx_pw_3src_10algorithms_6common_11cyt_dataset_7Dataset_17for
         else goto __pyx_L5_argtuple_error;
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "format_gp") < 0)) __PYX_ERR(0, 226, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "format_gp") < 0)) __PYX_ERR(0, 225, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 1) {
       goto __pyx_L5_argtuple_error;
@@ -7510,7 +7506,7 @@ static PyObject *__pyx_pw_3src_10algorithms_6common_11cyt_dataset_7Dataset_17for
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("format_gp", 1, 1, 1, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 226, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("format_gp", 1, 1, 1, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 225, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("src.algorithms.common.cyt_dataset.Dataset.format_gp", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -7540,33 +7536,33 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_16for
   int __pyx_t_5;
   __Pyx_TraceFrameInit(__pyx_codeobj__17)
   __Pyx_RefNannySetupContext("format_gp", 0);
-  __Pyx_TraceCall("format_gp", __pyx_f[0], 226, 0, __PYX_ERR(0, 226, __pyx_L1_error));
+  __Pyx_TraceCall("format_gp", __pyx_f[0], 225, 0, __PYX_ERR(0, 225, __pyx_L1_error));
 
-  /* "src/algorithms/common/cyt_dataset.pyx":227
+  /* "src/algorithms/common/cyt_dataset.pyx":226
  *     @staticmethod
  *     def format_gp(obj_gp):
  *         arr_gp = list(obj_gp)             # <<<<<<<<<<<<<<
  *         new_gp = list()
  *         for item in arr_gp:
  */
-  __pyx_t_1 = PySequence_List(__pyx_v_obj_gp); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 227, __pyx_L1_error)
+  __pyx_t_1 = PySequence_List(__pyx_v_obj_gp); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 226, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_arr_gp = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":228
+  /* "src/algorithms/common/cyt_dataset.pyx":227
  *     def format_gp(obj_gp):
  *         arr_gp = list(obj_gp)
  *         new_gp = list()             # <<<<<<<<<<<<<<
  *         for item in arr_gp:
  *             attr = int(item[0])
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 228, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 227, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_new_gp = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":229
+  /* "src/algorithms/common/cyt_dataset.pyx":228
  *         arr_gp = list(obj_gp)
  *         new_gp = list()
  *         for item in arr_gp:             # <<<<<<<<<<<<<<
@@ -7577,65 +7573,65 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_16for
   for (;;) {
     if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_1)) break;
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_3); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 229, __pyx_L1_error)
+    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_3); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 228, __pyx_L1_error)
     #else
-    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 229, __pyx_L1_error)
+    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 228, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     #endif
     __Pyx_XDECREF_SET(__pyx_v_item, __pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":230
+    /* "src/algorithms/common/cyt_dataset.pyx":229
  *         new_gp = list()
  *         for item in arr_gp:
  *             attr = int(item[0])             # <<<<<<<<<<<<<<
  *             sign = item[1]
  *             str_gp = str(attr) + sign
  */
-    __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_item, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 230, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_item, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 229, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_4 = __Pyx_PyNumber_Int(__pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 230, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyNumber_Int(__pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 229, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_XDECREF_SET(__pyx_v_attr, __pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":231
+    /* "src/algorithms/common/cyt_dataset.pyx":230
  *         for item in arr_gp:
  *             attr = int(item[0])
  *             sign = item[1]             # <<<<<<<<<<<<<<
  *             str_gp = str(attr) + sign
  *             new_gp.append(str_gp)
  */
-    __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_item, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 231, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_item, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 230, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_XDECREF_SET(__pyx_v_sign, __pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":232
+    /* "src/algorithms/common/cyt_dataset.pyx":231
  *             attr = int(item[0])
  *             sign = item[1]
  *             str_gp = str(attr) + sign             # <<<<<<<<<<<<<<
  *             new_gp.append(str_gp)
  *         return set(new_gp)
  */
-    __pyx_t_4 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyString_Type)), __pyx_v_attr); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 232, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyString_Type)), __pyx_v_attr); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 231, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_3 = PyNumber_Add(__pyx_t_4, __pyx_v_sign); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 232, __pyx_L1_error)
+    __pyx_t_3 = PyNumber_Add(__pyx_t_4, __pyx_v_sign); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 231, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_XDECREF_SET(__pyx_v_str_gp, __pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "src/algorithms/common/cyt_dataset.pyx":233
+    /* "src/algorithms/common/cyt_dataset.pyx":232
  *             sign = item[1]
  *             str_gp = str(attr) + sign
  *             new_gp.append(str_gp)             # <<<<<<<<<<<<<<
  *         return set(new_gp)
  */
-    __pyx_t_5 = __Pyx_PyList_Append(__pyx_v_new_gp, __pyx_v_str_gp); if (unlikely(__pyx_t_5 == ((int)-1))) __PYX_ERR(0, 233, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyList_Append(__pyx_v_new_gp, __pyx_v_str_gp); if (unlikely(__pyx_t_5 == ((int)-1))) __PYX_ERR(0, 232, __pyx_L1_error)
 
-    /* "src/algorithms/common/cyt_dataset.pyx":229
+    /* "src/algorithms/common/cyt_dataset.pyx":228
  *         arr_gp = list(obj_gp)
  *         new_gp = list()
  *         for item in arr_gp:             # <<<<<<<<<<<<<<
@@ -7645,19 +7641,19 @@ static PyObject *__pyx_pf_3src_10algorithms_6common_11cyt_dataset_7Dataset_16for
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":234
+  /* "src/algorithms/common/cyt_dataset.pyx":233
  *             str_gp = str(attr) + sign
  *             new_gp.append(str_gp)
  *         return set(new_gp)             # <<<<<<<<<<<<<<
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PySet_New(__pyx_v_new_gp); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 234, __pyx_L1_error)
+  __pyx_t_1 = PySet_New(__pyx_v_new_gp); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 233, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":226
+  /* "src/algorithms/common/cyt_dataset.pyx":225
  * 
  *     @staticmethod
  *     def format_gp(obj_gp):             # <<<<<<<<<<<<<<
@@ -12332,10 +12328,10 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_staticmethod = __Pyx_GetBuiltinName(__pyx_n_s_staticmethod); if (!__pyx_builtin_staticmethod) __PYX_ERR(0, 163, __pyx_L1_error)
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 112, __pyx_L1_error)
-  __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(0, 121, __pyx_L1_error)
-  __pyx_builtin_open = __Pyx_GetBuiltinName(__pyx_n_s_open); if (!__pyx_builtin_open) __PYX_ERR(0, 182, __pyx_L1_error)
+  __pyx_builtin_staticmethod = __Pyx_GetBuiltinName(__pyx_n_s_staticmethod); if (!__pyx_builtin_staticmethod) __PYX_ERR(0, 162, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 111, __pyx_L1_error)
+  __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(0, 120, __pyx_L1_error)
+  __pyx_builtin_open = __Pyx_GetBuiltinName(__pyx_n_s_open); if (!__pyx_builtin_open) __PYX_ERR(0, 181, __pyx_L1_error)
   __pyx_builtin_RuntimeError = __Pyx_GetBuiltinName(__pyx_n_s_RuntimeError); if (!__pyx_builtin_RuntimeError) __PYX_ERR(2, 856, __pyx_L1_error)
   __pyx_builtin_ImportError = __Pyx_GetBuiltinName(__pyx_n_s_ImportError); if (!__pyx_builtin_ImportError) __PYX_ERR(2, 1038, __pyx_L1_error)
   return 0;
@@ -12347,69 +12343,69 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "src/algorithms/common/cyt_dataset.pyx":48
+  /* "src/algorithms/common/cyt_dataset.pyx":47
  *             self.data = np.array([])
  *             print("csv file read error")
  *             raise Exception("Unable to read csv file")             # <<<<<<<<<<<<<<
  *         else:
  *             print("Data fetched from csv file")
  */
-  __pyx_tuple_ = PyTuple_Pack(1, __pyx_kp_s_Unable_to_read_csv_file); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 48, __pyx_L1_error)
+  __pyx_tuple_ = PyTuple_Pack(1, __pyx_kp_s_Unable_to_read_csv_file); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 47, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple_);
   __Pyx_GIVEREF(__pyx_tuple_);
 
-  /* "src/algorithms/common/cyt_dataset.pyx":83
+  /* "src/algorithms/common/cyt_dataset.pyx":82
  *     cdef np.ndarray get_title(self, list data):
  *         # data = self.raw_data
  *         if data[0][0].replace('.', '', 1).isdigit() or data[0][0].isdigit():             # <<<<<<<<<<<<<<
  *             return self.convert_data_to_array(data)
  *         else:
  */
-  __pyx_tuple__4 = PyTuple_Pack(3, __pyx_kp_s__2, __pyx_kp_s__3, __pyx_int_1); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 83, __pyx_L1_error)
+  __pyx_tuple__4 = PyTuple_Pack(3, __pyx_kp_s__2, __pyx_kp_s__3, __pyx_int_1); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 82, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__4);
   __Pyx_GIVEREF(__pyx_tuple__4);
 
-  /* "src/algorithms/common/cyt_dataset.pyx":100
+  /* "src/algorithms/common/cyt_dataset.pyx":99
  *             keys = np.arange(size)
  *             values = data[0]
  *             title = np.rec.fromarrays((keys, values), names=('key', 'value'))             # <<<<<<<<<<<<<<
  *             del data[0]
  *             # convert csv data into array
  */
-  __pyx_tuple__5 = PyTuple_Pack(2, __pyx_n_s_key, __pyx_n_s_value); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(0, 100, __pyx_L1_error)
+  __pyx_tuple__5 = PyTuple_Pack(2, __pyx_n_s_key, __pyx_n_s_value); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(0, 99, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__5);
   __Pyx_GIVEREF(__pyx_tuple__5);
 
-  /* "src/algorithms/common/cyt_dataset.pyx":182
+  /* "src/algorithms/common/cyt_dataset.pyx":181
  *     def read_csv(file):
  *         # 1. retrieve data-set from file
  *         with open(file, 'r') as f:             # <<<<<<<<<<<<<<
  *             dialect = csv.Sniffer().sniff(f.readline(), delimiters=";,' '\t")
  *             f.seek(0)
  */
-  __pyx_tuple__11 = PyTuple_Pack(3, Py_None, Py_None, Py_None); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(0, 182, __pyx_L1_error)
+  __pyx_tuple__11 = PyTuple_Pack(3, Py_None, Py_None, Py_None); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(0, 181, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__11);
   __Pyx_GIVEREF(__pyx_tuple__11);
 
-  /* "src/algorithms/common/cyt_dataset.pyx":201
+  /* "src/algorithms/common/cyt_dataset.pyx":200
  *         try:
  *             if type(int(date_str)):
  *                 return False, False             # <<<<<<<<<<<<<<
  *         except ValueError:
  *             try:
  */
-  __pyx_tuple__14 = PyTuple_Pack(2, Py_False, Py_False); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 201, __pyx_L1_error)
+  __pyx_tuple__14 = PyTuple_Pack(2, Py_False, Py_False); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 200, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__14);
   __Pyx_GIVEREF(__pyx_tuple__14);
 
-  /* "src/algorithms/common/cyt_dataset.pyx":212
+  /* "src/algorithms/common/cyt_dataset.pyx":211
  *                     return True, t_stamp
  *                 except ValueError:
  *                     raise ValueError('no valid date-time format found')             # <<<<<<<<<<<<<<
  * 
  *     @staticmethod
  */
-  __pyx_tuple__15 = PyTuple_Pack(1, __pyx_kp_s_no_valid_date_time_format_found); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(0, 212, __pyx_L1_error)
+  __pyx_tuple__15 = PyTuple_Pack(1, __pyx_kp_s_no_valid_date_time_format_found); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(0, 211, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__15);
   __Pyx_GIVEREF(__pyx_tuple__15);
 
@@ -12490,77 +12486,77 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__24);
   __Pyx_GIVEREF(__pyx_tuple__24);
 
-  /* "src/algorithms/common/cyt_dataset.pyx":165
+  /* "src/algorithms/common/cyt_dataset.pyx":164
  *     @staticmethod
  *     # @numba.jit(nopython=True, parallel=True)
  *     def bin_rank(arr, n, temp_pos, equal=False):             # <<<<<<<<<<<<<<
  *         if not equal:
  *             for i in range(n):
  */
-  __pyx_tuple__25 = PyTuple_Pack(7, __pyx_n_s_arr, __pyx_n_s_n, __pyx_n_s_temp_pos, __pyx_n_s_equal, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_temp_neg); if (unlikely(!__pyx_tuple__25)) __PYX_ERR(0, 165, __pyx_L1_error)
+  __pyx_tuple__25 = PyTuple_Pack(7, __pyx_n_s_arr, __pyx_n_s_n, __pyx_n_s_temp_pos, __pyx_n_s_equal, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_temp_neg); if (unlikely(!__pyx_tuple__25)) __PYX_ERR(0, 164, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__25);
   __Pyx_GIVEREF(__pyx_tuple__25);
-  __pyx_codeobj__8 = (PyObject*)__Pyx_PyCode_New(4, 0, 7, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__25, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_algorithms_common_cyt_datase, __pyx_n_s_bin_rank, 165, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__8)) __PYX_ERR(0, 165, __pyx_L1_error)
+  __pyx_codeobj__8 = (PyObject*)__Pyx_PyCode_New(4, 0, 7, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__25, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_algorithms_common_cyt_datase, __pyx_n_s_bin_rank, 164, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__8)) __PYX_ERR(0, 164, __pyx_L1_error)
 
-  /* "src/algorithms/common/cyt_dataset.pyx":180
+  /* "src/algorithms/common/cyt_dataset.pyx":179
  * 
  *     @staticmethod
  *     def read_csv(file):             # <<<<<<<<<<<<<<
  *         # 1. retrieve data-set from file
  *         with open(file, 'r') as f:
  */
-  __pyx_tuple__26 = PyTuple_Pack(5, __pyx_n_s_file, __pyx_n_s_f, __pyx_n_s_dialect, __pyx_n_s_reader, __pyx_n_s_temp); if (unlikely(!__pyx_tuple__26)) __PYX_ERR(0, 180, __pyx_L1_error)
+  __pyx_tuple__26 = PyTuple_Pack(5, __pyx_n_s_file, __pyx_n_s_f, __pyx_n_s_dialect, __pyx_n_s_reader, __pyx_n_s_temp); if (unlikely(!__pyx_tuple__26)) __PYX_ERR(0, 179, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__26);
   __Pyx_GIVEREF(__pyx_tuple__26);
-  __pyx_codeobj__9 = (PyObject*)__Pyx_PyCode_New(1, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__26, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_algorithms_common_cyt_datase, __pyx_n_s_read_csv, 180, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__9)) __PYX_ERR(0, 180, __pyx_L1_error)
+  __pyx_codeobj__9 = (PyObject*)__Pyx_PyCode_New(1, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__26, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_algorithms_common_cyt_datase, __pyx_n_s_read_csv, 179, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__9)) __PYX_ERR(0, 179, __pyx_L1_error)
 
-  /* "src/algorithms/common/cyt_dataset.pyx":191
+  /* "src/algorithms/common/cyt_dataset.pyx":190
  * 
  *     @staticmethod
  *     def write_file(data, path):             # <<<<<<<<<<<<<<
  *         with open(path, 'w') as f:
  *             f.write(data)
  */
-  __pyx_tuple__27 = PyTuple_Pack(3, __pyx_n_s_data, __pyx_n_s_path, __pyx_n_s_f); if (unlikely(!__pyx_tuple__27)) __PYX_ERR(0, 191, __pyx_L1_error)
+  __pyx_tuple__27 = PyTuple_Pack(3, __pyx_n_s_data, __pyx_n_s_path, __pyx_n_s_f); if (unlikely(!__pyx_tuple__27)) __PYX_ERR(0, 190, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__27);
   __Pyx_GIVEREF(__pyx_tuple__27);
-  __pyx_codeobj__12 = (PyObject*)__Pyx_PyCode_New(2, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__27, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_algorithms_common_cyt_datase, __pyx_n_s_write_file, 191, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__12)) __PYX_ERR(0, 191, __pyx_L1_error)
+  __pyx_codeobj__12 = (PyObject*)__Pyx_PyCode_New(2, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__27, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_algorithms_common_cyt_datase, __pyx_n_s_write_file, 190, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__12)) __PYX_ERR(0, 190, __pyx_L1_error)
 
-  /* "src/algorithms/common/cyt_dataset.pyx":197
+  /* "src/algorithms/common/cyt_dataset.pyx":196
  * 
  *     @staticmethod
  *     def test_time(date_str):             # <<<<<<<<<<<<<<
  *         # add all the possible formats
  *         try:
  */
-  __pyx_tuple__28 = PyTuple_Pack(3, __pyx_n_s_date_str, __pyx_n_s_date_time, __pyx_n_s_t_stamp); if (unlikely(!__pyx_tuple__28)) __PYX_ERR(0, 197, __pyx_L1_error)
+  __pyx_tuple__28 = PyTuple_Pack(3, __pyx_n_s_date_str, __pyx_n_s_date_time, __pyx_n_s_t_stamp); if (unlikely(!__pyx_tuple__28)) __PYX_ERR(0, 196, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__28);
   __Pyx_GIVEREF(__pyx_tuple__28);
-  __pyx_codeobj__13 = (PyObject*)__Pyx_PyCode_New(1, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__28, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_algorithms_common_cyt_datase, __pyx_n_s_test_time, 197, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__13)) __PYX_ERR(0, 197, __pyx_L1_error)
+  __pyx_codeobj__13 = (PyObject*)__Pyx_PyCode_New(1, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__28, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_algorithms_common_cyt_datase, __pyx_n_s_test_time, 196, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__13)) __PYX_ERR(0, 196, __pyx_L1_error)
 
-  /* "src/algorithms/common/cyt_dataset.pyx":215
+  /* "src/algorithms/common/cyt_dataset.pyx":214
  * 
  *     @staticmethod
  *     def get_timestamp(time_data):             # <<<<<<<<<<<<<<
  *         try:
  *             ok, stamp = Dataset.test_time(time_data)
  */
-  __pyx_tuple__29 = PyTuple_Pack(3, __pyx_n_s_time_data, __pyx_n_s_ok, __pyx_n_s_stamp); if (unlikely(!__pyx_tuple__29)) __PYX_ERR(0, 215, __pyx_L1_error)
+  __pyx_tuple__29 = PyTuple_Pack(3, __pyx_n_s_time_data, __pyx_n_s_ok, __pyx_n_s_stamp); if (unlikely(!__pyx_tuple__29)) __PYX_ERR(0, 214, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__29);
   __Pyx_GIVEREF(__pyx_tuple__29);
-  __pyx_codeobj__16 = (PyObject*)__Pyx_PyCode_New(1, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__29, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_algorithms_common_cyt_datase, __pyx_n_s_get_timestamp, 215, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__16)) __PYX_ERR(0, 215, __pyx_L1_error)
+  __pyx_codeobj__16 = (PyObject*)__Pyx_PyCode_New(1, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__29, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_algorithms_common_cyt_datase, __pyx_n_s_get_timestamp, 214, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__16)) __PYX_ERR(0, 214, __pyx_L1_error)
 
-  /* "src/algorithms/common/cyt_dataset.pyx":226
+  /* "src/algorithms/common/cyt_dataset.pyx":225
  * 
  *     @staticmethod
  *     def format_gp(obj_gp):             # <<<<<<<<<<<<<<
  *         arr_gp = list(obj_gp)
  *         new_gp = list()
  */
-  __pyx_tuple__30 = PyTuple_Pack(7, __pyx_n_s_obj_gp, __pyx_n_s_arr_gp, __pyx_n_s_new_gp, __pyx_n_s_item, __pyx_n_s_attr, __pyx_n_s_sign, __pyx_n_s_str_gp); if (unlikely(!__pyx_tuple__30)) __PYX_ERR(0, 226, __pyx_L1_error)
+  __pyx_tuple__30 = PyTuple_Pack(7, __pyx_n_s_obj_gp, __pyx_n_s_arr_gp, __pyx_n_s_new_gp, __pyx_n_s_item, __pyx_n_s_attr, __pyx_n_s_sign, __pyx_n_s_str_gp); if (unlikely(!__pyx_tuple__30)) __PYX_ERR(0, 225, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__30);
   __Pyx_GIVEREF(__pyx_tuple__30);
-  __pyx_codeobj__17 = (PyObject*)__Pyx_PyCode_New(1, 0, 7, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__30, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_algorithms_common_cyt_datase, __pyx_n_s_format_gp, 226, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__17)) __PYX_ERR(0, 226, __pyx_L1_error)
+  __pyx_codeobj__17 = (PyObject*)__Pyx_PyCode_New(1, 0, 7, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__30, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_algorithms_common_cyt_datase, __pyx_n_s_format_gp, 225, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__17)) __PYX_ERR(0, 225, __pyx_L1_error)
 
   /* "(tree fragment)":1
  * def __pyx_unpickle_Dataset(__pyx_type, long __pyx_checksum, __pyx_state):             # <<<<<<<<<<<<<<
@@ -12956,177 +12952,177 @@ if (!__Pyx_RefNanny) {
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_np, __pyx_t_2) < 0) __PYX_ERR(0, 14, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "src/algorithms/common/cyt_dataset.pyx":165
+  /* "src/algorithms/common/cyt_dataset.pyx":164
  *     @staticmethod
  *     # @numba.jit(nopython=True, parallel=True)
  *     def bin_rank(arr, n, temp_pos, equal=False):             # <<<<<<<<<<<<<<
  *         if not equal:
  *             for i in range(n):
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_3src_10algorithms_6common_11cyt_dataset_7Dataset_7bin_rank, NULL, __pyx_n_s_src_algorithms_common_cyt_datase_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 165, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_3src_10algorithms_6common_11cyt_dataset_7Dataset_7bin_rank, NULL, __pyx_n_s_src_algorithms_common_cyt_datase_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 164, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset->tp_dict, __pyx_n_s_bin_rank, __pyx_t_2) < 0) __PYX_ERR(0, 165, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset->tp_dict, __pyx_n_s_bin_rank, __pyx_t_2) < 0) __PYX_ERR(0, 164, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   PyType_Modified(__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset);
 
-  /* "src/algorithms/common/cyt_dataset.pyx":163
+  /* "src/algorithms/common/cyt_dataset.pyx":162
  *         return supp, temp_bin
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
  *     # @numba.jit(nopython=True, parallel=True)
  *     def bin_rank(arr, n, temp_pos, equal=False):
  */
-  __Pyx_GetNameInClass(__pyx_t_2, (PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset, __pyx_n_s_bin_rank); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 165, __pyx_L1_error)
+  __Pyx_GetNameInClass(__pyx_t_2, (PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset, __pyx_n_s_bin_rank); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 164, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_staticmethod, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 163, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_staticmethod, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 162, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset->tp_dict, __pyx_n_s_bin_rank, __pyx_t_1) < 0) __PYX_ERR(0, 165, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset->tp_dict, __pyx_n_s_bin_rank, __pyx_t_1) < 0) __PYX_ERR(0, 164, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   PyType_Modified(__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset);
 
-  /* "src/algorithms/common/cyt_dataset.pyx":180
+  /* "src/algorithms/common/cyt_dataset.pyx":179
  * 
  *     @staticmethod
  *     def read_csv(file):             # <<<<<<<<<<<<<<
  *         # 1. retrieve data-set from file
  *         with open(file, 'r') as f:
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_3src_10algorithms_6common_11cyt_dataset_7Dataset_9read_csv, NULL, __pyx_n_s_src_algorithms_common_cyt_datase_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 180, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_3src_10algorithms_6common_11cyt_dataset_7Dataset_9read_csv, NULL, __pyx_n_s_src_algorithms_common_cyt_datase_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 179, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset->tp_dict, __pyx_n_s_read_csv, __pyx_t_1) < 0) __PYX_ERR(0, 180, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset->tp_dict, __pyx_n_s_read_csv, __pyx_t_1) < 0) __PYX_ERR(0, 179, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   PyType_Modified(__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset);
 
-  /* "src/algorithms/common/cyt_dataset.pyx":179
+  /* "src/algorithms/common/cyt_dataset.pyx":178
  *         return temp_pos, temp_neg
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
  *     def read_csv(file):
  *         # 1. retrieve data-set from file
  */
-  __Pyx_GetNameInClass(__pyx_t_1, (PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset, __pyx_n_s_read_csv); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 180, __pyx_L1_error)
+  __Pyx_GetNameInClass(__pyx_t_1, (PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset, __pyx_n_s_read_csv); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 179, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_builtin_staticmethod, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 179, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_builtin_staticmethod, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 178, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset->tp_dict, __pyx_n_s_read_csv, __pyx_t_2) < 0) __PYX_ERR(0, 180, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset->tp_dict, __pyx_n_s_read_csv, __pyx_t_2) < 0) __PYX_ERR(0, 179, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   PyType_Modified(__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset);
 
-  /* "src/algorithms/common/cyt_dataset.pyx":191
+  /* "src/algorithms/common/cyt_dataset.pyx":190
  * 
  *     @staticmethod
  *     def write_file(data, path):             # <<<<<<<<<<<<<<
  *         with open(path, 'w') as f:
  *             f.write(data)
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_3src_10algorithms_6common_11cyt_dataset_7Dataset_11write_file, NULL, __pyx_n_s_src_algorithms_common_cyt_datase_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 191, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_3src_10algorithms_6common_11cyt_dataset_7Dataset_11write_file, NULL, __pyx_n_s_src_algorithms_common_cyt_datase_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 190, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset->tp_dict, __pyx_n_s_write_file, __pyx_t_2) < 0) __PYX_ERR(0, 191, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset->tp_dict, __pyx_n_s_write_file, __pyx_t_2) < 0) __PYX_ERR(0, 190, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   PyType_Modified(__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset);
 
-  /* "src/algorithms/common/cyt_dataset.pyx":190
+  /* "src/algorithms/common/cyt_dataset.pyx":189
  *         return temp
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
  *     def write_file(data, path):
  *         with open(path, 'w') as f:
  */
-  __Pyx_GetNameInClass(__pyx_t_2, (PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset, __pyx_n_s_write_file); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 191, __pyx_L1_error)
+  __Pyx_GetNameInClass(__pyx_t_2, (PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset, __pyx_n_s_write_file); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 190, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_staticmethod, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 190, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_staticmethod, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 189, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset->tp_dict, __pyx_n_s_write_file, __pyx_t_1) < 0) __PYX_ERR(0, 191, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset->tp_dict, __pyx_n_s_write_file, __pyx_t_1) < 0) __PYX_ERR(0, 190, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   PyType_Modified(__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset);
 
-  /* "src/algorithms/common/cyt_dataset.pyx":197
+  /* "src/algorithms/common/cyt_dataset.pyx":196
  * 
  *     @staticmethod
  *     def test_time(date_str):             # <<<<<<<<<<<<<<
  *         # add all the possible formats
  *         try:
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_3src_10algorithms_6common_11cyt_dataset_7Dataset_13test_time, NULL, __pyx_n_s_src_algorithms_common_cyt_datase_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 197, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_3src_10algorithms_6common_11cyt_dataset_7Dataset_13test_time, NULL, __pyx_n_s_src_algorithms_common_cyt_datase_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 196, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset->tp_dict, __pyx_n_s_test_time, __pyx_t_1) < 0) __PYX_ERR(0, 197, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset->tp_dict, __pyx_n_s_test_time, __pyx_t_1) < 0) __PYX_ERR(0, 196, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   PyType_Modified(__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset);
 
-  /* "src/algorithms/common/cyt_dataset.pyx":196
+  /* "src/algorithms/common/cyt_dataset.pyx":195
  *             f.close()
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
  *     def test_time(date_str):
  *         # add all the possible formats
  */
-  __Pyx_GetNameInClass(__pyx_t_1, (PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset, __pyx_n_s_test_time); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 197, __pyx_L1_error)
+  __Pyx_GetNameInClass(__pyx_t_1, (PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset, __pyx_n_s_test_time); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 196, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_builtin_staticmethod, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 196, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_builtin_staticmethod, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 195, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset->tp_dict, __pyx_n_s_test_time, __pyx_t_2) < 0) __PYX_ERR(0, 197, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset->tp_dict, __pyx_n_s_test_time, __pyx_t_2) < 0) __PYX_ERR(0, 196, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   PyType_Modified(__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset);
 
-  /* "src/algorithms/common/cyt_dataset.pyx":215
+  /* "src/algorithms/common/cyt_dataset.pyx":214
  * 
  *     @staticmethod
  *     def get_timestamp(time_data):             # <<<<<<<<<<<<<<
  *         try:
  *             ok, stamp = Dataset.test_time(time_data)
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_3src_10algorithms_6common_11cyt_dataset_7Dataset_15get_timestamp, NULL, __pyx_n_s_src_algorithms_common_cyt_datase_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 215, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_3src_10algorithms_6common_11cyt_dataset_7Dataset_15get_timestamp, NULL, __pyx_n_s_src_algorithms_common_cyt_datase_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 214, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset->tp_dict, __pyx_n_s_get_timestamp, __pyx_t_2) < 0) __PYX_ERR(0, 215, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset->tp_dict, __pyx_n_s_get_timestamp, __pyx_t_2) < 0) __PYX_ERR(0, 214, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   PyType_Modified(__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset);
 
-  /* "src/algorithms/common/cyt_dataset.pyx":214
+  /* "src/algorithms/common/cyt_dataset.pyx":213
  *                     raise ValueError('no valid date-time format found')
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
  *     def get_timestamp(time_data):
  *         try:
  */
-  __Pyx_GetNameInClass(__pyx_t_2, (PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset, __pyx_n_s_get_timestamp); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 215, __pyx_L1_error)
+  __Pyx_GetNameInClass(__pyx_t_2, (PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset, __pyx_n_s_get_timestamp); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 214, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_staticmethod, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 214, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_staticmethod, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 213, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset->tp_dict, __pyx_n_s_get_timestamp, __pyx_t_1) < 0) __PYX_ERR(0, 215, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset->tp_dict, __pyx_n_s_get_timestamp, __pyx_t_1) < 0) __PYX_ERR(0, 214, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   PyType_Modified(__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset);
 
-  /* "src/algorithms/common/cyt_dataset.pyx":226
+  /* "src/algorithms/common/cyt_dataset.pyx":225
  * 
  *     @staticmethod
  *     def format_gp(obj_gp):             # <<<<<<<<<<<<<<
  *         arr_gp = list(obj_gp)
  *         new_gp = list()
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_3src_10algorithms_6common_11cyt_dataset_7Dataset_17format_gp, NULL, __pyx_n_s_src_algorithms_common_cyt_datase_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 226, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_3src_10algorithms_6common_11cyt_dataset_7Dataset_17format_gp, NULL, __pyx_n_s_src_algorithms_common_cyt_datase_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 225, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset->tp_dict, __pyx_n_s_format_gp, __pyx_t_1) < 0) __PYX_ERR(0, 226, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset->tp_dict, __pyx_n_s_format_gp, __pyx_t_1) < 0) __PYX_ERR(0, 225, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   PyType_Modified(__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset);
 
-  /* "src/algorithms/common/cyt_dataset.pyx":225
+  /* "src/algorithms/common/cyt_dataset.pyx":224
  *             return False
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
  *     def format_gp(obj_gp):
  *         arr_gp = list(obj_gp)
  */
-  __Pyx_GetNameInClass(__pyx_t_1, (PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset, __pyx_n_s_format_gp); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 226, __pyx_L1_error)
+  __Pyx_GetNameInClass(__pyx_t_1, (PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset, __pyx_n_s_format_gp); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 225, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_builtin_staticmethod, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 225, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_builtin_staticmethod, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 224, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset->tp_dict, __pyx_n_s_format_gp, __pyx_t_2) < 0) __PYX_ERR(0, 226, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset->tp_dict, __pyx_n_s_format_gp, __pyx_t_2) < 0) __PYX_ERR(0, 225, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   PyType_Modified(__pyx_ptype_3src_10algorithms_6common_11cyt_dataset_Dataset);
 

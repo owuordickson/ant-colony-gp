@@ -15,6 +15,7 @@ import random as rand
 # import matplotlib.pyplot as plt
 from src.algorithms.tgraank.fuzzy_mf import FuzzyMF
 from src.algorithms.ant_colony.gp import GP, TGP
+from src.algorithms.ant_colony.gp import GP as new_GP
 
 
 class GradACO:
@@ -40,8 +41,9 @@ class GradACO:
         repeated = 0
         while repeated < 1:
             sol_n = self.generate_rand_pattern()
-            if sol_n:
-                if sol_n not in all_sols:
+            if len(sol_n) > 1:
+                exits = GradACO.is_subset(sol_n, all_sols)
+                if not exits:  # check if not subset
                     repeated = 0
                     all_sols.append(sol_n)
 
@@ -134,7 +136,7 @@ class GradACO:
             pattern.append(temp)
             count += 1
         if count <= 1:
-            pattern = False
+            pattern = []
         return pattern
 
     def evaluate_bin_solution(self, pattern, min_supp, time_diffs):
@@ -149,21 +151,14 @@ class GradACO:
             elif obj_i in self.valid_bins:
                 # fetch pattern
                 for obj in lst_bin:
-                    #print(obj)
                     if obj[0] == obj_i:
                         gen_pattern.append(obj[0])
                         bin_data.append([obj[1], obj[2], obj[0]])
                         count += 1
                         break
             else:
-                # attr_data = False
                 try:
                     attr_data = [obj_i[0], np.array(self.data.attr_data[obj_i[0]], dtype=float)]
-                # for obj in self.data.attr_data:
-                #    if obj[0] == obj_i[0]:
-                #        attr_data = obj
-                #        break
-                # if attr_data:
                     supp, temp_bin = self.data.get_bin_rank(attr_data, obj_i[1])
                     if supp >= min_supp:
                         self.valid_bins.append(tuple([obj_i[0], '+']))
@@ -295,13 +290,13 @@ class GradACO:
         new_sols = list()
         if not temporal:
             for item in all_sols:
-                sol = set(item[1])
-                is_sub = GradACO.check_subset(sol, all_sols)
+                #sol = set(item[1])
+                #is_sub = GradACO.check_subset(sol, all_sols)
                 # print(is_sub)
-                if not is_sub:
-                    if item:
-                        gp = GP(item)
-                        new_sols.append(gp)
+                #if not is_sub:
+                #    if item:
+                gp = GP(item)
+                new_sols.append(gp)
         else:
             for item in all_sols:
                 sol = set(item[1][0])
@@ -326,6 +321,16 @@ class GradACO:
                 if (item != set(obj[1][0])) and item.issubset(set(obj[1][0])):
                     return True
             return False
+
+    @staticmethod
+    def is_subset(pattern, lst_pattern):
+        for pat in lst_pattern:
+            if pattern == pat:
+                return True
+            if set(pattern).issubset(set(pat)):
+                #print(pattern)
+                return True
+        return False
 
     def run_ant_colony_old(self, min_supp, time_diffs=None):
         all_sols = list()
