@@ -5,7 +5,9 @@ try:
     from setuptools import setup, find_packages
 except ImportError:
     from distutils.core import setup
+from distutils.core import Extension
 from Cython.Build import cythonize
+import numpy
 
 with open('README.md') as readme_file:
     readme = readme_file.read()
@@ -20,7 +22,7 @@ test_requirements = [
     # TODO: put package test requirements here
 ]
 
-modules = cythonize("src/algorithms/handle_data/cyt_handle_data.pyx", annotate=True)
+ext_modules = cythonize("src/algorithms/common/cyt_dataset.pyx", annotate=True)
 
 
 setup(
@@ -34,7 +36,8 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=requirements,
-    ext_modules=modules,
+    ext_modules=ext_modules,
+    include_dirs=[numpy.get_include()],
     license="MIT",
     zip_safe=False,
     keywords='aco, graank, gradual patterns',

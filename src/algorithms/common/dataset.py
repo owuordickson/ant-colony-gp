@@ -24,8 +24,8 @@ class Dataset:
             raise Exception("Unable to read csv file")
         else:
             print("Data fetched from csv file")
-            self.data = data
-            self.title = self.get_title()  # optimized (numpy)
+            self.data = np.array([])
+            self.title = self.get_title(data)  # optimized (numpy)
             self.time_cols = self.get_time_cols()  # optimized (numpy)
             self.attr_cols = self.get_attributes()  # optimized (numpy)
             self.column_size = self.get_attribute_no()  # optimized (cdef)
@@ -46,36 +46,37 @@ class Dataset:
         count = self.data.shape[1]
         return count
 
-    def get_title(self):
+    def get_title(self, data):
         # data = self.raw_data
-        if self.data[0][0].replace('.', '', 1).isdigit() or self.data[0][0].isdigit():
-            title = self.convert_data_to_array()
+        if data[0][0].replace('.', '', 1).isdigit() or data[0][0].isdigit():
+            title = self.convert_data_to_array(data)
             return title
         else:
-            if self.data[0][1].replace('.', '', 1).isdigit() or self.data[0][1].isdigit():
-                title = self.convert_data_to_array()
+            if data[0][1].replace('.', '', 1).isdigit() or data[0][1].isdigit():
+                title = self.convert_data_to_array(data)
                 return title
             else:
-                title = self.convert_data_to_array(has_title=True)
+                title = self.convert_data_to_array(data, has_title=True)
                 return title
 
-    def convert_data_to_array(self, has_title=False):
+    def convert_data_to_array(self, data, has_title=False):
         # convert csv data into array
         if has_title:
-            keys = np.arange(len(self.data[0]))
-            values = self.data[0]
+            keys = np.arange(len(data[0]))
+            values = data[0]
             title = np.rec.fromarrays((keys, values), names=('key', 'value'))
-            del self.data[0]
+            del data[0]
             # convert csv data into array
-            self.data = np.asarray(self.data)
-            return title
+            self.data = np.asarray(data)
+            return np.array(title)
         else:
-            self.data = np.asarray(self.data)
+            self.data = np.asarray(data)
             return np.array([])
 
     def get_attributes(self):
-        keys = np.array(self.title.key, dtype=int)
-        attr_cols = np.delete(keys, self.time_cols)
+        #keys = np.array(self.title.key, dtype=int)
+        all_cols = np.arange(self.get_attribute_no())
+        attr_cols = np.delete(all_cols, self.time_cols)
         return attr_cols
 
     def get_time_cols(self):

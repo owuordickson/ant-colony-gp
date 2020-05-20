@@ -20,7 +20,8 @@ import sys
 from optparse import OptionParser
 import tracemalloc
 from src.algorithms.common.profile import Profile
-from src.algorithms.common.dataset import Dataset
+# from src.algorithms.common.dataset import Dataset
+from src.algorithms.common.cyt_dataset import Dataset
 from src.algorithms.ant_colony.aco_grad import GradACO
 
 

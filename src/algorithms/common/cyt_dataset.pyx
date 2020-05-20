@@ -12,24 +12,32 @@ import csv
 from dateutil.parser import parse
 import time
 import numpy as np
-
-'''
-spec = [
-    ('data', char[:, :]),
-    ('size', int32),
-    ('title', char[:]),
-    ('equal', boolean),
-    ('time_cols', int32[:]),
-    ('attr_cols', int32[:]),
-    ('column_size', int32),
-    ('thd_supp', float64),
-    ('attr_data', char[:]),
-    ('arr_bins', )
-]
-'''
+cimport numpy as np
+import cython
 
 
-class Dataset:
+cdef struct title_struct:
+    int key
+    char[20] value
+
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.cdivision(True)
+@cython.profile(True)
+cdef class Dataset:
+
+    cdef dict __dict__
+    cdef public int size, column_size
+    cdef float thd_supp
+    cdef int equal
+    #cdef array.array time_cols = array.array('i', [])
+    cdef public np.ndarray time_cols
+    cdef public np.ndarray attr_cols
+    cdef public np.ndarray title
+    cdef public np.ndarray data
+    cdef public np.ndarray attr_data
+    cdef public np.ndarray arr_bins
 
     def __init__(self, file_path):
         data = Dataset.read_csv(file_path)
@@ -39,8 +47,8 @@ class Dataset:
             raise Exception("Unable to read csv file")
         else:
             print("Data fetched from csv file")
-            self.data = data
-            self.title = self.get_title()  # optimized (numpy)
+            self.data = np.array([])
+            self.title = self.get_title(data)  # optimized (numpy)
             self.time_cols = self.get_time_cols()  # optimized (numpy)
             self.attr_cols = self.get_attributes()  # optimized (numpy)
             self.column_size = self.get_attribute_no()  # optimized (cdef)
@@ -51,49 +59,46 @@ class Dataset:
             # self.lst_bin = []
             self.arr_bins = np.array([])  # optimized (numpy & numba)
 
-    def get_size(self):
-        size = self.data.shape[0]
+    cdef int get_size(self):
+        cdef int size = self.data.shape[0]
         if self.title.size > 0:
             size += 1
         return size
 
-    def get_attribute_no(self):
-        count = self.data.shape[1]
+    cdef int get_attribute_no(self):
+        cdef int count = self.data.shape[1]
         return count
 
-    def get_title(self):
-        # data = self.raw_data
-        if self.data[0][0].replace('.', '', 1).isdigit() or self.data[0][0].isdigit():
-            title = self.convert_data_to_array()
-            return title
-        else:
-            if self.data[0][1].replace('.', '', 1).isdigit() or self.data[0][1].isdigit():
-                title = self.convert_data_to_array()
-                return title
-            else:
-                title = self.convert_data_to_array(has_title=True)
-                return title
-
-    def convert_data_to_array(self, has_title=False):
-        # convert csv data into array
-        if has_title:
-            keys = np.arange(len(self.data[0]))
-            values = self.data[0]
-            title = np.rec.fromarrays((keys, values), names=('key', 'value'))
-            del self.data[0]
-            # convert csv data into array
-            self.data = np.asarray(self.data)
-            return title
-        else:
-            self.data = np.asarray(self.data)
-            return np.array([])
-
-    def get_attributes(self):
-        keys = np.array(self.title.key, dtype=int)
-        attr_cols = np.delete(keys, self.time_cols)
+    cdef np.ndarray get_attributes(self):
+        cdef np.ndarray all_cols = np.arange(self.get_attribute_no())
+        cdef np.ndarray attr_cols = np.delete(all_cols, self.time_cols)
         return attr_cols
 
-    def get_time_cols(self):
+    cdef np.ndarray get_title(self, list data):
+        # data = self.raw_data
+        if data[0][0].replace('.', '', 1).isdigit() or data[0][0].isdigit():
+            return self.convert_data_to_array(data)
+        else:
+            if data[0][1].replace('.', '', 1).isdigit() or data[0][1].isdigit():
+                return self.convert_data_to_array(data)
+            else:
+                return self.convert_data_to_array(data, has_title=True)
+
+    cdef convert_data_to_array(self, data, has_title=False):
+        # convert csv data into array
+        if has_title:
+            keys = np.arange(len(data[0]))
+            values = data[0]
+            title = np.rec.fromarrays((keys, values), names=('key', 'value'))
+            del data[0]
+            # convert csv data into array
+            self.data = np.asarray(data)
+            return np.asarray(title)
+        else:
+            self.data = np.asarray(data)
+            return np.array([])
+
+    cdef np.ndarray get_time_cols(self):
         time_cols = list()
         # for k in range(10, len(self.data[0])):
         #    time_cols.append(k)
@@ -120,13 +125,13 @@ class Dataset:
         else:
             return np.array([])
 
-    def init_attributes(self, eq):
+    cpdef void init_attributes(self, bint eq):
         # (check) implement parallel multiprocessing
         # transpose csv array data
         self.equal = eq
         self.attr_data = np.transpose(self.data)
 
-    def get_bin_rank(self, attr_data, symbol):
+    cpdef get_bin_rank(self, attr_data, symbol):
         # execute binary rank to calculate support of pattern
         key = attr_data[0]
         data = attr_data[1]
