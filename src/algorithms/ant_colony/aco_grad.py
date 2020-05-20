@@ -44,28 +44,23 @@ class GradACO:
                 if sol_n not in all_sols:
                     repeated = 0
                     all_sols.append(sol_n)
-                    if loss_sols:
-                        # check for super-set anti-monotony
-                        is_super = GradACO.check_anti_monotony(loss_sols, sol_n, False)
-                        if is_super:
-                            continue
-                    if win_sols:
-                        # check for sub-set anti-monotony
-                        is_sub = GradACO.check_anti_monotony(win_sols, sol_n, True)
-                        if is_sub:
-                            continue
+
+                    # check for anti-monotony
+                    is_super = GradACO.check_anti_monotony(loss_sols, sol_n, subset=False)
+                    is_sub = GradACO.check_anti_monotony(win_sols, sol_n, subset=True)
+                    if is_super or is_sub:
+                        continue
                     supp, sol_gen = self.evaluate_bin_solution(sol_n, min_supp, time_diffs=None)
                     if supp >= min_supp:
                         if [supp, sol_gen] not in win_sols:
                             win_sols.append([supp, sol_gen])
                             self.update_pheromone(sol_gen)
                     else:
-                        # self.update_pheromone(sol_n, False)
-                        # update pheromone as irrelevant with loss_sols
-                        # self.negate_pheromone(sol_gen)
                         loss_sols.append([supp, sol_gen])
                         if sol_gen:
                             all_sols.append(sol_gen)
+                        # update pheromone as irrelevant with loss_sols
+                        # self.negate_pheromone(sol_gen)
                 else:
                     repeated += 1
         return GradACO.remove_subsets(win_sols)
@@ -248,9 +243,9 @@ class GradACO:
         plt.show()
 
     @staticmethod
-    def check_anti_monotony(lst_p, p_arr, ck_sub):
+    def check_anti_monotony(lst_p, p_arr, subset=True):
         result = False
-        if ck_sub:
+        if subset:
             for obj in lst_p:
                 result = set(p_arr).issubset(set(obj[1]))
                 if result:
@@ -404,3 +399,18 @@ class GradACO:
         else:
             return GradACO.remove_subsets(win_lag_sols, True)
             # return win_lag_sols
+
+    @staticmethod
+    def check_anti_monotony_old(lst_p, p_arr, subset):
+        result = False
+        if subset:
+            for obj in lst_p:
+                result = set(p_arr).issubset(set(obj[1]))
+                if result:
+                    break
+        else:
+            for obj in lst_p:
+                result = set(p_arr).issuperset(set(obj[1]))
+                if result:
+                    break
+        return result
