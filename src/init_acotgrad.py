@@ -31,7 +31,7 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
     try:
         wr_line = ""
         d_set = Dataset(f_path)
-        if d_set.data:
+        if d_set.data.size > 0:
             titles = d_set.title
             d_set.init_attributes(eq)
             tgp = TgradACO(d_set, refItem, minSup, minRep, allowPara)
@@ -138,5 +138,5 @@ if __name__ == "__main__":
     wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
     wr_text += str(res_text)
     f_name = str('res_aco' + str(end).replace('.', '', 1) + '.txt')
-    Dataset.write_file(wr_text, f_name)
+    #Dataset.write_file(wr_text, f_name)
     print(wr_text)
