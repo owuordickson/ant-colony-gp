@@ -6,7 +6,8 @@ try:
 except ImportError:
     from distutils.core import setup
 from distutils.core import Extension
-from Cython.Build import cythonize
+from Cython.Distutils import build_ext
+# from Cython.Build import cythonize
 import numpy
 
 with open('README.md') as readme_file:
@@ -22,20 +23,27 @@ test_requirements = [
     # TODO: put package test requirements here
 ]
 
-ext_modules = cythonize("src/algorithms/common/cyt_dataset.pyx", annotate=True)
+ext_modules = [
+    Extension("src.algorithms.common.cyt_dataset",
+              ["src/algorithms/common/cyt_dataset.pyx"],)
+]
+# ext_modules = cythonize("src/algorithms/common/cyt_dataset.pyx", annotate=True)
 
 
 setup(
     name='aco-grad',
     version='2.0',
-    description="A Python implementation of ant colony optimization of the GRAANK algorithm.",
+    description="A Python implementation of ant colony optimization of "
+                "the GRAANK algorithm.",
     long_description=readme + '\n\n' + history,
     author="Dickson Owuor",
     author_email='owuordickson@ieee.org',
     url='https://github.com/owuordickson/ant-colony-gp',
     packages=find_packages(),
+    # package_dir={'src': ''},
     include_package_data=True,
     install_requires=requirements,
+    cmdclass={'build_ext': build_ext},
     ext_modules=ext_modules,
     include_dirs=[numpy.get_include()],
     license="MIT",
@@ -44,7 +52,8 @@ setup(
     classifiers=[
         'Development Status :: 1 - Production/Stable',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: Massachusetts Institute of Technology (MIT) License',
+        'License :: OSI Approved :: Massachusetts Institute of Technology (MIT) '
+        'License',
         'Natural Language :: English',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
