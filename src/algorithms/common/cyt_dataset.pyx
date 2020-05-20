@@ -60,18 +60,21 @@ cdef class Dataset:
             self.arr_bins = np.array([])  # optimized (numpy & numba)
 
     cdef int get_size(self):
-        cdef int size = self.data.shape[0]
+        cdef int size
+        size = self.data.shape[0]
         if self.title.size > 0:
             size += 1
         return size
 
     cdef int get_attribute_no(self):
-        cdef int count = self.data.shape[1]
+        cdef int count
+        count = self.data.shape[1]
         return count
 
     cdef np.ndarray get_attributes(self):
-        cdef np.ndarray all_cols = np.arange(self.get_attribute_no())
-        cdef np.ndarray attr_cols = np.delete(all_cols, self.time_cols)
+        cdef np.ndarray all_cols, attr_cols
+        all_cols = np.arange(self.get_attribute_no())
+        attr_cols = np.delete(all_cols, self.time_cols)
         return attr_cols
 
     cdef np.ndarray get_title(self, list data):
@@ -84,10 +87,14 @@ cdef class Dataset:
             else:
                 return self.convert_data_to_array(data, has_title=True)
 
-    cdef convert_data_to_array(self, data, has_title=False):
+    cdef np.ndarray convert_data_to_array(self, list data, bint has_title=False):
         # convert csv data into array
+        cdef int size
+        cdef np.ndarray keys
+        cdef list values
         if has_title:
-            keys = np.arange(len(data[0]))
+            size = len(data[0])
+            keys = np.arange(size)
             values = data[0]
             title = np.rec.fromarrays((keys, values), names=('key', 'value'))
             del data[0]
@@ -99,25 +106,17 @@ cdef class Dataset:
             return np.array([])
 
     cdef np.ndarray get_time_cols(self):
-        time_cols = list()
-        # for k in range(10, len(self.data[0])):
-        #    time_cols.append(k)
-        # time_cols.append(0)
-        # time_cols.append(1)
-        # time_cols.append(2)
-        # time_cols.append(3)
-        # time_cols.append(4)
-        # time_cols.append(5)
-        # time_cols.append(6)
-        # time_cols.append(7)
-        # time_cols.append(8)
-        # time_cols.append(9)
+        cdef np.ndarray time_cols
+        time_cols = np.array([])
         for i in range(len(self.data[0])):  # check every column for time format
             row_data = str(self.data[0][i])
             try:
                 time_ok, t_stamp = Dataset.test_time(row_data)
                 if time_ok:
-                    time_cols.append(i)
+                    if time_cols.size > 0:
+                        time_cols = np.hstack((time_cols, i))
+                    else:
+                        time_cols = np.array([i])
             except ValueError:
                 continue
         if len(time_cols) > 0:
@@ -133,6 +132,9 @@ cdef class Dataset:
 
     cpdef get_bin_rank(self, attr_data, symbol):
         # execute binary rank to calculate support of pattern
+        cdef int key, n
+        cdef float supp
+        cdef np.ndarray data, temp, temp_pos, temp_neg, temp_bin
         key = attr_data[0]
         data = attr_data[1]
         incr = tuple([key, '+'])
@@ -229,4 +231,3 @@ cdef class Dataset:
             str_gp = str(attr) + sign
             new_gp.append(str_gp)
         return set(new_gp)
-
