@@ -17,9 +17,9 @@ import sys
 from optparse import OptionParser
 import tracemalloc
 # from src import InitParallel, HandleData, graank
-from algorithms.handle_data.multiprocess import InitParallel
-from algorithms.handle_data.handle_data import HandleData
-from algorithms.ant_colony.graank import graank
+from src.algorithms.common.profile import Profile
+from src.algorithms.graank.handle_data import HandleData
+from src.algorithms.graank.graank import graank
 
 
 def init_algorithm(f_path, min_supp, cores, eq=False):
@@ -34,7 +34,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
             if cores > 1:
                 num_cores = cores
             else:
-                num_cores = InitParallel.get_num_cores()
+                num_cores = Profile.get_num_cores()
 
             wr_line = "Algorithm: GRAANK \n"
             wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
@@ -73,8 +73,8 @@ if __name__ == "__main__":
                              help='path to file containing csv',
                              # default=None,
                              # default='../data/DATASET.csv',
-                             default='../data/Omnidir.csv',
-                             # default='../data/FARSmiss.csv',
+                             # default='../data/Omnidir.csv',
+                             default='../data/FARSmiss.csv',
                              type='string')
         optparser.add_option('-s', '--minSupport',
                              dest='minSup',
@@ -111,7 +111,7 @@ if __name__ == "__main__":
     end = time.time()
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
-    wr_text += (InitParallel.get_quick_mem_use(snapshot) + "\n")
+    wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
     wr_text += str(res_text)
     f_name = str('res_graank' + str(end).replace('.', '', 1) + '.txt')
     HandleData.write_file(wr_text, f_name)

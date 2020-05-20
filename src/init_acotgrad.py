@@ -22,15 +22,15 @@ import sys
 from optparse import OptionParser
 import tracemalloc
 # from src import HandleData, TgradACO
-from algorithms.handle_data.handle_data import HandleData
-from algorithms.tgraank.aco_t_graank import TgradACO
-from algorithms.handle_data.multiprocess import InitParallel
+from src.algorithms.common.dataset import Dataset
+from src.algorithms.tgraank.aco_tgrad import TgradACO
+from src.algorithms.common.profile import Profile
 
 
 def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
     try:
         wr_line = ""
-        d_set = HandleData(f_path)
+        d_set = Dataset(f_path)
         if d_set.data:
             titles = d_set.title
             d_set.init_attributes(eq)
@@ -135,8 +135,8 @@ if __name__ == "__main__":
     end = time.time()
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
-    wr_text += (InitParallel.get_quick_mem_use(snapshot) + "\n")
+    wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
     wr_text += str(res_text)
     f_name = str('res_aco' + str(end).replace('.', '', 1) + '.txt')
-    HandleData.write_file(wr_text, f_name)
+    Dataset.write_file(wr_text, f_name)
     print(wr_text)

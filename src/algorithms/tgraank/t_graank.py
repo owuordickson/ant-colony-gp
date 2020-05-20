@@ -16,7 +16,7 @@ Description: updated version that uses aco-graank and parallel multi-processing
 # from joblib import Parallel, delayed
 import multiprocessing as mp
 # from src import HandleData, GradACO, InitParallel
-from src.algorithms.common.dataset import Dataset
+from src.algorithms.graank.handle_data import HandleData
 from src.algorithms.common.profile import Profile
 from src.algorithms.graank.graank import graank
 
@@ -170,8 +170,8 @@ class Tgrad:
                     temp_1 = " "+str(data[i][int(col)])
                     temp_2 = " "+str(data[i + step][int(col)])
                     break
-                stamp_1 = Dataset.get_timestamp(temp_1)
-                stamp_2 = Dataset.get_timestamp(temp_2)
+                stamp_1 = HandleData.get_timestamp(temp_1)
+                stamp_2 = HandleData.get_timestamp(temp_2)
                 if (not stamp_1) or (not stamp_2):
                     return False, [i + 1, i + step + 1]
                 time_diff = (stamp_2 - stamp_1)

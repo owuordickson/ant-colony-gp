@@ -22,9 +22,9 @@ import sys
 from optparse import OptionParser
 import tracemalloc
 # from src import HandleData, Tgrad
-from algorithms.handle_data.handle_data import HandleData
-from algorithms.tgraank.t_graank import Tgrad
-from algorithms.handle_data.multiprocess import InitParallel
+from src.algorithms.graank.handle_data import HandleData
+from src.algorithms.tgraank.t_graank import Tgrad
+from src.algorithms.common.profile import Profile
 
 
 def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
@@ -131,7 +131,7 @@ if __name__ == "__main__":
     end = time.time()
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
-    wr_text += (InitParallel.get_quick_mem_use(snapshot) + "\n")
+    wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
     wr_text += str(res_text)
     f_name = str('res_temp' + str(end).replace('.', '', 1) + '.txt')
     HandleData.write_file(wr_text, f_name)

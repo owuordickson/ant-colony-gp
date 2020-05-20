@@ -20,7 +20,7 @@ import sys
 from optparse import OptionParser
 import tracemalloc
 from src.algorithms.common.profile import Profile
-# from src.algorithms.common.dataset import Dataset
+#from src.algorithms.common.dataset import Dataset
 from src.algorithms.common.cyt_dataset import Dataset
 from src.algorithms.ant_colony.aco_grad import GradACO
 
@@ -82,10 +82,10 @@ if __name__ == "__main__":
                              help='path to file containing csv',
                              # default=None,
                              #default='../data/DATASET.csv',
-                             # default='../data/DATASET3.csv',
-                             default='../data/Omnidir.csv',
-                             # default='../data/FluTopicData-testsansdate-blank.csv',
-                             # default='../data/FARSmiss.csv',
+                             #default='../data/DATASET3.csv',
+                             #default='../data/Omnidir.csv',
+                             #default='../data/FluTopicData-testsansdate-blank.csv',
+                             default='../data/FARSmiss.csv',
                              type='string')
         optparser.add_option('-s', '--minSupport',
                              dest='minSup',
