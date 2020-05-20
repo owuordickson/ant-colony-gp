@@ -12,6 +12,8 @@ import csv
 from dateutil.parser import parse
 import time
 import numpy as np
+from numba import prange
+import numba
 
 
 class Dataset:
@@ -142,16 +144,16 @@ class Dataset:
         return supp, temp_bin
 
     @staticmethod
-    # @numba.jit(nopython=True, parallel=True)
+    @numba.jit(nopython=True, parallel=True)
     def bin_rank(arr, n, temp_pos, equal=False):
         if not equal:
-            for i in range(n):
-                for j in range(i+1, n, 1):
+            for i in prange(n):
+                for j in prange(i+1, n, 1):
                     temp_pos[i, j] = arr[i] > arr[j]
                     temp_pos[j, i] = arr[i] < arr[j]
         else:
-            for i in range(n):
-                for j in range(i+1, n, 1):
+            for i in prange(n):
+                for j in prange(i+1, n, 1):
                     temp_pos[i, j] = arr[i] >= arr[j]
                     temp_pos[j, i] = arr[i] < arr[j]
         temp_neg = np.transpose(temp_pos)

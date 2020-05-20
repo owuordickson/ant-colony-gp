@@ -73,8 +73,8 @@ if __name__ == "__main__":
                              help='path to file containing csv',
                              # default=None,
                              # default='../data/DATASET.csv',
-                             # default='../data/Omnidir.csv',
-                             default='../data/FARSmiss.csv',
+                             default='../data/Omnidir.csv',
+                             # default='../data/FARSmiss.csv',
                              type='string')
         optparser.add_option('-s', '--minSupport',
                              dest='minSup',
