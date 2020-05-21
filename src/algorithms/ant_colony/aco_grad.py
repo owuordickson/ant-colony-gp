@@ -14,8 +14,8 @@ import numpy as np
 import random as rand
 # import matplotlib.pyplot as plt
 from src.algorithms.tgraank.fuzzy_mf import FuzzyMF
-from src.algorithms.ant_colony.gp import GP, TGP
-from src.algorithms.ant_colony.gp import GP as new_GP
+from src.algorithms.ant_colony.gp import TGP
+from src.algorithms.ant_colony.gp_ import GP, GI
 
 
 class GradACO:
@@ -36,36 +36,40 @@ class GradACO:
 
     def fetch_gps(self, min_supp):
         all_sols = list()
-        win_sols = list()  # subsets
-        loss_sols = list()  # supersets
+        winner_gps = list()  # subsets
+        loser_gps = list()  # supersets
         repeated = 0
         while repeated < 1:
-            sol_n = self.generate_rand_pattern()
-            if len(sol_n) > 1:
-                exits = GradACO.is_subset(sol_n, all_sols)
+            rand_gp = self.generate_rand_pattern()
+            if len(rand_gp.gradual_items) > 1:
+                # print(sol_n.get_pattern())
+                exits = GradACO.is_subset(rand_gp, all_sols)
                 if not exits:  # check if not subset
                     repeated = 0
-                    all_sols.append(sol_n)
-
+                    all_sols.append(rand_gp)
                     # check for anti-monotony
-                    is_super = GradACO.check_anti_monotony(loss_sols, sol_n, subset=False)
-                    is_sub = GradACO.check_anti_monotony(win_sols, sol_n, subset=True)
+                    is_super = GradACO.check_anti_monotony(loser_gps, rand_gp, subset=False)
+                    is_sub = GradACO.check_anti_monotony(winner_gps, rand_gp, subset=True)
                     if is_super or is_sub:
                         continue
-                    supp, sol_gen = self.evaluate_bin_solution(sol_n, min_supp, time_diffs=None)
-                    if supp >= min_supp:
-                        if [supp, sol_gen] not in win_sols:
-                            win_sols.append([supp, sol_gen])
-                            self.update_pheromone(sol_gen)
+                    gen_gp = self.evaluate_bin_solution(rand_gp, min_supp, time_diffs=None)
+                    if gen_gp.support >= min_supp:
+                        #if [supp, sol_gen] not in win_sols:
+                            #win_sols.append([supp, sol_gen])
+                        winner_gps.append(gen_gp)
+                        self.update_pheromone(gen_gp)
                     else:
-                        loss_sols.append([supp, sol_gen])
-                        if sol_gen:
-                            all_sols.append(sol_gen)
+                        loser_gps.append(gen_gp)
+                        if gen_gp.get_pattern() != rand_gp.get_pattern():
+                            loser_gps.append(rand_gp)
+                        #loss_sols.append([supp, sol_gen])
+                        #if sol_gen:
+                        #    all_sols.append(sol_gen)
                         # update pheromone as irrelevant with loss_sols
                         # self.negate_pheromone(sol_gen)
                 else:
                     repeated += 1
-        return GradACO.remove_subsets(win_sols)
+        return winner_gps
 
     def fetch_tgps(self, min_supp, time_diffs):
         all_sols = list()
@@ -119,40 +123,37 @@ class GradACO:
     def generate_rand_pattern(self):
         p = self.p_matrix
         n = len(self.attr_index)
-        pattern = list()
-        count = 0
+        pattern = GP()
         for i in range(n):
-            max_extreme = len(self.attr_index) * 10
+            max_extreme = n * 10
             x = float(rand.randint(1, max_extreme) / max_extreme)
             pos = float(p[i][0] / (p[i][0] + p[i][1] + p[i][2]))
             neg = float((p[i][0] + p[i][1]) / (p[i][0] + p[i][1] + p[i][2]))
             if x < pos:
-                temp = tuple([self.attr_index[i], '+'])
+                temp = GI(self.attr_index[i], '+')
             elif (x >= pos) and (x < neg):
-                temp = tuple([self.attr_index[i], '-'])
+                temp = GI(self.attr_index[i], '-')
             else:
                 # temp = tuple([self.data.attr_index[i], 'x'])
                 continue
-            pattern.append(temp)
-            count += 1
-        if count <= 1:
-            pattern = []
+            pattern.add_gradual_item(temp)
         return pattern
 
     def evaluate_bin_solution(self, pattern, min_supp, time_diffs):
         # pattern = [('2', '+'), ('4', '+')]
         lst_bin = self.data.arr_bins
-        gen_pattern = []
+        gen_pattern = GP()
         bin_data = []
         count = 0
-        for obj_i in pattern:
+        for obj_i in pattern.get_pattern():
             if obj_i in self.invalid_bins:
                 continue
             elif obj_i in self.valid_bins:
                 # fetch pattern
                 for obj in lst_bin:
                     if obj[0] == obj_i:
-                        gen_pattern.append(obj[0])
+                        gi = GI(obj_i[0], obj_i[1])
+                        gen_pattern.add_gradual_item(gi)
                         bin_data.append([obj[1], obj[2], obj[0]])
                         count += 1
                         break
@@ -161,9 +162,12 @@ class GradACO:
                     attr_data = [obj_i[0], np.array(self.data.attr_data[obj_i[0]], dtype=float)]
                     supp, temp_bin = self.data.get_bin_rank(attr_data, obj_i[1])
                     if supp >= min_supp:
+                        # self.valid_bins.append(GI(obj_i[0], '+'))
                         self.valid_bins.append(tuple([obj_i[0], '+']))
                         self.valid_bins.append(tuple([obj_i[0], '-']))
-                        gen_pattern.append(obj_i)
+
+                        gi = GI(obj_i[0], obj_i[1])
+                        gen_pattern.add_gradual_item(gi)
                         bin_data.append([temp_bin, supp, obj_i])
                         count += 1
                     else:
@@ -171,22 +175,23 @@ class GradACO:
                         self.invalid_bins.append(tuple([obj_i[0], '-']))
                 except IndexError:
                     # binary does not exist
-                    return False, False
+                    # return False, False
+                    return pattern
         if count <= 1:
-            return 0, []
+            return pattern
         else:
             # size = len(self.data.attr_data[0][1])
             size = self.data.attr_data.shape[1]
-            supp, new_pattern = GradACO.perform_bin_and(bin_data, size, min_supp, gen_pattern, time_diffs)
-            return supp, new_pattern
+            new_pattern = GradACO.perform_bin_and(bin_data, size, min_supp, gen_pattern, time_diffs)
+            return new_pattern
 
     def update_pheromone(self, pattern):
         lst_attr = []
-        for obj in pattern:
-            # print(obj)
-            attr = int(obj[0])
+        for obj in pattern.gradual_items:
+            # print(obj.attribute_col)
+            attr = obj.attribute_col
             lst_attr.append(attr)
-            symbol = obj[1]
+            symbol = obj.symbol
             i = attr
             if symbol == '+':
                 self.p_matrix[i][0] += 1
@@ -194,7 +199,6 @@ class GradACO:
                 self.p_matrix[i][1] += 1
         for index in self.data.attr_cols:
             if int(index) not in lst_attr:
-                # print(obj)
                 i = int(index) - 1
                 self.p_matrix[i][2] += 1
 
@@ -238,16 +242,16 @@ class GradACO:
         plt.show()
 
     @staticmethod
-    def check_anti_monotony(lst_p, p_arr, subset=True):
+    def check_anti_monotony(lst_p, pattern, subset=True):
         result = False
         if subset:
-            for obj in lst_p:
-                result = set(p_arr).issubset(set(obj[1]))
+            for pat in lst_p:
+                result = set(pattern.get_pattern()).issubset(set(pat.get_pattern()))
                 if result:
                     break
         else:
-            for obj in lst_p:
-                result = set(p_arr).issuperset(set(obj[1]))
+            for pat in lst_p:
+                result = set(pattern.get_pattern()).issuperset(set(pat.get_pattern()))
                 if result:
                     break
         return result
@@ -256,7 +260,7 @@ class GradACO:
     def perform_bin_and(unsorted_bins, n, thd_supp, gen_p, t_diffs):
         lst_bin = sorted(unsorted_bins, key=lambda x: x[1])
         final_bin = np.array([])
-        pattern = []
+        pattern = GP()
         count = 0
         for obj in lst_bin:
             temp_bin = final_bin
@@ -265,157 +269,36 @@ class GradACO:
                 supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
                 if supp >= thd_supp:
                     final_bin = temp_bin
-                    pattern.append(obj[2])
+                    gi = GI(obj[2][0], obj[2][1])
+                    pattern.add_gradual_item(gi)
                     count += 1
             else:
                 final_bin = obj[0]
-                pattern.append(obj[2])
+                gi = GI(obj[2][0], obj[2][1])
+                pattern.add_gradual_item(gi)
                 count += 1
         supp = float(np.sum(final_bin)) / float(n * (n - 1.0) / 2.0)
+        pattern.set_support(supp)
         if count >= 2:
             if t_diffs is None:
-                return supp, pattern
+                return pattern
             else:
                 t_lag, t_stamp = FuzzyMF.calculate_time_lag(FuzzyMF.get_patten_indices(final_bin), t_diffs, thd_supp)
                 if t_lag:
                     temp_p = [pattern, t_lag, t_stamp]
-                    return supp, temp_p
+                    return temp_p
                 else:
-                    return -1, pattern
+                    pattern.set_support(-1)
+                    return pattern
         else:
-            return -1, gen_p
-
-    @staticmethod
-    def remove_subsets(all_sols, temporal=False):
-        new_sols = list()
-        if not temporal:
-            for item in all_sols:
-                #sol = set(item[1])
-                #is_sub = GradACO.check_subset(sol, all_sols)
-                # print(is_sub)
-                #if not is_sub:
-                #    if item:
-                gp = GP(item)
-                new_sols.append(gp)
-        else:
-            for item in all_sols:
-                sol = set(item[1][0])
-                is_sub = GradACO.check_subset(sol, all_sols, temporal)
-                # print(is_sub)
-                if not is_sub:
-                    if item:
-                        tgp = TGP(item)
-                        new_sols.append(tgp)
-        # print(new_sols)
-        return new_sols
-
-    @staticmethod
-    def check_subset(item, items, extra=False):
-        if not extra:
-            for obj in items:
-                if (item != set(obj[1])) and item.issubset(set(obj[1])):
-                    return True
-            return False
-        else:
-            for obj in items:
-                if (item != set(obj[1][0])) and item.issubset(set(obj[1][0])):
-                    return True
-            return False
+            gen_p.set_support(-1)
+            return gen_p
 
     @staticmethod
     def is_subset(pattern, lst_pattern):
         for pat in lst_pattern:
-            if pattern == pat:
+            if pattern.get_pattern() == pat.get_pattern():
                 return True
-            if set(pattern).issubset(set(pat)):
-                #print(pattern)
+            if set(pattern.get_pattern()).issubset(set(pat.get_pattern())):
                 return True
         return False
-
-    def run_ant_colony_old(self, min_supp, time_diffs=None):
-        all_sols = list()
-        win_sols = list()
-        win_lag_sols = list()
-        loss_sols = list()
-        invalid_sols = list()
-        # count = 0
-        # converging = False
-        # while not converging:
-        repeated = 0
-        while repeated < 1:
-            # count += 1
-            sol_n = self.generate_rand_pattern()
-            # print(sol_n)
-            if sol_n:
-                if sol_n not in all_sols:
-                    lag_sols = []
-                    repeated = 0
-                    all_sols.append(sol_n)
-                    if loss_sols or invalid_sols:
-                        # check for super-set anti-monotony
-                        is_super = GradACO.check_anti_monotony(loss_sols, sol_n, False)
-                        is_invalid = GradACO.check_anti_monotony(invalid_sols, sol_n, False)
-                        if is_super or is_invalid:
-                            continue
-                    if win_sols:
-                        # check for sub-set anti-monotony
-                        is_sub = GradACO.check_anti_monotony(win_sols, sol_n, True)
-                        if is_sub:
-                            continue
-                    if time_diffs is None:
-                        supp, sol_gen = self.evaluate_bin_solution(sol_n, min_supp, time_diffs)
-                    else:
-                        supp, lag_sols = self.evaluate_bin_solution(sol_n, min_supp, time_diffs)
-                        if supp:
-                            sol_gen = lag_sols[0]
-                        else:
-                            sol_gen = False
-                    # print(supp)
-                    if supp and (supp >= min_supp):  # and ([supp, sol_gen] not in win_sols):
-                        if [supp, sol_gen] not in win_sols:
-                            win_sols.append([supp, sol_gen])
-                            self.update_pheromone(sol_gen)
-                            # print(lag_sols)
-                            if time_diffs is not None:
-                                win_lag_sols.append([supp, lag_sols])
-                            # converging = self.check_convergence()
-                    elif supp and (supp < min_supp):  # and ([supp, sol_gen] not in loss_sols):
-                        if [supp, sol_gen] not in loss_sols:
-                            loss_sols.append([supp, sol_gen])
-                            # self.update_pheromone(sol_n, False)
-                            # update pheromone as irrelevant with loss_sols
-                            # self.negate_pheromone(sol_gen)
-                    else:
-                        invalid_sols.append([supp, sol_n])
-                        if sol_gen:
-                            invalid_sols.append([supp, sol_gen])
-                        # self.update_pheromone(sol_n, False)
-                else:
-                    repeated += 1
-            # converging = self.check_convergence(repeated)
-            # is_member = GradACO.check_convergence(win_sols, sol_n)
-        # print("All: "+str(len(all_sols)))
-        # print("Winner: "+str(len(win_sols)))
-        # print("Losers: "+str(len(loss_sols)))
-        # print(count)
-        if time_diffs is None:
-            return GradACO.remove_subsets(win_sols)
-            # return win_sols
-        else:
-            return GradACO.remove_subsets(win_lag_sols, True)
-            # return win_lag_sols
-
-    @staticmethod
-    def check_anti_monotony_old(lst_p, p_arr, subset):
-        result = False
-        if subset:
-            for obj in lst_p:
-                result = set(p_arr).issubset(set(obj[1]))
-                if result:
-                    break
-        else:
-            for obj in lst_p:
-                result = set(p_arr).issuperset(set(obj[1]))
-                if result:
-                    break
-        return result
