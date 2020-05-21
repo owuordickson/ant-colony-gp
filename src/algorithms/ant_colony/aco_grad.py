@@ -25,8 +25,6 @@ class GradACO:
         self.attr_index = self.data.attr_cols
         self.e_factor = 0.9  # evaporation factor
         self.p_matrix = np.ones((self.data.column_size, 3), dtype=float)
-        #self.valid_bins = []
-        #self.invalid_bins = []
 
     def run_ant_colony(self, min_supp, time_diffs=None):
         if time_diffs is None:
