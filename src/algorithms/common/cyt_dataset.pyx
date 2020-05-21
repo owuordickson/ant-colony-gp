@@ -152,12 +152,12 @@ cdef class Dataset:
             temp_bin = np.array([])
         supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
 
-        if self.arr_bins.size > 0:
-            self.arr_bins = np.vstack((self.arr_bins, np.array([[incr, temp_pos, supp]])))
-            self.arr_bins = np.vstack((self.arr_bins, np.array([[decr, temp_neg, supp]])))
+        if self.valid_bins.size > 0:
+            self.valid_bins = np.vstack((self.valid_bins, np.array([[incr, temp_pos, supp]])))
+            self.valid_bins = np.vstack((self.valid_bins, np.array([[decr, temp_neg, supp]])))
         else:
-            self.arr_bins = np.array([[incr, temp_pos, supp]])
-            self.arr_bins = np.vstack((self.arr_bins, np.array([[decr, temp_neg, supp]])))
+            self.valid_bins = np.array([[incr, temp_pos, supp]])
+            self.valid_bins = np.vstack((self.valid_bins, np.array([[decr, temp_neg, supp]])))
         return supp, temp_bin
 
     @staticmethod

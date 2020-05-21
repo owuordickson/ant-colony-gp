@@ -20,8 +20,8 @@ import sys
 from optparse import OptionParser
 import tracemalloc
 from src.algorithms.common.profile import Profile
-# from src.algorithms.common.dataset import Dataset
-from src.algorithms.common.cyt_dataset import Dataset
+from src.algorithms.common.dataset import Dataset
+#from src.algorithms.common.cyt_dataset import Dataset
 from src.algorithms.ant_colony.aco_grad import GradACO
 #from src.algorithms.ant_colony.aco_grad_old import GradACO
 
@@ -32,7 +32,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
         d_set = Dataset(f_path)
         if d_set.data.size > 0:
             titles = d_set.title
-            d_set.init_attributes(eq)
+            d_set.init_attributes(min_supp, eq)
             ac = GradACO(d_set)
             list_gp = ac.run_ant_colony(min_supp)
 
@@ -92,7 +92,7 @@ if __name__ == "__main__":
         optparser.add_option('-s', '--minSupport',
                              dest='minSup',
                              help='minimum support value',
-                             default=0.5,
+                             default=0.9,
                              type='float')
         optparser.add_option('-e', '--allowEqual',
                              dest='allowEq',

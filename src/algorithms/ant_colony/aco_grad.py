@@ -23,7 +23,7 @@ class GradACO:
     def __init__(self, d_set):
         self.data = d_set
         self.attr_index = self.data.attr_cols
-        self.e_factor = 0.1  # evaporation factor
+        self.e_factor = 0.9  # evaporation factor
         self.p_matrix = np.ones((self.data.column_size, 3), dtype=float)
         self.valid_bins = []
         self.invalid_bins = []
@@ -51,13 +51,14 @@ class GradACO:
                     if is_super or is_sub:
                         continue
                     gen_gp = self.evaluate_bin_solution(rand_gp, min_supp, time_diffs=None)
-                    if gen_gp.support >= min_supp:
+                    is_present = GradACO.is_duplicate(gen_gp, winner_gps, loser_gps)
+                    if gen_gp.support >= min_supp and not is_present:
                         winner_gps.append(gen_gp)
-                        self.update_pheromone(gen_gp)
+                        self.add_pheromone(gen_gp)
                     else:
                         loser_gps.append(gen_gp)
                         # update pheromone as irrelevant with loss_sols
-                        # self.negate_pheromone(sol_gen)
+                        # self.negate_pheromone(gen_gp)
                     if gen_gp.get_pattern() != rand_gp.get_pattern():
                         loser_gps.append(rand_gp)
                 else:
@@ -99,7 +100,7 @@ class GradACO:
                         sol_gen = lag_sols[0]
                         if [supp, sol_gen] not in win_sols:
                             win_sols.append([supp, sol_gen])
-                            self.update_pheromone(sol_gen)
+                            self.add_pheromone(sol_gen)
                             # if time_diffs is not None:
                             win_lag_sols.append([supp, lag_sols])
                     else:
@@ -134,7 +135,7 @@ class GradACO:
 
     def evaluate_bin_solution(self, pattern, min_supp, time_diffs):
         # pattern = [('2', '+'), ('4', '+')]
-        lst_bin = self.data.arr_bins
+        lst_bin = self.data.valid_bins
         gen_pattern = GP()
         bin_data = []
         count = 0
@@ -178,7 +179,7 @@ class GradACO:
             new_pattern = GradACO.perform_bin_and(bin_data, size, min_supp, gen_pattern, time_diffs)
             return new_pattern
 
-    def update_pheromone(self, pattern):
+    def add_pheromone(self, pattern):
         lst_attr = []
         for obj in pattern.gradual_items:
             # print(obj.attribute_col)
@@ -197,8 +198,7 @@ class GradACO:
 
     def negate_pheromone(self, pattern):
         lst_attr = []
-        for obj in pattern:
-            # print(obj)
+        for obj in pattern.gradual_items:
             attr = obj.attribute_col
             symbol = obj.symbol
             lst_attr.append(attr)
@@ -207,7 +207,6 @@ class GradACO:
                 self.p_matrix[i][0] *= self.e_factor
             elif symbol == '-':
                 self.p_matrix[i][1] *= self.e_factor
-        print(self.p_matrix)
 
     def plot_pheromone_matrix(self):
         x_plot = np.array(self.p_matrix)
