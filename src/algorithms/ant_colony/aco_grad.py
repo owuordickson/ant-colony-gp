@@ -35,18 +35,16 @@ class GradACO:
             return self.fetch_tgps(min_supp, time_diffs)
 
     def fetch_gps(self, min_supp):
-        all_sols = list()
         winner_gps = list()  # subsets
         loser_gps = list()  # supersets
         repeated = 0
         while repeated < 1:
             rand_gp = self.generate_rand_pattern()
             if len(rand_gp.gradual_items) > 1:
-                # print(sol_n.get_pattern())
-                exits = GradACO.is_subset(rand_gp, all_sols)
-                if not exits:  # check if not subset
+                # print(rand_gp.get_pattern())
+                exits = GradACO.is_duplicate(rand_gp, winner_gps, loser_gps)
+                if not exits:
                     repeated = 0
-                    all_sols.append(rand_gp)
                     # check for anti-monotony
                     is_super = GradACO.check_anti_monotony(loser_gps, rand_gp, subset=False)
                     is_sub = GradACO.check_anti_monotony(winner_gps, rand_gp, subset=True)
@@ -54,19 +52,14 @@ class GradACO:
                         continue
                     gen_gp = self.evaluate_bin_solution(rand_gp, min_supp, time_diffs=None)
                     if gen_gp.support >= min_supp:
-                        #if [supp, sol_gen] not in win_sols:
-                            #win_sols.append([supp, sol_gen])
                         winner_gps.append(gen_gp)
                         self.update_pheromone(gen_gp)
                     else:
                         loser_gps.append(gen_gp)
-                        if gen_gp.get_pattern() != rand_gp.get_pattern():
-                            loser_gps.append(rand_gp)
-                        #loss_sols.append([supp, sol_gen])
-                        #if sol_gen:
-                        #    all_sols.append(sol_gen)
                         # update pheromone as irrelevant with loss_sols
                         # self.negate_pheromone(sol_gen)
+                    if gen_gp.get_pattern() != rand_gp.get_pattern():
+                        loser_gps.append(rand_gp)
                 else:
                     repeated += 1
         return winner_gps
@@ -295,10 +288,11 @@ class GradACO:
             return gen_p
 
     @staticmethod
-    def is_subset(pattern, lst_pattern):
-        for pat in lst_pattern:
+    def is_duplicate(pattern, lst_winners, lst_losers):
+        for pat in lst_losers:
             if pattern.get_pattern() == pat.get_pattern():
                 return True
-            if set(pattern.get_pattern()).issubset(set(pat.get_pattern())):
+        for pat in lst_winners:
+            if pattern.get_pattern() == pat.get_pattern():
                 return True
         return False
