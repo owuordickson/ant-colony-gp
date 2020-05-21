@@ -34,9 +34,8 @@ class Dataset:
             self.thd_supp = 0
             self.equal = False
             self.attr_data = np.array([])  # optimized (numpy)
-            # self.lst_bin = []
             self.valid_bins = np.array([])  # optimized (numpy & numba)
-            self.invalid_bins = np.array([])
+            self.invalid_bins = list()
 
     def get_size(self):
         size = self.data.shape[0]
@@ -132,12 +131,8 @@ class Dataset:
             supp = float(np.sum(temp_pos)) / float(n * (n - 1.0) / 2.0)
 
             if supp < self.thd_supp:
-                if self.invalid_bins > 0:
-                    self.invalid_bins = np.asarray(gi_pos)
-                    self.invalid_bins = np.hstack((self.invalid_bins, np.asarray(gi_neg)))
-                else:
-                    self.invalid_bins = np.hstack((self.invalid_bins, np.asarray(gi_pos)))
-                    self.invalid_bins = np.hstack((self.invalid_bins, np.asarray(gi_neg)))
+                self.invalid_bins.append(gi_pos.gradual_item)
+                self.invalid_bins.append(gi_neg.gradual_item)
             else:
                 if self.valid_bins.size > 0:
                     self.valid_bins = np.vstack((self.valid_bins, np.array([[gi_pos.gradual_item, temp_pos, supp]])))

@@ -133,7 +133,6 @@ class GradACO:
 
     def evaluate_bin_solution(self, pattern, min_supp, time_diffs):
         # pattern = [('2', '+'), ('4', '+')]
-        lst_bin = self.data.valid_bins
         gen_pattern = GP()
         bin_data = []
         count = 0
@@ -152,7 +151,6 @@ class GradACO:
         if count <= 1:
             return pattern
         else:
-            # size = len(self.data.attr_data[0][1])
             size = self.data.attr_data.shape[1]
             new_pattern = GradACO.perform_bin_and(bin_data, size, min_supp, gen_pattern, time_diffs)
             return new_pattern
