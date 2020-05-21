@@ -183,25 +183,25 @@ class GradACO:
         for obj in pattern.gradual_items:
             # print(obj.attribute_col)
             attr = obj.attribute_col
-            lst_attr.append(attr)
             symbol = obj.symbol
+            lst_attr.append(attr)
             i = attr
             if symbol == '+':
                 self.p_matrix[i][0] += 1
             elif symbol == '-':
                 self.p_matrix[i][1] += 1
-        for index in self.data.attr_cols:
+        for index in self.attr_index:
             if int(index) not in lst_attr:
-                i = int(index) - 1
+                i = int(index)
                 self.p_matrix[i][2] += 1
 
     def negate_pheromone(self, pattern):
         lst_attr = []
         for obj in pattern:
             # print(obj)
-            attr = int(obj[0])
+            attr = obj.attribute_col
+            symbol = obj.symbol
             lst_attr.append(attr)
-            symbol = obj[1]
             i = attr
             if symbol == '+':
                 self.p_matrix[i][0] *= self.e_factor
