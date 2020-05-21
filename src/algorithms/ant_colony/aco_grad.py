@@ -25,8 +25,8 @@ class GradACO:
         self.attr_index = self.data.attr_cols
         self.e_factor = 0.9  # evaporation factor
         self.p_matrix = np.ones((self.data.column_size, 3), dtype=float)
-        self.valid_bins = []
-        self.invalid_bins = []
+        #self.valid_bins = []
+        #self.invalid_bins = []
 
     def run_ant_colony(self, min_supp, time_diffs=None):
         if time_diffs is None:
@@ -140,37 +140,17 @@ class GradACO:
         bin_data = []
         count = 0
         for obj_i in pattern.get_pattern():
-            if obj_i in self.invalid_bins:
+            if obj_i in self.data.invalid_bins:
                 continue
-            elif obj_i in self.valid_bins:
+            else:
                 # fetch pattern
-                for obj in lst_bin:
+                for obj in self.data.valid_bins:
                     if obj[0] == obj_i:
                         gi = GI(obj_i[0], obj_i[1])
                         gen_pattern.add_gradual_item(gi)
                         bin_data.append([obj[1], obj[2], obj[0]])
                         count += 1
                         break
-            else:
-                try:
-                    attr_data = [obj_i[0], np.array(self.data.attr_data[obj_i[0]], dtype=float)]
-                    supp, temp_bin = self.data.get_bin_rank(attr_data, obj_i[1])
-                    if supp >= min_supp:
-                        # self.valid_bins.append(GI(obj_i[0], '+'))
-                        self.valid_bins.append(tuple([obj_i[0], '+']))
-                        self.valid_bins.append(tuple([obj_i[0], '-']))
-
-                        gi = GI(obj_i[0], obj_i[1])
-                        gen_pattern.add_gradual_item(gi)
-                        bin_data.append([temp_bin, supp, obj_i])
-                        count += 1
-                    else:
-                        self.invalid_bins.append(tuple([obj_i[0], '+']))
-                        self.invalid_bins.append(tuple([obj_i[0], '-']))
-                except IndexError:
-                    # binary does not exist
-                    # return False, False
-                    return pattern
         if count <= 1:
             return pattern
         else:
