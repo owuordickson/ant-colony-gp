@@ -2,9 +2,9 @@
 """
 @author: "Dickson OWUOR"
 @credits: "Anne LAURENT, Joseph ORERO"
-@version: "2.0"
+@version: "3.0"
 @email: "owuordickson@gmail.com"
-@created: "26 March 2020"
+@created: "20 May 2020"
 
 GP: Gradual Pattern
 TGP: Temporal Gradual Pattern
@@ -12,41 +12,37 @@ TGP: Temporal Gradual Pattern
 """
 
 
+class GI:
+
+    def __init__(self, attr_col, symbol):
+        self.attribute_col = attr_col
+        self.symbol = symbol
+        self.gradual_item = tuple([attr_col, symbol])
+
+    def toStr(self):
+        return str(self.attribute_col) + self.symbol
+
+
 class GP:
 
-    def __init__(self, gp):
-        self.gp = gp
-        self.pattern = None
+    def __init__(self):
+        self.gradual_items = list()
         self.support = 0
-        self.format_pattern()
 
-    def format_pattern(self):
-        self.pattern = GP.format_gp(self.gp[1])
-        self.support = self.gp[0]
+    def set_support(self, support):
+        self.support = support
 
-    @staticmethod
-    def format_gp(obj_gp):
-        arr_gp = list(obj_gp)
-        new_gp = list()
-        for item in arr_gp:
-            attr = int(item[0])
-            sign = item[1]
-            str_gp = str(attr) + sign
-            new_gp.append(str_gp)
-        return set(new_gp)
+    def add_gradual_item(self, item):
+        self.gradual_items.append(item)
 
+    def get_pattern(self):
+        pattern = list()
+        for item in self.gradual_items:
+            pattern.append(item.gradual_item)
+        return pattern
 
-class TGP:
-
-    def __init__(self, tgp):
-        self.tgp = tgp
-        self.pattern = None
-        self.support = 0
-        self.time_lag = None
-        self.format_pattern()
-
-    def format_pattern(self):
-        self.pattern = GP.format_gp(self.tgp[1][0])
-        self.support = self.tgp[0]
-        self.time_lag = self.tgp[1][1]
-
+    def print_pattern(self):
+        pattern = list()
+        for item in self.gradual_items:
+            pattern.append(item.toStr())
+        return pattern

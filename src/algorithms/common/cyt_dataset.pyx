@@ -28,16 +28,15 @@ cdef struct title_struct:
 cdef class Dataset:
 
     cdef dict __dict__
-    cdef public int size, column_size
+    cdef public int size, column_size, attr_size
     cdef float thd_supp
     cdef int equal
-    #cdef array.array time_cols = array.array('i', [])
     cdef public np.ndarray time_cols
     cdef public np.ndarray attr_cols
     cdef public np.ndarray title
     cdef public np.ndarray data
-    cdef public np.ndarray attr_data
-    cdef public np.ndarray arr_bins
+    cdef public np.ndarray valid_bins
+    cdef public list invalid_bins
 
     def __init__(self, file_path):
         cdef list data
@@ -54,11 +53,11 @@ cdef class Dataset:
             self.attr_cols = self.get_attributes()  # optimized (numpy)
             self.column_size = self.get_attribute_no()  # optimized (cdef)
             self.size = self.get_size()  # optimized (cdef)
-            self.thd_supp = False
+            self.attr_size = 0
+            self.thd_supp = 0
             self.equal = False
-            self.attr_data = np.array([])  # optimized (numpy)
-            # self.lst_bin = []
-            self.arr_bins = np.array([])  # optimized (numpy & numba)
+            self.valid_bins = np.array([])  # optimized (numpy & numba)
+            self.invalid_bins = list()
 
     cdef int get_size(self):
         cdef int size
@@ -125,40 +124,39 @@ cdef class Dataset:
         else:
             return np.array([])
 
-    cpdef void init_attributes(self, bint eq):
+    cpdef void init_attributes(self, float min_sup bint eq):
         # (check) implement parallel multiprocessing
         # transpose csv array data
+        self.thd_supp = min_sup
         self.equal = eq
-        self.attr_data = np.transpose(self.data)
+        attr_data = np.transpose(self.data)
+        self.attr_size = attr_data.shape[1]
+        self.get_bins(attr_data)
 
-    cpdef get_bin_rank(self, attr_data, symbol):
-        # execute binary rank to calculate support of pattern
-        cdef int key, n
+    cpdef get_bins(self, attr_data):
+        cdef int n
         cdef float supp
-        cdef np.ndarray data, temp, temp_pos, temp_neg, temp_bin
-        key = attr_data[0]
-        data = attr_data[1]
-        incr = tuple([key, '+'])
-        decr = tuple([key, '-'])
-        n = len(data)
-        temp = np.zeros((n, n), dtype='bool')
-        temp_pos, temp_neg = Dataset.bin_rank(data, n, temp, equal=self.equal)
+        cdef np.ndarray col_data, temp, temp_pos, temp_neg
+        for col in self.attr_cols:
+            col_data = np.array(attr_data[col], dtype=float)
+            incr = tuple([col, '+'])
+            decr = tuple([col, '-'])
+            n = len(col_data)
 
-        if symbol == '+':
-            temp_bin = temp_pos
-        elif symbol == '-':
-            temp_bin = temp_neg
-        else:
-            temp_bin = np.array([])
-        supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
+            temp = np.zeros((n, n), dtype='bool')
+            temp_pos, temp_neg = Dataset.bin_rank(col_data, n, temp, equal=self.equal)
+            supp = float(np.sum(temp_pos)) / float(n * (n - 1.0) / 2.0)
 
-        if self.valid_bins.size > 0:
-            self.valid_bins = np.vstack((self.valid_bins, np.array([[incr, temp_pos, supp]])))
-            self.valid_bins = np.vstack((self.valid_bins, np.array([[decr, temp_neg, supp]])))
-        else:
-            self.valid_bins = np.array([[incr, temp_pos, supp]])
-            self.valid_bins = np.vstack((self.valid_bins, np.array([[decr, temp_neg, supp]])))
-        return supp, temp_bin
+            if supp < self.thd_supp:
+                self.invalid_bins.append(incr)
+                self.invalid_bins.append(decr)
+            else:
+                if self.valid_bins.size > 0:
+                    self.valid_bins = np.vstack((self.valid_bins, np.array([[incr, temp_pos, supp]])))
+                    self.valid_bins = np.vstack((self.valid_bins, np.array([[decr, temp_neg, supp]])))
+                else:
+                    self.valid_bins = np.array([[incr, temp_pos, supp]])
+                    self.valid_bins = np.vstack((self.valid_bins, np.array([[decr, temp_neg, supp]])))
 
     @staticmethod
     # @numba.jit(nopython=True, parallel=True)

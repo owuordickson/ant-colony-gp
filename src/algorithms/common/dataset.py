@@ -12,7 +12,7 @@ import csv
 from dateutil.parser import parse
 import time
 import numpy as np
-from src.algorithms.ant_colony.gp_ import GI
+from src.algorithms.ant_colony.gp import GI
 
 
 class Dataset:
@@ -31,9 +31,9 @@ class Dataset:
             self.attr_cols = self.get_attributes()  # optimized (numpy)
             self.column_size = self.get_attribute_no()  # optimized (cdef)
             self.size = self.get_size()  # optimized (cdef)
+            self.attr_size = 0
             self.thd_supp = 0
             self.equal = False
-            self.attr_data = np.array([])  # optimized (numpy)
             self.valid_bins = np.array([])  # optimized (numpy & numba)
             self.invalid_bins = list()
 
@@ -115,15 +115,16 @@ class Dataset:
         # transpose csv array data
         self.thd_supp = min_sup
         self.equal = eq
-        self.attr_data = np.transpose(self.data)
-        self.get_bins(self.attr_data)
+        attr_data = np.transpose(self.data)
+        self.attr_size = attr_data.shape[1]
+        self.get_bins(attr_data)
 
     def get_bins(self, attr_data):
         # execute binary rank to calculate support of pattern
         for col in self.attr_cols:
             col_data = np.array(attr_data[col], dtype=float)
-            gi_pos = GI(col, '+')
-            gi_neg = GI(col, '-')
+            incr = tuple([col, '+'])
+            decr = tuple([col, '-'])
             n = len(col_data)
 
             temp = np.zeros((n, n), dtype='bool')
@@ -131,15 +132,15 @@ class Dataset:
             supp = float(np.sum(temp_pos)) / float(n * (n - 1.0) / 2.0)
 
             if supp < self.thd_supp:
-                self.invalid_bins.append(gi_pos.gradual_item)
-                self.invalid_bins.append(gi_neg.gradual_item)
+                self.invalid_bins.append(incr)
+                self.invalid_bins.append(decr)
             else:
                 if self.valid_bins.size > 0:
-                    self.valid_bins = np.vstack((self.valid_bins, np.array([[gi_pos.gradual_item, temp_pos, supp]])))
-                    self.valid_bins = np.vstack((self.valid_bins, np.array([[gi_neg.gradual_item, temp_neg, supp]])))
+                    self.valid_bins = np.vstack((self.valid_bins, np.array([[incr, temp_pos, supp]])))
+                    self.valid_bins = np.vstack((self.valid_bins, np.array([[decr, temp_neg, supp]])))
                 else:
-                    self.valid_bins = np.array([[gi_pos.gradual_item, temp_pos, supp]])
-                    self.valid_bins = np.vstack((self.valid_bins, np.array([[gi_neg.gradual_item, temp_neg, supp]])))
+                    self.valid_bins = np.array([[incr, temp_pos, supp]])
+                    self.valid_bins = np.vstack((self.valid_bins, np.array([[decr, temp_neg, supp]])))
 
     def get_bin_rank(self, attr_data, symbol):
         # execute binary rank to calculate support of pattern

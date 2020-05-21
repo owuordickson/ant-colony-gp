@@ -14,8 +14,8 @@ import numpy as np
 import random as rand
 # import matplotlib.pyplot as plt
 from src.algorithms.tgraank.fuzzy_mf import FuzzyMF
-from src.algorithms.ant_colony.gp import TGP
-from src.algorithms.ant_colony.gp_ import GP, GI
+from src.algorithms.ant_colony.gp_old import TGP
+from src.algorithms.ant_colony.gp import GP, GI
 
 
 class GradACO:
@@ -151,7 +151,7 @@ class GradACO:
         if count <= 1:
             return pattern
         else:
-            size = self.data.attr_data.shape[1]
+            size = self.data.attr_size
             new_pattern = GradACO.perform_bin_and(bin_data, size, min_supp, gen_pattern, time_diffs)
             return new_pattern
 
