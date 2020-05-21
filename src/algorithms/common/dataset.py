@@ -12,7 +12,6 @@ import csv
 from dateutil.parser import parse
 import time
 import numpy as np
-from src.algorithms.ant_colony.gp import GI
 
 
 class Dataset:
