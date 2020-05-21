@@ -48,7 +48,7 @@ class GradACO:
                     is_sub = GradACO.check_anti_monotony(winner_gps, rand_gp, subset=True)
                     if is_super or is_sub:
                         continue
-                    gen_gp = self.evaluate_bin_solution(rand_gp, min_supp, time_diffs=None)
+                    gen_gp = self.validate_gp(rand_gp, min_supp, time_diffs=None)
                     is_present = GradACO.is_duplicate(gen_gp, winner_gps, loser_gps)
                     if gen_gp.support >= min_supp and not is_present:
                         winner_gps.append(gen_gp)
@@ -89,7 +89,7 @@ class GradACO:
                     #if time_diffs is None:
                     #    supp, sol_gen = self.evaluate_bin_solution(sol_n, min_supp, time_diffs)
                     #else:
-                    supp, lag_sols = self.evaluate_bin_solution(sol_n, min_supp, time_diffs)
+                    supp, lag_sols = self.validate_gp(sol_n, min_supp, time_diffs)
                     #    if supp:
                     #        sol_gen = lag_sols[0]
                     #    else:
@@ -131,12 +131,12 @@ class GradACO:
             pattern.add_gradual_item(temp)
         return pattern
 
-    def evaluate_bin_solution(self, pattern, min_supp, time_diffs):
+    def validate_gp(self, pattern, min_supp, time_diffs):
         # pattern = [('2', '+'), ('4', '+')]
         gen_pattern = GP()
         bin_data = []
         count = 0
-        for obj_i in pattern.get_pattern():
+        for obj_i in pattern.get_pattern():  # make function
             if obj_i in self.data.invalid_bins:
                 continue
             else:
@@ -271,3 +271,9 @@ class GradACO:
             if pattern.get_pattern() == pat.get_pattern():
                 return True
         return False
+
+    @staticmethod
+    def bin_and(bins, n):
+        temp_bin = bins[0] & bins[1]
+        supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
+        return supp
