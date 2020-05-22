@@ -121,6 +121,7 @@ class Dataset:
 
     def get_bins(self, attr_data):
         # execute binary rank to calculate support of pattern
+        valid_bins = np.array([])
         for col in self.attr_cols:
             col_data = np.array(attr_data[col], dtype=float)
             incr = tuple([col, '+'])
@@ -135,14 +136,17 @@ class Dataset:
                 self.invalid_bins.append(incr)
                 self.invalid_bins.append(decr)
             else:
-                if self.valid_bins.size > 0:
-                    self.valid_bins = np.vstack((self.valid_bins, np.array([[incr, temp_pos, supp]])))
-                    self.valid_bins = np.vstack((self.valid_bins, np.array([[decr, temp_neg, supp]])))
+                if valid_bins.size > 0:
+                    new_bin = np.array([incr, temp_pos, supp]).reshape(3, 1)
+                    valid_bins = np.append(valid_bins, new_bin, axis=1)
+                    new_bin = np.array([decr, temp_neg, supp]).reshape(3, 1)
+                    valid_bins = np.append(valid_bins, new_bin, axis=1)
                 else:
-                    self.valid_bins = np.array([[incr, temp_pos, supp]])
-                    self.valid_bins = np.vstack((self.valid_bins, np.array([[decr, temp_neg, supp]])))
-        temp = np.transpose(self.valid_bins)
-        bins = np.rec.fromarrays((temp[0], temp[1], temp[2]), names=('gi', 'bin', 'support'))
+                    valid_bins = np.array([incr, temp_pos, supp]).reshape(3, 1)
+                    new_bin = np.array([decr, temp_neg, supp]).reshape(3, 1)
+                    valid_bins = np.append(valid_bins, new_bin, axis=1)
+        self.valid_bins = np.rec.fromarrays((valid_bins[0], valid_bins[1], valid_bins[2]),
+                                            names=('gi', 'bin', 'support'))
 
     def get_bin_rank(self, attr_data, symbol):
         # execute binary rank to calculate support of pattern

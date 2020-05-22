@@ -139,11 +139,11 @@ class GradACO:
                 continue
             else:  # call method
                 # fetch pattern
-                for obj in self.data.valid_bins:
-                    if obj[0] == obj_i:
+                for bin_obj in self.data.valid_bins:
+                    if bin_obj[0] == obj_i:
                         gi = GI(obj_i[0], obj_i[1])
                         gen_pattern.add_gradual_item(gi)
-                        bin_data.append([obj[1], obj[2], obj[0]])
+                        bin_data.append(bin_obj)
                         break
         if len(gen_pattern.gradual_items) <= 1:
             return pattern
@@ -231,24 +231,23 @@ class GradACO:
 
     @staticmethod
     def perform_bin_and(unsorted_bins, n, thd_supp, gen_p, t_diffs):
-        lst_bin = sorted(unsorted_bins, key=lambda x: x[1])
-        #print(lst_bin)
+        lst_bin = sorted(unsorted_bins, key=lambda x: x[2])
         final_bin = np.array([])
         pattern = GP()
         count = 0
-        for obj in lst_bin:
+        for bin_obj in lst_bin:
             temp_bin = final_bin
             if temp_bin.size != 0:
-                temp_bin = temp_bin & obj[0]
+                temp_bin = temp_bin & bin_obj.bin
                 supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
                 if supp >= thd_supp:
                     final_bin = temp_bin
-                    gi = GI(obj[2][0], obj[2][1])
+                    gi = GI(bin_obj.gi[0], bin_obj.gi[1])
                     pattern.add_gradual_item(gi)
                     count += 1
             else:
-                final_bin = obj[0]
-                gi = GI(obj[2][0], obj[2][1])
+                final_bin = bin_obj.bin
+                gi = GI(bin_obj.gi[0], bin_obj.gi[1])
                 pattern.add_gradual_item(gi)
                 count += 1
         supp = float(np.sum(final_bin)) / float(n * (n - 1.0) / 2.0)
