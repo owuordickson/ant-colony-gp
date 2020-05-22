@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 
 try:
-    from setuptools import setup, find_packages
+    from setuptools import setup, Extension, find_packages
 except ImportError:
-    from distutils.core import setup
-from distutils.core import Extension
+    from distutils.core import setup, Extension
 from Cython.Distutils import build_ext
 # from Cython.Build import cythonize
 import numpy
