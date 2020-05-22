@@ -14,7 +14,6 @@ import numpy as np
 import random as rand
 # import matplotlib.pyplot as plt
 from src.algorithms.tgraank.fuzzy_mf import FuzzyMF
-from src.algorithms.ant_colony.gp_old import TGP
 from src.algorithms.ant_colony.gp import GP, GI
 
 
