@@ -4,7 +4,7 @@ python:
     - "3.6"
 
 before_install:
-  - "pip install -U pip"
+  - "pip3 install cython"
   - "python setup.py install"
 
 install: pip3 install -r requirements.txt
