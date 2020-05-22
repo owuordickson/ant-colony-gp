@@ -135,20 +135,18 @@ class GradACO:
         # pattern = [('2', '+'), ('4', '+')]
         gen_pattern = GP()
         bin_data = []
-        count = 0
-        for obj_i in pattern.get_pattern():  # make function
+        for obj_i in pattern.get_pattern():
             if obj_i in self.data.invalid_bins:
                 continue
-            else:
+            else:  # call method
                 # fetch pattern
                 for obj in self.data.valid_bins:
                     if obj[0] == obj_i:
                         gi = GI(obj_i[0], obj_i[1])
                         gen_pattern.add_gradual_item(gi)
                         bin_data.append([obj[1], obj[2], obj[0]])
-                        count += 1
                         break
-        if count <= 1:
+        if len(gen_pattern.gradual_items) <= 1:
             return pattern
         else:
             size = self.data.attr_size
@@ -209,6 +207,14 @@ class GradACO:
         plt.grid()
         plt.show()
 
+    def evaluate_bins(self, raw_gi, bins):
+        for obj in self.data.valid_bins:
+            if obj[0] == raw_gi:
+                gi = GI(raw_gi[0], raw_gi[1])
+                # gen_pattern.add_gradual_item(gi)
+                # bin_data.append([obj[1], obj[2], obj[0]])
+                return gi, supp
+
     @staticmethod
     def check_anti_monotony(lst_p, pattern, subset=True):
         result = False
@@ -227,6 +233,7 @@ class GradACO:
     @staticmethod
     def perform_bin_and(unsorted_bins, n, thd_supp, gen_p, t_diffs):
         lst_bin = sorted(unsorted_bins, key=lambda x: x[1])
+        #print(lst_bin)
         final_bin = np.array([])
         pattern = GP()
         count = 0
