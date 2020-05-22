@@ -133,15 +133,30 @@ class GradACO:
     def validate_gp(self, pattern, min_supp, time_diffs):
         # pattern = [('2', '+'), ('4', '+')]
         gen_pattern = GP()
+        gen_pattern2 = GP()
         bin_data = []
-        for obj_i in pattern.get_pattern():
-            if obj_i in self.data.invalid_bins:
+        bin_data2 = np.array([])
+
+        for gi_obj in pattern.get_pattern():
+            if gi_obj in self.data.invalid_bins:
                 continue
             else:  # call method
                 # fetch pattern
                 for bin_obj in self.data.valid_bins:
-                    if bin_obj[0] == obj_i:
-                        gi = GI(obj_i[0], obj_i[1])
+                    if bin_obj.gi == gi_obj:
+                        if bin_data2.size <= 0:
+                            bin_data2 = np.array([bin_obj, bin_obj])
+                            gi = GI(bin_obj.gi[0], bin_obj.gi[1])
+                            gen_pattern2.add_gradual_item(gi)
+                        else:
+                            bin_data2[1] = bin_obj
+                            temp_bin, supp = self.bin_and(bin_data2, self.data.attr_size)
+                            if supp >= min_supp:
+                                bin_data2[0].bin = temp_bin
+                                gi = GI(bin_obj.gi[0], bin_obj.gi[1])
+                                gen_pattern2.add_gradual_item(gi)
+                                gen_pattern2.set_support(supp)
+                        gi = GI(bin_obj.gi[0], bin_obj.gi[1])
                         gen_pattern.add_gradual_item(gi)
                         bin_data.append(bin_obj)
                         break
@@ -150,7 +165,11 @@ class GradACO:
         else:
             size = self.data.attr_size
             new_pattern = GradACO.perform_bin_and(bin_data, size, min_supp, gen_pattern, time_diffs)
-            return new_pattern
+            print(pattern.print_pattern())
+            print(str(new_pattern.print_pattern()) + str(new_pattern.support))
+            print(str(gen_pattern2.print_pattern()) + str(gen_pattern2.support))
+            print("-----------")
+            return gen_pattern2
 
     def add_pheromone(self, pattern):
         lst_attr = []
@@ -205,14 +224,6 @@ class GradACO:
         plt.gray()
         plt.grid()
         plt.show()
-
-    def evaluate_bins(self, raw_gi, bins):
-        for obj in self.data.valid_bins:
-            if obj[0] == raw_gi:
-                gi = GI(raw_gi[0], raw_gi[1])
-                # gen_pattern.add_gradual_item(gi)
-                # bin_data.append([obj[1], obj[2], obj[0]])
-                return gi, supp
 
     @staticmethod
     def check_anti_monotony(lst_p, pattern, subset=True):
@@ -279,6 +290,6 @@ class GradACO:
 
     @staticmethod
     def bin_and(bins, n):
-        temp_bin = bins[0] & bins[1]
+        temp_bin = bins[0].bin & bins[1].bin
         supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
-        return supp
+        return temp_bin, supp
