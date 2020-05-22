@@ -34,6 +34,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
             titles = d_set.title
             d_set.init_attributes(min_supp, eq)
             ac = GradACO(d_set)
+            ac.init_pheromones()
             list_gp = ac.run_ant_colony(min_supp)
 
             if cores > 1:

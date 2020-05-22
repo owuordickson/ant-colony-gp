@@ -11,7 +11,8 @@
 """
 
 import numpy as np
-import random as rand
+from numpy import random as rand
+#import random as rand
 # import matplotlib.pyplot as plt
 from src.algorithms.tgraank.fuzzy_mf import FuzzyMF
 from src.algorithms.ant_colony.gp import GP, GI
@@ -22,8 +23,15 @@ class GradACO:
     def __init__(self, d_set):
         self.data = d_set
         self.attr_index = self.data.attr_cols
-        self.e_factor = 0.9  # evaporation factor
+        self.e_factor = 0.1  # evaporation factor
         self.p_matrix = np.ones((self.data.column_size, 3), dtype=float)
+
+    def init_pheromones(self):
+        invalid_pats = GP()
+        for obj_gi in self.data.invalid_bins:
+            gi = GI(obj_gi[0], obj_gi[1])
+            invalid_pats.add_gradual_item(gi)
+        self.negate_pheromone(invalid_pats, self.e_factor)
 
     def run_ant_colony(self, min_supp, time_diffs=None):
         if time_diffs is None:
@@ -49,7 +57,9 @@ class GradACO:
                         continue
                     gen_gp = self.validate_gp(rand_gp, min_supp, time_diffs=None)
                     is_present = GradACO.is_duplicate(gen_gp, winner_gps, loser_gps)
-                    if gen_gp.support >= min_supp and not is_present:
+                    if gen_gp.support >= min_supp and is_present:
+                        repeated += 1
+                    elif gen_gp.support >= min_supp and not is_present:
                         winner_gps.append(gen_gp)
                         self.add_pheromone(gen_gp)
                     else:
@@ -115,8 +125,9 @@ class GradACO:
         p = self.p_matrix
         n = len(self.attr_index)
         pattern = GP()
-        for i in range(n):
-            max_extreme = n * 10
+        attrs = np.random.permutation(n)
+        for i in attrs:
+            max_extreme = n * 100
             x = float(rand.randint(1, max_extreme) / max_extreme)
             pos = float(p[i][0] / (p[i][0] + p[i][1] + p[i][2]))
             neg = float((p[i][0] + p[i][1]) / (p[i][0] + p[i][1] + p[i][2]))
@@ -133,9 +144,7 @@ class GradACO:
     def validate_gp(self, pattern, min_supp, time_diffs):
         # pattern = [('2', '+'), ('4', '+')]
         gen_pattern = GP()
-        gen_pattern2 = GP()
-        bin_data = []
-        bin_data2 = np.array([])
+        bin_data = np.array([])
 
         for gi_obj in pattern.get_pattern():
             if gi_obj in self.data.invalid_bins:
@@ -144,32 +153,27 @@ class GradACO:
                 # fetch pattern
                 for bin_obj in self.data.valid_bins:
                     if bin_obj.gi == gi_obj:
-                        if bin_data2.size <= 0:
-                            bin_data2 = np.array([bin_obj, bin_obj])
+                        if bin_data.size <= 0:
+                            bin_data = np.array([bin_obj, bin_obj])
                             gi = GI(bin_obj.gi[0], bin_obj.gi[1])
-                            gen_pattern2.add_gradual_item(gi)
+                            gen_pattern.add_gradual_item(gi)
                         else:
-                            bin_data2[1] = bin_obj
-                            temp_bin, supp = self.bin_and(bin_data2, self.data.attr_size)
+                            bin_data[1] = bin_obj
+                            temp_bin, supp = self.bin_and(bin_data, self.data.attr_size)
                             if supp >= min_supp:
-                                bin_data2[0].bin = temp_bin
+                                bin_data[0].bin = temp_bin
                                 gi = GI(bin_obj.gi[0], bin_obj.gi[1])
-                                gen_pattern2.add_gradual_item(gi)
-                                gen_pattern2.set_support(supp)
-                        gi = GI(bin_obj.gi[0], bin_obj.gi[1])
-                        gen_pattern.add_gradual_item(gi)
-                        bin_data.append(bin_obj)
+                                gen_pattern.add_gradual_item(gi)
+                                gen_pattern.set_support(supp)
+                            else:
+                                bad_pattern = GP()
+                                bad_pattern.add_gradual_item(GI(bin_obj.gi[0], bin_obj.gi[1]))
+                                self.negate_pheromone(bad_pattern, bin_obj.support)
                         break
         if len(gen_pattern.gradual_items) <= 1:
             return pattern
         else:
-            size = self.data.attr_size
-            new_pattern = GradACO.perform_bin_and(bin_data, size, min_supp, gen_pattern, time_diffs)
-            print(pattern.print_pattern())
-            print(str(new_pattern.print_pattern()) + str(new_pattern.support))
-            print(str(gen_pattern2.print_pattern()) + str(gen_pattern2.support))
-            print("-----------")
-            return gen_pattern2
+            return gen_pattern
 
     def add_pheromone(self, pattern):
         lst_attr = []
@@ -188,7 +192,7 @@ class GradACO:
                 i = int(index)
                 self.p_matrix[i][2] += 1
 
-    def negate_pheromone(self, pattern):
+    def negate_pheromone(self, pattern, e_factor):
         lst_attr = []
         for obj in pattern.gradual_items:
             attr = obj.attribute_col
@@ -196,9 +200,9 @@ class GradACO:
             lst_attr.append(attr)
             i = attr
             if symbol == '+':
-                self.p_matrix[i][0] *= self.e_factor
+                self.p_matrix[i][0] *= e_factor
             elif symbol == '-':
-                self.p_matrix[i][1] *= self.e_factor
+                self.p_matrix[i][1] *= e_factor
 
     def plot_pheromone_matrix(self):
         x_plot = np.array(self.p_matrix)
