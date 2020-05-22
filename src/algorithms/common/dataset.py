@@ -143,7 +143,6 @@ class Dataset:
                     self.valid_bins = np.vstack((self.valid_bins, np.array([[decr, temp_neg, supp]])))
         temp = np.transpose(self.valid_bins)
         bins = np.rec.fromarrays((temp[0], temp[1], temp[2]), names=('gi', 'bin', 'support'))
-        print(bins.support)
 
     def get_bin_rank(self, attr_data, symbol):
         # execute binary rank to calculate support of pattern

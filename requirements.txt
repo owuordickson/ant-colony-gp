@@ -2,3 +2,4 @@ matplotlib
 python-dateutil
 numpy
 scikit-fuzzy
+cython
