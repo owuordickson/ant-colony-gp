@@ -28,7 +28,6 @@ ext_modules = [
 ]
 # ext_modules = cythonize("src/algorithms/common/cyt_dataset.pyx", annotate=True)
 
-
 setup(
     name='aco-grad',
     version='2.0',
