@@ -19,8 +19,8 @@ Description:
 import sys
 from optparse import OptionParser
 from src.algorithms.common.profile import Profile
-from src.algorithms.common.datasetv1 import Dataset
-#from src.algorithms.common.dataset import Dataset
+#from src.algorithms.common.datasetv1 import Dataset
+from src.algorithms.common.dataset import Dataset
 #from src.algorithms.common.cyt_dataset import Dataset
 from src.algorithms.ant_colony.aco_grad import GradACO
 
@@ -86,8 +86,8 @@ if __name__ == "__main__":
                              #default='../data/DATASET.csv',
                              #default='../data/DATASET3.csv',
                              #default='../data/Omnidir.csv',
-                             #default='../data/FluTopicData-testsansdate-blank.csv',
-                             default='data/FluTopicData-testsansdate-blank.csv',
+                             default='../data/FluTopicData-testsansdate-blank.csv',
+                             #default='data/FluTopicData-testsansdate-blank.csv',
                              #default='../data/FARSmiss.csv',
                              type='string')
         optparser.add_option('-s', '--minSupport',
