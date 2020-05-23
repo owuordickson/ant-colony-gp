@@ -97,7 +97,7 @@ cdef class Dataset:
             keys = np.arange(size)
             values = data[0]
             title = np.rec.fromarrays((keys, values), names=('key', 'value'))
-            del data[0]
+            data = np.delete(data, 0, 0)
             # convert csv data into array
             self.data = np.asarray(data)
             return np.asarray(title)
@@ -106,17 +106,14 @@ cdef class Dataset:
             return np.array([])
 
     cdef np.ndarray get_time_cols(self):
-        cdef np.ndarray time_cols
+        cdef list time_cols
         time_cols = np.array([])
         for i in range(len(self.data[0])):  # check every column for time format
             row_data = str(self.data[0][i])
             try:
                 time_ok, t_stamp = Dataset.test_time(row_data)
                 if time_ok:
-                    if time_cols.size > 0:
-                        time_cols = np.hstack((time_cols, i))
-                    else:
-                        time_cols = np.array([i])
+                    time_cols.append(i)
             except ValueError:
                 continue
         if len(time_cols) > 0:

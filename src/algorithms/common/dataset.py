@@ -65,9 +65,9 @@ class Dataset:
             keys = np.arange(len(data[0]))
             values = data[0]
             title = np.rec.fromarrays((keys, values), names=('key', 'value'))
-            del data[0]
+            # del data[0]
+            data = np.delete(data, 0, 0)
             # convert csv data into array
-            # print(title)
             self.data = np.asarray(data)
             return np.array(title)
         else:
@@ -81,11 +81,11 @@ class Dataset:
         return attr_cols
 
     def get_time_cols(self):
-        time_cols = np.array([])
+        time_cols = list()
         # for k in range(10, len(self.data[0])):
         #    time_cols.append(k)
         # time_cols.append(0)
-        #time_cols.append(1)
+        # time_cols.append(1)
         # time_cols.append(2)
         # time_cols.append(3)
         # time_cols.append(4)
@@ -99,10 +99,7 @@ class Dataset:
             try:
                 time_ok, t_stamp = Dataset.test_time(row_data)
                 if time_ok:
-                    if time_cols.size > 0:
-                        time_cols = np.hstack((time_cols, i))
-                    else:
-                        time_cols = np.array([i])
+                    time_cols.append(i)
             except ValueError:
                 continue
         if len(time_cols) > 0:
@@ -121,7 +118,7 @@ class Dataset:
 
     def get_bins(self, attr_data):
         # execute binary rank to calculate support of pattern
-        valid_bins = np.array([])
+        valid_bins = list()  # numpy is very slow for append operations
         for col in self.attr_cols:
             col_data = np.array(attr_data[col], dtype=float)
             incr = tuple([col, '+'])
@@ -136,15 +133,22 @@ class Dataset:
                 self.invalid_bins.append(incr)
                 self.invalid_bins.append(decr)
             else:
-                if valid_bins.size > 0:
-                    new_bin = np.array([incr, temp_pos, supp]).reshape(3, 1)
-                    valid_bins = np.append(valid_bins, new_bin, axis=1)
-                    new_bin = np.array([decr, temp_neg, supp]).reshape(3, 1)
-                    valid_bins = np.append(valid_bins, new_bin, axis=1)
+                if len(valid_bins) > 0:
+                    valid_bins[0].append(incr)
+                    valid_bins[0].append(decr)
+                    valid_bins[1].append(temp_pos)
+                    valid_bins[1].append(temp_neg)
+                    valid_bins[2].append(supp)
+                    valid_bins[2].append(supp)
                 else:
-                    valid_bins = np.array([incr, temp_pos, supp]).reshape(3, 1)
-                    new_bin = np.array([decr, temp_neg, supp]).reshape(3, 1)
-                    valid_bins = np.append(valid_bins, new_bin, axis=1)
+                    valid_bins.append([incr])
+                    valid_bins.append([temp_pos])
+                    valid_bins.append([supp])
+                    valid_bins[0].append(decr)
+                    valid_bins[1].append(temp_neg)
+                    valid_bins[2].append(supp)
+        valid_bins = np.asarray(valid_bins)
+        # self.invalid_bins = np.array(invalid_bins, dtype='i,O')
         self.valid_bins = np.rec.fromarrays((valid_bins[0], valid_bins[1], valid_bins[2]),
                                             names=('gi', 'bin', 'support'))
 

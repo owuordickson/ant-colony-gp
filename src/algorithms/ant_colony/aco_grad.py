@@ -13,7 +13,7 @@
 import numpy as np
 from numpy import random as rand
 #import random as rand
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 from src.algorithms.tgraank.fuzzy_mf import FuzzyMF
 from src.algorithms.ant_colony.gp import GP, GI
 
