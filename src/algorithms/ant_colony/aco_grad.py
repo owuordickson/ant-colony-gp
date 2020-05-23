@@ -31,7 +31,7 @@ class GradACO:
         for obj_gi in self.data.invalid_bins:
             gi = GI(obj_gi[0], obj_gi[1])
             invalid_pats.add_gradual_item(gi)
-        self.negate_pheromone(invalid_pats, self.e_factor)
+        self.vaporize_pheromone(invalid_pats, self.e_factor)
 
     def run_ant_colony(self, min_supp, time_diffs=None):
         if time_diffs is None:
@@ -61,7 +61,7 @@ class GradACO:
                         repeated += 1
                     elif gen_gp.support >= min_supp and not is_present:
                         winner_gps.append(gen_gp)
-                        self.add_pheromone(gen_gp)
+                        self.deposit_pheromone(gen_gp)
                     else:
                         loser_gps.append(gen_gp)
                         # update pheromone as irrelevant with loss_sols
@@ -107,7 +107,7 @@ class GradACO:
                         sol_gen = lag_sols[0]
                         if [supp, sol_gen] not in win_sols:
                             win_sols.append([supp, sol_gen])
-                            self.add_pheromone(sol_gen)
+                            self.deposit_pheromone(sol_gen)
                             # if time_diffs is not None:
                             win_lag_sols.append([supp, lag_sols])
                     else:
@@ -168,14 +168,14 @@ class GradACO:
                             else:
                                 bad_pattern = GP()
                                 bad_pattern.add_gradual_item(GI(bin_obj.gi[0], bin_obj.gi[1]))
-                                self.negate_pheromone(bad_pattern, bin_obj.support)
+                                self.vaporize_pheromone(bad_pattern, bin_obj.support)
                         break
         if len(gen_pattern.gradual_items) <= 1:
             return pattern
         else:
             return gen_pattern
 
-    def add_pheromone(self, pattern):
+    def deposit_pheromone(self, pattern):
         lst_attr = []
         for obj in pattern.gradual_items:
             # print(obj.attribute_col)
@@ -192,7 +192,7 @@ class GradACO:
                 i = int(index)
                 self.p_matrix[i][2] += 1
 
-    def negate_pheromone(self, pattern, e_factor):
+    def vaporize_pheromone(self, pattern, e_factor):
         lst_attr = []
         for obj in pattern.gradual_items:
             attr = obj.attribute_col

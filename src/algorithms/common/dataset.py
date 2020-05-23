@@ -148,32 +148,6 @@ class Dataset:
         self.valid_bins = np.rec.fromarrays((valid_bins[0], valid_bins[1], valid_bins[2]),
                                             names=('gi', 'bin', 'support'))
 
-    def get_bin_rank(self, attr_data, symbol):
-        # execute binary rank to calculate support of pattern
-        col = attr_data[0]
-        data = attr_data[1]
-        incr = GI(col, '+')
-        decr = GI(col, '-')
-        n = len(data)
-        temp = np.zeros((n, n), dtype='bool')
-        temp_pos, temp_neg = Dataset.bin_rank(data, n, temp, equal=self.equal)
-
-        if symbol == '+':
-            temp_bin = temp_pos
-        elif symbol == '-':
-            temp_bin = temp_neg
-        else:
-            temp_bin = np.array([])
-        supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
-
-        if self.valid_bins.size > 0:
-            self.valid_bins = np.vstack((self.valid_bins, np.array([[incr.gradual_item, temp_pos, supp]])))
-            self.valid_bins = np.vstack((self.valid_bins, np.array([[decr.gradual_item, temp_neg, supp]])))
-        else:
-            self.valid_bins = np.array([[incr.gradual_item, temp_pos, supp]])
-            self.valid_bins = np.vstack((self.valid_bins, np.array([[decr.gradual_item, temp_neg, supp]])))
-        return supp, temp_bin
-
     @staticmethod
     def bin_rank(arr, n, temp_pos, equal=False):
         if not equal:
