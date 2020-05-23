@@ -145,30 +145,34 @@ class GradACO:
         # pattern = [('2', '+'), ('4', '+')]
         gen_pattern = GP()
         bin_data = np.array([])
-
+        # self.data.get_bin(self.data.valid_gi_paths[0].path)
         for gi_obj in pattern.get_pattern():
             if gi_obj in self.data.invalid_bins:
                 continue
             else:  # call method
                 # fetch pattern
-                for bin_obj in self.data.valid_bins:
-                    if bin_obj.gi == gi_obj:
+                # for bin_obj in self.data.valid_bins:
+                for valid_gi in self.data.valid_gi_paths:
+                    if valid_gi.gi == gi_obj:
+                        bin_obj = self.data.get_bin(valid_gi.path)
                         if bin_data.size <= 0:
-                            bin_data = np.array([bin_obj, bin_obj])
-                            gi = GI(bin_obj.gi[0], bin_obj.gi[1])
+                            bin_data = np.array([bin_obj['bin'], bin_obj['bin']])
+                            gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
                             gen_pattern.add_gradual_item(gi)
                         else:
-                            bin_data[1] = bin_obj
+                            bin_data[1] = bin_obj['bin']
                             temp_bin, supp = self.bin_and(bin_data, self.data.attr_size)
                             if supp >= min_supp:
-                                bin_data[0].bin = temp_bin
-                                gi = GI(bin_obj.gi[0], bin_obj.gi[1])
+                                bin_data[0] = temp_bin
+                                # gi = GI(bin_obj.gi[0], bin_obj.gi[1])
+                                gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
                                 gen_pattern.add_gradual_item(gi)
                                 gen_pattern.set_support(supp)
                             else:
                                 bad_pattern = GP()
-                                bad_pattern.add_gradual_item(GI(bin_obj.gi[0], bin_obj.gi[1]))
-                                self.vaporize_pheromone(bad_pattern, bin_obj.support)
+                                gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
+                                bad_pattern.add_gradual_item(gi)
+                                self.vaporize_pheromone(bad_pattern, bin_obj['support'])
                         break
         if len(gen_pattern.gradual_items) <= 1:
             return pattern
@@ -294,6 +298,6 @@ class GradACO:
 
     @staticmethod
     def bin_and(bins, n):
-        temp_bin = bins[0].bin & bins[1].bin
+        temp_bin = bins[0] & bins[1]
         supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
         return temp_bin, supp

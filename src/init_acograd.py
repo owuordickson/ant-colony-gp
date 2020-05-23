@@ -61,6 +61,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
             wr_line += "\nPheromone Matrix\n"
             wr_line += str(ac.p_matrix)
             # ac.plot_pheromone_matrix()
+            d_set.clean_memory()
         return wr_line
     except ArithmeticError as error:
         wr_line = "Failed: " + str(error)
@@ -84,10 +85,10 @@ if __name__ == "__main__":
                              dest='file',
                              help='path to file containing csv',
                              # default=None,
-                             default='../data/DATASET.csv',
+                             #default='../data/DATASET.csv',
                              #default='../data/DATASET3.csv',
                              #default='../data/Omnidir.csv',
-                             #default='../data/FluTopicData-testsansdate-blank.csv',
+                             default='../data/FluTopicData-testsansdate-blank.csv',
                              #default='../data/FARSmiss.csv',
                              type='string')
         optparser.add_option('-s', '--minSupport',
@@ -119,13 +120,13 @@ if __name__ == "__main__":
     import time
 
     start = time.time()
-    tracemalloc.start()
+    #tracemalloc.start()
     res_text = init_algorithm(filePath, minSup, numCores)
-    snapshot = tracemalloc.take_snapshot()
+    #snapshot = tracemalloc.take_snapshot()
     end = time.time()
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
-    wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
+    #wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
     wr_text += str(res_text)
     f_name = str('res_acograd' + str(end).replace('.', '', 1) + '.txt')
     #Dataset.write_file(wr_text, f_name)

@@ -128,7 +128,7 @@ cdef class Dataset:
         self.equal = eq
         attr_data = np.transpose(self.data)
         self.attr_size = attr_data.shape[1]
-        self.get_bins(attr_data)
+        self.construct_bins(attr_data)
 
     cpdef get_bins(self, attr_data):
         cdef int n

@@ -12,6 +12,8 @@ import csv
 from dateutil.parser import parse
 import time
 import numpy as np
+import os
+import json
 
 
 class Dataset:
@@ -33,7 +35,8 @@ class Dataset:
             self.attr_size = 0
             self.thd_supp = 0
             self.equal = False
-            self.valid_bins = np.array([])  # optimized (numpy & numba)
+            #self.valid_bins = np.array([])  # optimized (numpy & numba)
+            self.valid_gi_paths = np.array([])
             self.invalid_bins = list()
 
     def get_size(self):
@@ -107,6 +110,9 @@ class Dataset:
         else:
             return np.array([])
 
+    def get_bin(self, gi_path):
+        return Dataset.read_json(gi_path)
+
     def init_attributes(self, min_sup, eq):
         # (check) implement parallel multiprocessing
         # transpose csv array data
@@ -114,11 +120,12 @@ class Dataset:
         self.equal = eq
         attr_data = np.transpose(self.data)
         self.attr_size = attr_data.shape[1]
-        self.get_bins(attr_data)
+        self.construct_bins(attr_data)
 
-    def get_bins(self, attr_data):
+    def construct_bins(self, attr_data):
         # execute binary rank to calculate support of pattern
-        valid_bins = list()  # numpy is very slow for append operations
+        # valid_bins = list()  # numpy is very slow for append operations
+        valid_paths = list()
         for col in self.attr_cols:
             col_data = np.array(attr_data[col], dtype=float)
             incr = tuple([col, '+'])
@@ -133,24 +140,30 @@ class Dataset:
                 self.invalid_bins.append(incr)
                 self.invalid_bins.append(decr)
             else:
-                if len(valid_bins) > 0:
-                    valid_bins[0].append(incr)
-                    valid_bins[0].append(decr)
-                    valid_bins[1].append(temp_pos)
-                    valid_bins[1].append(temp_neg)
-                    valid_bins[2].append(supp)
-                    valid_bins[2].append(supp)
+                path_pos = 'temp/gi_' + str(col) + 'pos' + '.json'
+                path_neg = 'temp/gi_' + str(col) + 'neg' + '.json'
+                content_pos = {"gi": [int(col), '+'],
+                               "bin": temp_pos.tolist(), "support": supp}
+                content_neg = {"gi": [int(col), '-'],
+                               "bin": temp_neg.tolist(), "support": supp}
+                Dataset.write_file(json.dumps(content_pos), path_pos)
+                Dataset.write_file(json.dumps(content_neg), path_neg)
+                if len(valid_paths) > 0:
+                    valid_paths[0].append(incr)
+                    valid_paths[1].append(path_pos)
+                    valid_paths[0].append(decr)
+                    valid_paths[1].append(path_neg)
                 else:
-                    valid_bins.append([incr])
-                    valid_bins.append([temp_pos])
-                    valid_bins.append([supp])
-                    valid_bins[0].append(decr)
-                    valid_bins[1].append(temp_neg)
-                    valid_bins[2].append(supp)
-        valid_bins = np.asarray(valid_bins)
-        # self.invalid_bins = np.array(invalid_bins, dtype='i,O')
-        self.valid_bins = np.rec.fromarrays((valid_bins[0], valid_bins[1], valid_bins[2]),
-                                            names=('gi', 'bin', 'support'))
+                    valid_paths.append([incr])
+                    valid_paths.append([path_pos])
+                    valid_paths[0].append(decr)
+                    valid_paths[1].append(path_neg)
+        valid_paths = np.asarray(valid_paths)
+        self.valid_gi_paths = np.rec.fromarrays((valid_paths[0], valid_paths[1]), names=('gi', 'path'))
+
+    def clean_memory(self):
+        for gi_obj in self.valid_gi_paths:
+            Dataset.delete_file(gi_obj.path)
 
     @staticmethod
     def bin_rank(arr, n, temp_pos, equal=False):
@@ -179,10 +192,21 @@ class Dataset:
         return temp
 
     @staticmethod
+    def read_json(file):
+        with open(file, 'r') as f:
+            data = json.load(f)
+        return data
+
+    @staticmethod
     def write_file(data, path):
         with open(path, 'w') as f:
             f.write(data)
             f.close()
+
+    @staticmethod
+    def delete_file(file):
+        if os.path.exists(file):
+            os.remove(file)
 
     @staticmethod
     def test_time(date_str):
