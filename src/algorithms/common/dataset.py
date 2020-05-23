@@ -138,7 +138,7 @@ class Dataset:
             incr = tuple([col, '+'])
             decr = tuple([col, '-'])
 
-            temp_pos, temp_neg = Dataset.bin_rank(col_data, n, temp, equal=self.equal)
+            temp_pos, temp_neg = Dataset.bin_rank(col_data, equal=self.equal)
             supp = float(np.sum(temp_pos)) / float(n * (n - 1.0) / 2.0)
 
             if supp < self.thd_supp:
@@ -168,18 +168,23 @@ class Dataset:
         self.data = np.array([])
 
     @staticmethod
-    def bin_rank(arr, n, temp_pos, equal=False):
-        if not equal:
-            for i in range(n):
-                for j in range(i+1, n, 1):
-                    temp_pos[i, j] = arr[i] > arr[j]
-                    temp_pos[j, i] = arr[i] < arr[j]
-        else:
-            for i in range(n):
-                for j in range(i+1, n, 1):
-                    temp_pos[i, j] = arr[i] >= arr[j]
-                    temp_pos[j, i] = arr[i] < arr[j]
+    def bin_rank(arr, equal=False):
+        # if not equal:
+        #    for i in range(n):
+        #        for j in range(i+1, n, 1):
+        #            temp_pos[i, j] = arr[i] > arr[j]
+        #            temp_pos[j, i] = arr[i] < arr[j]
+        # else:
+        #    for i in range(n):
+        #        for j in range(i+1, n, 1):
+        #            temp_pos[i, j] = arr[i] >= arr[j]
+        #            temp_pos[j, i] = arr[i] < arr[j]
         # temp_neg = np.transpose(temp_pos)
+        if not equal:
+            temp_pos = arr < arr[:, np.newaxis]
+        else:
+            temp_pos = arr <= arr[:, np.newaxis]
+            np.fill_diagonal(temp_pos, 0)
         temp_neg = temp_pos.T
         return temp_pos, temp_neg
 
