@@ -35,7 +35,7 @@ class Dataset:
             self.attr_size = 0
             self.thd_supp = 0
             self.equal = False
-            #self.valid_bins = np.array([])  # optimized (numpy & numba)
+            # self.valid_bins = np.array([])  # optimized (numpy & numba)
             self.valid_gi_paths = np.array([])
             self.invalid_bins = list()
 
@@ -78,7 +78,6 @@ class Dataset:
             return np.array([])
 
     def get_attributes(self):
-        #keys = np.array(self.title.key, dtype=int)
         all_cols = np.arange(self.get_attribute_no())
         attr_cols = np.delete(all_cols, self.time_cols)
         return attr_cols
@@ -113,12 +112,18 @@ class Dataset:
     def get_bin(self, gi_path):
         return Dataset.read_json(gi_path)
 
+    def clean_memory(self):
+        for gi_obj in self.valid_gi_paths:
+            Dataset.delete_file(gi_obj.path)
+
     def init_attributes(self, min_sup, eq):
         # (check) implement parallel multiprocessing
         # transpose csv array data
         self.thd_supp = min_sup
         self.equal = eq
-        attr_data = np.transpose(self.data)
+        # r, c = self.data.shape
+        attr_data = self.data.T
+        # attr_data = np.transpose(self.data)
         self.attr_size = attr_data.shape[1]
         self.construct_bins(attr_data)
 
@@ -140,8 +145,8 @@ class Dataset:
                 self.invalid_bins.append(incr)
                 self.invalid_bins.append(decr)
             else:
-                path_pos = 'temp/gi_' + str(col) + 'pos' + '.json'
-                path_neg = 'temp/gi_' + str(col) + 'neg' + '.json'
+                path_pos = 'gi_' + str(col) + 'pos' + '.json'
+                path_neg = 'gi_' + str(col) + 'neg' + '.json'
                 content_pos = {"gi": [int(col), '+'],
                                "bin": temp_pos.tolist(), "support": supp}
                 content_neg = {"gi": [int(col), '-'],
@@ -160,10 +165,7 @@ class Dataset:
                     valid_paths[1].append(path_neg)
         valid_paths = np.asarray(valid_paths)
         self.valid_gi_paths = np.rec.fromarrays((valid_paths[0], valid_paths[1]), names=('gi', 'path'))
-
-    def clean_memory(self):
-        for gi_obj in self.valid_gi_paths:
-            Dataset.delete_file(gi_obj.path)
+        self.data = np.array([])
 
     @staticmethod
     def bin_rank(arr, n, temp_pos, equal=False):
@@ -177,7 +179,8 @@ class Dataset:
                 for j in range(i+1, n, 1):
                     temp_pos[i, j] = arr[i] >= arr[j]
                     temp_pos[j, i] = arr[i] < arr[j]
-        temp_neg = np.transpose(temp_pos)
+        # temp_neg = np.transpose(temp_pos)
+        temp_neg = temp_pos.T
         return temp_pos, temp_neg
 
     @staticmethod

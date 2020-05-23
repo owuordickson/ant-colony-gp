@@ -151,10 +151,11 @@ class GradACO:
                 continue
             else:  # call method
                 # fetch pattern
-                # for bin_obj in self.data.valid_bins:
-                for valid_gi in self.data.valid_gi_paths:
-                    if valid_gi.gi == gi_obj:
-                        bin_obj = self.data.get_bin(valid_gi.path)
+                 for bin_obj in self.data.valid_bins:
+                #for valid_gi in self.data.valid_gi_paths:
+                #    if valid_gi.gi == gi_obj:
+                    if bin_obj.gi == gi_obj:
+                        #bin_obj = self.data.get_bin(valid_gi.path)
                         if bin_data.size <= 0:
                             bin_data = np.array([bin_obj['bin'], bin_obj['bin']])
                             gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])

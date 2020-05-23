@@ -12,34 +12,13 @@ import csv
 from dateutil.parser import parse
 import time
 import numpy as np
-cimport numpy as np
-import cython
+import os
+import json
 
 
-cdef struct title_struct:
-    int key
-    char[20] value
-
-
-@cython.boundscheck(False)
-@cython.wraparound(False)
-@cython.cdivision(True)
-@cython.profile(True)
-cdef class Dataset:
-
-    cdef dict __dict__
-    cdef public int size, column_size, attr_size
-    cdef float thd_supp
-    cdef int equal
-    cdef public np.ndarray time_cols
-    cdef public np.ndarray attr_cols
-    cdef public np.ndarray title
-    cdef public np.ndarray data
-    cdef public np.ndarray valid_bins
-    cdef public list invalid_bins
+class Dataset:
 
     def __init__(self, file_path):
-        cdef list data
         data = Dataset.read_csv(file_path)
         if len(data) == 0:
             self.data = np.array([])
@@ -56,58 +35,67 @@ cdef class Dataset:
             self.attr_size = 0
             self.thd_supp = 0
             self.equal = False
-            self.valid_bins = np.array([])  # optimized (numpy & numba)
+            self.valid_bins = np.array([])
             self.invalid_bins = list()
+            self.valid_gi_paths = np.array([])
 
-    cdef int get_size(self):
-        cdef int size
+    def get_size(self):
         size = self.data.shape[0]
         if self.title.size > 0:
             size += 1
         return size
 
-    cdef int get_attribute_no(self):
-        cdef int count
+    def get_attribute_no(self):
         count = self.data.shape[1]
         return count
 
-    cdef np.ndarray get_attributes(self):
-        cdef np.ndarray all_cols, attr_cols
-        all_cols = np.arange(self.get_attribute_no())
-        attr_cols = np.delete(all_cols, self.time_cols)
-        return attr_cols
-
-    cdef np.ndarray get_title(self, list data):
+    def get_title(self, data):
         # data = self.raw_data
         if data[0][0].replace('.', '', 1).isdigit() or data[0][0].isdigit():
-            return self.convert_data_to_array(data)
+            title = self.convert_data_to_array(data)
+            return title
         else:
             if data[0][1].replace('.', '', 1).isdigit() or data[0][1].isdigit():
-                return self.convert_data_to_array(data)
+                title = self.convert_data_to_array(data)
+                return title
             else:
-                return self.convert_data_to_array(data, has_title=True)
+                title = self.convert_data_to_array(data, has_title=True)
+                return title
 
-    cdef np.ndarray convert_data_to_array(self, list data, bint has_title=False):
+    def convert_data_to_array(self, data, has_title=False):
         # convert csv data into array
-        cdef int size
-        cdef np.ndarray keys
-        cdef list values
         if has_title:
-            size = len(data[0])
-            keys = np.arange(size)
+            keys = np.arange(len(data[0]))
             values = data[0]
             title = np.rec.fromarrays((keys, values), names=('key', 'value'))
+            # del data[0]
             data = np.delete(data, 0, 0)
             # convert csv data into array
             self.data = np.asarray(data)
-            return np.asarray(title)
+            return np.array(title)
         else:
             self.data = np.asarray(data)
             return np.array([])
 
-    cdef np.ndarray get_time_cols(self):
-        cdef list time_cols
-        time_cols = np.array([])
+    def get_attributes(self):
+        all_cols = np.arange(self.get_attribute_no())
+        attr_cols = np.delete(all_cols, self.time_cols)
+        return attr_cols
+
+    def get_time_cols(self):
+        time_cols = list()
+        # for k in range(10, len(self.data[0])):
+        #    time_cols.append(k)
+        # time_cols.append(0)
+        # time_cols.append(1)
+        # time_cols.append(2)
+        # time_cols.append(3)
+        # time_cols.append(4)
+        # time_cols.append(5)
+        # time_cols.append(6)
+        # time_cols.append(7)
+        # time_cols.append(8)
+        # time_cols.append(9)
         for i in range(len(self.data[0])):  # check every column for time format
             row_data = str(self.data[0][i])
             try:
@@ -121,19 +109,28 @@ cdef class Dataset:
         else:
             return np.array([])
 
-    cpdef void init_attributes(self, float min_sup bint eq):
+    def get_bin(self, gi_path):
+        return Dataset.read_json(gi_path)
+
+    def clean_memory(self):
+        for gi_obj in self.valid_gi_paths:
+            Dataset.delete_file(gi_obj.path)
+
+    def init_attributes(self, min_sup, eq):
         # (check) implement parallel multiprocessing
         # transpose csv array data
         self.thd_supp = min_sup
         self.equal = eq
-        attr_data = np.transpose(self.data)
+        # r, c = self.data.shape
+        attr_data = self.data.T
+        # attr_data = np.transpose(self.data)
         self.attr_size = attr_data.shape[1]
         self.construct_bins(attr_data)
 
-    cpdef construct_bins(self, attr_data):
-        cdef int n
-        cdef float supp
-        cdef np.ndarray col_data, temp, temp_pos, temp_neg, valid_bins
+    def construct_bins(self, attr_data):
+        # execute binary rank to calculate support of pattern
+        valid_bins = list()  # numpy is very slow for append operations
+
         for col in self.attr_cols:
             col_data = np.array(attr_data[col], dtype=float)
             incr = tuple([col, '+'])
@@ -148,20 +145,26 @@ cdef class Dataset:
                 self.invalid_bins.append(incr)
                 self.invalid_bins.append(decr)
             else:
-                if valid_bins.size > 0:
-                    new_bin = np.array([incr, temp_pos, supp]).reshape(3, 1)
-                    valid_bins = np.append(valid_bins, new_bin, axis=1)
-                    new_bin = np.array([decr, temp_neg, supp]).reshape(3, 1)
-                    valid_bins = np.append(valid_bins, new_bin, axis=1)
+                if len(valid_bins) > 0:
+                    valid_bins[0].append(incr)
+                    valid_bins[0].append(decr)
+                    valid_bins[1].append(temp_pos)
+                    valid_bins[1].append(temp_neg)
+                    valid_bins[2].append(supp)
+                    valid_bins[2].append(supp)
                 else:
-                    valid_bins = np.array([incr, temp_pos, supp]).reshape(3, 1)
-                    new_bin = np.array([decr, temp_neg, supp]).reshape(3, 1)
-                    valid_bins = np.append(valid_bins, new_bin, axis=1)
-            self.valid_bins = np.rec.fromarrays((valid_bins[0], valid_bins[1], valid_bins[2]),
-                                                names=('gi', 'bin', 'support'))
+                    valid_bins.append([incr])
+                    valid_bins.append([temp_pos])
+                    valid_bins.append([supp])
+                    valid_bins[0].append(decr)
+                    valid_bins[1].append(temp_neg)
+                    valid_bins[2].append(supp)
+        valid_bins = np.asarray(valid_bins)
+        # self.invalid_bins = np.array(invalid_bins, dtype='i,O')
+        self.valid_bins = np.rec.fromarrays((valid_bins[0], valid_bins[1], valid_bins[2]),
+                                            names=('gi', 'bin', 'support'))
 
     @staticmethod
-    # @numba.jit(nopython=True, parallel=True)
     def bin_rank(arr, n, temp_pos, equal=False):
         if not equal:
             for i in range(n):
@@ -173,7 +176,8 @@ cdef class Dataset:
                 for j in range(i+1, n, 1):
                     temp_pos[i, j] = arr[i] >= arr[j]
                     temp_pos[j, i] = arr[i] < arr[j]
-        temp_neg = np.transpose(temp_pos)
+        # temp_neg = np.transpose(temp_pos)
+        temp_neg = temp_pos.T
         return temp_pos, temp_neg
 
     @staticmethod

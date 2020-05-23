@@ -12,8 +12,6 @@
 
 import os
 import multiprocessing as mp
-import tracemalloc
-import linecache
 
 
 class Profile:
@@ -45,41 +43,3 @@ class Profile:
                 return False
         except KeyError:
             return False
-
-    @staticmethod
-    def get_quick_mem_use(snapshot, key_type='lineno'):
-        snapshot = snapshot.filter_traces((
-            tracemalloc.Filter(False, "<frozen importlib._bootstrap>"),
-            tracemalloc.Filter(False, "<unknown>"),
-        ))
-        top_stats = snapshot.statistics(key_type)
-        total = sum(stat.size for stat in top_stats)
-        wr_line = ("Total allocated memory size: %.1f KiB" % (total / 1024))
-        return wr_line
-
-    @staticmethod
-    def get_detailed_mem_use(snapshot, key_type='lineno', limit=10):
-        wr_line = ""
-        snapshot = snapshot.filter_traces((
-            tracemalloc.Filter(False, "<frozen importlib._bootstrap>"),
-            tracemalloc.Filter(False, "<unknown>"),
-        ))
-        top_stats = snapshot.statistics(key_type)
-
-        wr_line += ("Top %s lines" % limit)
-        for index, stat in enumerate(top_stats[:limit], 1):
-            frame = stat.traceback[0]
-            # replace "/path/to/module/file.py" with "module/file.py"
-            filename = os.sep.join(frame.filename.split(os.sep)[-2:])
-            wr_line += ("\n #%s: %s:%s: %.1f KiB" % (index, filename, frame.lineno, stat.size / 1024))
-            line = linecache.getline(frame.filename, frame.lineno).strip()
-            if line:
-                wr_line += ('\n    %s' % line)
-
-        other = top_stats[limit:]
-        if other:
-            size = sum(stat.size for stat in other)
-            wr_line += ("\n %s other: %.1f KiB" % (len(other), size / 1024))
-        total = sum(stat.size for stat in top_stats)
-        wr_line += ("\n Total allocated size: %.1f KiB" % (total / 1024))
-        return wr_line
