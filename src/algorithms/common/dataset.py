@@ -130,14 +130,14 @@ class Dataset:
     def construct_bins(self, attr_data):
         # execute binary rank to calculate support of pattern
         # valid_bins = list()  # numpy is very slow for append operations
+        n = self.attr_size
         valid_paths = list()
+        temp = np.zeros((n, n), dtype='bool')
         for col in self.attr_cols:
             col_data = np.array(attr_data[col], dtype=float)
             incr = tuple([col, '+'])
             decr = tuple([col, '-'])
-            n = len(col_data)
 
-            temp = np.zeros((n, n), dtype='bool')
             temp_pos, temp_neg = Dataset.bin_rank(col_data, n, temp, equal=self.equal)
             supp = float(np.sum(temp_pos)) / float(n * (n - 1.0) / 2.0)
 
