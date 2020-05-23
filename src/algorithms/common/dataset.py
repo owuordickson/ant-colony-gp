@@ -136,7 +136,6 @@ class Dataset:
             col_data = np.array(attr_data[col], dtype=float)
             incr = tuple([col, '+'])
             decr = tuple([col, '-'])
-
             temp_pos, temp_neg = Dataset.bin_rank(col_data, equal=self.equal)
             supp = float(np.sum(temp_pos)) / float(n * (n - 1.0) / 2.0)
 
