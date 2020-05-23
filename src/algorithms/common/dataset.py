@@ -132,7 +132,6 @@ class Dataset:
         # valid_bins = list()  # numpy is very slow for append operations
         n = self.attr_size
         valid_paths = list()
-        temp = np.zeros((n, n), dtype='bool')
         for col in self.attr_cols:
             col_data = np.array(attr_data[col], dtype=float)
             incr = tuple([col, '+'])
@@ -169,17 +168,6 @@ class Dataset:
 
     @staticmethod
     def bin_rank(arr, equal=False):
-        # if not equal:
-        #    for i in range(n):
-        #        for j in range(i+1, n, 1):
-        #            temp_pos[i, j] = arr[i] > arr[j]
-        #            temp_pos[j, i] = arr[i] < arr[j]
-        # else:
-        #    for i in range(n):
-        #        for j in range(i+1, n, 1):
-        #            temp_pos[i, j] = arr[i] >= arr[j]
-        #            temp_pos[j, i] = arr[i] < arr[j]
-        # temp_neg = np.transpose(temp_pos)
         if not equal:
             temp_pos = arr < arr[:, np.newaxis]
         else:
