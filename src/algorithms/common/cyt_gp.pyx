@@ -20,7 +20,7 @@ class GI:
         self.symbol = symbol
         self.gradual_item = tuple([attr_col, symbol])
 
-    def to_string(self):
+    def toStr(self):
         return str(self.attribute_col) + self.symbol
 
 
@@ -42,7 +42,7 @@ class GP:
             pattern.append(item.gradual_item)
         return pattern
 
-    def to_string(self):
+    def print_pattern(self):
         pattern = list()
         for item in self.gradual_items:
             pattern.append(item.to_string())
@@ -95,7 +95,7 @@ class TimeLag:
         else:
             return [years, "years"]
 
-    def to_string(self):
+    def print_lag(self):
         txt = ("~ " + self.sign + str(self.timelag[0]) + " " + str(self.timelag[1])
                + " : " + str(self.support))
         return txt
@@ -111,3 +111,6 @@ class TGP(GP):
 
     def set_timeLag(self, t_lag):
         self.time_lag = t_lag
+
+    def set_gradualPattern(self, gp):
+        self.gradual_pattern = gp

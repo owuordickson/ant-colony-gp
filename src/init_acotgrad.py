@@ -64,7 +64,7 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
             for obj in list_tgp:
                 if obj:
                     for tgp in obj:
-                        wr_line += (str(tgp.print_pattern()) + ' : ' + str(tgp.support) + ' | ' + str(tgp.time_lag.print_lag()) + '\n')
+                        wr_line += (str(tgp.to_string()) + ' : ' + str(tgp.support) + ' | ' + str(tgp.time_lag.to_string()) + '\n')
         #    print("\nPheromone Matrix")
         #    print(ac.p_matrix)
             d_set.clean_memory()
