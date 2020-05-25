@@ -13,58 +13,7 @@
 
 import numpy as np
 import skfuzzy as fuzzy
-
-
-class TimeLag:
-
-    def __init__(self, tstamp=0, supp=0):
-        self.timestamp = tstamp
-        self.support = supp
-        self.sign = self.get_sign()
-        if tstamp == 0:
-           self.timelag = np.array([])
-        else:
-            self.timelag = np.array(self.format_time())
-
-    def get_sign(self):
-        if self.timestamp < 0:
-            sign = "-"
-        else:
-            sign = "+"
-        return sign
-
-    def format_time(self):
-        stamp_in_seconds = abs(self.timestamp)
-        years = stamp_in_seconds / 3.154e+7
-        months = stamp_in_seconds / 2.628e+6
-        weeks = stamp_in_seconds / 604800
-        days = stamp_in_seconds / 86400
-        hours = stamp_in_seconds / 3600
-        minutes = stamp_in_seconds / 60
-        if int(years) <= 0:
-            if int(months) <= 0:
-                if int(weeks) <= 0:
-                    if int(days) <= 0:
-                        if int(hours) <= 0:
-                            if int(minutes) <= 0:
-                                return [stamp_in_seconds, "seconds"]
-                            else:
-                                return [minutes, "minutes"]
-                        else:
-                            return [hours, "hours"]
-                    else:
-                        return [days, "days"]
-                else:
-                    return [weeks, "weeks"]
-            else:
-                return [months, "months"]
-        else:
-            return [years, "years"]
-
-    def print_lag(self):
-        txt = ("~ " + self.sign + str(self.timelag[0]) + " " + str(self.timelag[1])
-               + " : " + str(self.support))
-        return txt
+from src.algorithms.common.gp import TimeLag
 
 
 class FuzzyMF:

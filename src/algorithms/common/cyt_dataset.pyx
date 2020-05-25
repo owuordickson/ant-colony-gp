@@ -189,7 +189,6 @@ cdef class Dataset:
                 valid_paths.append([decr, path_neg])
         self.valid_gi_paths = np.asarray(valid_paths)
         self.invalid_bins = np.array(invalid_bins, dtype='i, O')
-        self.data = np.array([])
 
     cdef np.ndarray bin_rank(self, np.ndarray arr):
         cdef np.ndarray bin_pos, bin_neg, all_bins
