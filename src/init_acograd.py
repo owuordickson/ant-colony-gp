@@ -18,21 +18,21 @@ Description:
 
 import sys
 from optparse import OptionParser
-#import tracemalloc
-# from src import HandleData, GradACO
-from algorithms.common.profile import Profile
-from algorithms.common.dataset_old import Dataset
-from algorithms.ant_colony.aco_grad_old import GradACO
+from src.algorithms.common.profile_cpu import Profile
+#from src.algorithms.common.dataset import Dataset
+from src.algorithms.common.cyt_dataset import Dataset
+from src.algorithms.ant_colony.aco_grad import GradACO
 
 
 def init_algorithm(f_path, min_supp, cores, eq=False):
     try:
         wr_line = ""
         d_set = Dataset(f_path)
-        if d_set.data:
+        if d_set.data.size > 0:
             titles = d_set.title
-            d_set.init_attributes(eq)
+            d_set.init_attributes(min_supp, eq)
             ac = GradACO(d_set)
+            ac.init_pheromones()
             list_gp = ac.run_ant_colony(min_supp)
 
             if cores > 1:
@@ -47,19 +47,20 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
             wr_line += "Number of cores: " + str(num_cores) + '\n\n'
 
             for txt in titles:
-                wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '\n')
+                wr_line += (str(txt.key) + '. ' + str(txt.value) + '\n')
 
             wr_line += str("\nFile: " + f_path + '\n')
             wr_line += str("\nPattern : Support" + '\n')
 
             for gp in list_gp:
-                wr_line += (str(gp[1]) + ' : ' + str(gp[0]) + '\n')
+                wr_line += (str(gp.print_pattern()) + ' : ' + str(gp.support) + '\n')
 
             wr_line += "\nPheromone Matrix\n"
             wr_line += str(ac.p_matrix)
             # ac.plot_pheromone_matrix()
+            d_set.clean_memory()
         return wr_line
-    except Exception as error:
+    except ArithmeticError as error:
         wr_line = "Failed: " + str(error)
         print(error)
         return wr_line
@@ -80,7 +81,13 @@ if __name__ == "__main__":
         optparser.add_option('-f', '--inputFile',
                              dest='file',
                              help='path to file containing csv',
-                             default='../data/FluTopicData-testsansdate-blank.csv',
+                             # default=None,
+                             default='../data/DATASET.csv',
+                             #default='../data/DATASET3.csv',
+                             #default='../data/Omnidir.csv',
+                             #default='../data/FluTopicData-testsansdate-blank.csv',
+                             #default='data/FluTopicData-testsansdate-blank.csv',
+                             #default='../data/FARSmiss.csv',
                              type='string')
         optparser.add_option('-s', '--minSupport',
                              dest='minSup',
@@ -109,15 +116,19 @@ if __name__ == "__main__":
         numCores = options.numCores
 
     import time
+    # import tracemalloc
+    # from src.algorithms.common.profile_mem import Profile
+
     start = time.time()
-    #tracemalloc.start()
+    # tracemalloc.start()
     res_text = init_algorithm(filePath, minSup, numCores)
-    #snapshot = tracemalloc.take_snapshot()
+    # snapshot = tracemalloc.take_snapshot()
     end = time.time()
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
-    #wr_text += (InitParallel.get_quick_mem_use(snapshot) + "\n")
+    # wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
     wr_text += str(res_text)
     f_name = str('res_acograd' + str(end).replace('.', '', 1) + '.txt')
-    #Dataset.write_file(wr_text, f_name)
+    # Dataset.write_file(wr_text, f_name)
     print(wr_text)
+

@@ -16,7 +16,7 @@ Description: updated version that uses aco-graank and parallel multi-processing
 # from joblib import Parallel, delayed
 import multiprocessing as mp
 from src.algorithms.ant_colony.aco_grad import GradACO
-from src.algorithms.common.dataset_v2 import Dataset
+from src.algorithms.common.dataset import Dataset
 from src.algorithms.common.profile_cpu import Profile
 
 
