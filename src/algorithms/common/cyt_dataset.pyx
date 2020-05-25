@@ -1,13 +1,22 @@
 # -*- coding: utf-8 -*-
 """
 @author: "Dickson Owuor"
-@credits: "Thomas Runkler, Edmond Menya, and Anne Laurent"
+@credits: "Anne Laurent"
 @license: "MIT"
-@version: "1.0"
+@version: "2.2"
 @email: "owuordickson@gmail.com"
 @created: "12 July 2019"
+@modified: "25 May 2020"
+
+Changes
+-------
+1. save attribute gradual item sets binaries as json file and retrieve them as dicts
+   - this frees primary memory from storing nxn matrices
+2. Fetch all binaries during initialization
+3. Replaced loops for fetching binary rank with numpy function
 
 """
+
 import csv
 from dateutil.parser import parse
 import time
