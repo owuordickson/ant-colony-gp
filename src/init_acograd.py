@@ -40,7 +40,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
             else:
                 num_cores = Profile.get_num_cores()
 
-            wr_line = "Algorithm: ACO-GRAANK \n"
+            wr_line = "Algorithm: ACO-GRAANK (2.2)\n"
             wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
             wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
             wr_line += "Minimum support: " + str(min_supp) + '\n'
