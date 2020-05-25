@@ -24,7 +24,9 @@ test_requirements = [
 
 ext_modules = [
     Extension("src.algorithms.common.cyt_dataset",
-              ["src/algorithms/common/cyt_dataset.pyx"],)
+              ["src/algorithms/common/cyt_dataset.pyx"]),
+    Extension("src.algorithms.common.cyt_gp",
+              ["src/algorithms/common/cyt_gp.pyx"])
 ]
 # ext_modules = cythonize("src/algorithms/common/cyt_dataset.pyx", annotate=True)
 
@@ -41,9 +43,9 @@ setup(
     # package_dir={'src': ''},
     include_package_data=True,
     install_requires=requirements,
-    #cmdclass={'build_ext': build_ext},
-    #ext_modules=ext_modules,
-    #include_dirs=[numpy.get_include()],
+    cmdclass={'build_ext': build_ext},
+    ext_modules=ext_modules,
+    include_dirs=[numpy.get_include()],
     license="MIT",
     zip_safe=False,
     keywords='aco, graank, gradual patterns',

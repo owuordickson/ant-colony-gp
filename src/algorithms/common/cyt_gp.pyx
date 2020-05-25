@@ -11,47 +11,80 @@ TGP: Temporal Gradual Pattern
 
 """
 import numpy as np
+cimport numpy as np
+import cython
 
 
-class GI:
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.cdivision(True)
+@cython.profile(True)
+cdef class GI:
 
-    def __init__(self, attr_col, symbol):
+    cdef public int attribute_col
+    cdef public str symbol
+    cdef public tuple gradual_item
+    cdef dict __dict__
+
+    def __cinit__(self, int attr_col, str symbol):
         self.attribute_col = attr_col
         self.symbol = symbol
         self.gradual_item = tuple([attr_col, symbol])
 
-    def toStr(self):
-        return str(self.attribute_col) + self.symbol
+    cpdef str to_string(self):
+        cdef str res
+        res = str(self.attribute_col) + self.symbol
+        return res
 
 
-class GP:
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.cdivision(True)
+@cython.profile(True)
+cdef class GP:
 
-    def __init__(self):
+    cdef public list gradual_items
+    cdef public float support
+    cdef dict __dict__
+
+    def __cinit__(self):
         self.gradual_items = list()
         self.support = 0
 
-    def set_support(self, support):
-        self.support = support
+    cpdef void set_support(self, float supp):
+        self.support = supp
 
-    def add_gradual_item(self, item):
+    cpdef void add_gradual_item(self, GI item):
         self.gradual_items.append(item)
 
-    def get_pattern(self):
+    cpdef list get_pattern(self):
+        cdef list pattern
         pattern = list()
         for item in self.gradual_items:
             pattern.append(item.gradual_item)
         return pattern
 
-    def print_pattern(self):
+    cpdef list to_string(self):
+        cdef pattern
         pattern = list()
         for item in self.gradual_items:
             pattern.append(item.to_string())
         return pattern
 
 
-class TimeLag:
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.cdivision(True)
+@cython.profile(True)
+cdef class TimeLag:
 
-    def __init__(self, tstamp=0, supp=0):
+    cdef public float timestamp
+    cdef public float support
+    cdef public str sign
+    cdef public np.ndarray timelag
+    cdef dict __dict__
+
+    def __cinit__(self, float tstamp=0, float supp=0):
         self.timestamp = tstamp
         self.support = supp
         self.sign = self.get_sign()
@@ -60,14 +93,17 @@ class TimeLag:
         else:
             self.timelag = np.array(self.format_time())
 
-    def get_sign(self):
+    cdef str get_sign(self):
+        cdef str sign
         if self.timestamp < 0:
             sign = "-"
         else:
             sign = "+"
         return sign
 
-    def format_time(self):
+    cpdef np.ndarray format_time(self):
+        cdef float stamp_in_seconds, years, months, weeks, days, hours, minutes
+        cdef np.ndarray res
         stamp_in_seconds = abs(self.timestamp)
         years = stamp_in_seconds / 3.154e+7
         months = stamp_in_seconds / 2.628e+6
@@ -81,36 +117,41 @@ class TimeLag:
                     if int(days) <= 0:
                         if int(hours) <= 0:
                             if int(minutes) <= 0:
-                                return [stamp_in_seconds, "seconds"]
+                                res = np.array([stamp_in_seconds, "seconds"])
                             else:
-                                return [minutes, "minutes"]
+                                res = np.array([minutes, "minutes"])
                         else:
-                            return [hours, "hours"]
+                            res = np.array([hours, "hours"])
                     else:
-                        return [days, "days"]
+                        res = np.array([days, "days"])
                 else:
-                    return [weeks, "weeks"]
+                    res = np.array([weeks, "weeks"])
             else:
-                return [months, "months"]
+                res = np.array([months, "months"])
         else:
-            return [years, "years"]
+            res = np.array([years, "years"])
+        return res
 
-    def print_lag(self):
-        txt = ("~ " + self.sign + str(self.timelag[0]) + " " + str(self.timelag[1])
+    cpdef str to_string(self):
+        cdef str res
+        res = ("~ " + self.sign + str(self.timelag[0]) + " " + str(self.timelag[1])
                + " : " + str(self.support))
-        return txt
+        return res
 
 
-class TGP(GP):
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.cdivision(True)
+@cython.profile(True)
+cdef class TGP(GP):
 
-    def __init__(self, gp=GP(), t_lag=TimeLag()):
+    cdef public TimeLag time_lag
+
+    def __cinit__(self, GP gp=GP(), TimeLag t_lag=TimeLag()):
         super().__init__()
         self.gradual_items = gp.gradual_items
         self.support = gp.support
         self.time_lag = t_lag
 
-    def set_timeLag(self, t_lag):
+    cpdef void set_timeLag(self, TimeLag t_lag):
         self.time_lag = t_lag
-
-    def set_gradualPattern(self, gp):
-        self.gradual_pattern = gp

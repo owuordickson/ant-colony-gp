@@ -49,7 +49,7 @@ cdef class Dataset:
     cdef public np.ndarray valid_gi_paths
     cdef public np.ndarray invalid_bins
 
-    def __init__(self, file_path):
+    def __cinit__(self, str file_path):
         cdef list data
         data = Dataset.read_csv(file_path)
         if len(data) == 0:
