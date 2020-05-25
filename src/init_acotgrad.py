@@ -24,7 +24,7 @@ import tracemalloc
 # from src import HandleData, TgradACO
 from src.algorithms.common.dataset import Dataset
 from src.algorithms.tgraank.aco_tgrad import TgradACO
-from src.algorithms.common.profile import Profile
+from src.algorithms.common.profile_cpu import Profile
 
 
 def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):

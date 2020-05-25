@@ -17,7 +17,7 @@ import sys
 from optparse import OptionParser
 import tracemalloc
 # from src import InitParallel, HandleData, graank
-from src.algorithms.common.profile import Profile
+from src.algorithms.common.profile_cpu import Profile
 from src.algorithms.graank.handle_data import HandleData
 from src.algorithms.graank.graank import graank
 

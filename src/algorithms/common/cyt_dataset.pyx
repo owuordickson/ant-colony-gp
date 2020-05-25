@@ -36,7 +36,7 @@ cdef class Dataset:
     cdef public np.ndarray title
     cdef public np.ndarray data
     cdef public np.ndarray valid_bins
-    cdef public list invalid_bins
+    cdef public np.ndarray invalid_bins
 
     def __init__(self, file_path):
         cdef list data
@@ -57,7 +57,7 @@ cdef class Dataset:
             self.thd_supp = 0
             self.equal = False
             self.valid_bins = np.array([])  # optimized (numpy & numba)
-            self.invalid_bins = list()
+            self.invalid_bins = np.array([])
 
     cdef int get_size(self):
         cdef int size
@@ -130,35 +130,37 @@ cdef class Dataset:
         self.attr_size = attr_data.shape[1]
         self.construct_bins(attr_data)
 
-    cpdef construct_bins(self, attr_data):
-        cdef int n
-        cdef float supp
-        cdef np.ndarray col_data, temp, temp_pos, temp_neg, valid_bins
+
+    def construct_bins(self, attr_data):
+        # execute binary rank to calculate support of pattern
+        # valid_bins = list()  # numpy is very slow for append operations
+        n = self.attr_size
+        valid_paths = list()
+        invalid_bins = list()
         for col in self.attr_cols:
             col_data = np.array(attr_data[col], dtype=float)
             incr = tuple([col, '+'])
             decr = tuple([col, '-'])
-            n = len(col_data)
-
-            temp = np.zeros((n, n), dtype='bool')
-            temp_pos, temp_neg = Dataset.bin_rank(col_data, n, temp, equal=self.equal)
+            temp_pos, temp_neg = Dataset.bin_rank(col_data, equal=self.equal)
             supp = float(np.sum(temp_pos)) / float(n * (n - 1.0) / 2.0)
 
             if supp < self.thd_supp:
-                self.invalid_bins.append(incr)
-                self.invalid_bins.append(decr)
+                invalid_bins.append(incr)
+                invalid_bins.append(decr)
             else:
-                if valid_bins.size > 0:
-                    new_bin = np.array([incr, temp_pos, supp]).reshape(3, 1)
-                    valid_bins = np.append(valid_bins, new_bin, axis=1)
-                    new_bin = np.array([decr, temp_neg, supp]).reshape(3, 1)
-                    valid_bins = np.append(valid_bins, new_bin, axis=1)
-                else:
-                    valid_bins = np.array([incr, temp_pos, supp]).reshape(3, 1)
-                    new_bin = np.array([decr, temp_neg, supp]).reshape(3, 1)
-                    valid_bins = np.append(valid_bins, new_bin, axis=1)
-            self.valid_bins = np.rec.fromarrays((valid_bins[0], valid_bins[1], valid_bins[2]),
-                                                names=('gi', 'bin', 'support'))
+                path_pos = 'gi_' + str(col) + 'pos' + '.json'
+                path_neg = 'gi_' + str(col) + 'neg' + '.json'
+                content_pos = {"gi": [int(col), '+'],
+                               "bin": temp_pos.tolist(), "support": supp}
+                content_neg = {"gi": [int(col), '-'],
+                               "bin": temp_neg.tolist(), "support": supp}
+                Dataset.write_file(json.dumps(content_pos), path_pos)
+                Dataset.write_file(json.dumps(content_neg), path_neg)
+                valid_paths.append([incr, path_pos])
+                valid_paths.append([decr, path_neg])
+        self.valid_gi_paths = np.asarray(valid_paths)
+        self.invalid_bins = np.array(invalid_bins, dtype='i, O')
+        self.data = np.array([])
 
     @staticmethod
     # @numba.jit(nopython=True, parallel=True)

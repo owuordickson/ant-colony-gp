@@ -37,7 +37,7 @@ class Dataset:
             self.equal = False
             # self.valid_bins = np.array([])  # optimized (numpy & numba)
             self.valid_gi_paths = np.array([])
-            self.invalid_bins = list()
+            self.invalid_bins = np.array([])
 
     def get_size(self):
         size = self.data.shape[0]
@@ -114,7 +114,7 @@ class Dataset:
 
     def clean_memory(self):
         for gi_obj in self.valid_gi_paths:
-            Dataset.delete_file(gi_obj.path)
+            Dataset.delete_file(gi_obj[1])
 
     def init_attributes(self, min_sup, eq):
         # (check) implement parallel multiprocessing
@@ -132,6 +132,7 @@ class Dataset:
         # valid_bins = list()  # numpy is very slow for append operations
         n = self.attr_size
         valid_paths = list()
+        invalid_bins = list()
         for col in self.attr_cols:
             col_data = np.array(attr_data[col], dtype=float)
             incr = tuple([col, '+'])
@@ -140,8 +141,8 @@ class Dataset:
             supp = float(np.sum(temp_pos)) / float(n * (n - 1.0) / 2.0)
 
             if supp < self.thd_supp:
-                self.invalid_bins.append(incr)
-                self.invalid_bins.append(decr)
+                invalid_bins.append(incr)
+                invalid_bins.append(decr)
             else:
                 path_pos = 'gi_' + str(col) + 'pos' + '.json'
                 path_neg = 'gi_' + str(col) + 'neg' + '.json'
@@ -151,18 +152,10 @@ class Dataset:
                                "bin": temp_neg.tolist(), "support": supp}
                 Dataset.write_file(json.dumps(content_pos), path_pos)
                 Dataset.write_file(json.dumps(content_neg), path_neg)
-                if len(valid_paths) > 0:
-                    valid_paths[0].append(incr)
-                    valid_paths[1].append(path_pos)
-                    valid_paths[0].append(decr)
-                    valid_paths[1].append(path_neg)
-                else:
-                    valid_paths.append([incr])
-                    valid_paths.append([path_pos])
-                    valid_paths[0].append(decr)
-                    valid_paths[1].append(path_neg)
-        valid_paths = np.asarray(valid_paths)
-        self.valid_gi_paths = np.rec.fromarrays((valid_paths[0], valid_paths[1]), names=('gi', 'path'))
+                valid_paths.append([incr, path_pos])
+                valid_paths.append([decr, path_neg])
+        self.valid_gi_paths = np.asarray(valid_paths)
+        self.invalid_bins = np.array(invalid_bins, dtype='i, O')
         self.data = np.array([])
 
     @staticmethod

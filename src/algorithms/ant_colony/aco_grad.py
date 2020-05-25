@@ -12,7 +12,7 @@
 
 import numpy as np
 from numpy import random as rand
-#import random as rand
+# import random as rand
 import matplotlib.pyplot as plt
 from src.algorithms.tgraank.fuzzy_mf import FuzzyMF
 from src.algorithms.ant_colony.gp import GP, GI
@@ -32,6 +32,35 @@ class GradACO:
             gi = GI(obj_gi[0], obj_gi[1])
             invalid_pats.add_gradual_item(gi)
         self.vaporize_pheromone(invalid_pats, self.e_factor)
+
+    def deposit_pheromone(self, pattern):
+        lst_attr = []
+        for obj in pattern.gradual_items:
+            # print(obj.attribute_col)
+            attr = obj.attribute_col
+            symbol = obj.symbol
+            lst_attr.append(attr)
+            i = attr
+            if symbol == '+':
+                self.p_matrix[i][0] += 1
+            elif symbol == '-':
+                self.p_matrix[i][1] += 1
+        for index in self.attr_index:
+            if int(index) not in lst_attr:
+                i = int(index)
+                self.p_matrix[i][2] += 1
+
+    def vaporize_pheromone(self, pattern, e_factor):
+        lst_attr = []
+        for obj in pattern.gradual_items:
+            attr = obj.attribute_col
+            symbol = obj.symbol
+            lst_attr.append(attr)
+            i = attr
+            if symbol == '+':
+                self.p_matrix[i][0] *= e_factor
+            elif symbol == '-':
+                self.p_matrix[i][1] *= e_factor
 
     def run_ant_colony(self, min_supp, time_diffs=None):
         if time_diffs is None:
@@ -145,69 +174,42 @@ class GradACO:
         # pattern = [('2', '+'), ('4', '+')]
         gen_pattern = GP()
         bin_data = np.array([])
-        # self.data.get_bin(self.data.valid_gi_paths[0].path)
-        for gi_obj in pattern.get_pattern():
-            if gi_obj in self.data.invalid_bins:
+
+        for obj in pattern.get_pattern():
+            gi_obj = np.array([obj], dtype='i, O')
+            if np.any(np.isin(self.data.invalid_bins, gi_obj)):
                 continue
-            else:  # call method
+            else:
                 # fetch pattern
-                # for bin_obj in self.data.valid_bins:
-                for valid_gi in self.data.valid_gi_paths:
-                    if valid_gi.gi == gi_obj:
-                    # if bin_obj.gi == gi_obj:
-                        bin_obj = self.data.get_bin(valid_gi.path)
-                        if bin_data.size <= 0:
-                            bin_data = np.array([bin_obj['bin'], bin_obj['bin']])
+                # for valid_gi in self.data.valid_gi_paths:
+                #    if valid_gi[0] == gi_obj:
+                arg = np.argwhere(np.isin(self.data.valid_gi_paths[:, 0], gi_obj))
+                if len(arg) > 0:
+                    i = arg[0][0]
+                    valid_gi = self.data.valid_gi_paths[i]
+                    bin_obj = self.data.get_bin(valid_gi[1])
+                    if bin_data.size <= 0:
+                        bin_data = np.array([bin_obj['bin'], bin_obj['bin']])
+                        gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
+                        gen_pattern.add_gradual_item(gi)
+                    else:
+                        bin_data[1] = bin_obj['bin']
+                        temp_bin, supp = self.bin_and(bin_data, self.data.attr_size)
+                        if supp >= min_supp:
+                            bin_data[0] = temp_bin
                             gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
                             gen_pattern.add_gradual_item(gi)
+                            gen_pattern.set_support(supp)
                         else:
-                            bin_data[1] = bin_obj['bin']
-                            temp_bin, supp = self.bin_and(bin_data, self.data.attr_size)
-                            if supp >= min_supp:
-                                bin_data[0] = temp_bin
-                                # gi = GI(bin_obj.gi[0], bin_obj.gi[1])
-                                gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
-                                gen_pattern.add_gradual_item(gi)
-                                gen_pattern.set_support(supp)
-                            else:
-                                bad_pattern = GP()
-                                gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
-                                bad_pattern.add_gradual_item(gi)
-                                self.vaporize_pheromone(bad_pattern, bin_obj['support'])
-                        break
+                            bad_pattern = GP()
+                            gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
+                            bad_pattern.add_gradual_item(gi)
+                            self.vaporize_pheromone(bad_pattern, bin_obj['support'])
+                        # break
         if len(gen_pattern.gradual_items) <= 1:
             return pattern
         else:
             return gen_pattern
-
-    def deposit_pheromone(self, pattern):
-        lst_attr = []
-        for obj in pattern.gradual_items:
-            # print(obj.attribute_col)
-            attr = obj.attribute_col
-            symbol = obj.symbol
-            lst_attr.append(attr)
-            i = attr
-            if symbol == '+':
-                self.p_matrix[i][0] += 1
-            elif symbol == '-':
-                self.p_matrix[i][1] += 1
-        for index in self.attr_index:
-            if int(index) not in lst_attr:
-                i = int(index)
-                self.p_matrix[i][2] += 1
-
-    def vaporize_pheromone(self, pattern, e_factor):
-        lst_attr = []
-        for obj in pattern.gradual_items:
-            attr = obj.attribute_col
-            symbol = obj.symbol
-            lst_attr.append(attr)
-            i = attr
-            if symbol == '+':
-                self.p_matrix[i][0] *= e_factor
-            elif symbol == '-':
-                self.p_matrix[i][1] *= e_factor
 
     def plot_pheromone_matrix(self):
         x_plot = np.array(self.p_matrix)
@@ -248,44 +250,6 @@ class GradACO:
                 if result:
                     break
         return result
-
-    @staticmethod
-    def perform_bin_and(unsorted_bins, n, thd_supp, gen_p, t_diffs):
-        lst_bin = sorted(unsorted_bins, key=lambda x: x[2])
-        final_bin = np.array([])
-        pattern = GP()
-        count = 0
-        for bin_obj in lst_bin:
-            temp_bin = final_bin
-            if temp_bin.size != 0:
-                temp_bin = temp_bin & bin_obj.bin
-                supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
-                if supp >= thd_supp:
-                    final_bin = temp_bin
-                    gi = GI(bin_obj.gi[0], bin_obj.gi[1])
-                    pattern.add_gradual_item(gi)
-                    count += 1
-            else:
-                final_bin = bin_obj.bin
-                gi = GI(bin_obj.gi[0], bin_obj.gi[1])
-                pattern.add_gradual_item(gi)
-                count += 1
-        supp = float(np.sum(final_bin)) / float(n * (n - 1.0) / 2.0)
-        pattern.set_support(supp)
-        if count >= 2:
-            if t_diffs is None:
-                return pattern
-            else:
-                t_lag, t_stamp = FuzzyMF.calculate_time_lag(FuzzyMF.get_patten_indices(final_bin), t_diffs, thd_supp)
-                if t_lag:
-                    temp_p = [pattern, t_lag, t_stamp]
-                    return temp_p
-                else:
-                    pattern.set_support(-1)
-                    return pattern
-        else:
-            gen_p.set_support(-1)
-            return gen_p
 
     @staticmethod
     def is_duplicate(pattern, lst_winners, lst_losers):

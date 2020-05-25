@@ -24,7 +24,7 @@ import tracemalloc
 # from src import HandleData, Tgrad
 from src.algorithms.graank.handle_data import HandleData
 from src.algorithms.tgraank.t_graank import Tgrad
-from src.algorithms.common.profile import Profile
+from src.algorithms.common.profile_cpu import Profile
 
 
 def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):

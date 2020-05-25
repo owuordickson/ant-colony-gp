@@ -17,7 +17,7 @@ Description: updated version that uses aco-graank and parallel multi-processing
 import multiprocessing as mp
 # from src import HandleData, GradACO, InitParallel
 from src.algorithms.graank.handle_data import HandleData
-from src.algorithms.common.profile import Profile
+from src.algorithms.common.profile_cpu import Profile
 from src.algorithms.graank.graank import graank
 
 
