@@ -1,3 +1,4 @@
 # Don't track content of these folders
 .idea/
+build/
 # algorithms/test.py
