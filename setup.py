@@ -30,7 +30,7 @@ ext_modules = [
 
 setup(
     name='aco-grad',
-    version='2.0',
+    version='2.2',
     description="A Python implementation of ant colony optimization of "
                 "the GRAANK algorithm.",
     long_description=readme + '\n\n' + history,
@@ -41,9 +41,9 @@ setup(
     # package_dir={'src': ''},
     include_package_data=True,
     install_requires=requirements,
-    cmdclass={'build_ext': build_ext},
-    ext_modules=ext_modules,
-    include_dirs=[numpy.get_include()],
+    #cmdclass={'build_ext': build_ext},
+    #ext_modules=ext_modules,
+    #include_dirs=[numpy.get_include()],
     license="MIT",
     zip_safe=False,
     keywords='aco, graank, gradual patterns',

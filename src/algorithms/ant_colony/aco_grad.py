@@ -14,8 +14,8 @@ import numpy as np
 from numpy import random as rand
 # import random as rand
 import matplotlib.pyplot as plt
-from src.algorithms.tgraank.fuzzy_mf import FuzzyMF
-from src.algorithms.ant_colony.gp import GP, GI
+from src.algorithms.ant_colony.fuzzy_mf_v2 import FuzzyMF, TimeLag
+from src.algorithms.ant_colony.gp import GI, GP, TGP
 
 
 class GradACO:
@@ -84,7 +84,7 @@ class GradACO:
                     is_sub = GradACO.check_anti_monotony(winner_gps, rand_gp, subset=True)
                     if is_super or is_sub:
                         continue
-                    gen_gp = self.validate_gp(rand_gp, min_supp, time_diffs=None)
+                    gen_gp = self.validate_gp(rand_gp, min_supp)
                     is_present = GradACO.is_duplicate(gen_gp, winner_gps, loser_gps)
                     if gen_gp.support >= min_supp and is_present:
                         repeated += 1
@@ -102,6 +102,39 @@ class GradACO:
         return winner_gps
 
     def fetch_tgps(self, min_supp, time_diffs):
+        winner_gps = list()  # subsets
+        loser_gps = list()  # supersets
+        repeated = 0
+        while repeated < 1:
+            rand_gp = self.generate_rand_pattern()
+            if len(rand_gp.gradual_items) > 1:
+                # print(rand_gp.get_pattern())
+                exits = GradACO.is_duplicate(rand_gp, winner_gps, loser_gps)
+                if not exits:
+                    repeated = 0
+                    # check for anti-monotony
+                    is_super = GradACO.check_anti_monotony(loser_gps, rand_gp, subset=False)
+                    is_sub = GradACO.check_anti_monotony(winner_gps, rand_gp, subset=True)
+                    if is_super or is_sub:
+                        continue
+                    gen_gp = self.validate_tgp(rand_gp, min_supp, time_diffs)
+                    is_present = GradACO.is_duplicate(gen_gp, winner_gps, loser_gps)
+                    if gen_gp.support >= min_supp and is_present:
+                        repeated += 1
+                    elif gen_gp.support >= min_supp and not is_present:
+                        winner_gps.append(gen_gp)
+                        self.deposit_pheromone(gen_gp)
+                    else:
+                        loser_gps.append(gen_gp)
+                        # update pheromone as irrelevant with loss_sols
+                        # self.negate_pheromone(gen_gp)
+                    if gen_gp.get_pattern() != rand_gp.get_pattern():
+                        loser_gps.append(rand_gp)
+                else:
+                    repeated += 1
+        return winner_gps
+
+    def fetch_tgps_old(self, min_supp, time_diffs):
         all_sols = list()
         win_sols = list()  # subsets
         win_lag_sols = list()
@@ -170,7 +203,7 @@ class GradACO:
             pattern.add_gradual_item(temp)
         return pattern
 
-    def validate_gp(self, pattern, min_supp, time_diffs):
+    def validate_gp(self, pattern, min_supp):
         # pattern = [('2', '+'), ('4', '+')]
         gen_pattern = GP()
         bin_data = np.array([])
@@ -210,6 +243,50 @@ class GradACO:
             return pattern
         else:
             return gen_pattern
+
+    def validate_tgp(self, pattern, min_supp, t_diffs):
+        # pattern = [('2', '+'), ('4', '+')]
+        gen_pattern = GP()
+        bin_data = np.array([])
+
+        for obj in pattern.get_pattern():
+            gi_obj = np.array([obj], dtype='i, O')
+            if np.any(np.isin(self.data.invalid_bins, gi_obj)):
+                continue
+            else:
+                # fetch pattern
+                # for valid_gi in self.data.valid_gi_paths:
+                #    if valid_gi[0] == gi_obj:
+                arg = np.argwhere(np.isin(self.data.valid_gi_paths[:, 0], gi_obj))
+                if len(arg) > 0:
+                    i = arg[0][0]
+                    valid_gi = self.data.valid_gi_paths[i]
+                    bin_obj = self.data.get_bin(valid_gi[1])
+                    if bin_data.size <= 0:
+                        bin_data = np.array([bin_obj['bin'], bin_obj['bin']])
+                        gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
+                        gen_pattern.add_gradual_item(gi)
+                    else:
+                        bin_data[1] = bin_obj['bin']
+                        temp_bin, supp = self.bin_and(bin_data, self.data.attr_size)
+                        if supp >= min_supp:
+                            bin_data[0] = temp_bin
+                            gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
+                            gen_pattern.add_gradual_item(gi)
+                            gen_pattern.set_support(supp)
+                        else:
+                            bad_pattern = GP()
+                            gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
+                            bad_pattern.add_gradual_item(gi)
+                            self.vaporize_pheromone(bad_pattern, bin_obj['support'])
+                        # break
+        if len(gen_pattern.gradual_items) <= 1:
+            tgp = TGP(gp=pattern)
+            return tgp
+        else:
+            t_lag = FuzzyMF.calculate_time_lag(FuzzyMF.get_patten_indices(bin_data[0]), t_diffs, min_supp)
+            tgp = TGP(gp=gen_pattern, t_lag=t_lag)
+            return tgp
 
     def plot_pheromone_matrix(self):
         x_plot = np.array(self.p_matrix)

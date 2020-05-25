@@ -165,7 +165,7 @@ class Dataset:
                 valid_paths.append([decr, path_neg])
         self.valid_gi_paths = np.asarray(valid_paths)
         self.invalid_bins = np.array(invalid_bins, dtype='i, O')
-        self.data = np.array([])
+        # self.data = np.array([])
 
     @staticmethod
     def bin_rank(arr, equal=False):

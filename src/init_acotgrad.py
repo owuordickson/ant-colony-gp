@@ -20,8 +20,6 @@ Description:
 
 import sys
 from optparse import OptionParser
-import tracemalloc
-# from src import HandleData, TgradACO
 from src.algorithms.common.dataset import Dataset
 from src.algorithms.tgraank.aco_tgrad import TgradACO
 from src.algorithms.common.profile_cpu import Profile
@@ -33,7 +31,7 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
         d_set = Dataset(f_path)
         if d_set.data.size > 0:
             titles = d_set.title
-            d_set.init_attributes(eq)
+            d_set.init_attributes(minSup, eq)
             tgp = TgradACO(d_set, refItem, minSup, minRep, allowPara)
             if allowPara >= 1:
                 msg_para = "True"
@@ -45,7 +43,7 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
             # if len(list_tgp) > 5:
             # list_tgp.sort(key=lambda k: (k[0][0], k[0][1]), reverse=True)
 
-            wr_line = "Algorithm: ACO-TGRAANK \n"
+            wr_line = "Algorithm: ACO-TGRAANK (2.2) \n"
             wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
             wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
             wr_line += "Minimum support: " + str(minSup) + '\n'
@@ -66,11 +64,12 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
             for obj in list_tgp:
                 if obj:
                     for tgp in obj:
-                        wr_line += (str(tgp.pattern) + ' : ' + str(tgp.support) + ' | ' + str(tgp.time_lag) + '\n')
+                        wr_line += (str(tgp.print_pattern()) + ' : ' + str(tgp.support) + ' | ' + str(tgp.time_lag.print_lag()) + '\n')
         #    print("\nPheromone Matrix")
         #    print(ac.p_matrix)
+            d_set.clean_memory()
         return wr_line
-    except Exception as error:
+    except ArithmeticError as error:
         wr_line = "Failed: " + str(error)
         print(error)
         return wr_line
@@ -111,7 +110,7 @@ if __name__ == "__main__":
         optparser.add_option('-p', '--allowMultiprocessing',
                              dest='allowPara',
                              help='allow multiprocessing',
-                             default=1,
+                             default=0,
                              type='int')
         (options, args) = optparser.parse_args()
         inFile = None
@@ -128,14 +127,16 @@ if __name__ == "__main__":
         allow_p = options.allowPara
 
     import time
+    # import tracemalloc
+
     start = time.time()
-    tracemalloc.start()
+    # tracemalloc.start()
     res_text = init_algorithm(file_path, ref_col, min_sup, min_rep, allow_p)
-    snapshot = tracemalloc.take_snapshot()
+    # snapshot = tracemalloc.take_snapshot()
     end = time.time()
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
-    wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
+    # wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
     wr_text += str(res_text)
     f_name = str('res_aco' + str(end).replace('.', '', 1) + '.txt')
     #Dataset.write_file(wr_text, f_name)

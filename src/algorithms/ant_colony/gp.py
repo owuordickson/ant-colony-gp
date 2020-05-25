@@ -10,6 +10,7 @@ GP: Gradual Pattern
 TGP: Temporal Gradual Pattern
 
 """
+from src.algorithms.ant_colony.fuzzy_mf_v2 import TimeLag
 
 
 class GI:
@@ -46,3 +47,18 @@ class GP:
         for item in self.gradual_items:
             pattern.append(item.toStr())
         return pattern
+
+
+class TGP(GP):
+
+    def __init__(self, gp=GP(), t_lag=TimeLag()):
+        super().__init__()
+        self.gradual_items = gp.gradual_items
+        self.support = gp.support
+        self.time_lag = t_lag
+
+    def set_timeLag(self, t_lag):
+        self.time_lag = t_lag
+
+    def set_gradualPattern(self, gp):
+        self.gradual_pattern = gp

@@ -14,6 +14,7 @@ Description: updated version that uses aco-graank and parallel multi-processing
 """
 
 # from joblib import Parallel, delayed
+import numpy as np
 import multiprocessing as mp
 from src.algorithms.ant_colony.aco_grad import GradACO
 from src.algorithms.common.dataset import Dataset
@@ -25,7 +26,7 @@ class TgradACO:
     def __init__(self, d_set, ref_item, min_sup, min_rep, cores):
         # For tgraank
         self.d_set = d_set
-        cols = d_set.get_time_cols()
+        cols = d_set.time_cols
         if len(cols) > 0:
             print("Dataset Ok")
             self.time_ok = True
@@ -33,7 +34,7 @@ class TgradACO:
             self.min_sup = min_sup
             self.ref_item = ref_item
             self.max_step = self.get_max_step(min_rep)
-            self.orig_attr_data = d_set.attr_data
+            self.orig_attr_data = self.set_attribute_data()
             self.cores = cores
             # self.multi_data = self.split_dataset()
         else:
@@ -41,6 +42,14 @@ class TgradACO:
             self.time_ok = False
             self.time_cols = []
             raise Exception('No date-time data found')
+
+    def set_attribute_data(self):
+        a_data = self.d_set.data.T
+        attr_data = list()
+        for i in range(len(a_data)):
+            attr_data.append([i, a_data[i]])
+        attr_data = np.delete(attr_data, self.time_cols, 0)
+        return attr_data
 
     def run_tgraank(self, parallel=False):
         if parallel:
@@ -81,6 +90,7 @@ class TgradACO:
 
             # 3. Execute aco-graank for each transformation
             ac = GradACO(self.d_set)
+            ac.init_pheromones()
             list_gp = ac.run_ant_colony(self.min_sup, time_diffs)
             # print("\nPheromone Matrix")
             # print(ac.p_matrix)
@@ -113,6 +123,7 @@ class TgradACO:
                     # 2. Transform the data using (row) n+step
                     new_data = list()
                     size = len(data)
+                    # size = self.d_set.size
                     for obj in attr_cols:
                         col_index = int(obj[0])
                         tuples = obj[1]
