@@ -12,7 +12,7 @@ You will be required to install the following python dependencies before using <
 ```
 
 ```
-                    $ pip3 install numpy python-dateutil scikit-fuzzy joblib
+                    $ pip3 install numpy python-dateutil scikit-fuzzy cython
 
 ```
 
