@@ -23,10 +23,10 @@ test_requirements = [
 ]
 
 ext_modules = [
-    Extension("src.algorithms.common.cyt_dataset",
-              ["src/algorithms/common/cyt_dataset.pyx"]),
-    Extension("src.algorithms.common.cyt_gp",
-              ["src/algorithms/common/cyt_gp.pyx"])
+    Extension("common.cyt_dataset",
+              ["src/algorithms/common/cython/cyt_dataset.pyx"]),
+    Extension("common.cyt_gp",
+              ["src/algorithms/common/cython/cyt_gp.pyx"])
 ]
 # ext_modules = cythonize("src/algorithms/common/cyt_dataset.pyx", annotate=True)
 

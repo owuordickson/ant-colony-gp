@@ -17,7 +17,8 @@ Description: updated version that uses aco-graank and parallel multi-processing
 import numpy as np
 import multiprocessing as mp
 from src.algorithms.ant_colony.aco_grad import GradACO
-from src.algorithms.common.dataset import Dataset
+#from src.algorithms.common.dataset import Dataset
+from common.cyt_dataset import Dataset
 from src.algorithms.common.profile_cpu import Profile
 
 

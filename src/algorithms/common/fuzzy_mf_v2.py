@@ -13,7 +13,8 @@
 
 import numpy as np
 import skfuzzy as fuzzy
-from src.algorithms.common.gp import TimeLag
+#from src.algorithms.common.gp import TimeLag
+from common.cyt_gp import TimeLag
 
 
 class FuzzyMF:

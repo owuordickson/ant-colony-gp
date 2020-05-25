@@ -16,7 +16,7 @@ from numpy import random as rand
 import matplotlib.pyplot as plt
 from src.algorithms.common.fuzzy_mf_v2 import FuzzyMF
 # from src.algorithms.common.gp import GI, GP, TGP
-from common.cyt_gp import GI, GP, TGP
+from src.algorithms.common.cyt_gp import GI, GP, TGP
 
 
 class GradACO:
