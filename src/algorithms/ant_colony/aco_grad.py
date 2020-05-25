@@ -134,55 +134,6 @@ class GradACO:
                     repeated += 1
         return winner_gps
 
-    def fetch_tgps_old(self, min_supp, time_diffs):
-        all_sols = list()
-        win_sols = list()  # subsets
-        win_lag_sols = list()
-        loss_sols = list()  # supersets
-        repeated = 0
-        while repeated < 1:
-            sol_n = self.generate_rand_pattern()
-            if sol_n:
-                if sol_n not in all_sols:
-                    lag_sols = []
-                    repeated = 0
-                    all_sols.append(sol_n)
-                    if loss_sols:
-                        # check for super-set anti-monotony
-                        is_super = GradACO.check_anti_monotony(loss_sols, sol_n, False)
-                        if is_super:
-                            continue
-                    if win_sols:
-                        # check for sub-set anti-monotony
-                        is_sub = GradACO.check_anti_monotony(win_sols, sol_n, True)
-                        if is_sub:
-                            continue
-                    #if time_diffs is None:
-                    #    supp, sol_gen = self.evaluate_bin_solution(sol_n, min_supp, time_diffs)
-                    #else:
-                    supp, lag_sols = self.validate_gp(sol_n, min_supp, time_diffs)
-                    #    if supp:
-                    #        sol_gen = lag_sols[0]
-                    #    else:
-                    #        sol_gen = False
-                    if supp >= min_supp:
-                        sol_gen = lag_sols[0]
-                        if [supp, sol_gen] not in win_sols:
-                            win_sols.append([supp, sol_gen])
-                            self.deposit_pheromone(sol_gen)
-                            # if time_diffs is not None:
-                            win_lag_sols.append([supp, lag_sols])
-                    else:
-                        # self.update_pheromone(sol_n, False)
-                        # update pheromone as irrelevant with loss_sols
-                        # self.negate_pheromone(sol_gen)
-                        loss_sols.append([supp, sol_gen])
-                        if sol_gen:
-                            all_sols.append(sol_gen)
-                else:
-                    repeated += 1
-        return GradACO.remove_subsets(win_lag_sols, True)
-
     def generate_rand_pattern(self):
         p = self.p_matrix
         n = len(self.attr_index)
