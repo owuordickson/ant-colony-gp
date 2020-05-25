@@ -12,6 +12,8 @@ import csv
 from dateutil.parser import parse
 import time
 import numpy as np
+import os
+import json
 cimport numpy as np
 import cython
 
@@ -35,7 +37,7 @@ cdef class Dataset:
     cdef public np.ndarray attr_cols
     cdef public np.ndarray title
     cdef public np.ndarray data
-    cdef public np.ndarray valid_bins
+    cdef public np.ndarray valid_gi_paths
     cdef public np.ndarray invalid_bins
 
     def __init__(self, file_path):
@@ -56,7 +58,7 @@ cdef class Dataset:
             self.attr_size = 0
             self.thd_supp = 0
             self.equal = False
-            self.valid_bins = np.array([])  # optimized (numpy & numba)
+            self.valid_gi_paths = np.array([])
             self.invalid_bins = np.array([])
 
     cdef int get_size(self):
@@ -74,32 +76,34 @@ cdef class Dataset:
     cdef np.ndarray get_attributes(self):
         cdef np.ndarray all_cols, attr_cols
         all_cols = np.arange(self.get_attribute_no())
-        attr_cols = np.delete(all_cols, self.time_cols)
+        attr_cols = np.setdiff1d(all_cols, self.time_cols)
         return attr_cols
 
     cdef np.ndarray get_title(self, list data):
-        # data = self.raw_data
+        cdef np.ndarray title
         if data[0][0].replace('.', '', 1).isdigit() or data[0][0].isdigit():
-            return self.convert_data_to_array(data)
+            title = self.convert_data_to_array(data)
         else:
             if data[0][1].replace('.', '', 1).isdigit() or data[0][1].isdigit():
-                return self.convert_data_to_array(data)
+                title = self.convert_data_to_array(data)
             else:
-                return self.convert_data_to_array(data, has_title=True)
+                title = self.convert_data_to_array(data, has_title=True)
+        return title
 
     cdef np.ndarray convert_data_to_array(self, list data, bint has_title=False):
         # convert csv data into array
         cdef int size
-        cdef np.ndarray keys
+        cdef np.ndarray keys, temp_data
         cdef list values
         if has_title:
             size = len(data[0])
             keys = np.arange(size)
             values = data[0]
             title = np.rec.fromarrays((keys, values), names=('key', 'value'))
-            data = np.delete(data, 0, 0)
+            temp_data = np.asarray(data)
+            # temp_data = np.delete(np.asarray(data), 0, 0)
             # convert csv data into array
-            self.data = np.asarray(data)
+            self.data = np.asarray(temp_data[1:])
             return np.asarray(title)
         else:
             self.data = np.asarray(data)
@@ -107,7 +111,7 @@ cdef class Dataset:
 
     cdef np.ndarray get_time_cols(self):
         cdef list time_cols
-        time_cols = np.array([])
+        time_cols = list()
         for i in range(len(self.data[0])):  # check every column for time format
             row_data = str(self.data[0][i])
             try:
@@ -121,19 +125,33 @@ cdef class Dataset:
         else:
             return np.array([])
 
-    cpdef void init_attributes(self, float min_sup bint eq):
+
+    cpdef dict get_bin(self, str gi_path):
+        return Dataset.read_json(gi_path)
+
+    cpdef void clean_memory(self):
+        for gi_obj in self.valid_gi_paths:
+            Dataset.delete_file(gi_obj[1])
+
+    cpdef void init_attributes(self, float min_sup, bint eq):
         # (check) implement parallel multiprocessing
         # transpose csv array data
         self.thd_supp = min_sup
         self.equal = eq
-        attr_data = np.transpose(self.data)
+        attr_data = self.data.T
         self.attr_size = attr_data.shape[1]
         self.construct_bins(attr_data)
 
 
-    def construct_bins(self, attr_data):
+    cdef void construct_bins(self, np.ndarray attr_data):
         # execute binary rank to calculate support of pattern
-        # valid_bins = list()  # numpy is very slow for append operations
+        cdef int n
+        cdef float supp
+        cdef list valid_paths, invalid_bins
+        cdef tuple incr, decr
+        cdef str path_pos, path_neg
+        cdef dict content_pos, content_neg
+        cdef np.ndarray col_data, bins, temp_pos, temp_neg
         n = self.attr_size
         valid_paths = list()
         invalid_bins = list()
@@ -141,7 +159,9 @@ cdef class Dataset:
             col_data = np.array(attr_data[col], dtype=float)
             incr = tuple([col, '+'])
             decr = tuple([col, '-'])
-            temp_pos, temp_neg = Dataset.bin_rank(col_data, equal=self.equal)
+            bins = self.bin_rank(col_data)
+            temp_pos = bins[0]
+            temp_neg = bins[1]
             supp = float(np.sum(temp_pos)) / float(n * (n - 1.0) / 2.0)
 
             if supp < self.thd_supp:
@@ -162,21 +182,16 @@ cdef class Dataset:
         self.invalid_bins = np.array(invalid_bins, dtype='i, O')
         self.data = np.array([])
 
-    @staticmethod
-    # @numba.jit(nopython=True, parallel=True)
-    def bin_rank(arr, n, temp_pos, equal=False):
-        if not equal:
-            for i in range(n):
-                for j in range(i+1, n, 1):
-                    temp_pos[i, j] = arr[i] > arr[j]
-                    temp_pos[j, i] = arr[i] < arr[j]
+    cdef np.ndarray bin_rank(self, np.ndarray arr):
+        cdef np.ndarray bin_pos, bin_neg, all_bins
+        if not self.equal:
+            bin_pos = arr < arr[:, np.newaxis]
         else:
-            for i in range(n):
-                for j in range(i+1, n, 1):
-                    temp_pos[i, j] = arr[i] >= arr[j]
-                    temp_pos[j, i] = arr[i] < arr[j]
-        temp_neg = np.transpose(temp_pos)
-        return temp_pos, temp_neg
+            bin_pos = arr <= arr[:, np.newaxis]
+            np.fill_diagonal(bin_pos, 0)
+        bin_neg = bin_pos.T
+        all_bins = np.array([bin_pos, bin_neg])
+        return all_bins
 
     @staticmethod
     def read_csv(file):
@@ -190,10 +205,21 @@ cdef class Dataset:
         return temp
 
     @staticmethod
+    def read_json(file):
+        with open(file, 'r') as f:
+            data = json.load(f)
+        return data
+
+    @staticmethod
     def write_file(data, path):
         with open(path, 'w') as f:
             f.write(data)
             f.close()
+
+    @staticmethod
+    def delete_file(file):
+        if os.path.exists(file):
+            os.remove(file)
 
     @staticmethod
     def test_time(date_str):

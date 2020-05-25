@@ -20,8 +20,8 @@ import sys
 from optparse import OptionParser
 from src.algorithms.common.profile_cpu import Profile
 #from src.algorithms.common.datasetv1 import Dataset
-from src.algorithms.common.dataset import Dataset
-#from src.algorithms.common.cyt_dataset import Dataset
+#from src.algorithms.common.dataset import Dataset
+from src.algorithms.common.cyt_dataset import Dataset
 from src.algorithms.ant_colony.aco_grad import GradACO
 
 
