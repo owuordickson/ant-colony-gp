@@ -79,7 +79,7 @@ class Dataset:
 
     def get_attributes(self):
         all_cols = np.arange(self.get_attribute_no())
-        #attr_cols = np.delete(all_cols, self.time_cols)
+        # attr_cols = np.delete(all_cols, self.time_cols)
         attr_cols = np.setdiff1d(all_cols, self.time_cols)
         return attr_cols
 
