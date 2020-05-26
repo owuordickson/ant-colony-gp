@@ -21,11 +21,6 @@ import cython
 @cython.profile(True)
 cdef class GI:
 
-    cdef public int attribute_col
-    cdef public str symbol
-    cdef public tuple gradual_item
-    cdef dict __dict__
-
     def __cinit__(self, int attr_col, str symbol):
         self.attribute_col = attr_col
         self.symbol = symbol
@@ -42,10 +37,6 @@ cdef class GI:
 @cython.cdivision(True)
 @cython.profile(True)
 cdef class GP:
-
-    cdef public list gradual_items
-    cdef public float support
-    cdef dict __dict__
 
     def __cinit__(self):
         self.gradual_items = list()
@@ -77,12 +68,6 @@ cdef class GP:
 @cython.cdivision(True)
 @cython.profile(True)
 cdef class TimeLag:
-
-    cdef public float timestamp
-    cdef public float support
-    cdef public str sign
-    cdef public np.ndarray timelag
-    cdef dict __dict__
 
     def __cinit__(self, float tstamp=0, float supp=0):
         self.timestamp = tstamp
@@ -144,8 +129,6 @@ cdef class TimeLag:
 @cython.cdivision(True)
 @cython.profile(True)
 cdef class TGP(GP):
-
-    cdef public TimeLag time_lag
 
     def __cinit__(self, GP gp=GP(), TimeLag t_lag=TimeLag()):
         super().__init__()

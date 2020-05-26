@@ -9,6 +9,7 @@ from Cython.Distutils import build_ext
 # from Cython.Build import cythonize
 import numpy
 
+
 with open('README.md') as readme_file:
     readme = readme_file.read()
 
@@ -23,10 +24,17 @@ test_requirements = [
 ]
 
 ext_modules = [
-    Extension("common.cyt_dataset",
+    Extension("src.algorithms.common.cython.cyt_dataset",
               ["src/algorithms/common/cython/cyt_dataset.pyx"]),
-    Extension("common.cyt_gp",
-              ["src/algorithms/common/cython/cyt_gp.pyx"])
+              #define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")]),
+    Extension("src.algorithms.common.cython.cyt_gp",
+              ["src/algorithms/common/cython/cyt_gp.pyx"],
+              define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")]),
+    #Extension("common.cyt_fuzzy_mf_v2",
+    #          ["src/algorithms/common/cython/cyt_fuzzy_mf_v2.pyx"]),
+    Extension("src.algorithms.ant_colony.cython.cyt_aco_grad",
+              ["src/algorithms/ant_colony/cython/cyt_aco_grad.pyx"],
+              define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")])
 ]
 # ext_modules = cythonize("src/algorithms/common/cyt_dataset.pyx", annotate=True)
 
@@ -40,8 +48,10 @@ setup(
     author_email='owuordickson@ieee.org',
     url='https://github.com/owuordickson/ant-colony-gp',
     packages=find_packages(),
-    # package_dir={'src': ''},
+    # package_dir={'src': 'src'},
+    # packages="src",
     include_package_data=True,
+    package_data={'src/algorithms/common/cython': ['*.pxd']},
     install_requires=requirements,
     cmdclass={'build_ext': build_ext},
     ext_modules=ext_modules,

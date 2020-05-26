@@ -38,17 +38,6 @@ cdef struct title_struct:
 @cython.profile(True)
 cdef class Dataset:
 
-    cdef dict __dict__
-    cdef public int size, column_size, attr_size
-    cdef float thd_supp
-    cdef int equal
-    cdef public np.ndarray time_cols
-    cdef public np.ndarray attr_cols
-    cdef public np.ndarray title
-    cdef public np.ndarray data
-    cdef public np.ndarray valid_gi_paths
-    cdef public np.ndarray invalid_bins
-
     def __cinit__(self, str file_path):
         cdef list data
         data = Dataset.read_csv(file_path)
@@ -91,15 +80,15 @@ cdef class Dataset:
     cdef np.ndarray get_title(self, list data):
         cdef np.ndarray title
         if data[0][0].replace('.', '', 1).isdigit() or data[0][0].isdigit():
-            title = self.convert_data_to_array(data)
+            title = self.convert_data_to_array(data, False)
         else:
             if data[0][1].replace('.', '', 1).isdigit() or data[0][1].isdigit():
-                title = self.convert_data_to_array(data)
+                title = self.convert_data_to_array(data, False)
             else:
-                title = self.convert_data_to_array(data, has_title=True)
+                title = self.convert_data_to_array(data, True)
         return title
 
-    cdef np.ndarray convert_data_to_array(self, list data, bint has_title=False):
+    cdef np.ndarray convert_data_to_array(self, list data, bint has_title):
         # convert csv data into array
         cdef int size
         cdef np.ndarray keys, temp_data
