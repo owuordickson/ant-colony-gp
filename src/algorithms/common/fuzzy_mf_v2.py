@@ -13,8 +13,8 @@
 
 import numpy as np
 import skfuzzy as fuzzy
-# from src.algorithms.common.gp import TimeLag
-from src.algorithms.common.cython.cyt_gp import TimeLag
+from src.algorithms.common.gp import TimeLag
+#from src.algorithms.common.cython.cyt_gp import TimeLag
 
 
 def init_fuzzy_support(test_members, all_members, minsup):
