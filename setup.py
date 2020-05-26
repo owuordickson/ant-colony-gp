@@ -25,8 +25,8 @@ test_requirements = [
 
 ext_modules = [
     Extension("src.algorithms.common.cython.cyt_dataset",
-              ["src/algorithms/common/cython/cyt_dataset.pyx"]),
-              #define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")]),
+              ["src/algorithms/common/cython/cyt_dataset.pyx"],
+              define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")]),
     Extension("src.algorithms.common.cython.cyt_gp",
               ["src/algorithms/common/cython/cyt_gp.pyx"],
               define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")]),
