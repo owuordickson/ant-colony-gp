@@ -25,16 +25,16 @@ test_requirements = [
 
 ext_modules = [
     Extension("src.algorithms.common.cython.cyt_dataset",
-              ["src/algorithms/common/cython/cyt_dataset.pyx"],
-              define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")]),
+              ["src/algorithms/common/cython/cyt_dataset.pyx"]),
+              #define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")]),
     Extension("src.algorithms.common.cython.cyt_gp",
-              ["src/algorithms/common/cython/cyt_gp.pyx"],
-              define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")]),
+              ["src/algorithms/common/cython/cyt_gp.pyx"]),
+              #define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")]),
     #Extension("common.cyt_fuzzy_mf_v2",
     #          ["src/algorithms/common/cython/cyt_fuzzy_mf_v2.pyx"]),
     Extension("src.algorithms.ant_colony.cython.cyt_aco_grad",
-              ["src/algorithms/ant_colony/cython/cyt_aco_grad.pyx"],
-              define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")])
+              ["src/algorithms/ant_colony/cython/cyt_aco_grad.pyx"]),
+              #define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")])
 ]
 # ext_modules = cythonize("src/algorithms/common/cyt_dataset.pyx", annotate=True)
 
