@@ -35,10 +35,7 @@ def get_time_lags(indices, time_diffs):
         exits2 = pat_indices.intersection(set(index2))
         if len(exits1) > 0 or len(exits2) > 0:
             time_lags.append(obj[0])
-    if len(time_lags) > 0:
-        return time_lags
-    else:
-        raise Exception("Error: No pattern found for fetching time-lags")
+    return time_lags
 
 
 def get_membership_boundaries(members):
@@ -133,24 +130,6 @@ def calculate_support(memberships):  # optimized
 
 
 def get_indices(bin_data):  # optimized
-    # indices = []
-    # t_rows = len(bin_data)
-    # t_columns = len(bin_data[0])
-    # for r in range(t_rows):
-    #    for c in range(t_columns):
-    #        if bin_data[c][r] == 1:
-    #            index = [r, c]
-    #            indices.append(index)
-    #print(bin_data)
-    #print("------")
-    #print(indices)
-    #print("-----")
     indices = np.argwhere(bin_data == 1)
     return indices
 
-
-def multidim_intersect(arr1, arr2):
-    arr1_view = arr1.view([('', arr1.dtype)]*arr1.shape[1])
-    arr2_view = arr2.view([('', arr2.dtype)]*arr2.shape[1])
-    intersected = np.intersect1d(arr1_view, arr2_view)
-    return intersected.view(arr1.dtype).reshape(-1, arr1.shape[1])
