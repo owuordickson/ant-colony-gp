@@ -6,41 +6,73 @@
 @version: "2.0"
 @email: "owuordickson@gmail.com"
 @created: "20 November 2019"
-@modified: "28 March 2019"
+@modified: "28 May 2020"
 
 """
 
 
 import numpy as np
 import skfuzzy as fuzzy
-from src.algorithms.common.gp import TimeLag
+cimport numpy as np
+from src.algorithms.common.cython.cyt_gp cimport TimeLag
+from src.algorithms.common.cython.cyt_gp import TimeLag
 
 
-class FuzzyMF:
+cpdef TimeLag calculate_time_lag(np.ndarray indices, np.ndarray time_diffs, float min_sup):
+    cdef np.ndarray stamps, time_lags
+    cdef list boundaries, extremes
+    cdef TimeLag time_lag
+    stamps = np.array(time_diffs[:, 0])  # get all stamps from 1st column
+    time_lags = get_time_lags(indices, time_diffs)
+    boundaries, extremes = get_membership_boundaries(stamps)
+    time_lag = approximate_fuzzy_support(min_sup, time_lags, boundaries, extremes)
+    return time_lag
 
-    @staticmethod
-    def init_fuzzy_support(test_members, all_members, minsup):
-        boundaries, extremes = FuzzyMF.get_membership_boundaries(all_members)
-        t_lag = FuzzyMF.approximate_fuzzy_support(minsup, test_members, boundaries, extremes)
-        return t_lag
 
-    @staticmethod
-    def get_membership_boundaries(members):
-        # 1. Sort the members in ascending order
-        members.sort()
+cdef np.ndarray get_time_lags(np.ndarray indices, np.ndarray time_diffs):
+    cdef set pat_indices
+    cdef list time_lags
+    cdef tuple index1, index2
+    pat_indices = set(tuple(map(tuple, indices)))
+    time_lags = list()
+    for obj in time_diffs:
+        index1 = tuple([(obj[1])])
+        index2 = tuple([(obj[1][1], obj[1][0])])
+        exits1 = pat_indices.intersection(set(index1))
+        exits2 = pat_indices.intersection(set(index2))
+        if len(exits1) > 0 or len(exits2) > 0:
+            time_lags.append(obj[0])
+    return np.array(time_lags)
 
-        # 2. Get the boundaries of membership function
-        min_ = np.min(members)
-        q_1 = np.percentile(members, 25)  # Quartile 1
-        med = np.percentile(members, 50)
-        q_3 = np.percentile(members, 75)
-        max_ = np.max(members)
-        boundaries = [q_1, med, q_3]
-        extremes = [min_, max_]
-        return boundaries, extremes
 
-    @staticmethod
-    def approximate_fuzzy_support(minsup, timelags, orig_boundaries, extremes):
+cdef get_membership_boundaries(np.ndarray members):  # optimized
+    cdef list boundaries, extremes
+    cdef float min_, q_1, med, q_3, max
+    # 1. Sort the members in ascending order
+    members.sort()
+
+    # 2. Get the boundaries of membership function
+    min_ = np.min(members)
+    q_1 = np.percentile(members, 25)  # Quartile 1
+    med = np.percentile(members, 50)
+    q_3 = np.percentile(members, 75)
+    max_ = np.max(members)
+    boundaries = [q_1, med, q_3]
+    extremes = [min_, max_]
+    return boundaries, extremes
+
+
+cdef TimeLag approximate_fuzzy_support(float minsup, np.ndarray timelags, list orig_boundaries, list extremes):
+    cdef TimeLag res
+    cdef float slice_gap, sup, sup1, sample
+    cdef bint slide_left, slide_right, expand
+    cdef float a, b, b1, c, min_a, max_c
+    cdef np.ndarray boundaries, time_lags, memberships
+    if len(timelags) <= 0:
+        # if timelags is blank return nothing
+        res = TimeLag()
+        return res
+    else:
         slice_gap = (0.1 * int(orig_boundaries[1]))
         sup = sup1 = 0
         slide_left = slide_right = expand = False
@@ -63,11 +95,9 @@ class FuzzyMF:
             memberships = fuzzy.membership.trimf(time_lags, boundaries)
 
             # Calculate support
-            sup = FuzzyMF.calculate_support(memberships)
+            sup = calculate_support(memberships)
 
             if sup >= minsup:
-                # value = FuzzyMF.get_time_format(b)
-                # return b, value, sup
                 res = TimeLag(b, sup)
                 return res
             else:
@@ -102,50 +132,21 @@ class FuzzyMF:
                     slide_left = slide_right = False
                     expand = True
                 else:
-                    # value = FuzzyMF.get_time_format(b1)
-                    # return b1, value, False
                     res = TimeLag(b1, 0)
                     return res
 
-    @staticmethod
-    def calculate_support(memberships):
-        support = 0
-        if len(memberships) > 0:
-            sup_count = 0
-            total = len(memberships)
-            for member in memberships:
-                # if float(member) > 0.5:
-                if float(member) > 0:
-                    sup_count = sup_count + 1
-            support = sup_count / total
-        return support
 
-    @staticmethod
-    def calculate_time_lag(indices, time_diffs, minsup):
-        arr_timelags = FuzzyMF.get_time_lags(indices, time_diffs)
-        time_lag = FuzzyMF.init_fuzzy_support(arr_timelags, time_diffs, minsup)
-        return time_lag
+cdef float calculate_support(np.ndarray memberships):  # optimized
+    cdef int sup_count, total
+    cdef float support
+    sup_count = np.count_nonzero(memberships > 0)
+    total = memberships.size
+    support = sup_count / total
+    return support
 
-    @staticmethod
-    def get_patten_indices(D):
-        indices = []
-        t_rows = len(D)
-        t_columns = len(D[0])
-        for r in range(t_rows):
-            for c in range(t_columns):
-                if D[c][r] == 1:
-                    index = [r, c]
-                    indices.append(index)
-        return indices
 
-    @staticmethod
-    def get_time_lags(indices, time_diffs):
-        if len(indices) > 0:
-            indxs = np.unique(indices[0])
-            time_lags = []
-            for i in indxs:
-                if (i >= 0) and (i < len(time_diffs)):
-                    time_lags.append(time_diffs[i])
-            return time_lags
-        else:
-            raise Exception("Error: No pattern found for fetching time-lags")
+cpdef np.ndarray get_indices(np.ndarray bin_data):  # optimized
+    cdef np.ndarray indices
+    indices = np.argwhere(bin_data == 1)
+    return indices
+

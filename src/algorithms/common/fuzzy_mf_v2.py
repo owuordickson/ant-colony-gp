@@ -14,7 +14,6 @@
 import numpy as np
 import skfuzzy as fuzzy
 from src.algorithms.common.gp import TimeLag
-#from src.algorithms.common.cython.cyt_gp import TimeLag
 
 
 def calculate_time_lag(indices, time_diffs, min_sup):
@@ -35,7 +34,7 @@ def get_time_lags(indices, time_diffs):
         exits2 = pat_indices.intersection(set(index2))
         if len(exits1) > 0 or len(exits2) > 0:
             time_lags.append(obj[0])
-    return time_lags
+    return np.array(time_lags)
 
 
 def get_membership_boundaries(members):  # optimized

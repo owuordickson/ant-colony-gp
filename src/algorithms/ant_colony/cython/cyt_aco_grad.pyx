@@ -16,8 +16,8 @@ import cython
 # import random as rand
 import matplotlib.pyplot as plt
 cimport numpy as np
-from src.algorithms.common.fuzzy_mf_v2 import calculate_time_lag, get_indices
 
+from src.algorithms.common.cython.cyt_fuzzy_mf_v2 import calculate_time_lag, get_indices
 from src.algorithms.common.cython.cyt_dataset cimport Dataset
 from src.algorithms.common.cython.cyt_dataset import Dataset
 from src.algorithms.common.cython.cyt_gp cimport GI, GP, TGP, TimeLag
