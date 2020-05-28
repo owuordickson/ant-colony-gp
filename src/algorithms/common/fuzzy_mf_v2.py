@@ -27,8 +27,6 @@ def calculate_time_lag(indices, time_diffs, minsup):
 
 def get_time_lags(indices, time_diffs):
     pat_indices = set(tuple(map(tuple, indices)))
-    #stamps = np.array(time_diffs["stamps"])
-    #stamp_indices = np.array(time_diffs["indices"])
     time_lags = list()
     for obj in time_diffs:
         index1 = tuple([(obj[1])])
@@ -37,34 +35,10 @@ def get_time_lags(indices, time_diffs):
         exits2 = pat_indices.intersection(set(index2))
         if len(exits1) > 0 or len(exits2) > 0:
             time_lags.append(obj[0])
-
-    #for obj in time_diffs:
-        #index1 = np.array([stamp_indices[i]])
-        #index2 = np.array([[stamp_indices[i][1], stamp_indices[i][0]]])
-        #exists = multidim_intersect(indices, index1)
-        #if len(exists) <= 0:
-        #    exists = multidim_intersect(indices, index2)
-        #    if len(exists) <= 0:
-        #        continue
-        #print(exists)
-        #time_lags.append(stamps[i])
-    print(time_lags)
-    return time_lags
-    #print(indices)
-    #print(stamp_indices)
-    #print(multidim_intersect(indices, stamp_indices))
-    #print(np.intersect1d(list(indices), time_diffs[:, 1]))
-    #print("--- end ---")
-    #if len(indices) > 0:
-    #    indxs = np.unique(indices[0])
-        # print(indxs)
-    #    time_lags = []
-    #    for i in indxs:
-    #        if (i >= 0) and (i < len(time_diffs)):
-    #            time_lags.append(time_diffs[i])
-    #    return time_lags
-    #else:
-    #    raise Exception("Error: No pattern found for fetching time-lags")
+    if len(time_lags) > 0:
+        return time_lags
+    else:
+        raise Exception("Error: No pattern found for fetching time-lags")
 
 
 def get_membership_boundaries(members):
