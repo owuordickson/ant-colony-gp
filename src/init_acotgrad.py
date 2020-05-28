@@ -20,9 +20,10 @@ Description:
 
 import sys
 from optparse import OptionParser
-from src.algorithms.common.dataset import Dataset
+#from src.algorithms.common.dataset import Dataset
 from src.algorithms.tgraank.aco_tgrad import TgradACO
 from src.algorithms.common.profile_cpu import Profile
+from src.algorithms.common.cython.cyt_dataset import Dataset
 
 
 def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):

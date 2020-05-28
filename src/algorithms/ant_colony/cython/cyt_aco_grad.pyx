@@ -130,7 +130,7 @@ cdef class GradACO:
                     repeated += 1
         return winner_gps
 
-    cdef list fetch_tgps(self, float min_supp, list time_diffs):
+    cdef list fetch_tgps(self, float min_supp, np.ndarray time_diffs):
         cdef list winner_gps, loser_gps
         cdef int repeated
         cdef GP rand_gp
@@ -241,7 +241,7 @@ cdef class GradACO:
         else:
             return gen_pattern
 
-    cdef TGP validate_tgp(self, GP pattern, float min_supp, list t_diffs):
+    cdef TGP validate_tgp(self, GP pattern, float min_supp, np.ndarray t_diffs):
         # pattern = [('2', '+'), ('4', '+')]
         cdef GP gen_pattern, bad_pattern
         cdef GI gi
