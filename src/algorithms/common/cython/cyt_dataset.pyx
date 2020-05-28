@@ -25,6 +25,7 @@ import os
 import json
 cimport numpy as np
 import cython
+from cython.parallel import prange
 
 
 cdef struct title_struct:
@@ -109,8 +110,13 @@ cdef class Dataset:
 
     cdef np.ndarray get_time_cols(self):
         cdef list time_cols
+        cdef str row_data
+        cdef bint time_ok
+        cdef float t_stamp
+        cdef int n
         time_cols = list()
-        for i in range(len(self.data[0])):  # check every column for time format
+        n = len(self.data[0])
+        for i in range(n):  # check every column for time format
             row_data = str(self.data[0][i])
             try:
                 time_ok, t_stamp = Dataset.test_time(row_data)

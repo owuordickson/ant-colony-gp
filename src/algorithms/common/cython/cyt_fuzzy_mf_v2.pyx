@@ -18,10 +18,11 @@ from src.algorithms.common.cython.cyt_gp cimport TimeLag
 from src.algorithms.common.cython.cyt_gp import TimeLag
 
 
-cpdef TimeLag calculate_time_lag(np.ndarray indices, np.ndarray time_diffs, float min_sup):
+cpdef TimeLag calculate_time_lag(np.ndarray bin_data, np.ndarray time_diffs, float min_sup):
     cdef np.ndarray stamps, time_lags
     cdef list boundaries, extremes
     cdef TimeLag time_lag
+    indices = get_indices(bin_data)
     stamps = np.array(time_diffs[:, 0])  # get all stamps from 1st column
     time_lags = get_time_lags(indices, time_diffs)
     boundaries, extremes = get_membership_boundaries(stamps)
@@ -145,7 +146,7 @@ cdef float calculate_support(np.ndarray memberships):  # optimized
     return support
 
 
-cpdef np.ndarray get_indices(np.ndarray bin_data):  # optimized
+cdef np.ndarray get_indices(np.ndarray bin_data):  # optimized
     cdef np.ndarray indices
     indices = np.argwhere(bin_data == 1)
     return indices

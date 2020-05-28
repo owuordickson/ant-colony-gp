@@ -34,6 +34,7 @@ cdef class Dataset:
     cdef public np.ndarray valid_gi_paths
     cdef public np.ndarray invalid_bins
 
+    # Dataset() nogil except +
     cdef int get_size(self)
     cdef int get_attribute_no(self)
     cdef np.ndarray get_attributes(self)

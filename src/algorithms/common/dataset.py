@@ -22,6 +22,7 @@ import time
 import numpy as np
 import os
 import json
+from cython.parallel import prange
 
 
 class Dataset:
@@ -105,7 +106,8 @@ class Dataset:
         # time_cols.append(7)
         # time_cols.append(8)
         # time_cols.append(9)
-        for i in range(len(self.data[0])):  # check every column for time format
+        n = len(self.data[0])
+        for i in prange(n, nogil=True):  # check every column for time format
             row_data = str(self.data[0][i])
             try:
                 time_ok, t_stamp = Dataset.test_time(row_data)

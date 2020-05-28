@@ -14,7 +14,7 @@ import numpy as np
 from numpy import random as rand
 # import random as rand
 import matplotlib.pyplot as plt
-from src.algorithms.common.fuzzy_mf_v2 import calculate_time_lag, get_indices
+from src.algorithms.common.fuzzy_mf_v2 import calculate_time_lag
 from src.algorithms.common.gp import GI, GP, TGP
 
 
@@ -236,7 +236,7 @@ class GradACO:
             return tgp
         else:
             # t_lag = FuzzyMF.calculate_time_lag(FuzzyMF.get_patten_indices(bin_data[0]), t_diffs, min_supp)
-            t_lag = calculate_time_lag(get_indices(bin_data[0]), t_diffs, min_supp)
+            t_lag = calculate_time_lag(bin_data[0], t_diffs, min_supp)
             tgp = TGP(gp=gen_pattern, t_lag=t_lag)
             return tgp
 

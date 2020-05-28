@@ -31,7 +31,7 @@ class GP:
         self.support = 0
 
     def set_support(self, support):
-        self.support = support
+        self.support = round(support, 3)
 
     def add_gradual_item(self, item):
         self.gradual_items.append(item)
@@ -53,7 +53,7 @@ class TimeLag:
 
     def __init__(self, tstamp=0, supp=0):
         self.timestamp = tstamp
-        self.support = supp
+        self.support = round(supp, 3)
         self.sign = self.get_sign()
         if tstamp == 0:
            self.timelag = np.array([])
@@ -81,19 +81,19 @@ class TimeLag:
                     if int(days) <= 0:
                         if int(hours) <= 0:
                             if int(minutes) <= 0:
-                                return [stamp_in_seconds, "seconds"]
+                                return [round(stamp_in_seconds, 0), "seconds"]
                             else:
-                                return [minutes, "minutes"]
+                                return [round(minutes, 0), "minutes"]
                         else:
-                            return [hours, "hours"]
+                            return [round(hours, 0), "hours"]
                     else:
-                        return [days, "days"]
+                        return [round(days, 0), "days"]
                 else:
-                    return [weeks, "weeks"]
+                    return [round(weeks, 0), "weeks"]
             else:
-                return [months, "months"]
+                return [round(months, 0), "months"]
         else:
-            return [years, "years"]
+            return [round(years, 0), "years"]
 
     def to_string(self):
         if len(self.timelag) > 0:

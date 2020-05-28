@@ -16,10 +16,10 @@ Description: updated version that uses aco-graank and parallel multi-processing
 # from joblib import Parallel, delayed
 import numpy as np
 import multiprocessing as mp
-#from src.algorithms.ant_colony.aco_grad import GradACO
-#from src.algorithms.common.dataset import Dataset
-from src.algorithms.ant_colony.cython.cyt_aco_grad import GradACO
-from src.algorithms.common.cython.cyt_dataset import Dataset
+from src.algorithms.ant_colony.aco_grad import GradACO
+from src.algorithms.common.dataset import Dataset
+#from src.algorithms.ant_colony.cython.cyt_aco_grad import GradACO
+#from src.algorithms.common.cython.cyt_dataset import Dataset
 from src.algorithms.common.profile_cpu import Profile
 
 
@@ -48,7 +48,7 @@ class TgradACO:
     def set_attribute_data(self):
         a_data = self.d_set.data.T
         attr_data = list()
-        for i in range(len(a_data)):
+        for i in a_data[0].shape:
             attr_data.append([i, a_data[i]])
         attr_data = np.delete(attr_data, self.time_cols, 0)
         return attr_data
@@ -60,14 +60,12 @@ class TgradACO:
                 num_cores = self.cores
             else:
                 num_cores = Profile.get_num_cores()
-            print("No. of cpu cores found: " + str(num_cores))
-            print("No. of parallel tasks: " + str(self.max_step))
+
             self.cores = num_cores
             steps = range(self.max_step)
             pool = mp.Pool(num_cores)
             patterns = pool.map(self.fetch_patterns, steps)
             # patterns = Parallel(n_jobs=num_cores)(delayed(self.fetch_patterns)(s+1) for s in steps)
-            print("Finished extracting patterns")
             return patterns
         else:
             patterns = list()
