@@ -17,10 +17,54 @@ from src.algorithms.common.gp import TimeLag
 #from src.algorithms.common.cython.cyt_gp import TimeLag
 
 
-def init_fuzzy_support(test_members, all_members, minsup):
-    boundaries, extremes = get_membership_boundaries(all_members)
-    t_lag = approximate_fuzzy_support(minsup, test_members, boundaries, extremes)
-    return t_lag
+def calculate_time_lag(indices, time_diffs, minsup):
+    stamps = np.array(time_diffs[:, 0])  # get all stamps from 1st column
+    arr_timelags = get_time_lags(indices, time_diffs)
+    boundaries, extremes = get_membership_boundaries(stamps)
+    time_lag = approximate_fuzzy_support(minsup, arr_timelags, boundaries, extremes)
+    return time_lag
+
+
+def get_time_lags(indices, time_diffs):
+    pat_indices = set(tuple(map(tuple, indices)))
+    #stamps = np.array(time_diffs["stamps"])
+    #stamp_indices = np.array(time_diffs["indices"])
+    time_lags = list()
+    for obj in time_diffs:
+        index1 = tuple([(obj[1])])
+        index2 = tuple([(obj[1][1], obj[1][0])])
+        exits1 = pat_indices.intersection(set(index1))
+        exits2 = pat_indices.intersection(set(index2))
+        if len(exits1) > 0 or len(exits2) > 0:
+            time_lags.append(obj[0])
+
+    #for obj in time_diffs:
+        #index1 = np.array([stamp_indices[i]])
+        #index2 = np.array([[stamp_indices[i][1], stamp_indices[i][0]]])
+        #exists = multidim_intersect(indices, index1)
+        #if len(exists) <= 0:
+        #    exists = multidim_intersect(indices, index2)
+        #    if len(exists) <= 0:
+        #        continue
+        #print(exists)
+        #time_lags.append(stamps[i])
+    print(time_lags)
+    return time_lags
+    #print(indices)
+    #print(stamp_indices)
+    #print(multidim_intersect(indices, stamp_indices))
+    #print(np.intersect1d(list(indices), time_diffs[:, 1]))
+    #print("--- end ---")
+    #if len(indices) > 0:
+    #    indxs = np.unique(indices[0])
+        # print(indxs)
+    #    time_lags = []
+    #    for i in indxs:
+    #        if (i >= 0) and (i < len(time_diffs)):
+    #            time_lags.append(time_diffs[i])
+    #    return time_lags
+    #else:
+    #    raise Exception("Error: No pattern found for fetching time-lags")
 
 
 def get_membership_boundaries(members):
@@ -39,6 +83,7 @@ def get_membership_boundaries(members):
 
 
 def approximate_fuzzy_support(minsup, timelags, orig_boundaries, extremes):
+    # if timelags is blank return (do not process)
     slice_gap = (0.1 * int(orig_boundaries[1]))
     sup = sup1 = 0
     slide_left = slide_right = expand = False
@@ -106,44 +151,32 @@ def approximate_fuzzy_support(minsup, timelags, orig_boundaries, extremes):
                 return res
 
 
-def calculate_support(memberships):
-    support = 0
-    if len(memberships) > 0:
-        sup_count = 0
-        total = len(memberships)
-        for member in memberships:
-            # if float(member) > 0.5:
-            if float(member) > 0:
-                sup_count = sup_count + 1
-        support = sup_count / total
+def calculate_support(memberships):  # optimized
+    sup_count = np.count_nonzero(memberships > 0)
+    total = memberships.size
+    support = sup_count / total
     return support
 
 
-def calculate_time_lag(indices, time_diffs, minsup):
-    arr_timelags = get_time_lags(indices, time_diffs)
-    time_lag = init_fuzzy_support(arr_timelags, time_diffs, minsup)
-    return time_lag
-
-
-def get_patten_indices(D):
-    indices = []
-    t_rows = len(D)
-    t_columns = len(D[0])
-    for r in range(t_rows):
-        for c in range(t_columns):
-            if D[c][r] == 1:
-                index = [r, c]
-                indices.append(index)
+def get_indices(bin_data):  # optimized
+    # indices = []
+    # t_rows = len(bin_data)
+    # t_columns = len(bin_data[0])
+    # for r in range(t_rows):
+    #    for c in range(t_columns):
+    #        if bin_data[c][r] == 1:
+    #            index = [r, c]
+    #            indices.append(index)
+    #print(bin_data)
+    #print("------")
+    #print(indices)
+    #print("-----")
+    indices = np.argwhere(bin_data == 1)
     return indices
 
 
-def get_time_lags(indices, time_diffs):
-    if len(indices) > 0:
-        indxs = np.unique(indices[0])
-        time_lags = []
-        for i in indxs:
-            if (i >= 0) and (i < len(time_diffs)):
-                time_lags.append(time_diffs[i])
-        return time_lags
-    else:
-        raise Exception("Error: No pattern found for fetching time-lags")
+def multidim_intersect(arr1, arr2):
+    arr1_view = arr1.view([('', arr1.dtype)]*arr1.shape[1])
+    arr2_view = arr2.view([('', arr2.dtype)]*arr2.shape[1])
+    intersected = np.intersect1d(arr1_view, arr2_view)
+    return intersected.view(arr1.dtype).reshape(-1, arr1.shape[1])

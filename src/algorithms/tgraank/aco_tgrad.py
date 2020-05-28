@@ -18,7 +18,7 @@ import numpy as np
 import multiprocessing as mp
 from src.algorithms.ant_colony.aco_grad import GradACO
 #from src.algorithms.common.dataset import Dataset
-from common.cyt_dataset import Dataset
+from src.algorithms.common.cython.cyt_dataset import Dataset
 from src.algorithms.common.profile_cpu import Profile
 
 
@@ -176,6 +176,7 @@ class TgradACO:
         data = self.d_set.data
         size = len(data)
         time_diffs = []
+        indices = []
         for i in range(size):
             if i < (size - step):
                 # temp_1 = self.data[i][0]
@@ -190,6 +191,13 @@ class TgradACO:
                 if (not stamp_1) or (not stamp_2):
                     return False, [i + 1, i + step + 1]
                 time_diff = (stamp_2 - stamp_1)
-                time_diffs.append(time_diff)
+                index = tuple([i, i+step])
+                time_diffs.append([time_diff, index])
+                #indices.append([i, i + step])
         # print("Time Diff: " + str(time_diff))
-        return True, time_diffs
+        #print(np.array(indices))
+        #print(np.array(time_diffs))
+        # time_diffs = np.rec.fromarrays((np.array(t_diffs), np.array(indices)), names=('stamp', 'index'))
+        # return True, [time_diffs, indices]
+        #diff_dict = {"stamps": time_diffs, "indices": indices}
+        return True, np.array(time_diffs)
