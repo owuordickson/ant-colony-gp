@@ -6,7 +6,7 @@
 @version: "2.0"
 @email: "owuordickson@gmail.com"
 @created: "20 November 2019"
-@modified: "28 March 2019"
+@modified: "28 May 2020"
 
 """
 
@@ -17,11 +17,11 @@ from src.algorithms.common.gp import TimeLag
 #from src.algorithms.common.cython.cyt_gp import TimeLag
 
 
-def calculate_time_lag(indices, time_diffs, minsup):
+def calculate_time_lag(indices, time_diffs, min_sup):
     stamps = np.array(time_diffs[:, 0])  # get all stamps from 1st column
-    arr_timelags = get_time_lags(indices, time_diffs)
+    time_lags = get_time_lags(indices, time_diffs)
     boundaries, extremes = get_membership_boundaries(stamps)
-    time_lag = approximate_fuzzy_support(minsup, arr_timelags, boundaries, extremes)
+    time_lag = approximate_fuzzy_support(min_sup, time_lags, boundaries, extremes)
     return time_lag
 
 
@@ -38,7 +38,7 @@ def get_time_lags(indices, time_diffs):
     return time_lags
 
 
-def get_membership_boundaries(members):
+def get_membership_boundaries(members):  # optimized
     # 1. Sort the members in ascending order
     members.sort()
 
@@ -54,72 +54,72 @@ def get_membership_boundaries(members):
 
 
 def approximate_fuzzy_support(minsup, timelags, orig_boundaries, extremes):
-    # if timelags is blank return (do not process)
-    slice_gap = (0.1 * int(orig_boundaries[1]))
-    sup = sup1 = 0
-    slide_left = slide_right = expand = False
-    sample = np.percentile(timelags, 50)
+    if len(timelags) <= 0:
+        # if timelags is blank return nothing
+        res = TimeLag()
+        return res
+    else:
+        slice_gap = (0.1 * int(orig_boundaries[1]))
+        sup = sup1 = 0
+        slide_left = slide_right = expand = False
+        sample = np.percentile(timelags, 50)
 
-    a = orig_boundaries[0]
-    b = b1 = orig_boundaries[1]
-    c = orig_boundaries[2]
-    min_a = extremes[0]
-    max_c = extremes[1]
-    boundaries = np.array(orig_boundaries)
-    time_lags = np.array(timelags)
+        a = orig_boundaries[0]
+        b = b1 = orig_boundaries[1]
+        c = orig_boundaries[2]
+        min_a = extremes[0]
+        max_c = extremes[1]
+        boundaries = np.array(orig_boundaries)
+        time_lags = np.array(timelags)
 
-    while sup <= minsup:
-        if sup > sup1:
-            sup1 = sup
-            b1 = b
+        while sup <= minsup:
+            if sup > sup1:
+                sup1 = sup
+                b1 = b
 
-        # Calculate membership of frequent path
-        memberships = fuzzy.membership.trimf(time_lags, boundaries)
+            # Calculate membership of frequent path
+            memberships = fuzzy.membership.trimf(time_lags, boundaries)
 
-        # Calculate support
-        sup = calculate_support(memberships)
+            # Calculate support
+            sup = calculate_support(memberships)
 
-        if sup >= minsup:
-            # value = FuzzyMF.get_time_format(b)
-            # return b, value, sup
-            res = TimeLag(b, sup)
-            return res
-        else:
-            if not slide_left:
-                # 7. Slide to the left to change boundaries
-                # if extreme is reached - then slide right
-                if sample <= b:
-                    # if min_a >= b:
-                    a = a - slice_gap
-                    b = b - slice_gap
-                    c = c - slice_gap
-                    boundaries = np.array([a, b, c])
-                else:
-                    slide_left = True
-            elif not slide_right:
-                # 8. Slide to the right to change boundaries
-                # if extreme is reached - then slide right
-                if sample >= b:
-                    # if max_c <= b:
-                    a = a + slice_gap
-                    b = b + slice_gap
-                    c = c + slice_gap
-                    boundaries = np.array([a, b, c])
-                else:
-                    slide_right = True
-            elif not expand:
-                # 9. Expand quartiles and repeat 5. and 6.
-                a = min_a
-                b = orig_boundaries[1]
-                c = max_c
-                boundaries = np.array([a, b, c])
-                slide_left = slide_right = False
-                expand = True
-            else:
-                # value = FuzzyMF.get_time_format(b1)
-                # return b1, value, False
-                res = TimeLag(b1, 0)
+            if sup >= minsup:
+                res = TimeLag(b, sup)
                 return res
+            else:
+                if not slide_left:
+                    # 7. Slide to the left to change boundaries
+                    # if extreme is reached - then slide right
+                    if sample <= b:
+                        # if min_a >= b:
+                        a = a - slice_gap
+                        b = b - slice_gap
+                        c = c - slice_gap
+                        boundaries = np.array([a, b, c])
+                    else:
+                        slide_left = True
+                elif not slide_right:
+                    # 8. Slide to the right to change boundaries
+                    # if extreme is reached - then slide right
+                    if sample >= b:
+                        # if max_c <= b:
+                        a = a + slice_gap
+                        b = b + slice_gap
+                        c = c + slice_gap
+                        boundaries = np.array([a, b, c])
+                    else:
+                        slide_right = True
+                elif not expand:
+                    # 9. Expand quartiles and repeat 5. and 6.
+                    a = min_a
+                    b = orig_boundaries[1]
+                    c = max_c
+                    boundaries = np.array([a, b, c])
+                    slide_left = slide_right = False
+                    expand = True
+                else:
+                    res = TimeLag(b1, 0)
+                    return res
 
 
 def calculate_support(memberships):  # optimized

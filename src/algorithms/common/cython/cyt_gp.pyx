@@ -119,8 +119,11 @@ cdef class TimeLag:
 
     cpdef str to_string(self):
         cdef str res
-        res = ("~ " + self.sign + str(self.timelag[0]) + " " + str(self.timelag[1])
-               + " : " + str(self.support))
+        if len(self.timelag) > 0:
+            res = ("~ " + self.sign + str(self.timelag[0]) + " " + str(self.timelag[1])
+                   + " : " + str(self.support))
+        else:
+            res = "No time lag found!"
         return res
 
 

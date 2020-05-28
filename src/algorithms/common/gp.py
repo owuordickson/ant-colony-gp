@@ -96,8 +96,11 @@ class TimeLag:
             return [years, "years"]
 
     def to_string(self):
-        txt = ("~ " + self.sign + str(self.timelag[0]) + " " + str(self.timelag[1])
-               + " : " + str(self.support))
+        if len(self.timelag) > 0:
+            txt = ("~ " + self.sign + str(self.timelag[0]) + " " + str(self.timelag[1])
+                   + " : " + str(self.support))
+        else:
+            txt = "No time lag found!"
         return txt
 
 

@@ -176,7 +176,6 @@ class TgradACO:
         data = self.d_set.data
         size = len(data)
         time_diffs = []
-        indices = []
         for i in range(size):
             if i < (size - step):
                 # temp_1 = self.data[i][0]
@@ -193,11 +192,4 @@ class TgradACO:
                 time_diff = (stamp_2 - stamp_1)
                 index = tuple([i, i+step])
                 time_diffs.append([time_diff, index])
-                #indices.append([i, i + step])
-        # print("Time Diff: " + str(time_diff))
-        #print(np.array(indices))
-        #print(np.array(time_diffs))
-        # time_diffs = np.rec.fromarrays((np.array(t_diffs), np.array(indices)), names=('stamp', 'index'))
-        # return True, [time_diffs, indices]
-        #diff_dict = {"stamps": time_diffs, "indices": indices}
         return True, np.array(time_diffs)
