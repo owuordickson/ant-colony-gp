@@ -74,9 +74,9 @@ cdef class TimeLag:
         self.support = supp
         self.sign = self.get_sign()
         if tstamp == 0:
-           self.timelag = np.array([])
+           self.time_lag = np.array([])
         else:
-            self.timelag = np.array(self.format_time())
+            self.time_lag = np.array(self.format_time())
 
     cdef str get_sign(self):
         cdef str sign
@@ -119,8 +119,8 @@ cdef class TimeLag:
 
     cpdef str to_string(self):
         cdef str res
-        if len(self.timelag) > 0:
-            res = ("~ " + self.sign + str(self.timelag[0]) + " " + str(self.timelag[1])
+        if len(self.time_lag) > 0:
+            res = ("~ " + self.sign + str(self.time_lag[0]) + " " + str(self.time_lag[1])
                    + " : " + str(self.support))
         else:
             res = "No time lag found!"

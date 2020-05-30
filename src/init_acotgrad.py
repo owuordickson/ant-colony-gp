@@ -33,7 +33,7 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
         d_set = Dataset(f_path)
         if d_set.data.size > 0:
             titles = d_set.title
-            d_set.init_attributes(minSup, eq)
+            d_set.init_attributes(minSup, eq, attr=False)
             tgp = TgradACO(d_set, refItem, minSup, minRep, allowPara)
             if allowPara >= 1:
                 msg_para = "True"
@@ -67,9 +67,9 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
                 if obj:
                     for tgp in obj:
                         wr_line += (str(tgp.to_string()) + ' : ' + str(tgp.support) + ' | ' + str(tgp.time_lag.to_string()) + '\n')
-        #    print("\nPheromone Matrix")
-        #    print(ac.p_matrix)
-            d_set.clean_memory()
+            # print("\nPheromone Matrix")
+            # print(ac.p_matrix)
+            # d_set.clean_memory()
         return wr_line
     except ArithmeticError as error:
         wr_line = "Failed: " + str(error)
@@ -91,9 +91,9 @@ if __name__ == "__main__":
                              dest='file',
                              help='path to file containing csv',
                              # default=None,
-                             default='../data/DATASET3.csv',
+                             #default='../data/DATASET2.csv',
                              #default='../data/rain_temp2013-2015.csv',
-                             #default='../data/Directio.csv',
+                             default='../data/Directio.csv',
                              type='string')
         optparser.add_option('-c', '--refColumn',
                              dest='refCol',

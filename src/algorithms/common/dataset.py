@@ -127,17 +127,18 @@ class Dataset:
         for gi_obj in self.valid_gi_paths:
             Dataset.delete_file(gi_obj[1])
 
-    def init_attributes(self, min_sup, eq):
+    def init_attributes(self, min_sup, eq, attr=True):
         # (check) implement parallel multiprocessing
         # transpose csv array data
         self.thd_supp = min_sup
         self.equal = eq
-        # r, c = self.data.shape
-        attr_data = self.data.T
-        # attr_data = np.transpose(self.data)
-        # self.attr_size = attr_data.shape[1]
-        self.attr_size = len(attr_data[self.attr_cols[0]])
-        self.construct_bins(attr_data)
+        if attr:
+            # r, c = self.data.shape
+            attr_data = self.data.T
+            # attr_data = np.transpose(self.data)
+            # self.attr_size = attr_data.shape[1]
+            self.attr_size = len(attr_data[self.attr_cols[0]])
+            self.construct_bins(attr_data)
 
     def update_attributes(self, attr_data):
         self.attr_size = len(attr_data[self.attr_cols[0]])
@@ -160,8 +161,9 @@ class Dataset:
                 invalid_bins.append(incr)
                 invalid_bins.append(decr)
             else:
-                path_pos = 'gi_' + str(col) + 'pos' + str(n) + '.json'
-                path_neg = 'gi_' + str(col) + 'neg' + str(n) + '.json'
+                k = np.count_nonzero(np.isnan(col_data))
+                path_pos = 'gi_' + str(col) + 'pos' + str(k) + '.json'
+                path_neg = 'gi_' + str(col) + 'neg' + str(k) + '.json'
                 content_pos = {"gi": [int(col), '+'],
                                "bin": temp_pos.tolist(), "support": supp}
                 content_neg = {"gi": [int(col), '-'],
@@ -176,13 +178,14 @@ class Dataset:
 
     @staticmethod
     def bin_rank(arr, equal=False):
-        if not equal:
-            temp_pos = arr < arr[:, np.newaxis]
-        else:
-            temp_pos = arr <= arr[:, np.newaxis]
-            np.fill_diagonal(temp_pos, 0)
-        temp_neg = temp_pos.T
-        return temp_pos, temp_neg
+        with np.errstate(invalid='ignore'):
+            if not equal:
+                temp_pos = arr < arr[:, np.newaxis]
+            else:
+                temp_pos = arr <= arr[:, np.newaxis]
+                np.fill_diagonal(temp_pos, 0)
+            temp_neg = temp_pos.T
+            return temp_pos, temp_neg
 
     @staticmethod
     def read_csv(file):

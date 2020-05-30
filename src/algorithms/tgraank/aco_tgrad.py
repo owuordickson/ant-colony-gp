@@ -80,18 +80,19 @@ class TgradACO:
         list_gp = ac.run_ant_colony(self.min_sup, time_diffs)
         # print("\nPheromone Matrix")
         # print(ac.p_matrix)
-        d_set.clean_memory()
+        self.d_set.clean_memory()
         if len(list_gp) > 0:
             return list_gp
         return False
 
-    def transform_data(self, step):
+    def transform_data(self, step):  # optimized
         # NB: Restructure dataset based on reference item
         if self.time_ok:
             # 1. Calculate time difference using step
             ok, time_diffs = self.get_time_diffs(step)
             if not ok:
-                msg = "Error: Time in row " + str(time_diffs[0]) + " or row " + str(time_diffs[1]) + " is not valid."
+                msg = "Error: Time in row " + str(time_diffs[0]) \
+                      + " or row " + str(time_diffs[1]) + " is not valid."
                 raise Exception(msg)
             else:
                 ref_col = self.ref_item
@@ -103,43 +104,40 @@ class TgradACO:
                           "0 and "+str(len(self.d_set.title) - 1)
                     raise Exception(msg)
                 else:
-                    # 1. Split the original data-set into column-tuples
+                    # 1. Split the transpose data set into column-tuples
                     attr_data = self.orig_attr_data
 
                     # 2. Transform the data using (row) n+step
                     new_attr_data = list()
-
-                    for k in range(len(attr_data)):
+                    size = len(attr_data)
+                    for k in range(size):
                         col_index = k
                         tuples = attr_data[k]
+                        n = tuples.size
+                        temp_tuples = np.empty(n,)
+                        temp_tuples[:] = np.NaN
                         if col_index in self.time_cols:
                             # date-time attribute
                             temp_tuples = tuples[:]
                         elif col_index == ref_col:
                             # reference attribute
-                            temp_tuples = tuples[0: tuples.size - step]
+                            temp_tuples[:n - step] = tuples[0: n - step]
                         else:
                             # other attributes
-                            temp_tuples = tuples[step: tuples.size]
+                            temp_tuples[:n - step] = tuples[step: n]
+                        # print(temp_tuples)
                         new_attr_data.append(temp_tuples)
                     return new_attr_data, time_diffs
         else:
             msg = "Fatal Error: Time format in column could not be processed"
             raise Exception(msg)
 
-    def get_max_step(self, minrep):
+    def get_max_step(self, min_rep):  # optimized
         all_rows = len(self.d_set.data)
-        return all_rows - int(minrep * all_rows)
+        return all_rows - int(min_rep * all_rows)
 
     def get_time_diffs(self, step):  # optimized
         data = self.d_set.data
-        # x = int(self.time_cols[0])
-        # time_data1 = np.array(data[:, x].copy(), dtype='datetime64[s]')  # fetch time data
-        # time_data2 = np.empty_like(time_data1)
-        # time_data2[:-step] = time_data1[step:]
-        # time_data1 = time_data1[0: time_data1.size - step]
-        # time_data2 = time_data2[0: time_data2.size - step]
-        # time_diffs = np.subtract(time_data2, time_data1)
         size = len(data)
         time_diffs = []
         for i in range(size):

@@ -56,9 +56,11 @@ class TimeLag:
         self.support = round(supp, 3)
         self.sign = self.get_sign()
         if tstamp == 0:
-           self.timelag = np.array([])
+            self.time_lag = np.array([])
+            self.valid = False
         else:
-            self.timelag = np.array(self.format_time())
+            self.time_lag = np.array(self.format_time())
+            self.valid = True
 
     def get_sign(self):
         if self.timestamp < 0:
@@ -96,8 +98,8 @@ class TimeLag:
             return [round(years, 0), "years"]
 
     def to_string(self):
-        if len(self.timelag) > 0:
-            txt = ("~ " + self.sign + str(self.timelag[0]) + " " + str(self.timelag[1])
+        if len(self.time_lag) > 0:
+            txt = ("~ " + self.sign + str(self.time_lag[0]) + " " + str(self.time_lag[1])
                    + " : " + str(self.support))
         else:
             txt = "No time lag found!"

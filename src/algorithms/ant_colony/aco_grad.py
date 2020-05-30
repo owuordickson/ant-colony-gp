@@ -236,7 +236,7 @@ class GradACO:
             return tgp
         else:
             # t_lag = FuzzyMF.calculate_time_lag(FuzzyMF.get_patten_indices(bin_data[0]), t_diffs, min_supp)
-            t_lag = calculate_time_lag(bin_data[0], t_diffs, min_supp)
+            t_lag = calculate_time_lag(bin_data[0], t_diffs)
             tgp = TGP(gp=gen_pattern, t_lag=t_lag)
             return tgp
 
