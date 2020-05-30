@@ -113,7 +113,7 @@ if __name__ == "__main__":
         optparser.add_option('-p', '--allowMultiprocessing',
                              dest='allowPara',
                              help='allow multiprocessing',
-                             default=0,
+                             default=1,
                              type='int')
         (options, args) = optparser.parse_args()
         inFile = None

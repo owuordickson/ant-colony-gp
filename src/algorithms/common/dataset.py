@@ -141,7 +141,6 @@ class Dataset:
 
     def update_attributes(self, attr_data):
         self.attr_size = len(attr_data[self.attr_cols[0]])
-        print(self.attr_size)
         self.construct_bins(attr_data)
 
     def construct_bins(self, attr_data):
@@ -161,8 +160,8 @@ class Dataset:
                 invalid_bins.append(incr)
                 invalid_bins.append(decr)
             else:
-                path_pos = 'gi_' + str(col) + 'pos' + '.json'
-                path_neg = 'gi_' + str(col) + 'neg' + '.json'
+                path_pos = 'gi_' + str(col) + 'pos' + str(n) + '.json'
+                path_neg = 'gi_' + str(col) + 'neg' + str(n) + '.json'
                 content_pos = {"gi": [int(col), '+'],
                                "bin": temp_pos.tolist(), "support": supp}
                 content_neg = {"gi": [int(col), '-'],

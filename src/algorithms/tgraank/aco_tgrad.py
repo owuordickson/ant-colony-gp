@@ -3,7 +3,7 @@
 @author: "Dickson Owuor"
 @credits: "Joseph Orero and Anne Laurent,"
 @license: "MIT"
-@version: "2.0"
+@version: "2.2"
 @email: "owuordickson@gmail.com"
 @created: "19 November 2019"
 
@@ -70,15 +70,17 @@ class TgradACO:
     def fetch_patterns(self, step):
         step += 1  # because for-loop is not inclusive from range: 0 - max_step
         # 1. Transform data
+        d_set = self.d_set
         attr_data, time_diffs = self.transform_data(step)
 
         # 2. Execute aco-graank for each transformation
-        self.d_set.update_attributes(attr_data)
-        ac = GradACO(self.d_set)
+        d_set.update_attributes(attr_data)
+        ac = GradACO(d_set)
         ac.init_pheromones()
         list_gp = ac.run_ant_colony(self.min_sup, time_diffs)
         # print("\nPheromone Matrix")
         # print(ac.p_matrix)
+        d_set.clean_memory()
         if len(list_gp) > 0:
             return list_gp
         return False
