@@ -36,7 +36,7 @@ class TgradACO:
             self.min_sup = min_sup
             self.ref_item = ref_item
             self.max_step = self.get_max_step(min_rep)
-            self.orig_attr_data = self.set_attribute_data()
+            self.orig_attr_data = self.d_set.data.copy().T
             self.cores = cores
             # self.multi_data = self.split_dataset()
         else:
@@ -44,14 +44,6 @@ class TgradACO:
             self.time_ok = False
             self.time_cols = []
             raise Exception('No date-time data found')
-
-    def set_attribute_data(self):
-        a_data = self.d_set.data.T
-        attr_data = list()
-        for i in a_data[0].shape:
-            attr_data.append([i, a_data[i]])
-        attr_data = np.delete(attr_data, self.time_cols, 0)
-        return attr_data
 
     def run_tgraank(self, parallel=False):
         if parallel:
@@ -77,30 +69,22 @@ class TgradACO:
 
     def fetch_patterns(self, step):
         step += 1  # because for-loop is not inclusive from range: 0 - max_step
-        # 1. Calculate representativity
-        chk_rep, rep_info = self.get_representativity(step)
-        # print(rep_info)
-        if chk_rep:
-            # 2. Transform data
-            self.d_set.attr_data = self.orig_attr_data
-            data, time_diffs = self.transform_data(step)
-            self.d_set.attr_data = data
-            self.d_set.valid_bins = []
-            # d_set = HandleData("", attr_data=[self.d_set.column_size, data])
+        # 1. Transform data
+        attr_data, time_diffs = self.transform_data(step)
 
-            # 3. Execute aco-graank for each transformation
-            ac = GradACO(self.d_set)
-            ac.init_pheromones()
-            list_gp = ac.run_ant_colony(self.min_sup, time_diffs)
-            # print("\nPheromone Matrix")
-            # print(ac.p_matrix)
-            if len(list_gp) > 0:
-                return list_gp
+        # 2. Execute aco-graank for each transformation
+        self.d_set.update_attributes(attr_data)
+        ac = GradACO(self.d_set)
+        ac.init_pheromones()
+        list_gp = ac.run_ant_colony(self.min_sup, time_diffs)
+        # print("\nPheromone Matrix")
+        # print(ac.p_matrix)
+        if len(list_gp) > 0:
+            return list_gp
         return False
 
     def transform_data(self, step):
         # NB: Restructure dataset based on reference item
-        data = self.d_set.data
         if self.time_ok:
             # 1. Calculate time difference using step
             ok, time_diffs = self.get_time_diffs(step)
@@ -118,72 +102,50 @@ class TgradACO:
                     raise Exception(msg)
                 else:
                     # 1. Split the original data-set into column-tuples
-                    attr_cols = self.d_set.attr_data
+                    attr_data = self.orig_attr_data
 
                     # 2. Transform the data using (row) n+step
-                    new_data = list()
-                    size = len(data)
-                    # size = self.d_set.size
-                    for obj in attr_cols:
-                        col_index = int(obj[0])
-                        tuples = obj[1]
-                        temp_tuples = list()
-                        if (col_index - 1) == ref_col:
+                    new_attr_data = list()
+
+                    for k in range(len(attr_data)):
+                        col_index = k
+                        tuples = attr_data[k]
+                        if col_index in self.time_cols:
+                            # date-time attribute
+                            temp_tuples = tuples[:]
+                        elif col_index == ref_col:
                             # reference attribute
-                            for i in range(size-step):
-                                temp_tuples.append(tuples[i])
+                            temp_tuples = tuples[0: tuples.size - step]
                         else:
-                            for i in range(step, size):
-                                temp_tuples.append(tuples[i])
-                        var_attr = [str(col_index), temp_tuples]
-                        new_data.append(var_attr)
-                    return new_data, time_diffs
+                            # other attributes
+                            temp_tuples = tuples[step: tuples.size]
+                        new_attr_data.append(temp_tuples)
+                    return new_attr_data, time_diffs
         else:
             msg = "Fatal Error: Time format in column could not be processed"
             raise Exception(msg)
 
-    def get_representativity(self, step):
-        # 1. Get all rows minus the title row (already removed)
-        all_rows = len(self.d_set.data)
-
-        # 2. Get selected rows
-        incl_rows = (all_rows - step)
-
-        # 3. Calculate representativity
-        if incl_rows > 0:
-            rep = (incl_rows / float(all_rows))
-            info = {"Transformation": "n+"+str(step), "Representativity": rep, "Included Rows": incl_rows,
-                    "Total Rows": all_rows}
-            return True, info
-        else:
-            return False, "Representativity is 0%"
-
     def get_max_step(self, minrep):
-        # 1. count the number of steps each time comparing the
-        # calculated representativity with minimum representativity
-        size = len(self.d_set.data)
-        for i in range(size):
-            check, info = self.get_representativity(i + 1)
-            if check:
-                rep = info['Representativity']
-                if rep < minrep:
-                    return i
-            else:
-                return 0
+        all_rows = len(self.d_set.data)
+        return all_rows - int(minrep * all_rows)
 
-    def get_time_diffs(self, step):
+    def get_time_diffs(self, step):  # optimized
         data = self.d_set.data
+        # x = int(self.time_cols[0])
+        # time_data1 = np.array(data[:, x].copy(), dtype='datetime64[s]')  # fetch time data
+        # time_data2 = np.empty_like(time_data1)
+        # time_data2[:-step] = time_data1[step:]
+        # time_data1 = time_data1[0: time_data1.size - step]
+        # time_data2 = time_data2[0: time_data2.size - step]
+        # time_diffs = np.subtract(time_data2, time_data1)
         size = len(data)
         time_diffs = []
         for i in range(size):
             if i < (size - step):
-                # temp_1 = self.data[i][0]
-                # temp_2 = self.data[i + step][0]
-                temp_1 = temp_2 = ""
-                for col in self.time_cols:
-                    temp_1 = " "+str(data[i][int(col)])
-                    temp_2 = " "+str(data[i + step][int(col)])
-                    break
+                # for col in self.time_cols:
+                col = self.time_cols[0]  # use only the first date-time value
+                temp_1 = str(data[i][int(col)])
+                temp_2 = str(data[i + step][int(col)])
                 stamp_1 = Dataset.get_timestamp(temp_1)
                 stamp_2 = Dataset.get_timestamp(temp_2)
                 if (not stamp_1) or (not stamp_2):

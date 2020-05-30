@@ -135,7 +135,13 @@ class Dataset:
         # r, c = self.data.shape
         attr_data = self.data.T
         # attr_data = np.transpose(self.data)
-        self.attr_size = attr_data.shape[1]
+        # self.attr_size = attr_data.shape[1]
+        self.attr_size = len(attr_data[self.attr_cols[0]])
+        self.construct_bins(attr_data)
+
+    def update_attributes(self, attr_data):
+        self.attr_size = len(attr_data[self.attr_cols[0]])
+        print(self.attr_size)
         self.construct_bins(attr_data)
 
     def construct_bins(self, attr_data):
