@@ -14,39 +14,6 @@ from src.algorithms.common.fuzzy_mf_v1 import FuzzyMF
 from src.algorithms.common.dataset import Dataset
 
 
-def init_graank(T, eq=False):
-    res = []
-    n = len(T[0][1])
-    for i in range(len(T)):
-        # npl = str(i + 1) + '+'
-        # nm = str(i + 1) + '-'
-        attr = T[i][0]
-        bin = T[i][1]
-        npl = str(attr) + '+'
-        nm = str(attr) + '-'
-        tempp = np.zeros((n, n), dtype='bool')
-        tempm = np.zeros((n, n), dtype='bool')
-        for j in range(n):
-            for k in range(j + 1, n):
-                if bin[j] > bin[k]:
-                    tempp[j][k] = 1
-                    tempm[k][j] = 1
-                else:
-                    if bin[j] < bin[k]:
-                        # print (j,k)
-                        tempm[j][k] = 1
-                        tempp[k][j] = 1
-                    else:
-                        if eq:
-                            tempm[j][k] = 1
-                            tempp[k][j] = 1
-                            tempp[j][k] = 1
-                            tempm[k][j] = 1
-        res.append(({npl}, tempp))
-        res.append(({nm}, tempm))
-    return res
-
-
 def inv(g_item):
     if g_item[1] == '+':
         temp = tuple([g_item[0], '-'])

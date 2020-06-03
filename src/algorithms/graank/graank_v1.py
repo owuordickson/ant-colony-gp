@@ -95,7 +95,6 @@ def gen_apriori_candidates(R, a, n):
                 if test == 1:
                     # print(temp)
                     m = R[i][1] * R[j][1]
-                    print(R[i][1])
                     t = float(np.sum(m)) / float(n * (n - 1.0) / 2.0)
                     if t > a:
                         res.append((temp, m))
