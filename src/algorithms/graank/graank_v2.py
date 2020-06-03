@@ -95,58 +95,52 @@ def store_gp(gi, bin_data, supp):
     return [gi_tuple, path]
 
 
-def graank(f_path, sup, eq, t_diffs=None):
-    d_set = Dataset(f_path, sup, eq)
-    # T = d_set.attr_data
-    res = []
-    res2 = []
-    res3 = []
+def graank(f_path, min_sup, eq, t_diffs=None):
+    d_set = Dataset(f_path, min_sup, eq)
+    patterns = []
+    supports = []
+    t_lags = []
     n = d_set.attr_size
-    G = d_set.valid_gi_paths
+    bin_paths = d_set.valid_gi_paths
     gen_paths = []
-    # n = len(T[0][1])
-    # G = init_graank(T, eq)
-    # for i in G:
-    #    temp = float(np.sum(i[1])) / float(n * (n - 1.0) / 2.0)
-    #    if temp < a:
-    #        G.remove(i)
-    while G != []:
-        G = gen_apriori_candidates(G, sup, n)
+
+    while bin_paths != []:
+        bin_paths = gen_apriori_candidates(bin_paths, min_sup, n)
         i = 0
-        while i < len(G) and G != []:
+        while i < len(bin_paths) and bin_paths != []:
             # temp = float(np.sum(G[i][1])) / float(n * (n - 1.0) / 2.0)
-            gen_paths.append(G[i][1])
-            bin_obj = Dataset.read_json(G[i][1])
+            gen_paths.append(bin_paths[i][1])
+            bin_obj = Dataset.read_json(bin_paths[i][1])
             bin_data = np.array(bin_obj['bin'])
-            temp = float(np.sum(np.array(bin_data))) / float(n * (n - 1.0) / 2.0)
-            if temp < sup:
-                del G[i]
+            sup = float(np.sum(np.array(bin_data))) / float(n * (n - 1.0) / 2.0)
+            if sup < min_sup:
+                del bin_paths[i]
             else:
                 z = 0
-                while z < (len(res) - 1):
+                while z < (len(patterns) - 1):
                     # print(set(res[z]))
                     # print(set(G[i][0]))
-                    if set(res[z]).issubset(set(G[i][0])):
-                        del res[z]
-                        del res2[z]
+                    if set(patterns[z]).issubset(set(bin_paths[i][0])):
+                        del patterns[z]
+                        del supports[z]
                     else:
                         z = z + 1
                 # return fetch indices (array) of G[1] where True
                 if t_diffs is not None:
                     # t_lag = calculateTimeLag(getPattenIndices(G[i][1]), t_diffs, a)
-                    t_lag = FuzzyMF.calculate_time_lag(FuzzyMF.get_patten_indices(G[i][1]), t_diffs, sup)
+                    t_lag = FuzzyMF.calculate_time_lag(FuzzyMF.get_patten_indices(bin_data), t_diffs, min_sup)
                     if t_lag:
-                        res.append(G[i][0])
-                        res2.append(temp)
-                        res3.append(t_lag)
+                        patterns.append(bin_paths[i][0])
+                        supports.append(sup)
+                        t_lags.append(t_lag)
                 else:
-                    res.append(G[i][0])
-                    res2.append(temp)
+                    patterns.append(bin_paths[i][0])
+                    supports.append(sup)
                 i += 1
     d_set.clean_memory()
     for file in gen_paths:
         Dataset.delete_file(file)
     if t_diffs is None:
-        return d_set, res, res2
+        return d_set, patterns, supports
     else:
-        return d_set, res, res2, res3
+        return d_set, patterns, supports, t_lags
