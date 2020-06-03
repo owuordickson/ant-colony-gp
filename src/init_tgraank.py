@@ -20,50 +20,53 @@ Description:
 
 import sys
 from optparse import OptionParser
-from src.algorithms.common.handle_data import HandleData
 from src.algorithms.tgraank.t_graank import Tgrad
 from src.algorithms.common.profile_cpu import Profile
 
 
 def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
     try:
-        wr_line = ""
-        d_set = HandleData(f_path)
-        if d_set.data:
-            titles = d_set.title
-            d_set.init_attributes(eq)
-            tgp = Tgrad(d_set, refItem, minSup, minRep, allowPara)
-            if allowPara >= 1:
-                msg_para = "True"
-                list_tgp = tgp.run_tgraank(parallel=True)
+        # wr_line = ""
+        # d_set = HandleData(f_path)
+        # if d_set.data:
+        #    titles = d_set.title
+        #    d_set.init_attributes(eq)
+        tgp = Tgrad(f_path, eq, refItem, minSup, minRep, allowPara)
+        if allowPara >= 1:
+            msg_para = "True"
+            list_tgp = tgp.run_tgraank(parallel=True)
+        else:
+            msg_para = "False"
+            list_tgp = tgp.run_tgraank()
+        #list_tgp = list(filter(bool, list_tgp))
+        #if len(list_tgp) > 5:
+        #    list_tgp.sort(key=lambda k: (k[0][0], k[0][1]), reverse=True)
+
+        d_set = tgp.d_set
+        wr_line = "Algorithm: T-GRAANK \n"
+        wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
+        wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
+        wr_line += "Minimum support: " + str(minSup) + '\n'
+        wr_line += "Minimum representativity: " + str(minRep) + '\n'
+        wr_line += "Multi-core execution: " + str(msg_para) + '\n'
+        wr_line += "Number of cores: " + str(tgp.cores) + '\n'
+        wr_line += "Number of tasks: " + str(tgp.max_step) + '\n\n'
+        for txt in d_set.title:
+            col = (int(txt[0]) - 1)
+            if col == refItem:
+                wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '**' + '\n')
             else:
-                msg_para = "False"
-                list_tgp = tgp.run_tgraank()
-            #list_tgp = list(filter(bool, list_tgp))
-            #if len(list_tgp) > 5:
-            #    list_tgp.sort(key=lambda k: (k[0][0], k[0][1]), reverse=True)
+                wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '\n')
 
-            wr_line = "Algorithm: T-GRAANK \n"
-            wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
-            wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
-            wr_line += "Minimum support: " + str(minSup) + '\n'
-            wr_line += "Minimum representativity: " + str(minRep) + '\n'
-            wr_line += "Multi-core execution: " + str(msg_para) + '\n'
-            wr_line += "Number of cores: " + str(tgp.cores) + '\n'
-            wr_line += "Number of tasks: " + str(tgp.max_step) + '\n\n'
-            for txt in titles:
-                col = (int(txt[0]) - 1)
-                if col == refItem:
-                    wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '**' + '\n')
-                else:
-                    wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '\n')
+        wr_line += str("\nFile: " + f_path + '\n')
+        wr_line += str("\nPattern : Support" + '\n')
 
-            wr_line += str("\nFile: " + f_path + '\n')
-            wr_line += str("\nPattern : Support" + '\n')
-
-            for obj in list_tgp:
+        for obj in list_tgp:
+            if obj:
                 for i in range(len(obj[0])):
-                    wr_line += (str(obj[0][i]) + ' : ' + str(obj[1][i]) + ' | ' + str(obj[2][i]) + '\n')
+                    wr_line += (str(obj[0][i]) + ' : ' + str(obj[1][i]) +
+                                ' | ' + obj[2][i].to_string() + '\n')
+        #d_set.clean_memory()
         return wr_line
     except ArithmeticError as error:
         wr_line = "Failed: " + str(error)

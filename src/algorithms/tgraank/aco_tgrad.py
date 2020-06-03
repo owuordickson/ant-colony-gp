@@ -83,7 +83,7 @@ class TgradACO:
         list_gp = ac.run_ant_colony(self.min_sup, time_diffs)
         # print("\nPheromone Matrix")
         # print(ac.p_matrix)
-        self.d_set.clean_memory()
+        d_set.clean_memory()
         if len(list_gp) > 0:
             return list_gp
         return False

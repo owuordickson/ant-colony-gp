@@ -48,6 +48,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
         for i in range(len(D1)):
             wr_line += (str(D1[i]) + ' : ' + str(S1[i]) + '\n')
 
+        d_set.clean_memory()
         return wr_line
     except ArithmeticError as error:
         wr_line = "Failed: " + str(error)

@@ -44,9 +44,10 @@ class Dataset:
             self.attr_size = 0
             self.thd_supp = min_sup
             self.equal = eq
-            # self.valid_bins = np.array([])  # optimized (numpy & numba)
+            # self.valid_bins = np.array([])
             self.valid_gi_paths = np.array([])
             self.invalid_bins = np.array([])
+            self.gen_paths = list()
             if init:
                 self.init_attributes()
 
@@ -128,6 +129,12 @@ class Dataset:
     def clean_memory(self):
         for gi_obj in self.valid_gi_paths:
             Dataset.delete_file(gi_obj[1])
+
+        for file in self.gen_paths:
+            Dataset.delete_file(file)
+
+        self.valid_gi_paths = np.array([])
+        self.gen_paths = list()
 
     def init_attributes(self):
         # (check) implement parallel multiprocessing

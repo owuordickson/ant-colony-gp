@@ -10,7 +10,7 @@
 import numpy as np
 import gc
 import json
-from src.algorithms.common.fuzzy_mf_v1 import FuzzyMF
+from src.algorithms.common.fuzzy_mf_v2 import calculate_time_lag
 from src.algorithms.common.dataset import Dataset
 
 
@@ -22,7 +22,7 @@ def inv(g_item):
     return temp
 
 
-def gen_apriori_candidates(R, sup, n):
+def gen_apriori_candidates(R, sup, n, step):
     res = []
     I = []
     if len(R) < 2:
@@ -65,14 +65,14 @@ def gen_apriori_candidates(R, sup, n):
                     m = bin_data1 * bin_data2
                     t = float(np.sum(m)) / float(n * (n - 1.0) / 2.0)
                     if t > sup:
-                        path = store_gp(temp, m, t)
+                        path = store_gp(temp, m, t, step)
                         res.append(path)
                 I.append(temp)
                 gc.collect()
     return res
 
 
-def store_gp(gi, bin_data, supp):
+def store_gp(gi, bin_data, supp, step):
     gi_data = []
     gi_tuple = []
     gi_str = ""
@@ -80,27 +80,29 @@ def store_gp(gi, bin_data, supp):
         gi_data.append([int(obj[0]), str(obj[1])])
         gi_tuple.append(tuple([obj[0], obj[1]]))
         gi_str += str(obj[0]) + str(obj[1])
-    path = 'gi_' + gi_str + '.json'
+    path = 'gi_' + gi_str + str(step) + '.json'
     content = {"gi": gi_data, "bin": bin_data.tolist(), "support": supp}
     Dataset.write_file(json.dumps(content), path)
     return [gi_tuple, path]
 
 
-def graank(f_path, min_sup, eq, t_diffs=None):
-    d_set = Dataset(f_path, min_sup, eq)
+def graank(f_path=None, min_sup=None, eq=False, t_diffs=None, d_set=None, step=0):
+    if d_set is None:
+        d_set = Dataset(f_path, min_sup, eq)
+    else:
+        d_set = d_set
     patterns = []
     supports = []
     t_lags = []
     n = d_set.attr_size
     bin_paths = d_set.valid_gi_paths
-    gen_paths = []
 
     while len(bin_paths) > 0:
-        bin_paths = gen_apriori_candidates(bin_paths, min_sup, n)
+        bin_paths = gen_apriori_candidates(bin_paths, min_sup, n, step)
         i = 0
         while i < len(bin_paths) and bin_paths != []:
             # temp = float(np.sum(G[i][1])) / float(n * (n - 1.0) / 2.0)
-            gen_paths.append(bin_paths[i][1])
+            d_set.gen_paths.append(bin_paths[i][1])
             bin_obj = Dataset.read_json(bin_paths[i][1])
             bin_data = np.array(bin_obj['bin'])
             sup = float(np.sum(np.array(bin_data))) / float(n * (n - 1.0) / 2.0)
@@ -118,8 +120,8 @@ def graank(f_path, min_sup, eq, t_diffs=None):
                         z = z + 1
                 # return fetch indices (array) of G[1] where True
                 if t_diffs is not None:
-                    # t_lag = calculateTimeLag(getPattenIndices(G[i][1]), t_diffs, a)
-                    t_lag = FuzzyMF.calculate_time_lag(FuzzyMF.get_patten_indices(bin_data), t_diffs, min_sup)
+                    # t_lag = FuzzyMF.calculate_time_lag(FuzzyMF.get_patten_indices(bin_data), t_diffs, min_sup)
+                    t_lag = calculate_time_lag(bin_data, t_diffs)
                     if t_lag:
                         patterns.append(bin_paths[i][0])
                         supports.append(sup)
@@ -128,10 +130,7 @@ def graank(f_path, min_sup, eq, t_diffs=None):
                     patterns.append(bin_paths[i][0])
                     supports.append(sup)
                 i += 1
-    d_set.clean_memory()
-    for file in gen_paths:
-        Dataset.delete_file(file)
     if t_diffs is None:
         return d_set, patterns, supports
     else:
-        return d_set, patterns, supports, t_lags
+        return patterns, supports, t_lags
