@@ -25,10 +25,11 @@ from src.algorithms.common.profile_cpu import Profile
 
 class TgradACO:
 
-    def __init__(self, d_set, ref_item, min_sup, min_rep, cores):
+    def __init__(self, f_path, eq, ref_item, min_sup, min_rep, cores):
         # For tgraank
-        self.d_set = d_set
-        cols = d_set.time_cols
+        # self.d_set = d_set
+        self.d_set = Dataset(f_path, min_sup=min_sup, eq=eq, init=False)
+        cols = self.d_set.time_cols
         if len(cols) > 0:
             print("Dataset Ok")
             self.time_ok = True
@@ -77,7 +78,7 @@ class TgradACO:
 
         # 2. Execute aco-graank for each transformation
         d_set.update_attributes(attr_data)
-        ac = GradACO(d_set)
+        ac = GradACO(d_set=d_set)
         ac.init_pheromones()
         list_gp = ac.run_ant_colony(self.min_sup, time_diffs)
         # print("\nPheromone Matrix")

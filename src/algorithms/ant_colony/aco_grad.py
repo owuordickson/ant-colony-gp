@@ -16,12 +16,17 @@ from numpy import random as rand
 import matplotlib.pyplot as plt
 from src.algorithms.common.fuzzy_mf_v2 import calculate_time_lag
 from src.algorithms.common.gp import GI, GP, TGP
+from src.algorithms.common.dataset import Dataset
+#from src.algorithms.common.cython.cyt_dataset import Dataset
 
 
 class GradACO:
 
-    def __init__(self, d_set):
-        self.data = d_set
+    def __init__(self, f_path=None, min_supp=None, eq=None, d_set=None):
+        if d_set is None:
+            self.data = Dataset(f_path, min_sup=min_supp, eq=eq)
+        else:
+            self.data = d_set
         self.attr_index = self.data.attr_cols
         self.e_factor = 0.1  # evaporation factor
         self.p_matrix = np.ones((self.data.column_size, 3), dtype=float)

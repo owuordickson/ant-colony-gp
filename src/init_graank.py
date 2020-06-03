@@ -16,38 +16,37 @@ Description:
 import sys
 from optparse import OptionParser
 from src.algorithms.common.profile_cpu import Profile
-from src.algorithms.common.handle_data import HandleData
-from src.algorithms.graank.graank_v1 import graank
+from src.algorithms.graank.graank_v2 import graank
 
 
 def init_algorithm(f_path, min_supp, cores, eq=False):
     try:
-        wr_line = ""
-        d_set = HandleData(f_path)
-        if d_set.data:
-            titles = d_set.title
-            d_set.init_attributes(eq)
-            D1, S1 = graank(d_set.attr_data, min_supp)
+        # wr_line = ""
+        # d_set = Dataset(f_path)
+        # if d_set.data:
+        #    titles = d_set.title
+        #    d_set.init_attributes(min_supp, eq)
+        D1, S1 = graank(f_path, min_supp, eq)
 
-            if cores > 1:
-                num_cores = cores
-            else:
-                num_cores = Profile.get_num_cores()
+        if cores > 1:
+            num_cores = cores
+        else:
+            num_cores = Profile.get_num_cores()
 
-            wr_line = "Algorithm: GRAANK \n"
-            wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
-            wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
-            wr_line += "Minimum support: " + str(min_supp) + '\n'
-            wr_line += "Number of cores: " + str(num_cores) + '\n\n'
+        wr_line = "Algorithm: GRAANK \n"
+        wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
+        wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
+        wr_line += "Minimum support: " + str(min_supp) + '\n'
+        wr_line += "Number of cores: " + str(num_cores) + '\n\n'
 
-            for txt in titles:
-                wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '\n')
+        for txt in titles:
+            wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '\n')
 
-            wr_line += str("\nFile: " + f_path + '\n')
-            wr_line += str("\nPattern : Support" + '\n')
+        wr_line += str("\nFile: " + f_path + '\n')
+        wr_line += str("\nPattern : Support" + '\n')
 
-            for i in range(len(D1)):
-                wr_line += (str(D1[i]) + ' : ' + str(S1[i]) + '\n')
+        for i in range(len(D1)):
+            wr_line += (str(D1[i]) + ' : ' + str(S1[i]) + '\n')
 
         return wr_line
     except ArithmeticError as error:
@@ -114,6 +113,6 @@ if __name__ == "__main__":
     # wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
     wr_text += str(res_text)
     f_name = str('res_graank' + str(end).replace('.', '', 1) + '.txt')
-    # HandleData.write_file(wr_text, f_name)
+    # Dataset.write_file(wr_text, f_name)
     print(wr_text)
 

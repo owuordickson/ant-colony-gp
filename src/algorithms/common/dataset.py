@@ -27,12 +27,12 @@ from cython.parallel import prange
 
 class Dataset:
 
-    def __init__(self, file_path):
+    def __init__(self, file_path, min_sup=0, eq=False, init=True):
         data = Dataset.read_csv(file_path)
-        if len(data) == 0:
+        if len(data) <= 1:
             self.data = np.array([])
             print("csv file read error")
-            raise Exception("Unable to read csv file")
+            raise Exception("Unable to read csv file or file has no data")
         else:
             print("Data fetched from csv file")
             self.data = np.array([])
@@ -42,11 +42,13 @@ class Dataset:
             self.column_size = self.get_attribute_no()  # optimized (cdef)
             self.size = self.get_size()  # optimized (cdef)
             self.attr_size = 0
-            self.thd_supp = 0
-            self.equal = False
+            self.thd_supp = min_sup
+            self.equal = eq
             # self.valid_bins = np.array([])  # optimized (numpy & numba)
             self.valid_gi_paths = np.array([])
             self.invalid_bins = np.array([])
+            if init:
+                self.init_attributes()
 
     def get_size(self):
         size = self.data.shape[0]
@@ -127,18 +129,16 @@ class Dataset:
         for gi_obj in self.valid_gi_paths:
             Dataset.delete_file(gi_obj[1])
 
-    def init_attributes(self, min_sup, eq, attr=True):
+    def init_attributes(self):
         # (check) implement parallel multiprocessing
         # transpose csv array data
-        self.thd_supp = min_sup
-        self.equal = eq
-        if attr:
-            # r, c = self.data.shape
-            attr_data = self.data.T
-            # attr_data = np.transpose(self.data)
-            # self.attr_size = attr_data.shape[1]
-            self.attr_size = len(attr_data[self.attr_cols[0]])
-            self.construct_bins(attr_data)
+        # if attr:
+        # r, c = self.data.shape
+        attr_data = self.data.T
+        # attr_data = np.transpose(self.data)
+        # self.attr_size = attr_data.shape[1]
+        self.attr_size = len(attr_data[self.attr_cols[0]])
+        self.construct_bins(attr_data)
 
     def update_attributes(self, attr_data):
         self.attr_size = len(attr_data[self.attr_cols[0]])

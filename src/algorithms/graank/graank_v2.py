@@ -10,6 +10,7 @@
 import numpy as np
 import gc
 from src.algorithms.common.fuzzy_mf_v1 import FuzzyMF
+from src.algorithms.common.dataset import Dataset
 
 
 def init_graank(T, eq=False):
@@ -53,7 +54,7 @@ def inv(s):
         return s[0:i] + '+'
 
 
-def gen_apriori_candidates(R, a, n):
+def gen_apriori_candidates(R, sup, n):
     res = []
     I = []
     if len(R) < 2:
@@ -74,29 +75,31 @@ def gen_apriori_candidates(R, a, n):
                 if test == 1:
                     m = R[i][1] * R[j][1]
                     t = float(np.sum(m)) / float(n * (n - 1.0) / 2.0)
-                    if t > a:
+                    if t > sup:
                         res.append((temp, m))
                 I.append(temp)
                 gc.collect()
     return res
 
 
-def graank(T, a, t_diffs=None, eq=False):
+def graank(f_path, sup, eq, t_diffs=None):
+    d_set = Dataset(f_path, sup, eq)
+    # T = d_set.attr_data
     res = []
     res2 = []
     res3 = []
     n = len(T[0][1])
-    G = init_graank(T, eq)
-    for i in G:
-        temp = float(np.sum(i[1])) / float(n * (n - 1.0) / 2.0)
-        if temp < a:
-            G.remove(i)
+    # G = init_graank(T, eq)
+    # for i in G:
+    #    temp = float(np.sum(i[1])) / float(n * (n - 1.0) / 2.0)
+    #    if temp < a:
+    #        G.remove(i)
     while G != []:
-        G = gen_apriori_candidates(G, a, n)
+        G = gen_apriori_candidates(G, sup, n)
         i = 0
         while i < len(G) and G != []:
             temp = float(np.sum(G[i][1])) / float(n * (n - 1.0) / 2.0)
-            if temp < a:
+            if temp < sup:
                 del G[i]
             else:
                 z = 0
@@ -109,7 +112,7 @@ def graank(T, a, t_diffs=None, eq=False):
                 # return fetch indices (array) of G[1] where True
                 if t_diffs is not None:
                     # t_lag = calculateTimeLag(getPattenIndices(G[i][1]), t_diffs, a)
-                    t_lag = FuzzyMF.calculate_time_lag(FuzzyMF.get_patten_indices(G[i][1]), t_diffs, a)
+                    t_lag = FuzzyMF.calculate_time_lag(FuzzyMF.get_patten_indices(G[i][1]), t_diffs, sup)
                     if t_lag:
                         res.append(G[i][0])
                         res2.append(temp)
