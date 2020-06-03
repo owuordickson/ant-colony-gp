@@ -9,7 +9,6 @@
 
 import numpy as np
 import gc
-# from src import FuzzyMF
 from src.algorithms.common.fuzzy_mf_v1 import FuzzyMF
 
 
@@ -56,26 +55,16 @@ def inv(s):
 
 def gen_apriori_candidates(R, a, n):
     res = []
-    test = 1
-    temp = set()
-    temp2 = set()
-    # print"a"
     I = []
-    if (len(R) < 2):
+    if len(R) < 2:
         return []
     Ck = [x[0] for x in R]
-    # print"b"
     for i in range(len(R) - 1):
-        # print"c"
-        # print len(R)
         for j in range(i + 1, len(R)):
             temp = R[i][0] | R[j][0]
             invtemp = {inv(x) for x in temp}
-            # print invtemp
-            # print"d"+str(j)
-            if ((len(temp) == len(R[0][0]) + 1) and (not (I != [] and temp in I)) and (not (I != [] and invtemp in I))):
+            if (len(temp) == len(R[0][0]) + 1) and (not (I != [] and temp in I)) and (not (I != [] and invtemp in I)):
                 test = 1
-                # print "e"
                 for k in temp:
                     temp2 = temp - set([k])
                     invtemp2 = {inv(x) for x in temp2}
@@ -89,7 +78,6 @@ def gen_apriori_candidates(R, a, n):
                         res.append((temp, m))
                 I.append(temp)
                 gc.collect()
-    # print "z"
     return res
 
 
@@ -130,7 +118,6 @@ def graank(T, a, t_diffs=None, eq=False):
                     res.append(G[i][0])
                     res2.append(temp)
                 i += 1
-    # return title, res, res2, res3
     if t_diffs is None:
         return res, res2
     else:

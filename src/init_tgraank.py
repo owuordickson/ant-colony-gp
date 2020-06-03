@@ -20,9 +20,7 @@ Description:
 
 import sys
 from optparse import OptionParser
-import tracemalloc
-# from src import HandleData, Tgrad
-from src.algorithms.graank.handle_data import HandleData
+from src.algorithms.common.handle_data import HandleData
 from src.algorithms.tgraank.t_graank import Tgrad
 from src.algorithms.common.profile_cpu import Profile
 
@@ -41,9 +39,9 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
             else:
                 msg_para = "False"
                 list_tgp = tgp.run_tgraank()
-            list_tgp = list(filter(bool, list_tgp))
-            if len(list_tgp) > 5:
-                list_tgp.sort(key=lambda k: (k[0][0], k[0][1]), reverse=True)
+            #list_tgp = list(filter(bool, list_tgp))
+            #if len(list_tgp) > 5:
+            #    list_tgp.sort(key=lambda k: (k[0][0], k[0][1]), reverse=True)
 
             wr_line = "Algorithm: T-GRAANK \n"
             wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
@@ -67,7 +65,7 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
                 for i in range(len(obj[0])):
                     wr_line += (str(obj[0][i]) + ' : ' + str(obj[1][i]) + ' | ' + str(obj[2][i]) + '\n')
         return wr_line
-    except Exception as error:
+    except ArithmeticError as error:
         wr_line = "Failed: " + str(error)
         print(error)
         return wr_line
@@ -87,7 +85,9 @@ if __name__ == "__main__":
                              dest='file',
                              help='path to file containing csv',
                              # default=None,
-                             default='../data/Directio.csv',
+                             # default='../data/DATASET2.csv',
+                             default='../data/rain_temp2013-2015.csv',
+                             # default='../data/Directio.csv',
                              type='string')
         optparser.add_option('-c', '--refColumn',
                              dest='refCol',
@@ -124,15 +124,17 @@ if __name__ == "__main__":
         allow_p = options.allowPara
 
     import time
+    # import tracemalloc
+
     start = time.time()
-    tracemalloc.start()
+    # tracemalloc.start()
     res_text = init_algorithm(file_path, ref_col, min_sup, min_rep, allow_p)
-    snapshot = tracemalloc.take_snapshot()
+    # snapshot = tracemalloc.take_snapshot()
     end = time.time()
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
-    wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
+    # wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
     wr_text += str(res_text)
     f_name = str('res_temp' + str(end).replace('.', '', 1) + '.txt')
-    HandleData.write_file(wr_text, f_name)
+    #HandleData.write_file(wr_text, f_name)
     print(wr_text)

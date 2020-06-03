@@ -61,6 +61,8 @@ class TgradACO:
             return patterns
         else:
             patterns = list()
+            # v_func = np.vectorize(self.fetch_patterns)
+            # patterns = v_func(np.arange(self.max_step))
             for step in range(self.max_step):
                 t_pattern = self.fetch_patterns(step)
                 if t_pattern:

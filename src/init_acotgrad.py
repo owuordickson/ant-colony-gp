@@ -71,7 +71,7 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
             # print(ac.p_matrix)
             # d_set.clean_memory()
         return wr_line
-    except Exception as error:
+    except ArithmeticError as error:
         wr_line = "Failed: " + str(error)
         print(error)
         return wr_line
@@ -113,7 +113,7 @@ if __name__ == "__main__":
         optparser.add_option('-p', '--allowMultiprocessing',
                              dest='allowPara',
                              help='allow multiprocessing',
-                             default=1,
+                             default=0,
                              type='int')
         (options, args) = optparser.parse_args()
         inFile = None

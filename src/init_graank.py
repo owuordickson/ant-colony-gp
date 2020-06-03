@@ -15,11 +15,9 @@ Description:
 
 import sys
 from optparse import OptionParser
-import tracemalloc
-# from src import InitParallel, HandleData, graank
 from src.algorithms.common.profile_cpu import Profile
-from src.algorithms.graank.handle_data import HandleData
-from src.algorithms.graank.graank import graank
+from src.algorithms.common.handle_data import HandleData
+from src.algorithms.graank.graank_v1 import graank
 
 
 def init_algorithm(f_path, min_supp, cores, eq=False):
@@ -52,7 +50,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
                 wr_line += (str(D1[i]) + ' : ' + str(S1[i]) + '\n')
 
         return wr_line
-    except Exception as error:
+    except ArithmeticError as error:
         wr_line = "Failed: " + str(error)
         print(error)
         return wr_line
@@ -72,9 +70,9 @@ if __name__ == "__main__":
                              dest='file',
                              help='path to file containing csv',
                              # default=None,
-                             #default='../data/DATASET.csv',
+                             default='../data/DATASET.csv',
                              #default='../data/Omnidir.csv',
-                             default='../data/FARSmiss.csv',
+                             #default='../data/FARSmiss.csv',
                              #default='../data/FluTopicData-testsansdate-blank.csv',
                              type='string')
         optparser.add_option('-s', '--minSupport',
@@ -104,17 +102,18 @@ if __name__ == "__main__":
         numCores = options.numCores
 
     import time
+    # import tracemalloc
 
     start = time.time()
-    tracemalloc.start()
+    # tracemalloc.start()
     res_text = init_algorithm(filePath, minSup, numCores)
-    snapshot = tracemalloc.take_snapshot()
+    # snapshot = tracemalloc.take_snapshot()
     end = time.time()
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
-    wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
+    # wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
     wr_text += str(res_text)
     f_name = str('res_graank' + str(end).replace('.', '', 1) + '.txt')
-    HandleData.write_file(wr_text, f_name)
+    # HandleData.write_file(wr_text, f_name)
     print(wr_text)
 
