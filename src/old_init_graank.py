@@ -50,7 +50,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
                 wr_line += (str(D1[i]) + ' : ' + str(S1[i]) + '\n')
 
         return wr_line
-    except ArithmeticError as error:
+    except Exception as error:
         wr_line = "Failed: " + str(error)
         print(error)
         return wr_line

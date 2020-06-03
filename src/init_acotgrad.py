@@ -72,7 +72,7 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
         # print(ac.p_matrix)
         # d_set.clean_memory()
         return wr_line
-    except ArithmeticError as error:
+    except Exception as error:
         wr_line = "Failed: " + str(error)
         print(error)
         return wr_line

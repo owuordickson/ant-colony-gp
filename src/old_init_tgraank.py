@@ -65,7 +65,7 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
                 for i in range(len(obj[0])):
                     wr_line += (str(obj[0][i]) + ' : ' + str(obj[1][i]) + ' | ' + str(obj[2][i]) + '\n')
         return wr_line
-    except ArithmeticError as error:
+    except Exception as error:
         wr_line = "Failed: " + str(error)
         print(error)
         return wr_line
