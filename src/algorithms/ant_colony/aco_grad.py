@@ -297,7 +297,7 @@ class GradACO:
 
     @staticmethod
     def bin_and(bins, n):
-        # temp_bin = bins[0] & bins[1]
-        temp_bin = np.logical_and(bins[0], bins[1])
+        temp_bin = np.array(bins[0]) * np.array(bins[1])
+        # temp_bin = np.logical_and(bins[0], bins[1])
         supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
         return temp_bin, supp

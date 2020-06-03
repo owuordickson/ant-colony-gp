@@ -20,8 +20,10 @@ def init_graank(T, eq=False):
         # nm = str(i + 1) + '-'
         attr = T[i][0]
         bin = T[i][1]
-        npl = str(attr) + '+'
-        nm = str(attr) + '-'
+        # npl = str(attr) + '+'
+        # nm = str(attr) + '-'
+        npl = tuple([attr, '+'])
+        nm = tuple([attr, '-'])
         tempp = np.zeros((n, n), dtype='bool')
         tempm = np.zeros((n, n), dtype='bool')
         for j in range(n):
@@ -45,15 +47,21 @@ def init_graank(T, eq=False):
     return res
 
 
-def inv(s):
-    i = len(s) - 1
-    if s[i] == '+':
-        return s[0:i] + '-'
+def inv(g_item):
+    # i = len(s) - 1
+    # if s[i] == '+':
+    #    return s[0:i] + '-'
+    # else:
+    #    return s[0:i] + '+'
+    if g_item[1] == '+':
+        temp = tuple([g_item[0], '-'])
     else:
-        return s[0:i] + '+'
+        temp = tuple([g_item[0], '+'])
+    return temp
 
 
 def gen_apriori_candidates(R, a, n):
+    # print(R)
     res = []
     test = 1
     temp = set()
@@ -63,16 +71,19 @@ def gen_apriori_candidates(R, a, n):
     if (len(R) < 2):
         return []
     Ck = [x[0] for x in R]
-    # print"b"
+    # print(Ck)
     for i in range(len(R) - 1):
         # print"c"
         # print len(R)
         for j in range(i + 1, len(R)):
             temp = R[i][0] | R[j][0]
             invtemp = {inv(x) for x in temp}
+            # print([temp, invtemp])
+            # print(temp)
+            # print(invtemp)
             # print invtemp
             # print"d"+str(j)
-            if ((len(temp) == len(R[0][0]) + 1) and (not (I != [] and temp in I)) and (not (I != [] and invtemp in I))):
+            if (len(temp) == len(R[0][0]) + 1) and (not (I != [] and temp in I)) and (not (I != [] and invtemp in I)):
                 test = 1
                 # print "e"
                 for k in temp:
@@ -82,7 +93,9 @@ def gen_apriori_candidates(R, a, n):
                         test = 0
                         break
                 if test == 1:
+                    # print(temp)
                     m = R[i][1] * R[j][1]
+                    print(R[i][1])
                     t = float(np.sum(m)) / float(n * (n - 1.0) / 2.0)
                     if t > a:
                         res.append((temp, m))

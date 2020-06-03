@@ -26,7 +26,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
         # if d_set.data:
         #    titles = d_set.title
         #    d_set.init_attributes(min_supp, eq)
-        D1, S1 = graank(f_path, min_supp, eq)
+        d_set, D1, S1 = graank(f_path, min_supp, eq)
 
         if cores > 1:
             num_cores = cores
@@ -39,7 +39,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
         wr_line += "Minimum support: " + str(min_supp) + '\n'
         wr_line += "Number of cores: " + str(num_cores) + '\n\n'
 
-        for txt in titles:
+        for txt in d_set.title:
             wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '\n')
 
         wr_line += str("\nFile: " + f_path + '\n')
