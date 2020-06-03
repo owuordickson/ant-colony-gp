@@ -20,12 +20,12 @@ You will be required to install the following python dependencies before using <
 Use it a command line program with the local package:<br>
 To mine gradual patterns:<br>
 ```
-$python3 init_acograd.py -f filename.csv -s minSup
+$python3 src/init_acograd.py -f filename.csv -s minSup
 ```
 
 To mine fuzzy-temporal gradual patterns:<br>
 ```
-$python3 init_acotgraank.py -f filename.csv -c refCol -s minSup  -r minRep
+$python3 src/init_acotgraank.py -f filename.csv -c refCol -s minSup  -r minRep
 ```
 
 where you specify the input parameters as follows:<br>
