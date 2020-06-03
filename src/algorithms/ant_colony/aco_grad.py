@@ -14,7 +14,7 @@ import numpy as np
 from numpy import random as rand
 # import random as rand
 import matplotlib.pyplot as plt
-from src.algorithms.common.fuzzy_mf_v2 import calculate_time_lag
+from src.algorithms.common.fuzzy_mf import calculate_time_lag
 from src.algorithms.common.gp import GI, GP, TGP
 from src.algorithms.common.dataset import Dataset
 #from src.algorithms.common.cython.cyt_dataset import Dataset
