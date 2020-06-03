@@ -27,13 +27,11 @@ def gen_apriori_candidates(R, sup, n):
     I = []
     if len(R) < 2:
         return []
-    # Ck = [set([x[0]]) for x in R]
-    Ck = []
-    for x in R:
-        try:
-            Ck.append(set([x[0]]))
-        except TypeError:
-            Ck.append(set(x[0]))
+    try:
+        Ck = [set([x[0]]) for x in R]
+    except TypeError:
+        Ck = [set(x[0]) for x in R]
+
     for i in range(len(R) - 1):
         for j in range(i + 1, len(R)):
             try:
@@ -44,11 +42,10 @@ def gen_apriori_candidates(R, sup, n):
                 R_i = set(R[i][0])
                 R_j = set(R[j][0])
                 R_o = set(R[0][0])
-
             temp = R_i | R_j
             invtemp = {inv(x) for x in temp}
-            # print([temp, invtemp])
-            if (len(temp) == len(R_o) + 1) and (not (I != [] and temp in I)) and (not (I != [] and invtemp in I)):
+            if (len(temp) == len(R_o) + 1) and (not (I != [] and temp in I)) \
+                    and (not (I != [] and invtemp in I)):
                 test = 1
                 for k in temp:
                     try:
@@ -61,20 +58,14 @@ def gen_apriori_candidates(R, sup, n):
                         test = 0
                         break
                 if test == 1:
-                    # print(list(temp))
                     bin_obj1 = Dataset.read_json(R[i][1])
                     bin_obj2 = Dataset.read_json(R[j][1])
                     bin_data1 = np.array(bin_obj1['bin'])
                     bin_data2 = np.array(bin_obj2['bin'])
-                    # print(bin_data1)
-                    # m = R[i][1] * R[j][1]
                     m = bin_data1 * bin_data2
-                    # print(m)
                     t = float(np.sum(m)) / float(n * (n - 1.0) / 2.0)
                     if t > sup:
-                        # res.append((temp, m))
                         path = store_gp(temp, m, t)
-                        # print(path)
                         res.append(path)
                 I.append(temp)
                 gc.collect()
@@ -104,7 +95,7 @@ def graank(f_path, min_sup, eq, t_diffs=None):
     bin_paths = d_set.valid_gi_paths
     gen_paths = []
 
-    while bin_paths != []:
+    while len(bin_paths) > 0:
         bin_paths = gen_apriori_candidates(bin_paths, min_sup, n)
         i = 0
         while i < len(bin_paths) and bin_paths != []:
