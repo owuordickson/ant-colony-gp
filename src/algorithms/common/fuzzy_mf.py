@@ -25,14 +25,11 @@ def calculate_time_lag(bin_data, time_diffs):
 
 
 def get_time_lags(indices, time_diffs):
-    pat_indices = set(tuple(map(tuple, indices)))
+    pat_indices_flat = np.unique(indices.flatten())
     time_lags = list()
     for obj in time_diffs:
-        index1 = tuple([(obj[1])])
-        index2 = tuple([(obj[1][1], obj[1][0])])
-        exits1 = pat_indices.intersection(set(index1))
-        exits2 = pat_indices.intersection(set(index2))
-        if len(exits1) > 0 or len(exits2) > 0:
+        index1 = obj[1]
+        if int(index1) in pat_indices_flat:
             time_lags.append(obj[0])
     return np.array(time_lags)
 

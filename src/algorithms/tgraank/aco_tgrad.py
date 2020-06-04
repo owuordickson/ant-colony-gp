@@ -58,12 +58,11 @@ class TgradACO:
             steps = range(self.max_step)
             pool = mp.Pool(num_cores)
             patterns = pool.map(self.fetch_patterns, steps)
-            # patterns = Parallel(n_jobs=num_cores)(delayed(self.fetch_patterns)(s+1) for s in steps)
+            pool.close()
+            pool.join()
             return patterns
         else:
             patterns = list()
-            # v_func = np.vectorize(self.fetch_patterns)
-            # patterns = v_func(np.arange(self.max_step))
             for step in range(self.max_step):
                 t_pattern = self.fetch_patterns(step)
                 if t_pattern:
@@ -104,7 +103,7 @@ class TgradACO:
                     raise Exception(msg)
                 elif (ref_col < 0) or (ref_col >= len(self.d_set.title)):
                     msg = "Reference column does not exist\nselect column between: " \
-                          "0 and "+str(len(self.d_set.title) - 1)
+                          "0 and " + str(len(self.d_set.title) - 1)
                     raise Exception(msg)
                 else:
                     # 1. Split the transpose data set into column-tuples
@@ -117,17 +116,17 @@ class TgradACO:
                         col_index = k
                         tuples = attr_data[k]
                         n = tuples.size
-                        temp_tuples = np.empty(n,)
-                        temp_tuples[:] = np.NaN
+                        # temp_tuples = np.empty(n, )
+                        # temp_tuples[:] = np.NaN
                         if col_index in self.time_cols:
                             # date-time attribute
                             temp_tuples = tuples[:]
                         elif col_index == ref_col:
                             # reference attribute
-                            temp_tuples[:n - step] = tuples[0: n - step]
+                            temp_tuples = tuples[0: n - step]
                         else:
                             # other attributes
-                            temp_tuples[:n - step] = tuples[step: n]
+                            temp_tuples = tuples[step: n]
                         # print(temp_tuples)
                         new_attr_data.append(temp_tuples)
                     return new_attr_data, time_diffs
@@ -154,6 +153,7 @@ class TgradACO:
                 if (not stamp_1) or (not stamp_2):
                     return False, [i + 1, i + step + 1]
                 time_diff = (stamp_2 - stamp_1)
-                index = tuple([i, i+step])
-                time_diffs.append([time_diff, index])
+                # index = tuple([i, i + step])
+                # time_diffs.append([time_diff, index])
+                time_diffs.append([time_diff, i])
         return True, np.array(time_diffs)

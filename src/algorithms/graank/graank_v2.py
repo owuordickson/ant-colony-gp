@@ -3,7 +3,7 @@
 @author: Olivier + modif MJL+MR 140316
 @created on Fri Jun 12 14:31:16 2015
 
-@modified by D. Owuor 06 December 2019
+@modified by D. Owuor 04 June 2020
 
 """
 
@@ -28,16 +28,16 @@ def gen_apriori_candidates(R, sup, n, step):
     if len(R) < 2:
         return []
     try:
-        Ck = [set([x[0]]) for x in R]
+        Ck = [{x[0]} for x in R]
     except TypeError:
         Ck = [set(x[0]) for x in R]
 
     for i in range(len(R) - 1):
         for j in range(i + 1, len(R)):
             try:
-                R_i = set([R[i][0]])
-                R_j = set([R[j][0]])
-                R_o = set([R[0][0]])
+                R_i = {R[i][0]}
+                R_j = {R[j][0]}
+                R_o = {R[0][0]}
             except TypeError:
                 R_i = set(R[i][0])
                 R_j = set(R[j][0])
@@ -49,7 +49,7 @@ def gen_apriori_candidates(R, sup, n, step):
                 test = 1
                 for k in temp:
                     try:
-                        k_set = set([k])
+                        k_set = {k}
                     except TypeError:
                         k_set = set(k)
                     temp2 = temp - k_set
@@ -95,7 +95,7 @@ def graank(f_path=None, min_sup=None, eq=False, t_diffs=None, d_set=None, step=0
     supports = []
     t_lags = []
     n = d_set.attr_size
-    bin_paths = d_set.valid_gi_paths
+    bin_paths = list(d_set.valid_gi_paths)
 
     while len(bin_paths) > 0:
         bin_paths = gen_apriori_candidates(bin_paths, min_sup, n, step)
@@ -116,6 +116,8 @@ def graank(f_path=None, min_sup=None, eq=False, t_diffs=None, d_set=None, step=0
                     if set(patterns[z]).issubset(set(bin_paths[i][0])):
                         del patterns[z]
                         del supports[z]
+                        if t_diffs is not None:
+                            del t_lags[z]
                     else:
                         z = z + 1
                 # return fetch indices (array) of G[1] where True
