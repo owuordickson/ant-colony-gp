@@ -21,7 +21,6 @@ Description:
 import sys
 from optparse import OptionParser
 from src.algorithms.graank.t_graank import Tgrad
-from src.algorithms.common.profile_cpu import Profile
 
 
 def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
@@ -71,6 +70,12 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
         wr_line = "Failed: " + str(error)
         print(error)
         return wr_line
+
+
+def write_file(data, path):
+    with open(path, 'w') as f:
+        f.write(data)
+        f.close()
 
 
 if __name__ == "__main__":
@@ -138,5 +143,5 @@ if __name__ == "__main__":
     # wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
     wr_text += str(res_text)
     f_name = str('res_temp' + str(end).replace('.', '', 1) + '.txt')
-    #HandleData.write_file(wr_text, f_name)
+    write_file(wr_text, f_name)
     print(wr_text)

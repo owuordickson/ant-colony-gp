@@ -66,6 +66,11 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
         return wr_line
 
 
+def write_file(data, path):
+    with open(path, 'w') as f:
+        f.write(data)
+        f.close()
+
 # ------------------------- main method ---------------------------------------------
 
 
@@ -129,6 +134,6 @@ if __name__ == "__main__":
     # wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
     wr_text += str(res_text)
     f_name = str('res_acograd' + str(end).replace('.', '', 1) + '.txt')
-    # Dataset.write_file(wr_text, f_name)
+    write_file(wr_text, f_name)
     print(wr_text)
 
