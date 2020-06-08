@@ -21,7 +21,7 @@ Description:
 
 import sys
 from optparse import OptionParser
-from src.algorithms.tgraank.aco_tgrad import TgradACO
+from src.algorithms.ant_colony.aco_tgrad import TgradACO
 from src.algorithms.common.profile_cpu import Profile
 
 

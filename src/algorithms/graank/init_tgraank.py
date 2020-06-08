@@ -20,7 +20,7 @@ Description:
 
 import sys
 from optparse import OptionParser
-from src.algorithms.tgraank.t_graank import Tgrad
+from src.algorithms.graank.t_graank import Tgrad
 from src.algorithms.common.profile_cpu import Profile
 
 
