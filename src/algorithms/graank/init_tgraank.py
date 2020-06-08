@@ -51,7 +51,7 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
         wr_line += "Number of cores: " + str(tgp.cores) + '\n'
         wr_line += "Number of tasks: " + str(tgp.max_step) + '\n\n'
         for txt in d_set.title:
-            col = (int(txt[0]) - 1)
+            col = int(txt[0])
             if col == refItem:
                 wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '**' + '\n')
             else:
@@ -62,11 +62,11 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
 
         for obj in list_tgp:
             if obj:
-                for i in range(len(obj[0])):
-                    wr_line += (str(obj[0][i]) + ' : ' + str(obj[1][i]) +
-                                ' | ' + obj[2][i].to_string() + '\n')
+                for tgp in obj:
+                    wr_line += (str(tgp.to_string()) + ' : ' + str(tgp.support) +
+                                ' | ' + str(tgp.time_lag.to_string()) + '\n')
         return wr_line
-    except ArithmeticError as error:
+    except Exception as error:
         wr_line = "Failed: " + str(error)
         print(error)
         return wr_line
@@ -145,3 +145,4 @@ if __name__ == "__main__":
     f_name = str('res_temp' + str(end).replace('.', '', 1) + '.txt')
     write_file(wr_text, f_name)
     print(wr_text)
+

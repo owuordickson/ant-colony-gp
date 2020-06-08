@@ -12,6 +12,7 @@ import gc
 import json
 from src.algorithms.common.fuzzy_mf import calculate_time_lag
 from src.algorithms.common.dataset import Dataset
+from src.algorithms.common.gp import GI, GP, TGP
 
 
 def inv(g_item):
@@ -92,8 +93,6 @@ def graank(f_path=None, min_sup=None, eq=False, t_diffs=None, d_set=None, step=0
     else:
         d_set = d_set
     patterns = []
-    supports = []
-    t_lags = []
     n = d_set.attr_size
     bin_paths = list(d_set.valid_gi_paths)
 
@@ -111,13 +110,8 @@ def graank(f_path=None, min_sup=None, eq=False, t_diffs=None, d_set=None, step=0
             else:
                 z = 0
                 while z < (len(patterns) - 1):
-                    # print(set(res[z]))
-                    # print(set(G[i][0]))
-                    if set(patterns[z]).issubset(set(bin_paths[i][0])):
+                    if set(patterns[z].get_pattern()).issubset(set(bin_paths[i][0])):
                         del patterns[z]
-                        del supports[z]
-                        if t_diffs is not None:
-                            del t_lags[z]
                     else:
                         z = z + 1
                 # return fetch indices (array) of G[1] where True
@@ -125,14 +119,22 @@ def graank(f_path=None, min_sup=None, eq=False, t_diffs=None, d_set=None, step=0
                     # t_lag = FuzzyMF.calculate_time_lag(FuzzyMF.get_patten_indices(bin_data), t_diffs, min_sup)
                     t_lag = calculate_time_lag(bin_data, t_diffs)
                     if t_lag:
-                        patterns.append(bin_paths[i][0])
-                        supports.append(sup)
-                        t_lags.append(t_lag)
+                        gp = GP()
+                        for obj in bin_paths[i][0]:
+                            gi = GI(obj[0], obj[1])
+                            gp.add_gradual_item(gi)
+                        gp.set_support(sup)
+                        tgp = TGP(gp=gp, t_lag=t_lag)
+                        patterns.append(tgp)
                 else:
-                    patterns.append(bin_paths[i][0])
-                    supports.append(sup)
+                    gp = GP()
+                    for obj in bin_paths[i][0]:
+                        gi = GI(obj[0], obj[1])
+                        gp.add_gradual_item(gi)
+                    gp.set_support(sup)
+                    patterns.append(gp)
                 i += 1
     if t_diffs is None:
-        return d_set, patterns, supports
+        return d_set, patterns
     else:
-        return patterns, supports, t_lags
+        return patterns

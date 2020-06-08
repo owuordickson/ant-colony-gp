@@ -26,7 +26,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
         # if d_set.data:
         #    titles = d_set.title
         #    d_set.init_attributes(min_supp, eq)
-        d_set, D1, S1 = graank(f_path, min_supp, eq)
+        d_set, list_gp = graank(f_path, min_supp, eq)
 
         if cores > 1:
             num_cores = cores
@@ -45,8 +45,8 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
         wr_line += str("\nFile: " + f_path + '\n')
         wr_line += str("\nPattern : Support" + '\n')
 
-        for i in range(len(D1)):
-            wr_line += (str(D1[i]) + ' : ' + str(S1[i]) + '\n')
+        for gp in list_gp:
+            wr_line += (str(gp.to_string()) + ' : ' + str(gp.support) + '\n')
 
         d_set.clean_memory()
         return wr_line
