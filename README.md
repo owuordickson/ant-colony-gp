@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/owuordickson/ant-colony-gp.svg?branch=update)](https://travis-ci.org/owuordickson/ant-colony-gp)
 
 ## ACO-GRAANK
-A Python implementation of the <em><strong>ACO</strong>-GRAANK</em> algorithm. The algorithm utilizes a pheromone-based (or probabilistic) strategy to optimize the <em>GRAANK</em> algorithm. The algorithm converges as the pheromone matrix values approach saturation. We have also implemented parallel multi-core multiprocessing using the Python <em>joblib</em> package.
+A Python implementation of the <em><strong>ACO</strong>-GRAANK</em> algorithm. The algorithm utilizes a pheromone-based (or probabilistic) strategy to optimize the <em>GRAANK</em> algorithm. The algorithm converges as the pheromone matrix values approach saturation. We have optimized the implementation of the algorithm by: (1) using Numpy functions for operations that are time consuming, (2) allowed parallel multi-processing and (3) allowed secondary storage of large data in order to free CPU memory during processing.
 <!-- Research paper published at -- link<br> -->
 
 ### Requirements:
