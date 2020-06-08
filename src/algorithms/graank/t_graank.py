@@ -7,10 +7,6 @@
 @email: "owuordickson@gmail.com"
 @created: "19 November 2019"
 
-
-
-Description: updated version that uses aco-graank and parallel multi-processing
-
 """
 
 # from joblib import Parallel, delayed

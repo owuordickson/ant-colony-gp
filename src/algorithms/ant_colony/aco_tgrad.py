@@ -7,13 +7,11 @@
 @email: "owuordickson@gmail.com"
 @created: "19 November 2019"
 
-
-
 Description: updated version that uses aco-graank and parallel multi-processing
 
 """
 
-# from joblib import Parallel, delayed
+
 import numpy as np
 import multiprocessing as mp
 from src.algorithms.ant_colony.aco_grad import GradACO
