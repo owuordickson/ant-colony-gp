@@ -76,11 +76,11 @@ class TgradACO:
         # 2. Execute aco-graank for each transformation
         d_set.update_attributes(attr_data)
         ac = GradACO(d_set=d_set)
-        ac.init_pheromones()
+        # ac.init_pheromones()
         list_gp = ac.run_ant_colony(self.min_sup, time_diffs)
         # print("\nPheromone Matrix")
         # print(ac.p_matrix)
-        d_set.clean_memory()
+        # d_set.clean_memory()
         if len(list_gp) > 0:
             return list_gp
         return False

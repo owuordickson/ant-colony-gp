@@ -21,7 +21,11 @@ from dateutil.parser import parse
 import time
 import numpy as np
 import os
+from pathlib import Path
 import json
+
+# import tables
+# from src.algorithms.common.gp import GI, GP
 # from cython.parallel import prange
 
 
@@ -44,7 +48,8 @@ class Dataset:
             self.attr_size = 0
             self.thd_supp = min_sup
             self.equal = eq
-            # self.valid_bins = np.array([])
+            self.valid_bins = np.array([])
+            self.valid_bins_index = np.array([])
             self.valid_gi_paths = np.array([])
             self.invalid_bins = np.array([])
             self.gen_paths = list()
@@ -136,13 +141,37 @@ class Dataset:
         # attr_data = np.transpose(self.data)
         # self.attr_size = attr_data.shape[1]
         self.attr_size = len(attr_data[self.attr_cols[0]])
-        self.construct_bins(attr_data)
+        # self.construct_bins(attr_data)
+        self.construct_bins_v1(attr_data)
 
     def update_attributes(self, attr_data):
         self.attr_size = len(attr_data[self.attr_cols[0]])
-        self.construct_bins(attr_data)
+        self.construct_bins_v1(attr_data)
 
-    def construct_bins(self, attr_data):
+    def construct_bins_v1(self, attr_data):
+        # execute binary rank to calculate support of pattern
+        # valid_bins = list()  # numpy is very slow for append operations
+        n = self.attr_size
+        valid_bins = list()
+        invalid_bins = list()
+        for col in self.attr_cols:
+            col_data = np.array(attr_data[col], dtype=float)
+            incr = tuple([col, '+'])
+            decr = tuple([col, '-'])
+            temp_pos, temp_neg = Dataset.bin_rank(col_data, equal=self.equal)
+            supp = float(np.sum(temp_pos)) / float(n * (n - 1.0) / 2.0)
+
+            if supp < self.thd_supp:
+                invalid_bins.append(incr)
+                invalid_bins.append(decr)
+            else:
+                valid_bins.append([incr, temp_pos])
+                valid_bins.append([decr, temp_neg])
+        self.valid_bins = np.asarray(valid_bins)
+        self.invalid_bins = np.array(invalid_bins, dtype='i, O')
+        # self.data = np.array([])
+
+    def construct_bins_v2(self, attr_data):
         # execute binary rank to calculate support of pattern
         # valid_bins = list()  # numpy is very slow for append operations
         n = self.attr_size
@@ -173,6 +202,115 @@ class Dataset:
         self.valid_gi_paths = np.asarray(valid_paths)
         self.invalid_bins = np.array(invalid_bins, dtype='i, O')
         # self.data = np.array([])
+
+    def construct_bins_v3(self, attr_data):
+        # execute binary rank to calculate support of pattern
+        # valid_bins = list()  # numpy is very slow for append operations
+        n = self.attr_size
+        valid_bins = list()
+        invalid_bins = list()
+        for col in self.attr_cols:
+            col_data = np.array(attr_data[col], dtype=float)
+            incr = tuple([col, '+'])
+            decr = tuple([col, '-'])
+            bin_pos_index, bin_neg_index = self.bin_rank_v2(col_data, equal=self.equal)
+
+            if bin_pos_index.size <= 0 and bin_neg_index.size <= 0:
+                # print(incr)
+                invalid_bins.append(incr)
+                invalid_bins.append(decr)
+            else:
+                valid_bins.append([incr, bin_pos_index, bin_neg_index])
+                valid_bins.append([decr, bin_neg_index, bin_pos_index])
+            #supp = float(np.sum(temp_pos)) / temp_pos.size
+            #supn = float(np.sum(temp_neg)) / temp_neg.size
+            #if supp < self.thd_supp and supn < self.thd_supp:
+            #    invalid_bins.append(incr)
+            #    invalid_bins.append(decr)
+            #elif supp > supn:
+            #    invalid_bins.append(decr)
+                # gi = GP()
+                # gi.add_gradual_item(GI(incr[0], incr[1]))
+                # gi.set_support(supp)
+                # gi.set_bin(temp_pos)
+            #   valid_bins.append([incr, temp_pos])
+            #else:
+            #    invalid_bins.append(incr)
+                # gi = GP()
+                # gi.add_gradual_item(GI(decr[0], decr[1]))
+                # gi.set_support(supn)
+                # gi.set_bin(temp_neg)
+            #    valid_bins.append([decr, temp_neg])
+        # for gi in valid_bins:
+        #    print(gi.to_string())
+        # self.valid_bins = np.asarray(valid_bins)
+        self.valid_bins_index = np.asarray(valid_bins)
+        self.invalid_bins = np.array(invalid_bins, dtype='i, O')
+        #print(self.valid_bins_index[:, 0])
+
+    def construct_bins_v4(self, attr_data):
+        # execute binary rank to calculate support of pattern
+        # valid_bins = list()  # numpy is very slow for append operations
+        n = self.attr_size
+        valid_paths = list()
+        invalid_bins = list()
+        for col in self.attr_cols:
+            col_data = np.array(attr_data[col], dtype=float)
+            incr = tuple([col, '+'])
+            decr = tuple([col, '-'])
+            temp_pos, temp_neg = Dataset.bin_rank(col_data, equal=self.equal)
+            supp = float(np.sum(temp_pos)) / float(n * (n - 1.0) / 2.0)
+
+            if supp < self.thd_supp:
+                invalid_bins.append(incr)
+                invalid_bins.append(decr)
+            else:
+                path_pos = 'gi_' + str(col) + 'pos' + str(n) + '.json'
+                path_neg = 'gi_' + str(col) + 'neg' + str(n) + '.json'
+                content_pos = {"gi": [int(col), '+'],
+                               "bin": temp_pos.tolist(), "support": supp}
+                content_neg = {"gi": [int(col), '-'],
+                               "bin": temp_neg.tolist(), "support": supp}
+                # Dataset.write_file(json.dumps(content_pos), path_pos)
+                # Dataset.write_file(json.dumps(content_neg), path_neg)
+                # valid_paths.append([incr, path_pos])
+                # valid_paths.append([decr, path_neg])
+        self.valid_gi_paths = np.asarray(valid_paths)
+        self.invalid_bins = np.array(invalid_bins, dtype='i, O')
+
+    def bin_rank_v2(self, arr, equal=False):
+        n = self.attr_size
+        with np.errstate(invalid='ignore'):
+            if not equal:
+                temp_pos = arr > arr[:, np.newaxis]
+            else:
+                temp_pos = arr >= arr[:, np.newaxis]
+                np.fill_diagonal(temp_pos, 0)
+            supp = float(np.sum(temp_pos)) / float(n * (n - 1.0) / 2.0)
+
+            if supp >= self.thd_supp:
+                bin_pos = temp_pos[np.triu_indices(n, k=1)]
+                bin_neg = temp_pos.T[np.triu_indices(n, k=1)]
+
+                bin_pos_i = np.argwhere(bin_pos)
+                bin_neg_i = np.argwhere(bin_neg)
+                return np.ravel(bin_pos_i), np.ravel(bin_neg_i)
+            else:
+                return np.array([]), np.array([])
+
+                #bin_gen_pos = np.zeros(int(n * (n - 1) / 2), dtype=bool)
+                #bin_gen_neg = np.zeros(int(n * (n - 1) / 2), dtype=bool)
+                #bin_gen_pos[np.ravel(bin_pos_i)] = 1
+                #bin_gen_neg[np.ravel(bin_neg_i)] = 1
+                #bin_ = np.zeros((n, n), dtype=bool)
+                #bin_[np.triu_indices(n, k=1)] = bin_gen_pos
+                #bin_.T[np.triu_indices(n, k=1)] = bin_gen_neg
+                #print(np.ravel(bin_pos_i))
+                #print(temp_pos)
+                #print("\n")
+                #print(bin_)
+                #print("--- next ---")
+            #return bin_pos, bin_neg
 
     @staticmethod
     def bin_rank(arr, equal=False):

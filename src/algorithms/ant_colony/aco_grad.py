@@ -28,15 +28,8 @@ class GradACO:
         else:
             self.data = d_set
         self.attr_index = self.data.attr_cols
-        self.e_factor = 0.1  # evaporation factor
+        # self.e_factor = 0.1  # evaporation factor
         self.p_matrix = np.ones((self.data.column_size, 3), dtype=float)
-
-    def init_pheromones(self):
-        invalid_pats = GP()
-        for obj_gi in self.data.invalid_bins:
-            gi = GI(obj_gi[0], obj_gi[1])
-            invalid_pats.add_gradual_item(gi)
-        self.vaporize_pheromone(invalid_pats, self.e_factor)
 
     def deposit_pheromone(self, pattern):
         lst_attr = []
@@ -54,18 +47,6 @@ class GradACO:
             if int(index) not in lst_attr:
                 i = int(index)
                 self.p_matrix[i][2] += 1
-
-    def vaporize_pheromone(self, pattern, e_factor):
-        lst_attr = []
-        for obj in pattern.gradual_items:
-            attr = obj.attribute_col
-            symbol = obj.symbol
-            lst_attr.append(attr)
-            i = attr
-            if symbol == '+':
-                self.p_matrix[i][0] *= e_factor
-            elif symbol == '-':
-                self.p_matrix[i][1] *= e_factor
 
     def run_ant_colony(self, min_supp, time_diffs=None):
         if time_diffs is None:
@@ -90,17 +71,19 @@ class GradACO:
                     if is_super or is_sub:
                         continue
                     gen_gp = self.validate_gp(rand_gp, min_supp)
-                    is_present = GradACO.is_duplicate(gen_gp, winner_gps, loser_gps)
-                    if gen_gp.support >= min_supp and is_present:
-                        repeated += 1
-                    elif gen_gp.support >= min_supp and not is_present:
-                        winner_gps.append(gen_gp)
+                    if gen_gp.support >= min_supp:
                         self.deposit_pheromone(gen_gp)
+                        is_present = GradACO.is_duplicate(gen_gp, winner_gps, loser_gps)
+                        is_sub = GradACO.check_anti_monotony(winner_gps, gen_gp, subset=True)
+                        if is_present or is_sub:
+                            repeated += 1
+                        else:
+                            winner_gps.append(gen_gp)
                     else:
                         loser_gps.append(gen_gp)
                         # update pheromone as irrelevant with loss_sols
-                        # self.negate_pheromone(gen_gp)
-                    if gen_gp.get_pattern() != rand_gp.get_pattern():
+                        # self.vaporize_pheromone(gen_gp, self.e_factor)
+                    if set(gen_gp.get_pattern()) != set(rand_gp.get_pattern()):
                         loser_gps.append(rand_gp)
                 else:
                     repeated += 1
@@ -123,17 +106,19 @@ class GradACO:
                     if is_super or is_sub:
                         continue
                     gen_gp = self.validate_tgp(rand_gp, min_supp, time_diffs)
-                    is_present = GradACO.is_duplicate(gen_gp, winner_gps, loser_gps)
-                    if gen_gp.support >= min_supp and is_present:
-                        repeated += 1
-                    elif gen_gp.support >= min_supp and not is_present:
-                        winner_gps.append(gen_gp)
+                    if gen_gp.support >= min_supp:
                         self.deposit_pheromone(gen_gp)
+                        is_present = GradACO.is_duplicate(gen_gp, winner_gps, loser_gps)
+                        is_sub = GradACO.check_anti_monotony(winner_gps, gen_gp, subset=True)
+                        if is_present or is_sub:
+                            repeated += 1
+                        else:
+                            winner_gps.append(gen_gp)
                     else:
                         loser_gps.append(gen_gp)
                         # update pheromone as irrelevant with loss_sols
                         # self.negate_pheromone(gen_gp)
-                    if gen_gp.get_pattern() != rand_gp.get_pattern():
+                    if set(gen_gp.get_pattern()) != set(rand_gp.get_pattern()):
                         loser_gps.append(rand_gp)
                 else:
                     repeated += 1
@@ -172,28 +157,55 @@ class GradACO:
                 # fetch pattern
                 # for valid_gi in self.data.valid_gi_paths:
                 #    if valid_gi[0] == gi_obj:
-                arg = np.argwhere(np.isin(self.data.valid_gi_paths[:, 0], gi_obj))
+                # arg = np.argwhere(np.isin(self.data.valid_gi_paths[:, 0], gi_obj))
+                # arg = np.argwhere(np.isin(self.data.valid_bins_index[:, 0], gi_obj))
+                arg = np.argwhere(np.isin(self.data.valid_bins[:, 0], gi_obj))
+                # bin_obj1 = np.isin(self.data.valid_bins[:, 0], gi_obj)
+                # print(bin_obj1)
                 if len(arg) > 0:
                     i = arg[0][0]
-                    valid_gi = self.data.valid_gi_paths[i]
-                    bin_obj = self.data.get_bin(valid_gi[1])
+                    # valid_gi = self.data.valid_gi_paths[i]
+                    # bin_obj = self.data.get_bin(valid_gi[1])
+                    # if bin_data.size <= 0:
+                    #    bin_data = np.array([bin_obj['bin'], bin_obj['bin']])
+                    #    gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
+                    #    gen_pattern.add_gradual_item(gi)
+                    # else:
+                    #    bin_data[1] = bin_obj['bin']
+                    #    temp_bin, supp = self.bin_and(bin_data, self.data.attr_size)
+                    #    if supp >= min_supp:
+                    #        bin_data[0] = temp_bin
+                    #        gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
+                    #        gen_pattern.add_gradual_item(gi)
+                    #        gen_pattern.set_support(supp)
+                    #    else:
+                    #        bad_pattern = GP()
+                    #        gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
+                    #        bad_pattern.add_gradual_item(gi)
+                    #        self.vaporize_pheromone(bad_pattern, bin_obj['support'])
+                    # bin_obj = self.data.valid_bins_index[i]
+                    # temp = [bin_obj[1], bin_obj[2]]
+                    bin_obj = self.data.valid_bins[i]
+                    temp = bin_obj[1]
                     if bin_data.size <= 0:
-                        bin_data = np.array([bin_obj['bin'], bin_obj['bin']])
-                        gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
+                        bin_data = np.array([temp, temp])
+                        gi = GI(bin_obj[0][0], bin_obj[0][1])
                         gen_pattern.add_gradual_item(gi)
                     else:
-                        bin_data[1] = bin_obj['bin']
+                        bin_data[1] = temp
                         temp_bin, supp = self.bin_and(bin_data, self.data.attr_size)
                         if supp >= min_supp:
                             bin_data[0] = temp_bin
-                            gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
+                            gi = GI(bin_obj[0][0], bin_obj[0][1])
                             gen_pattern.add_gradual_item(gi)
                             gen_pattern.set_support(supp)
-                        else:
-                            bad_pattern = GP()
-                            gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
-                            bad_pattern.add_gradual_item(gi)
-                            self.vaporize_pheromone(bad_pattern, bin_obj['support'])
+                            # gen_pattern.set_bin(temp_bin)
+                        # else:
+                        #    bad_pattern = GP()
+                        #    gi = GI(bin_obj[0][0], bin_obj[0][1])
+                        #    bad_pattern.add_gradual_item(gi)
+                        #    print(bad_pattern.to_string())
+                        #    self.vaporize_pheromone(bad_pattern, bin_obj[2])
                         # break
         if len(gen_pattern.gradual_items) <= 1:
             return pattern
@@ -210,31 +222,28 @@ class GradACO:
             if np.any(np.isin(self.data.invalid_bins, gi_obj)):
                 continue
             else:
-                # fetch pattern
-                # for valid_gi in self.data.valid_gi_paths:
-                #    if valid_gi[0] == gi_obj:
-                arg = np.argwhere(np.isin(self.data.valid_gi_paths[:, 0], gi_obj))
+                arg = np.argwhere(np.isin(self.data.valid_bins[:, 0], gi_obj))
                 if len(arg) > 0:
                     i = arg[0][0]
-                    valid_gi = self.data.valid_gi_paths[i]
-                    bin_obj = self.data.get_bin(valid_gi[1])
+                    bin_obj = self.data.valid_bins[i]
                     if bin_data.size <= 0:
-                        bin_data = np.array([bin_obj['bin'], bin_obj['bin']])
-                        gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
+                        bin_data = np.array([bin_obj[1], bin_obj[1]])
+                        gi = GI(bin_obj[0][0], bin_obj[0][1])
                         gen_pattern.add_gradual_item(gi)
                     else:
-                        bin_data[1] = bin_obj['bin']
+                        bin_data[1] = bin_obj[1]
                         temp_bin, supp = self.bin_and(bin_data, self.data.attr_size)
                         if supp >= min_supp:
                             bin_data[0] = temp_bin
-                            gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
+                            gi = GI(bin_obj[0][0], bin_obj[0][1])
                             gen_pattern.add_gradual_item(gi)
                             gen_pattern.set_support(supp)
-                        else:
-                            bad_pattern = GP()
-                            gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
-                            bad_pattern.add_gradual_item(gi)
-                            self.vaporize_pheromone(bad_pattern, bin_obj['support'])
+                            gen_pattern.set_bin(temp_bin)
+                        # else:
+                        #    bad_pattern = GP()
+                        #    gi = GI(bin_obj[0][0], bin_obj[0][1])
+                        #    bad_pattern.add_gradual_item(gi)
+                        #    self.vaporize_pheromone(bad_pattern, bin_obj[2])
                         # break
         if len(gen_pattern.gradual_items) <= 1:
             tgp = TGP(gp=pattern)
@@ -275,29 +284,65 @@ class GradACO:
         result = False
         if subset:
             for pat in lst_p:
-                result = set(pattern.get_pattern()).issubset(set(pat.get_pattern()))
-                if result:
+                result1 = set(pattern.get_pattern()).issubset(set(pat.get_pattern()))
+                result2 = set(pattern.inv_pattern()).issubset(set(pat.get_pattern()))
+                if result1 or result2:
+                    result = True
                     break
         else:
             for pat in lst_p:
-                result = set(pattern.get_pattern()).issuperset(set(pat.get_pattern()))
-                if result:
+                result1 = set(pattern.get_pattern()).issuperset(set(pat.get_pattern()))
+                result2 = set(pattern.inv_pattern()).issuperset(set(pat.get_pattern()))
+                if result1 or result2:
+                    result = True
                     break
         return result
 
     @staticmethod
     def is_duplicate(pattern, lst_winners, lst_losers):
         for pat in lst_losers:
-            if pattern.get_pattern() == pat.get_pattern():
+            if set(pattern.get_pattern()) == set(pat.get_pattern()) or \
+                    set(pattern.inv_pattern()) == set(pat.get_pattern()):
                 return True
         for pat in lst_winners:
-            if pattern.get_pattern() == pat.get_pattern():
+            if set(pattern.get_pattern()) == set(pat.get_pattern()) or \
+                    set(pattern.inv_pattern()) == set(pat.get_pattern()):
                 return True
         return False
 
     @staticmethod
     def bin_and(bins, n):
-        temp_bin = np.array(bins[0]) * np.array(bins[1])
-        # temp_bin = np.logical_and(bins[0], bins[1])
+        # bin_ = np.zeros((n, n), dtype=bool)
+        temp_bin = bins[0] * bins[1]
         supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
         return temp_bin, supp
+
+    @staticmethod
+    def bin_and_v2(bins, n):
+        # bin_ = np.zeros((n, n), dtype=bool)
+        bin1 = GradACO.recreate_bin(bins[0], int(n * (n - 1) / 2))
+        bin2 = GradACO.recreate_bin(bins[1], int(n * (n - 1) / 2))
+        temp_bin = bin1 * bin2
+        supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
+
+        bin_pos = temp_bin[np.triu_indices(n, k=1)]
+        bin_neg = temp_bin.T[np.triu_indices(n, k=1)]
+        bin_pos_i = np.argwhere(bin_pos)
+        bin_neg_i = np.argwhere(bin_neg)
+        # print(temp_bin)
+        # print(supp)
+        # return temp_bin, supp
+        return [np.ravel(bin_pos_i), np.ravel(bin_neg_i)], supp
+
+    @staticmethod
+    def recreate_bin(bin_index, n):
+        bin_gen_pos = np.zeros(int(n * (n - 1) / 2), dtype=bool)
+        bin_gen_neg = np.zeros(int(n * (n - 1) / 2), dtype=bool)
+        bin_gen_pos[np.ravel(bin_index[0])] = 1
+        bin_gen_neg[np.ravel(bin_index[1])] = 1
+        bin_ = np.zeros((n, n), dtype=bool)
+        bin_[np.triu_indices(n, k=1)] = bin_gen_pos
+        bin_.T[np.triu_indices(n, k=1)] = bin_gen_neg
+        # print("\n")
+        # print(bin_)
+        return bin_

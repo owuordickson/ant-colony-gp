@@ -148,5 +148,5 @@ if __name__ == "__main__":
     # wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
     wr_text += str(res_text)
     f_name = str('res_aco' + str(end).replace('.', '', 1) + '.txt')
-    write_file(wr_text, f_name)
+    # write_file(wr_text, f_name)
     print(wr_text)

@@ -20,6 +20,13 @@ class GI:
         self.symbol = symbol
         self.gradual_item = tuple([attr_col, symbol])
 
+    def inv(self):
+        if self.symbol == '+':
+            temp = tuple([self.attribute_col, '-'])
+        else:
+            temp = tuple([self.attribute_col, '+'])
+        return temp
+
     def to_string(self):
         return str(self.attribute_col) + self.symbol
 
@@ -29,9 +36,13 @@ class GP:
     def __init__(self):
         self.gradual_items = list()
         self.support = 0
+        self.bin = np.array([])
 
     def set_support(self, support):
         self.support = round(support, 3)
+
+    def set_bin(self, bin_data):
+        self.bin = bin_data
 
     def add_gradual_item(self, item):
         self.gradual_items.append(item)
@@ -40,6 +51,12 @@ class GP:
         pattern = list()
         for item in self.gradual_items:
             pattern.append(item.gradual_item)
+        return pattern
+
+    def inv_pattern(self):
+        pattern = list()
+        for gi in self.gradual_items:
+            pattern.append(gi.inv())
         return pattern
 
     def to_string(self):
