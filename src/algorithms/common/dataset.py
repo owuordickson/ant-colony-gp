@@ -145,7 +145,6 @@ class Dataset:
             attr_data = None
         # else:
             # 1. do not construct bins (due to transformation)
-            # 2. store self.data for T-GRAANK
         self.data = None
         gc.collect()
 
