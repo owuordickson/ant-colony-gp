@@ -47,7 +47,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
         wr_line += "Number of cores: " + str(num_cores) + '\n\n'
 
         for txt in d_set.title:
-            wr_line += (str(txt.key) + '. ' + str(txt.value) + '\n')
+            wr_line += (str(txt.key) + '. ' + str(txt.value.decode()) + '\n')
 
         wr_line += str("\nFile: " + f_path + '\n')
         wr_line += str("\nPattern : Support" + '\n')
@@ -58,7 +58,6 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
         wr_line += "\nPheromone Matrix\n"
         wr_line += str(ac.p_matrix)
         # ac.plot_pheromone_matrix()
-        d_set.clean_memory()
         return wr_line
     except ArithmeticError as error:
         wr_line = "Failed: " + str(error)

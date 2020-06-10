@@ -20,9 +20,10 @@ import csv
 from dateutil.parser import parse
 import time
 import numpy as np
-import os
 from pathlib import Path
-import json
+import h5py
+import gc
+import os
 
 # import tables
 # from src.algorithms.common.gp import GI, GP
@@ -32,34 +33,48 @@ import json
 class Dataset:
 
     def __init__(self, file_path, min_sup=0, eq=False, init=True):
-        data = Dataset.read_csv(file_path)
-        if len(data) <= 1:
-            self.data = np.array([])
-            print("csv file read error")
-            raise Exception("Unable to read csv file or file has no data")
-        else:
-            print("Data fetched from csv file")
-            self.data = np.array([])
-            self.title = self.get_title(data)  # optimized (numpy)
-            self.time_cols = self.get_time_cols()  # optimized (numpy)
-            self.attr_cols = self.get_attributes()  # optimized (numpy)
-            self.column_size = self.get_attribute_no()  # optimized (cdef)
-            self.size = self.get_size()  # optimized (cdef)
-            self.attr_size = 0
+        self.h5_file = str(Path(file_path).stem) + str('.h5')
+        if not os.path.exists(self.h5_file):
+            print("Fetching data from h5 file")
+            h5f = h5py.File(self.h5_file, 'r')
+            self.title = h5f['dataset/title'][:]
+            self.time_cols = h5f['dataset/time_cols'][:]
+            self.attr_cols = h5f['dataset/attr_cols'][:]
+            size = h5f['dataset/size'][:]
+            self.column_size = size[0]
+            self.size = size[1]
+            self.invalid_bins = h5f['dataset/invalid_bins'][:]
+            # self.attr_size = 0
+            h5f.close()
             self.thd_supp = min_sup
             self.equal = eq
-            self.valid_bins = np.array([])
-            self.valid_bins_index = np.array([])
-            self.valid_gi_paths = np.array([])
-            self.invalid_bins = np.array([])
-            self.gen_paths = list()
-            if init:
-                self.init_attributes()
+        else:
+            data = Dataset.read_csv(file_path)
+            if len(data) <= 1:
+                self.data = np.array([])
+                print("csv file read error")
+                raise Exception("Unable to read csv file or file has no data")
+            else:
+                print("Data fetched from csv file")
+                self.data = np.array([])
+                self.title = self.get_title(data)  # optimized (numpy)
+                self.time_cols = self.get_time_cols()  # optimized (numpy)
+                self.attr_cols = self.get_attributes()  # optimized (numpy)
+                self.column_size = self.get_attribute_no()  # optimized (cdef)
+                self.size = self.get_size()  # optimized (cdef)
+                self.attr_size = 0
+                self.thd_supp = min_sup
+                self.equal = eq
+                self.invalid_bins = np.array([])
+                self.valid_bins = np.array([])  # to be removed
+                # self.data_name = ''
+                data = None
+                self.init_attributes(init)
 
     def get_size(self):
         size = self.data.shape[0]
-        if self.title.size > 0:
-            size += 1
+        # if self.title.size > 0:
+        #    size += 1
         return size
 
     def get_attribute_no(self):
@@ -81,18 +96,15 @@ class Dataset:
 
     def convert_data_to_array(self, data, has_title=False):
         # convert csv data into array
+        title = np.array([])
         if has_title:
             keys = np.arange(len(data[0]))
-            values = data[0]
+            values = np.array(data[0], dtype='S')
             title = np.rec.fromarrays((keys, values), names=('key', 'value'))
-            # del data[0]
             data = np.delete(data, 0, 0)
-            # convert csv data into array
-            self.data = np.asarray(data)
-            return np.array(title)
-        else:
-            self.data = np.asarray(data)
-            return np.array([])
+        # convert csv data into array
+        self.data = np.array(np.copy(data), dtype=float)
+        return title
 
     def get_attributes(self):
         all_cols = np.arange(self.get_attribute_no())
@@ -119,34 +131,27 @@ class Dataset:
         else:
             return np.array([])
 
-    def get_bin(self, gi_path):
-        return Dataset.read_json(gi_path)
-
-    def clean_memory(self):
-        for gi_obj in self.valid_gi_paths:
-            Dataset.delete_file(gi_obj[1])
-
-        for file in self.gen_paths:
-            Dataset.delete_file(file)
-
-        self.valid_gi_paths = np.array([])
-        self.gen_paths = list()
-
-    def init_attributes(self):
+    def init_attributes(self, init):
         # (check) implement parallel multiprocessing
-        # transpose csv array data
-        # if attr:
-        # r, c = self.data.shape
-        attr_data = self.data.T
-        # attr_data = np.transpose(self.data)
-        # self.attr_size = attr_data.shape[1]
-        self.attr_size = len(attr_data[self.attr_cols[0]])
-        # self.construct_bins(attr_data)
-        self.construct_bins_v1(attr_data)
+        # create h5 groups to store class attributes
+        self.init_h5_groups()
+        if init:
+            # transpose csv array data
+            attr_data = self.data.copy().T
+            self.attr_size = len(attr_data[self.attr_cols[0]])
+            self.construct_bins_v1(attr_data)
+            self.construct_bins_v4(attr_data)
+            attr_data = None
+        # else:
+            # 1. do not construct bins (due to transformation)
+            # 2. store self.data for T-GRAANK
+        self.data = None
+        gc.collect()
 
     def update_attributes(self, attr_data):
         self.attr_size = len(attr_data[self.attr_cols[0]])
         self.construct_bins_v1(attr_data)
+        gc.collect()
 
     def construct_bins_v1(self, attr_data):
         # execute binary rank to calculate support of pattern
@@ -156,161 +161,74 @@ class Dataset:
         invalid_bins = list()
         for col in self.attr_cols:
             col_data = np.array(attr_data[col], dtype=float)
-            incr = tuple([col, '+'])
-            decr = tuple([col, '-'])
-            temp_pos, temp_neg = Dataset.bin_rank(col_data, equal=self.equal)
+            incr = np.array((col, '+'), dtype='i, S1')
+            decr = np.array((col, '-'), dtype='i, S1')
+            temp_pos = Dataset.bin_rank(col_data, equal=self.equal)
             supp = float(np.sum(temp_pos)) / float(n * (n - 1.0) / 2.0)
 
             if supp < self.thd_supp:
                 invalid_bins.append(incr)
                 invalid_bins.append(decr)
             else:
-                valid_bins.append([incr, temp_pos])
-                valid_bins.append([decr, temp_neg])
-        self.valid_bins = np.asarray(valid_bins)
-        self.invalid_bins = np.array(invalid_bins, dtype='i, O')
-        # self.data = np.array([])
-
-    def construct_bins_v2(self, attr_data):
-        # execute binary rank to calculate support of pattern
-        # valid_bins = list()  # numpy is very slow for append operations
-        n = self.attr_size
-        valid_paths = list()
-        invalid_bins = list()
-        for col in self.attr_cols:
-            col_data = np.array(attr_data[col], dtype=float)
-            incr = tuple([col, '+'])
-            decr = tuple([col, '-'])
-            temp_pos, temp_neg = Dataset.bin_rank(col_data, equal=self.equal)
-            supp = float(np.sum(temp_pos)) / float(n * (n - 1.0) / 2.0)
-
-            if supp < self.thd_supp:
-                invalid_bins.append(incr)
-                invalid_bins.append(decr)
-            else:
-                # k = np.count_nonzero(np.isnan(col_data))
-                path_pos = 'gi_' + str(col) + 'pos' + str(n) + '.json'
-                path_neg = 'gi_' + str(col) + 'neg' + str(n) + '.json'
-                content_pos = {"gi": [int(col), '+'],
-                               "bin": temp_pos.tolist(), "support": supp}
-                content_neg = {"gi": [int(col), '-'],
-                               "bin": temp_neg.tolist(), "support": supp}
-                Dataset.write_file(json.dumps(content_pos), path_pos)
-                Dataset.write_file(json.dumps(content_neg), path_neg)
-                valid_paths.append([incr, path_pos])
-                valid_paths.append([decr, path_neg])
-        self.valid_gi_paths = np.asarray(valid_paths)
-        self.invalid_bins = np.array(invalid_bins, dtype='i, O')
-        # self.data = np.array([])
-
-    def construct_bins_v3(self, attr_data):
-        # execute binary rank to calculate support of pattern
-        # valid_bins = list()  # numpy is very slow for append operations
-        n = self.attr_size
-        valid_bins = list()
-        invalid_bins = list()
-        for col in self.attr_cols:
-            col_data = np.array(attr_data[col], dtype=float)
-            incr = tuple([col, '+'])
-            decr = tuple([col, '-'])
-            bin_pos_index, bin_neg_index = self.bin_rank_v2(col_data, equal=self.equal)
-
-            if bin_pos_index.size <= 0 and bin_neg_index.size <= 0:
-                # print(incr)
-                invalid_bins.append(incr)
-                invalid_bins.append(decr)
-            else:
-                valid_bins.append([incr, bin_pos_index, bin_neg_index])
-                valid_bins.append([decr, bin_neg_index, bin_pos_index])
-            #supp = float(np.sum(temp_pos)) / temp_pos.size
-            #supn = float(np.sum(temp_neg)) / temp_neg.size
-            #if supp < self.thd_supp and supn < self.thd_supp:
-            #    invalid_bins.append(incr)
-            #    invalid_bins.append(decr)
-            #elif supp > supn:
-            #    invalid_bins.append(decr)
-                # gi = GP()
-                # gi.add_gradual_item(GI(incr[0], incr[1]))
-                # gi.set_support(supp)
-                # gi.set_bin(temp_pos)
-            #   valid_bins.append([incr, temp_pos])
-            #else:
-            #    invalid_bins.append(incr)
-                # gi = GP()
-                # gi.add_gradual_item(GI(decr[0], decr[1]))
-                # gi.set_support(supn)
-                # gi.set_bin(temp_neg)
-            #    valid_bins.append([decr, temp_neg])
-        # for gi in valid_bins:
-        #    print(gi.to_string())
-        # self.valid_bins = np.asarray(valid_bins)
-        self.valid_bins_index = np.asarray(valid_bins)
-        self.invalid_bins = np.array(invalid_bins, dtype='i, O')
-        #print(self.valid_bins_index[:, 0])
+                valid_bins.append(np.array([incr.tolist(), temp_pos]))
+                valid_bins.append(np.array([decr.tolist(), temp_pos.T]))
+        self.valid_bins = np.array(valid_bins)
+        self.invalid_bins = np.array(invalid_bins)
 
     def construct_bins_v4(self, attr_data):
         # execute binary rank to calculate support of pattern
-        # valid_bins = list()  # numpy is very slow for append operations
         n = self.attr_size
-        valid_paths = list()
+        # self.data_name = 'step_' + str(int(self.size - self.attr_size))
+        # print(self.data_name)
         invalid_bins = list()
+        valid_bins = list()  # to be removed
         for col in self.attr_cols:
             col_data = np.array(attr_data[col], dtype=float)
-            incr = tuple([col, '+'])
-            decr = tuple([col, '-'])
-            temp_pos, temp_neg = Dataset.bin_rank(col_data, equal=self.equal)
+            incr = np.array((col, '+'), dtype='i, S1')
+            decr = np.array((col, '-'), dtype='i, S1')
+            temp_pos = Dataset.bin_rank(col_data, equal=self.equal)
             supp = float(np.sum(temp_pos)) / float(n * (n - 1.0) / 2.0)
 
             if supp < self.thd_supp:
                 invalid_bins.append(incr)
                 invalid_bins.append(decr)
             else:
-                path_pos = 'gi_' + str(col) + 'pos' + str(n) + '.json'
-                path_neg = 'gi_' + str(col) + 'neg' + str(n) + '.json'
-                content_pos = {"gi": [int(col), '+'],
-                               "bin": temp_pos.tolist(), "support": supp}
-                content_neg = {"gi": [int(col), '-'],
-                               "bin": temp_neg.tolist(), "support": supp}
-                # Dataset.write_file(json.dumps(content_pos), path_pos)
-                # Dataset.write_file(json.dumps(content_neg), path_neg)
-                # valid_paths.append([incr, path_pos])
-                # valid_paths.append([decr, path_neg])
-        self.valid_gi_paths = np.asarray(valid_paths)
-        self.invalid_bins = np.array(invalid_bins, dtype='i, O')
+                valid_bin_pos = np.array([incr.tolist(), temp_pos])
+                valid_bin_neg = np.array([decr.tolist(), temp_pos.T])
+                valid_bins.append(valid_bin_pos)
+                # self.create_h5_data(self.data_name, valid_bin_pos)
+                # self.create_h5_data(self.data_name, valid_bin_neg)
+        self.invalid_bins = np.array(invalid_bins)
+        # print(self.invalid_bins)
+        print(np.array(valid_bins)[:, 0])
+        # h5f = h5py.File(self.h5_file, 'r+')
+        # del h5f['dataset/invalid_bins']
+        # h5f['dataset'].create_dataset('invalid_bins', data=self.invalid_bins)
+        # h5f.close()
 
-    def bin_rank_v2(self, arr, equal=False):
-        n = self.attr_size
-        with np.errstate(invalid='ignore'):
-            if not equal:
-                temp_pos = arr > arr[:, np.newaxis]
-            else:
-                temp_pos = arr >= arr[:, np.newaxis]
-                np.fill_diagonal(temp_pos, 0)
-            supp = float(np.sum(temp_pos)) / float(n * (n - 1.0) / 2.0)
+    def init_h5_groups(self):
+        if os.path.exists(self.h5_file):
+            h5f = h5py.File(self.h5_file, 'r')
+            print(list(h5f['dataset'].keys()))
+            # print(h5f['dataset/size'][:])
+            # print(h5f['dataset/title'][:])
+            # print(h5f['dataset/valid_bins'])
+            # print(h5f['dataset/invalid_bins'][:])
+            h5f.close()
+        else:
+            with h5py.File(self.h5_file, 'w') as h5f:
+                grp = h5f.require_group('dataset')
+                grp.require_group('invalid_bins')
+                grp.require_group('valid_bins')
+                grp.require_group('p_matrix')
 
-            if supp >= self.thd_supp:
-                bin_pos = temp_pos[np.triu_indices(n, k=1)]
-                bin_neg = temp_pos.T[np.triu_indices(n, k=1)]
+                grp.create_dataset('title', data=self.title)
+                grp.create_dataset('data', data=self.data)
+                grp.create_dataset('size', data=np.array([self.column_size, self.size]))
+                grp.create_dataset('time_cols', data=self.time_cols)
+                grp.create_dataset('attr_cols', data=self.attr_cols)
 
-                bin_pos_i = np.argwhere(bin_pos)
-                bin_neg_i = np.argwhere(bin_neg)
-                return np.ravel(bin_pos_i), np.ravel(bin_neg_i)
-            else:
-                return np.array([]), np.array([])
-
-                #bin_gen_pos = np.zeros(int(n * (n - 1) / 2), dtype=bool)
-                #bin_gen_neg = np.zeros(int(n * (n - 1) / 2), dtype=bool)
-                #bin_gen_pos[np.ravel(bin_pos_i)] = 1
-                #bin_gen_neg[np.ravel(bin_neg_i)] = 1
-                #bin_ = np.zeros((n, n), dtype=bool)
-                #bin_[np.triu_indices(n, k=1)] = bin_gen_pos
-                #bin_.T[np.triu_indices(n, k=1)] = bin_gen_neg
-                #print(np.ravel(bin_pos_i))
-                #print(temp_pos)
-                #print("\n")
-                #print(bin_)
-                #print("--- next ---")
-            #return bin_pos, bin_neg
+                h5f.close()
 
     @staticmethod
     def bin_rank(arr, equal=False):
@@ -320,8 +238,7 @@ class Dataset:
             else:
                 temp_pos = arr <= arr[:, np.newaxis]
                 np.fill_diagonal(temp_pos, 0)
-            temp_neg = temp_pos.T
-            return temp_pos, temp_neg
+            return temp_pos
 
     @staticmethod
     def read_csv(file):
@@ -333,23 +250,6 @@ class Dataset:
             temp = list(reader)
             f.close()
         return temp
-
-    @staticmethod
-    def read_json(file):
-        with open(file, 'r') as f:
-            data = json.load(f)
-        return data
-
-    @staticmethod
-    def write_file(data, path):
-        with open(path, 'w') as f:
-            f.write(data)
-            f.close()
-
-    @staticmethod
-    def delete_file(file):
-        if os.path.exists(file):
-            os.remove(file)
 
     @staticmethod
     def test_time(date_str):

@@ -1,5 +1,5 @@
 matplotlib
 python-dateutil
-numpy
 scikit-fuzzy
+h5py
 cython

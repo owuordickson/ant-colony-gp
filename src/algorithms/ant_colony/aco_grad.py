@@ -139,7 +139,7 @@ class GradACO:
             elif (x >= pos) and (x < neg):
                 temp = GI(self.attr_index[i], '-')
             else:
-                # temp = tuple([self.data.attr_index[i], 'x'])
+                # temp = GI(self.attr_index[i], 'x')
                 continue
             pattern.add_gradual_item(temp)
         return pattern
@@ -149,9 +149,11 @@ class GradACO:
         gen_pattern = GP()
         bin_data = np.array([])
 
-        for obj in pattern.get_pattern():
-            gi_obj = np.array([obj], dtype='i, O')
+        for obj in pattern.gradual_items:
+            gi_obj = obj.gradual_item
+            # gi_obj = np.array([obj], dtype='i, O')
             if np.any(np.isin(self.data.invalid_bins, gi_obj)):
+                # print(gi_obj)
                 continue
             else:
                 # fetch pattern
