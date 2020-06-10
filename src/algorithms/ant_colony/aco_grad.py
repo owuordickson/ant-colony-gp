@@ -318,33 +318,3 @@ class GradACO:
         temp_bin = bins[0] * bins[1]
         supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
         return temp_bin, supp
-
-    @staticmethod
-    def bin_and_v2(bins, n):
-        # bin_ = np.zeros((n, n), dtype=bool)
-        bin1 = GradACO.recreate_bin(bins[0], int(n * (n - 1) / 2))
-        bin2 = GradACO.recreate_bin(bins[1], int(n * (n - 1) / 2))
-        temp_bin = bin1 * bin2
-        supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
-
-        bin_pos = temp_bin[np.triu_indices(n, k=1)]
-        bin_neg = temp_bin.T[np.triu_indices(n, k=1)]
-        bin_pos_i = np.argwhere(bin_pos)
-        bin_neg_i = np.argwhere(bin_neg)
-        # print(temp_bin)
-        # print(supp)
-        # return temp_bin, supp
-        return [np.ravel(bin_pos_i), np.ravel(bin_neg_i)], supp
-
-    @staticmethod
-    def recreate_bin(bin_index, n):
-        bin_gen_pos = np.zeros(int(n * (n - 1) / 2), dtype=bool)
-        bin_gen_neg = np.zeros(int(n * (n - 1) / 2), dtype=bool)
-        bin_gen_pos[np.ravel(bin_index[0])] = 1
-        bin_gen_neg[np.ravel(bin_index[1])] = 1
-        bin_ = np.zeros((n, n), dtype=bool)
-        bin_[np.triu_indices(n, k=1)] = bin_gen_pos
-        bin_.T[np.triu_indices(n, k=1)] = bin_gen_neg
-        # print("\n")
-        # print(bin_)
-        return bin_

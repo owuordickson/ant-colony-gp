@@ -45,6 +45,7 @@ class Dataset:
             self.size = size[1]
             self.invalid_bins = h5f['dataset/invalid_bins'][:]
             # self.attr_size = 0
+            # self.table_name = ''
             h5f.close()
             self.thd_supp = min_sup
             self.equal = eq
@@ -63,11 +64,11 @@ class Dataset:
                 self.column_size = self.get_attribute_no()  # optimized (cdef)
                 self.size = self.get_size()  # optimized (cdef)
                 self.attr_size = 0
+                self.table_name = ''
                 self.thd_supp = min_sup
                 self.equal = eq
                 self.invalid_bins = np.array([])
                 self.valid_bins = np.array([])  # to be removed
-                # self.data_name = ''
                 data = None
                 self.init_attributes(init)
 
@@ -178,10 +179,10 @@ class Dataset:
     def construct_bins_v4(self, attr_data):
         # execute binary rank to calculate support of pattern
         n = self.attr_size
-        # self.data_name = 'step_' + str(int(self.size - self.attr_size))
-        # print(self.data_name)
+        self.table_name = 'step_' + str(int(self.size - self.attr_size))
+        # print(self.table_name)
         invalid_bins = list()
-        valid_bins = list()  # to be removed
+        # valid_bins = list()  # to be removed
         for col in self.attr_cols:
             col_data = np.array(attr_data[col], dtype=float)
             incr = np.array((col, '+'), dtype='i, S1')
@@ -193,39 +194,36 @@ class Dataset:
                 invalid_bins.append(incr)
                 invalid_bins.append(decr)
             else:
-                valid_bin_pos = np.array([incr.tolist(), temp_pos])
-                valid_bin_neg = np.array([decr.tolist(), temp_pos.T])
-                valid_bins.append(valid_bin_pos)
-                # self.create_h5_data(self.data_name, valid_bin_pos)
-                # self.create_h5_data(self.data_name, valid_bin_neg)
+                # valid_bin_pos = np.array([incr.tolist(), temp_pos])
+                # valid_bin_neg = np.array([decr.tolist(), temp_pos.T])
+                # valid_bins.append(valid_bin_pos)
+
+                grp = 'dataset/' + self.table_name + '/valid_bins/' + str(col) + '_pos'
+                # self.add_h5_dataset(grp, temp_pos)
+                grp = 'dataset/' + self.table_name + '/valid_bins/' + str(col) + '_neg'
+                # self.add_h5_dataset(grp, temp_pos.T)
         self.invalid_bins = np.array(invalid_bins)
-        # print(self.invalid_bins)
-        # print(np.array(valid_bins)[:, 0])
-        # h5f = h5py.File(self.h5_file, 'r+')
-        # del h5f['dataset/invalid_bins']
-        # h5f['dataset'].create_dataset('invalid_bins', data=self.invalid_bins)
-        # h5f.close()
+        grp = 'dataset/' + self.table_name + '/invalid_bins'
+        # self.add_h5_dataset(grp, self.invalid_bins)
 
     def init_h5_groups(self):
         if os.path.exists(self.h5_file):
             h5f = h5py.File(self.h5_file, 'r')
-            print(list(h5f['dataset'].keys()))
+            print(list(h5f['dataset/step_0/valid_bins'].keys()))
             h5f.close()
-            temp = self.read_h5_dataset('dataset/title')
-            print(temp)
+            # temp = self.read_h5_dataset('dataset/step_0/valid_bins/0_neg')
+            # print(temp)
         else:
             with h5py.File(self.h5_file, 'w') as h5f:
                 grp = h5f.require_group('dataset')
-                grp.require_group('invalid_bins')
-                grp.require_group('valid_bins')
-                grp.require_group('p_matrix')
-
+                # grp.require_group('invalid_bins')
+                # grp.require_group('valid_bins')
+                # grp.require_group('p_matrix')
                 grp.create_dataset('title', data=self.title)
                 grp.create_dataset('data', data=self.data)
                 grp.create_dataset('size', data=np.array([self.column_size, self.size]))
                 grp.create_dataset('time_cols', data=self.time_cols)
                 grp.create_dataset('attr_cols', data=self.attr_cols)
-
                 h5f.close()
 
     def read_h5_dataset(self, group):
@@ -233,6 +231,11 @@ class Dataset:
         temp = h5f[group][:]
         h5f.close()
         return temp
+
+    def add_h5_dataset(self, group, data):
+        h5f = h5py.File(self.h5_file, 'r+')
+        h5f.create_dataset(group, data=data)
+        h5f.close()
 
     @staticmethod
     def bin_rank(arr, equal=False):
