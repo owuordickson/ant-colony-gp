@@ -29,7 +29,13 @@ class GradACO:
             self.data = d_set
         self.attr_index = self.data.attr_cols
         # self.e_factor = 0.1  # evaporation factor
-        self.p_matrix = np.ones((self.data.column_size, 3), dtype=float)
+        # fetch previous p_matrix from memory
+        grp = 'dataset/' + self.data.table_name + '/p_matrix'
+        p_matrix = self.data.read_h5_dataset(grp)
+        if p_matrix.size > 0:
+            self.p_matrix = p_matrix
+        else:
+            self.p_matrix = np.ones((self.data.column_size, 3), dtype=float)
 
     def deposit_pheromone(self, pattern):
         lst_attr = []
@@ -87,6 +93,8 @@ class GradACO:
                         loser_gps.append(rand_gp)
                 else:
                     repeated += 1
+        grp = 'dataset/' + self.data.table_name + '/p_matrix'
+        self.data.add_h5_dataset(grp, self.p_matrix)
         return winner_gps
 
     def fetch_tgps(self, min_supp, time_diffs):

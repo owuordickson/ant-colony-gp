@@ -214,12 +214,17 @@ class Dataset:
 
     def read_h5_dataset(self, group):
         h5f = h5py.File(self.h5_file, 'r')
-        temp = h5f[group][:]
-        h5f.close()
-        return temp
+        if group in h5f:
+            temp = h5f[group][:]
+            h5f.close()
+            return temp
+        else:
+            return np.array([])
 
     def add_h5_dataset(self, group, data):
         h5f = h5py.File(self.h5_file, 'r+')
+        if group in h5f:
+            del h5f[group]
         h5f.create_dataset(group, data=data)
         h5f.close()
 
