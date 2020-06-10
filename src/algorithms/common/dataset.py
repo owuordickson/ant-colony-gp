@@ -200,7 +200,7 @@ class Dataset:
                 # self.create_h5_data(self.data_name, valid_bin_neg)
         self.invalid_bins = np.array(invalid_bins)
         # print(self.invalid_bins)
-        print(np.array(valid_bins)[:, 0])
+        # print(np.array(valid_bins)[:, 0])
         # h5f = h5py.File(self.h5_file, 'r+')
         # del h5f['dataset/invalid_bins']
         # h5f['dataset'].create_dataset('invalid_bins', data=self.invalid_bins)
@@ -210,11 +210,9 @@ class Dataset:
         if os.path.exists(self.h5_file):
             h5f = h5py.File(self.h5_file, 'r')
             print(list(h5f['dataset'].keys()))
-            # print(h5f['dataset/size'][:])
-            # print(h5f['dataset/title'][:])
-            # print(h5f['dataset/valid_bins'])
-            # print(h5f['dataset/invalid_bins'][:])
             h5f.close()
+            temp = self.read_h5_dataset('dataset/title')
+            print(temp)
         else:
             with h5py.File(self.h5_file, 'w') as h5f:
                 grp = h5f.require_group('dataset')
@@ -229,6 +227,12 @@ class Dataset:
                 grp.create_dataset('attr_cols', data=self.attr_cols)
 
                 h5f.close()
+
+    def read_h5_dataset(self, group):
+        h5f = h5py.File(self.h5_file, 'r')
+        temp = h5f[group][:]
+        h5f.close()
+        return temp
 
     @staticmethod
     def bin_rank(arr, equal=False):
