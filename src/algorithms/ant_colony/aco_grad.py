@@ -130,6 +130,8 @@ class GradACO:
                         loser_gps.append(rand_gp)
                 else:
                     repeated += 1
+        grp = 'dataset/' + self.data.table_name + '/p_matrix'
+        self.data.add_h5_dataset(grp, self.p_matrix)
         return winner_gps
 
     def generate_rand_pattern(self):
@@ -158,7 +160,7 @@ class GradACO:
         bin_data = np.array([])
 
         for gi in pattern.gradual_items:
-            if np.any(np.isin(self.data.invalid_bins, gi.gradual_item)):
+            if self.data.invalid_bins.size > 0 and np.any(np.isin(self.data.invalid_bins, gi.gradual_item)):
                 continue
             else:
                 grp = 'dataset/' + self.data.table_name + '/valid_bins/' + gi.as_string()
@@ -179,6 +181,36 @@ class GradACO:
             return gen_pattern
 
     def validate_tgp(self, pattern, min_supp, t_diffs):
+        # pattern = [('2', '+'), ('4', '+')]
+        gen_pattern = GP()
+        bin_data = np.array([])
+
+        for gi in pattern.gradual_items:
+            if self.data.invalid_bins.size > 0 and np.any(np.isin(self.data.invalid_bins, gi.gradual_item)):
+                continue
+            else:
+                grp = 'dataset/' + self.data.table_name + '/valid_bins/' + gi.as_string()
+                temp = self.data.read_h5_dataset(grp)
+                if bin_data.size <= 0:
+                    bin_data = np.array([temp, temp])
+                    gen_pattern.add_gradual_item(gi)
+                else:
+                    bin_data[1] = temp
+                    temp_bin, supp = self.bin_and(bin_data, self.data.attr_size)
+                    if supp >= min_supp:
+                        bin_data[0] = temp_bin
+                        gen_pattern.add_gradual_item(gi)
+                        gen_pattern.set_support(supp)
+        if len(gen_pattern.gradual_items) <= 1:
+            tgp = TGP(gp=pattern)
+            return tgp
+        else:
+            # t_lag = FuzzyMF.calculate_time_lag(FuzzyMF.get_patten_indices(bin_data[0]), t_diffs, min_supp)
+            t_lag = calculate_time_lag(bin_data[0], t_diffs)
+            tgp = TGP(gp=gen_pattern, t_lag=t_lag)
+            return tgp
+
+    def validate_tgp_v1(self, pattern, min_supp, t_diffs):
         # pattern = [('2', '+'), ('4', '+')]
         gen_pattern = GP()
         bin_data = np.array([])

@@ -49,6 +49,7 @@ class Dataset:
             h5f.close()
             self.thd_supp = min_sup
             self.equal = eq
+            self.data = None
         else:
             data = Dataset.read_csv(file_path)
             if len(data) <= 1:
@@ -68,7 +69,6 @@ class Dataset:
                 self.thd_supp = min_sup
                 self.equal = eq
                 self.invalid_bins = np.array([])
-                # self.valid_bins = np.array([])  # to be removed
                 data = None
                 self.init_attributes(init)
 
@@ -104,7 +104,7 @@ class Dataset:
             title = np.rec.fromarrays((keys, values), names=('key', 'value'))
             data = np.delete(data, 0, 0)
         # convert csv data into array
-        self.data = np.array(np.copy(data), dtype=float)
+        self.data = np.asarray(data)
         return title
 
     def get_attributes(self):
@@ -207,10 +207,12 @@ class Dataset:
         with h5py.File(self.h5_file, 'w') as h5f:
             grp = h5f.require_group('dataset')
             grp.create_dataset('title', data=self.title)
-            grp.create_dataset('data', data=self.data)
+            data = np.array(self.data.copy()).astype('S')
+            grp.create_dataset('data', data=data)
             grp.create_dataset('time_cols', data=self.time_cols)
             grp.create_dataset('attr_cols', data=self.attr_cols)
             h5f.close()
+            data = None
 
     def read_h5_dataset(self, group):
         h5f = h5py.File(self.h5_file, 'r')

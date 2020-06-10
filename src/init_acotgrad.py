@@ -55,9 +55,9 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
         for txt in d_set.title:
             col = int(txt[0])
             if col == refItem:
-                wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '**' + '\n')
+                wr_line += (str(txt[0]) + '. ' + str(txt[1].decode()) + '**' + '\n')
             else:
-                wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '\n')
+                wr_line += (str(txt[0]) + '. ' + str(txt[1].decode()) + '\n')
 
         wr_line += str("\nFile: " + f_path + '\n')
         wr_line += str("\nPattern : Support" + '\n')
@@ -69,9 +69,8 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
                                 ' | ' + str(tgp.time_lag.to_string()) + '\n')
         # print("\nPheromone Matrix")
         # print(ac.p_matrix)
-        # d_set.clean_memory()
         return wr_line
-    except Exception as error:
+    except ArithmeticError as error:
         wr_line = "Failed: " + str(error)
         print(error)
         return wr_line
