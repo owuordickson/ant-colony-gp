@@ -158,47 +158,11 @@ class GradACO:
         bin_data = np.array([])
 
         for gi in pattern.gradual_items:
-            # gi_obj = obj.gradual_item
-            # gi_obj = np.array([gi], dtype='i, O')
             if np.any(np.isin(self.data.invalid_bins, gi.gradual_item)):
-                # print(gi_obj)
                 continue
             else:
-                # fetch pattern
-                # for valid_gi in self.data.valid_gi_paths:
-                #    if valid_gi[0] == gi_obj:
-                # arg = np.argwhere(np.isin(self.data.valid_gi_paths[:, 0], gi_obj))
-                # arg = np.argwhere(np.isin(self.data.valid_bins_index[:, 0], gi_obj))
-                # arg = np.argwhere(np.isin(self.data.valid_bins[:, 0], gi_obj))
-                # bin_obj1 = np.isin(self.data.valid_bins[:, 0], gi_obj)
-                # print(bin_obj1)
                 grp = 'dataset/' + self.data.table_name + '/valid_bins/' + gi.as_string()
                 temp = self.data.read_h5_dataset(grp)
-                #if len(temp) > 0:
-                    # i = arg[0][0]
-                    # valid_gi = self.data.valid_gi_paths[i]
-                    # bin_obj = self.data.get_bin(valid_gi[1])
-                    # if bin_data.size <= 0:
-                    #    bin_data = np.array([bin_obj['bin'], bin_obj['bin']])
-                    #    gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
-                    #    gen_pattern.add_gradual_item(gi)
-                    # else:
-                    #    bin_data[1] = bin_obj['bin']
-                    #    temp_bin, supp = self.bin_and(bin_data, self.data.attr_size)
-                    #    if supp >= min_supp:
-                    #        bin_data[0] = temp_bin
-                    #        gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
-                    #        gen_pattern.add_gradual_item(gi)
-                    #        gen_pattern.set_support(supp)
-                    #    else:
-                    #        bad_pattern = GP()
-                    #        gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
-                    #        bad_pattern.add_gradual_item(gi)
-                    #        self.vaporize_pheromone(bad_pattern, bin_obj['support'])
-                    # bin_obj = self.data.valid_bins_index[i]
-                    # temp = [bin_obj[1], bin_obj[2]]
-                    # bin_obj = self.data.valid_bins[i]
-                    # temp = bin_obj[1]
                 if bin_data.size <= 0:
                     bin_data = np.array([temp, temp])
                     gen_pattern.add_gradual_item(gi)
