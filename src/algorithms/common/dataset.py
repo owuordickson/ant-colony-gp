@@ -182,7 +182,6 @@ class Dataset:
         n = self.attr_size
         self.table_name = 'step_' + str(int(self.size - self.attr_size))
         invalid_bins = list()
-        # valid_bins = list()  # to be removed
         for col in self.attr_cols:
             col_data = np.array(attr_data[col], dtype=float)
             incr = np.array((col, '+'), dtype='i, S1')
@@ -194,10 +193,6 @@ class Dataset:
                 invalid_bins.append(incr)
                 invalid_bins.append(decr)
             else:
-                # valid_bin_pos = np.array([incr.tolist(), temp_pos])
-                # valid_bin_neg = np.array([decr.tolist(), temp_pos.T])
-                # valid_bins.append(valid_bin_pos)
-
                 grp = 'dataset/' + self.table_name + '/valid_bins/' + str(col) + '_pos'
                 self.add_h5_dataset(grp, temp_pos)
                 grp = 'dataset/' + self.table_name + '/valid_bins/' + str(col) + '_neg'
@@ -209,21 +204,10 @@ class Dataset:
         self.add_h5_dataset('dataset/size', data_size)
 
     def init_h5_groups(self):
-        # if os.path.exists(self.h5_file):
-        #    h5f = h5py.File(self.h5_file, 'r')
-            # print(list(h5f['dataset/step_0/valid_bins'].keys()))
-        #    h5f.close()
-            # temp = self.read_h5_dataset('dataset/step_0/valid_bins/0_neg')
-            # print(temp)
-        # else:
         with h5py.File(self.h5_file, 'w') as h5f:
             grp = h5f.require_group('dataset')
-            # grp.require_group('invalid_bins')
-            # grp.require_group('valid_bins')
-            # grp.require_group('p_matrix')
             grp.create_dataset('title', data=self.title)
             grp.create_dataset('data', data=self.data)
-            # grp.create_dataset('size', data=np.array([self.column_size, self.size]))
             grp.create_dataset('time_cols', data=self.time_cols)
             grp.create_dataset('attr_cols', data=self.attr_cols)
             h5f.close()

@@ -166,7 +166,7 @@ class GradACO:
                 # print(bin_obj1)
                 grp = 'dataset/' + self.data.table_name + '/valid_bins/' + gi.as_string()
                 temp = self.data.read_h5_dataset(grp)
-                if len(temp) > 0:
+                #if len(temp) > 0:
                     # i = arg[0][0]
                     # valid_gi = self.data.valid_gi_paths[i]
                     # bin_obj = self.data.get_bin(valid_gi[1])
@@ -191,18 +191,16 @@ class GradACO:
                     # temp = [bin_obj[1], bin_obj[2]]
                     # bin_obj = self.data.valid_bins[i]
                     # temp = bin_obj[1]
-                    if bin_data.size <= 0:
-                        bin_data = np.array([temp, temp])
-                        # gi = GI(bin_obj[0][0], bin_obj[0][1])
+                if bin_data.size <= 0:
+                    bin_data = np.array([temp, temp])
+                    gen_pattern.add_gradual_item(gi)
+                else:
+                    bin_data[1] = temp
+                    temp_bin, supp = self.bin_and(bin_data, self.data.attr_size)
+                    if supp >= min_supp:
+                        bin_data[0] = temp_bin
                         gen_pattern.add_gradual_item(gi)
-                    else:
-                        bin_data[1] = temp
-                        temp_bin, supp = self.bin_and(bin_data, self.data.attr_size)
-                        if supp >= min_supp:
-                            bin_data[0] = temp_bin
-                            # gi = GI(bin_obj[0][0], bin_obj[0][1])
-                            gen_pattern.add_gradual_item(gi)
-                            gen_pattern.set_support(supp)
+                        gen_pattern.set_support(supp)
         if len(gen_pattern.gradual_items) <= 1:
             return pattern
         else:
