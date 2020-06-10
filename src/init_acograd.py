@@ -47,7 +47,10 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
         wr_line += "Number of cores: " + str(num_cores) + '\n\n'
 
         for txt in d_set.title:
-            wr_line += (str(txt.key) + '. ' + str(txt.value.decode()) + '\n')
+            try:
+                wr_line += (str(txt.key) + '. ' + str(txt.value.decode()) + '\n')
+            except AttributeError:
+                wr_line += (str(txt[0]) + '. ' + str(txt[1].decode()) + '\n')
 
         wr_line += str("\nFile: " + f_path + '\n')
         wr_line += str("\nPattern : Support" + '\n')

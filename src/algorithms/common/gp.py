@@ -30,8 +30,15 @@ class GI:
             temp = np.array((self.attribute_col, '+'), dtype='i, S1')
         return temp
 
+    def as_string(self):
+        if self.symbol == '+':
+            temp = str(self.attribute_col) + '_pos'
+        else:
+            temp = str(self.attribute_col) + '_neg'
+        return temp
+
     def to_string(self):
-        return str(self.attribute_col) + self.symbol.decode()
+        return str(self.attribute_col) + self.symbol
 
 
 class GP:
@@ -39,13 +46,9 @@ class GP:
     def __init__(self):
         self.gradual_items = list()
         self.support = 0
-        self.bin = np.array([])
 
     def set_support(self, support):
         self.support = round(support, 3)
-
-    def set_bin(self, bin_data):
-        self.bin = bin_data
 
     def add_gradual_item(self, item):
         self.gradual_items.append(item)
