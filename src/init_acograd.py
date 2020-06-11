@@ -25,13 +25,7 @@ from src.algorithms.ant_colony.aco_grad import GradACO
 
 def init_algorithm(f_path, min_supp, cores, eq=False):
     try:
-        # wr_line = ""
-        # d_set = Dataset(f_path)
-        # if d_set.data.size > 0:
-        #    titles = d_set.title
-        #    d_set.init_attributes(min_supp, eq)
         ac = GradACO(f_path, min_supp, eq)
-        # ac.init_pheromones()
         list_gp = ac.run_ant_colony(min_supp)
 
         if cores > 1:

@@ -44,8 +44,8 @@ class Dataset:
             self.column_size = size[0]
             self.size = size[1]
             self.attr_size = size[2]
-            self.table_name = 'step_' + str(int(self.size - self.attr_size))
-            self.invalid_bins = h5f['dataset/' + self.table_name + '/invalid_bins'][:]
+            self.step_name = 'step_' + str(int(self.size - self.attr_size))
+            self.invalid_bins = h5f['dataset/' + self.step_name + '/invalid_bins'][:]
             h5f.close()
             self.thd_supp = min_sup
             self.equal = eq
@@ -65,7 +65,7 @@ class Dataset:
                 self.column_size = self.get_attribute_no()  # optimized (numpy)
                 self.size = self.get_size()  # optimized (numpy)
                 self.attr_size = 0
-                self.table_name = ''
+                self.step_name = ''
                 self.thd_supp = min_sup
                 self.equal = eq
                 self.invalid_bins = np.array([])
@@ -179,7 +179,7 @@ class Dataset:
     def construct_bins_v4(self, attr_data):
         # execute binary rank to calculate support of pattern
         n = self.attr_size
-        self.table_name = 'step_' + str(int(self.size - self.attr_size))
+        self.step_name = 'step_' + str(int(self.size - self.attr_size))
         invalid_bins = list()
         for col in self.attr_cols:
             col_data = np.array(attr_data[col], dtype=float)
@@ -192,12 +192,12 @@ class Dataset:
                 invalid_bins.append(incr)
                 invalid_bins.append(decr)
             else:
-                grp = 'dataset/' + self.table_name + '/valid_bins/' + str(col) + '_pos'
+                grp = 'dataset/' + self.step_name + '/valid_bins/' + str(col) + '_pos'
                 self.add_h5_dataset(grp, temp_pos)
-                grp = 'dataset/' + self.table_name + '/valid_bins/' + str(col) + '_neg'
+                grp = 'dataset/' + self.step_name + '/valid_bins/' + str(col) + '_neg'
                 self.add_h5_dataset(grp, temp_pos.T)
         self.invalid_bins = np.array(invalid_bins)
-        grp = 'dataset/' + self.table_name + '/invalid_bins'
+        grp = 'dataset/' + self.step_name + '/invalid_bins'
         self.add_h5_dataset(grp, self.invalid_bins)
         data_size = np.array([self.column_size, self.size, self.attr_size])
         self.add_h5_dataset('dataset/size', data_size)

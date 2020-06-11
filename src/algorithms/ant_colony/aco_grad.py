@@ -30,7 +30,7 @@ class GradACO:
         self.attr_index = self.data.attr_cols
         # self.e_factor = 0.1  # evaporation factor
         # fetch previous p_matrix from memory
-        grp = 'dataset/' + self.data.table_name + '/p_matrix'
+        grp = 'dataset/' + self.data.step_name + '/p_matrix'
         p_matrix = self.data.read_h5_dataset(grp)
         if p_matrix.size > 0:
             self.p_matrix = p_matrix
@@ -93,7 +93,7 @@ class GradACO:
                         loser_gps.append(rand_gp)
                 else:
                     repeated += 1
-        grp = 'dataset/' + self.data.table_name + '/p_matrix'
+        grp = 'dataset/' + self.data.step_name + '/p_matrix'
         self.data.add_h5_dataset(grp, self.p_matrix)
         return winner_gps
 
@@ -130,7 +130,7 @@ class GradACO:
                         loser_gps.append(rand_gp)
                 else:
                     repeated += 1
-        grp = 'dataset/' + self.data.table_name + '/p_matrix'
+        grp = 'dataset/' + self.data.step_name + '/p_matrix'
         self.data.add_h5_dataset(grp, self.p_matrix)
         return winner_gps
 
@@ -163,7 +163,7 @@ class GradACO:
             if self.data.invalid_bins.size > 0 and np.any(np.isin(self.data.invalid_bins, gi.gradual_item)):
                 continue
             else:
-                grp = 'dataset/' + self.data.table_name + '/valid_bins/' + gi.as_string()
+                grp = 'dataset/' + self.data.step_name + '/valid_bins/' + gi.as_string()
                 temp = self.data.read_h5_dataset(grp)
                 if bin_data.size <= 0:
                     bin_data = np.array([temp, temp])
@@ -189,7 +189,7 @@ class GradACO:
             if self.data.invalid_bins.size > 0 and np.any(np.isin(self.data.invalid_bins, gi.gradual_item)):
                 continue
             else:
-                grp = 'dataset/' + self.data.table_name + '/valid_bins/' + gi.as_string()
+                grp = 'dataset/' + self.data.step_name + '/valid_bins/' + gi.as_string()
                 temp = self.data.read_h5_dataset(grp)
                 if bin_data.size <= 0:
                     bin_data = np.array([temp, temp])

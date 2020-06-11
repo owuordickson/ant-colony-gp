@@ -26,11 +26,6 @@ from src.algorithms.ant_colony.aco_tgrad import TgradACO
 
 def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
     try:
-        # wr_line = ""
-        # d_set = Dataset(f_path)
-        # if d_set.data.size > 0:
-        #    titles = d_set.title
-        #    d_set.init_attributes(minSup, eq, attr=False)
         tgp = TgradACO(f_path, eq, refItem, minSup, minRep, allowPara)
         if allowPara >= 1:
             msg_para = "True"
@@ -38,9 +33,6 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
         else:
             msg_para = "False"
             list_tgp = tgp.run_tgraank()
-        # list_tgp = list(filter(bool, list_tgp))
-        # if len(list_tgp) > 5:
-        # list_tgp.sort(key=lambda k: (k[0][0], k[0][1]), reverse=True)
 
         d_set = tgp.d_set
         wr_line = "Algorithm: ACO-TGRAANK (2.2) \n"
@@ -67,8 +59,6 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
                 for tgp in obj:
                     wr_line += (str(tgp.to_string()) + ' : ' + str(tgp.support) +
                                 ' | ' + str(tgp.time_lag.to_string()) + '\n')
-        # print("\nPheromone Matrix")
-        # print(ac.p_matrix)
         return wr_line
     except ArithmeticError as error:
         wr_line = "Failed: " + str(error)
