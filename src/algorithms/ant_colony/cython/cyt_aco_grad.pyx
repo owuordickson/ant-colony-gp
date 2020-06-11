@@ -36,16 +36,16 @@ cdef class GradACO:
     cdef dict __dict__
 
     def __cinit__(self, Dataset d_set):
-        self.data = d_set
-        self.attr_index = self.data.attr_cols
+        self.d_set = d_set
+        self.attr_index = self.d_set.attr_cols
         self.e_factor = 0.1  # evaporation factor
-        self.p_matrix = np.ones((self.data.column_size, 3), dtype=float)
+        self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=float)
 
     cpdef void init_pheromones(self):
         cdef GP invalid_pats
         cdef GI gi
         invalid_pats = GP()
-        for obj_gi in self.data.invalid_bins:
+        for obj_gi in self.d_set.invalid_bins:
             gi = GI(obj_gi[0], obj_gi[1])
             invalid_pats.add_gradual_item(gi)
         self.vaporize_pheromone(invalid_pats, self.e_factor)
@@ -207,24 +207,24 @@ cdef class GradACO:
 
         for obj in pattern.get_pattern():
             gi_obj = np.array([obj], dtype='i, O')
-            if np.any(np.isin(self.data.invalid_bins, gi_obj)):
+            if np.any(np.isin(self.d_set.invalid_bins, gi_obj)):
                 continue
             else:
                 # fetch pattern
                 # for valid_gi in self.data.valid_gi_paths:
                 #    if valid_gi[0] == gi_obj:
-                arg = np.argwhere(np.isin(self.data.valid_gi_paths[:, 0], gi_obj))
+                arg = np.argwhere(np.isin(self.d_set.valid_gi_paths[:, 0], gi_obj))
                 if len(arg) > 0:
                     i = arg[0][0]
-                    valid_gi = self.data.valid_gi_paths[i]
-                    bin_obj = self.data.get_bin(valid_gi[1])
+                    valid_gi = self.d_set.valid_gi_paths[i]
+                    bin_obj = self.d_set.get_bin(valid_gi[1])
                     if bin_data.size <= 0:
                         bin_data = np.array([bin_obj['bin'], bin_obj['bin']])
                         gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
                         gen_pattern.add_gradual_item(gi)
                     else:
                         bin_data[1] = bin_obj['bin']
-                        temp_bin, supp = self.bin_and(bin_data, self.data.attr_size)
+                        temp_bin, supp = self.bin_and(bin_data, self.d_set.attr_size)
                         if supp >= min_supp:
                             bin_data[0] = temp_bin
                             gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
@@ -257,24 +257,24 @@ cdef class GradACO:
 
         for obj in pattern.get_pattern():
             gi_obj = np.array([obj], dtype='i, O')
-            if np.any(np.isin(self.data.invalid_bins, gi_obj)):
+            if np.any(np.isin(self.d_set.invalid_bins, gi_obj)):
                 continue
             else:
                 # fetch pattern
                 # for valid_gi in self.data.valid_gi_paths:
                 #    if valid_gi[0] == gi_obj:
-                arg = np.argwhere(np.isin(self.data.valid_gi_paths[:, 0], gi_obj))
+                arg = np.argwhere(np.isin(self.d_set.valid_gi_paths[:, 0], gi_obj))
                 if len(arg) > 0:
                     i = arg[0][0]
-                    valid_gi = self.data.valid_gi_paths[i]
-                    bin_obj = self.data.get_bin(valid_gi[1])
+                    valid_gi = self.d_set.valid_gi_paths[i]
+                    bin_obj = self.d_set.get_bin(valid_gi[1])
                     if bin_data.size <= 0:
                         bin_data = np.array([bin_obj['bin'], bin_obj['bin']])
                         gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
                         gen_pattern.add_gradual_item(gi)
                     else:
                         bin_data[1] = bin_obj['bin']
-                        temp_bin, supp = self.bin_and(bin_data, self.data.attr_size)
+                        temp_bin, supp = self.bin_and(bin_data, self.d_set.attr_size)
                         if supp >= min_supp:
                             bin_data[0] = temp_bin
                             gi = GI(bin_obj['gi'][0], bin_obj['gi'][1])
@@ -310,9 +310,9 @@ cdef class GradACO:
         plt.ylim(0, len(self.p_matrix))
         x = [0, 1, 2]
         y = []
-        for i in range(len(self.data.title)):
+        for i in range(len(self.d_set.title)):
             y.append(i)
-            plt.text(-0.3, (i+0.5), self.data.title[i][1][:3])
+            plt.text(-0.3, (i+0.5), self.d_set.title[i][1][:3])
         plt.xticks(x, [])
         plt.yticks(y, [])
         plt.text(0.5, -0.4, '+')

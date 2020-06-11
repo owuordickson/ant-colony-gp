@@ -22,11 +22,13 @@ Description:
 import sys
 from optparse import OptionParser
 from src.algorithms.ant_colony.aco_tgrad import TgradACO
+from src.algorithms.ant_colony.aco_tgrad_v2 import T_GradACO
 
 
 def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
     try:
-        tgp = TgradACO(f_path, eq, refItem, minSup, minRep, allowPara)
+        # tgp = TgradACO(f_path, eq, refItem, minSup, minRep, allowPara)
+        tgp = T_GradACO(f_path, eq, refItem, minSup, minRep, allowPara)
         if allowPara >= 1:
             msg_para = "True"
             list_tgp = tgp.run_tgraank(parallel=True)

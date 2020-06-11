@@ -43,12 +43,12 @@ cdef class Dataset:
         cdef list data
         data = Dataset.read_csv(file_path)
         if len(data) == 0:
-            self.data = np.array([])
+            self.d_set = np.array([])
             print("csv file read error")
             raise Exception("Unable to read csv file")
         else:
             print("Data fetched from csv file")
-            self.data = np.array([])
+            self.d_set = np.array([])
             self.title = self.get_title(data)  # optimized (numpy)
             self.time_cols = self.get_time_cols()  # optimized (numpy)
             self.attr_cols = self.get_attributes()  # optimized (numpy)
@@ -62,14 +62,14 @@ cdef class Dataset:
 
     cdef int get_size(self):
         cdef int size
-        size = self.data.shape[0]
+        size = self.d_set.shape[0]
         if self.title.size > 0:
             size += 1
         return size
 
     cdef int get_attribute_no(self):
         cdef int count
-        count = self.data.shape[1]
+        count = self.d_set.shape[1]
         return count
 
     cdef np.ndarray get_attributes(self):
@@ -102,10 +102,10 @@ cdef class Dataset:
             temp_data = np.asarray(data)
             # temp_data = np.delete(np.asarray(data), 0, 0)
             # convert csv data into array
-            self.data = np.asarray(temp_data[1:])
+            self.d_set = np.asarray(temp_data[1:])
             return np.asarray(title)
         else:
-            self.data = np.asarray(data)
+            self.d_set = np.asarray(data)
             return np.array([])
 
     cdef np.ndarray get_time_cols(self):
@@ -115,9 +115,9 @@ cdef class Dataset:
         cdef float t_stamp
         cdef int n
         time_cols = list()
-        n = len(self.data[0])
+        n = len(self.d_set[0])
         for i in range(n):  # check every column for time format
-            row_data = str(self.data[0][i])
+            row_data = str(self.d_set[0][i])
             try:
                 time_ok, t_stamp = Dataset.test_time(row_data)
                 if time_ok:
@@ -142,7 +142,7 @@ cdef class Dataset:
         # transpose csv array data
         self.thd_supp = min_sup
         self.equal = eq
-        attr_data = self.data.T
+        attr_data = self.d_set.T
         self.attr_size = attr_data.shape[1]
         self.construct_bins(attr_data)
 
