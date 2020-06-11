@@ -141,7 +141,7 @@ class Dataset:
             attr_data = self.data.copy().T
             self.attr_size = len(attr_data[self.attr_cols[0]])
             # self.construct_bins_v1(attr_data)
-            self.construct_bins_v4(attr_data)
+            self.construct_bins(attr_data)
             attr_data = None
         # else:
             # 1. do not construct bins (due to transformation)
@@ -151,32 +151,10 @@ class Dataset:
     def update_attributes(self, attr_data):
         self.attr_size = len(attr_data[self.attr_cols[0]])
         # self.construct_bins_v1(attr_data)
-        self.construct_bins_v4(attr_data)
+        self.construct_bins(attr_data)
         gc.collect()
 
-    def construct_bins_v1(self, attr_data):
-        # execute binary rank to calculate support of pattern
-        # valid_bins = list()  # numpy is very slow for append operations
-        n = self.attr_size
-        valid_bins = list()
-        invalid_bins = list()
-        for col in self.attr_cols:
-            col_data = np.array(attr_data[col], dtype=float)
-            incr = np.array((col, '+'), dtype='i, S1')
-            decr = np.array((col, '-'), dtype='i, S1')
-            temp_pos = Dataset.bin_rank(col_data, equal=self.equal)
-            supp = float(np.sum(temp_pos)) / float(n * (n - 1.0) / 2.0)
-
-            if supp < self.thd_supp:
-                invalid_bins.append(incr)
-                invalid_bins.append(decr)
-            else:
-                valid_bins.append(np.array([incr.tolist(), temp_pos]))
-                valid_bins.append(np.array([decr.tolist(), temp_pos.T]))
-        self.valid_bins = np.array(valid_bins)
-        self.invalid_bins = np.array(invalid_bins)
-
-    def construct_bins_v4(self, attr_data):
+    def construct_bins(self, attr_data):
         # execute binary rank to calculate support of pattern
         n = self.attr_size
         self.step_name = 'step_' + str(int(self.size - self.attr_size))
@@ -201,6 +179,29 @@ class Dataset:
         self.add_h5_dataset(grp, self.invalid_bins)
         data_size = np.array([self.column_size, self.size, self.attr_size])
         self.add_h5_dataset('dataset/size', data_size)
+        gc.collect()
+
+    def construct_bins_v1(self, attr_data):
+        # execute binary rank to calculate support of pattern
+        # valid_bins = list()  # numpy is very slow for append operations
+        n = self.attr_size
+        valid_bins = list()
+        invalid_bins = list()
+        for col in self.attr_cols:
+            col_data = np.array(attr_data[col], dtype=float)
+            incr = np.array((col, '+'), dtype='i, S1')
+            decr = np.array((col, '-'), dtype='i, S1')
+            temp_pos = Dataset.bin_rank(col_data, equal=self.equal)
+            supp = float(np.sum(temp_pos)) / float(n * (n - 1.0) / 2.0)
+
+            if supp < self.thd_supp:
+                invalid_bins.append(incr)
+                invalid_bins.append(decr)
+            else:
+                valid_bins.append(np.array([incr.tolist(), temp_pos]))
+                valid_bins.append(np.array([decr.tolist(), temp_pos.T]))
+        self.valid_bins = np.array(valid_bins)
+        self.invalid_bins = np.array(invalid_bins)
 
     def init_h5_groups(self):
         with h5py.File(self.h5_file, 'w') as h5f:
@@ -214,20 +215,18 @@ class Dataset:
             data = None
 
     def read_h5_dataset(self, group):
-        h5f = h5py.File(self.h5_file, 'r')
-        if group in h5f:
-            temp = h5f[group][:]
-            h5f.close()
-            return temp
-        else:
-            return np.array([])
+        temp = np.array([])
+        with h5py.File(self.h5_file, 'r') as h5f:
+            if group in h5f:
+                temp = h5f[group][:]
+        return temp
 
     def add_h5_dataset(self, group, data):
-        h5f = h5py.File(self.h5_file, 'r+')
-        if group in h5f:
-            del h5f[group]
-        h5f.create_dataset(group, data=data)
-        h5f.close()
+        with h5py.File(self.h5_file, 'r+') as h5f:
+            # assert h5f.swmr_mode
+            if group in h5f:
+                del h5f[group]
+            h5f.create_dataset(group, data=data)
 
     @staticmethod
     def bin_rank(arr, equal=False):

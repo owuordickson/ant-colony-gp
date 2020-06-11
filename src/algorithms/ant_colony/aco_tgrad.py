@@ -103,10 +103,11 @@ class T_GradACO:
 
             self.cores = num_cores
             steps = range(self.max_step)
-            pool = mp.Pool(num_cores)
-            patterns = pool.map(self.fetch_patterns, steps)
-            pool.close()
-            pool.join()
+            # pool = mp.Pool(num_cores)
+            with mp.Pool(num_cores) as pool:
+                patterns = pool.map(self.fetch_patterns, steps)
+                # pool.close()
+                # pool.join()
             return patterns
         else:
             patterns = list()
