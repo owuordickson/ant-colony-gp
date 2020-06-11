@@ -102,7 +102,7 @@ cdef class GradACO:
         loser_gps = list()  # supersets
         repeated = 0
         while repeated < 1:
-            rand_gp = self.generate_rand_pattern()
+            rand_gp = self.generate_random_gp()
             if len(rand_gp.gradual_items) > 1:
                 # print(rand_gp.get_pattern())
                 exits = GradACO.is_duplicate(rand_gp, winner_gps, loser_gps)
@@ -140,7 +140,7 @@ cdef class GradACO:
         loser_gps = list()  # supersets
         repeated = 0
         while repeated < 1:
-            rand_gp = self.generate_rand_pattern()
+            rand_gp = self.generate_random_gp()
             if len(rand_gp.gradual_items) > 1:
                 # print(rand_gp.get_pattern())
                 exits = GradACO.is_duplicate(rand_gp, winner_gps, loser_gps)
