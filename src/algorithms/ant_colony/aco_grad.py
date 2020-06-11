@@ -12,7 +12,7 @@
 
 import numpy as np
 from numpy import random as rand
-# import random as rand
+import gc
 import matplotlib.pyplot as plt
 from src.algorithms.common.fuzzy_mf import calculate_time_lag
 from src.algorithms.common.gp import GI, GP, TGP
@@ -175,6 +175,7 @@ class GradACO:
                         bin_data[0] = temp_bin
                         gen_pattern.add_gradual_item(gi)
                         gen_pattern.set_support(supp)
+        gc.collect()
         if len(gen_pattern.gradual_items) <= 1:
             return pattern
         else:
