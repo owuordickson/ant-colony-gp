@@ -26,14 +26,14 @@ from src.algorithms.ant_colony.aco_grad import GradACO
 def init_algorithm(f_path, min_supp, cores, eq=False):
     try:
         ac = GradACO(f_path, min_supp, eq)
-        list_gp = ac.run_ant_colony(min_supp)
+        list_gp = ac.run_ant_colony()
 
         if cores > 1:
             num_cores = cores
         else:
             num_cores = Profile.get_num_cores()
 
-        d_set = ac.data
+        d_set = ac.d_set
         wr_line = "Algorithm: ACO-GRAANK (2.2)\n"
         wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
         wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
