@@ -3,9 +3,10 @@
 @author: "Dickson Owuor"
 @credits: "Joseph Orero and Anne Laurent,"
 @license: "MIT"
-@version: "2.2"
+@version: "2.4"
 @email: "owuordickson@gmail.com"
 @created: "19 November 2019"
+@modified: "11 June 2020"
 
 Description: updated version that uses aco-graank and parallel multi-processing
 
@@ -14,14 +15,57 @@ Description: updated version that uses aco-graank and parallel multi-processing
 
 import numpy as np
 import multiprocessing as mp
-from src.algorithms.ant_colony.aco_grad import GradACO
+from src.algorithms.ant_colony.aco_grad_v2 import GradACO
+from src.algorithms.common.fuzzy_mf import calculate_time_lag
+from src.algorithms.common.gp import GP, TGP
 from src.algorithms.common.dataset import Dataset
 #from src.algorithms.ant_colony.cython.cyt_aco_grad import GradACO
 #from src.algorithms.common.cython.cyt_dataset import Dataset
 from src.algorithms.common.profile_cpu import Profile
 
 
-class TgradACO:
+class GradACOt (GradACO):
+
+    def __init__(self, d_set, attr_data, t_diffs):
+        self.d_set = d_set
+        self.time_diffs = t_diffs
+        self.attr_index = self.d_set.attr_cols
+        self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=float)
+        self.d_set.update_attributes(attr_data)
+
+    def validate_gp(self, pattern):
+        # pattern = [('2', '+'), ('4', '+')]
+        min_supp = self.d_set.thd_supp
+        gen_pattern = GP()
+        bin_data = np.array([])
+
+        for gi in pattern.gradual_items:
+            if self.d_set.invalid_bins.size > 0 and np.any(np.isin(self.d_set.invalid_bins, gi.gradual_item)):
+                continue
+            else:
+                grp = 'dataset/' + self.d_set.step_name + '/valid_bins/' + gi.as_string()
+                temp = self.d_set.read_h5_dataset(grp)
+                if bin_data.size <= 0:
+                    bin_data = np.array([temp, temp])
+                    gen_pattern.add_gradual_item(gi)
+                else:
+                    bin_data[1] = temp
+                    temp_bin, supp = self.bin_and(bin_data, self.d_set.attr_size)
+                    if supp >= min_supp:
+                        bin_data[0] = temp_bin
+                        gen_pattern.add_gradual_item(gi)
+                        gen_pattern.set_support(supp)
+        if len(gen_pattern.gradual_items) <= 1:
+            tgp = TGP(gp=pattern)
+            return tgp
+        else:
+            # t_lag = FuzzyMF.calculate_time_lag(FuzzyMF.get_patten_indices(bin_data[0]), t_diffs, min_supp)
+            t_lag = calculate_time_lag(bin_data[0], self.time_diffs)
+            tgp = TGP(gp=gen_pattern, t_lag=t_lag)
+            return tgp
+
+
+class T_GradACO:
 
     def __init__(self, f_path, eq, ref_item, min_sup, min_rep, cores):
         # For tgraank
@@ -39,12 +83,15 @@ class TgradACO:
             self.max_step = self.get_max_step(min_rep)
             self.orig_attr_data = self.d_set.data.copy().T
             self.cores = cores
-            # self.multi_data = self.split_dataset()
         else:
             print("Dataset Error")
             self.time_ok = False
             self.time_cols = []
             raise Exception('No date-time data found')
+
+    def get_max_step(self, min_rep):  # optimized
+        all_rows = len(self.d_set.data)
+        return all_rows - int(min_rep * all_rows)
 
     def run_tgraank(self, parallel=False):
         if parallel:
@@ -76,9 +123,9 @@ class TgradACO:
         attr_data, time_diffs = self.transform_data(step)
 
         # 2. Execute aco-graank for each transformation
-        d_set.update_attributes(attr_data)
-        ac = GradACO(d_set=d_set)
-        list_gp = ac.run_ant_colony(self.min_sup, time_diffs)
+        # d_set.update_attributes(attr_data)
+        ac = GradACOt(d_set, attr_data, time_diffs)
+        list_gp = ac.run_ant_colony()
         # print("\nPheromone Matrix")
         # print(ac.p_matrix)
         if len(list_gp) > 0:
@@ -131,10 +178,6 @@ class TgradACO:
         else:
             msg = "Fatal Error: Time format in column could not be processed"
             raise Exception(msg)
-
-    def get_max_step(self, min_rep):  # optimized
-        all_rows = len(self.d_set.data)
-        return all_rows - int(min_rep * all_rows)
 
     def get_time_diffs(self, step):  # optimized
         data = self.d_set.data

@@ -21,8 +21,8 @@ Description:
 
 import sys
 from optparse import OptionParser
-from src.algorithms.ant_colony.aco_tgrad import TgradACO
-from src.algorithms.ant_colony.aco_tgrad_v2 import T_GradACO
+from src.algorithms.ant_colony.aco_tgrad import T_GradACO
+# from src.algorithms.ant_colony.aco_tgrad_v2 import T_GradACO
 
 
 def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
