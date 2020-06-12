@@ -68,6 +68,25 @@ class Dataset_t(Dataset):
                 self.invalid_bins = np.array([])
                 data = None
 
+    def init_h5_groups(self, f=None):
+        if os.path.exists(self.h5_file):
+            pass
+        else:
+            if f is None:
+                h5f = h5py.File(self.h5_file, 'w')
+            else:
+                h5f = f
+            grp = h5f.require_group('dataset')
+            grp.create_dataset('title', data=self.title)
+            data = np.array(self.data.copy()).astype('S')
+            grp.create_dataset('data', data=data)
+            grp.create_dataset('time_cols', data=self.time_cols)
+            grp.create_dataset('attr_cols', data=self.attr_cols)
+            if f is None:
+                h5f.close()
+            data = None
+            self.data = None
+
 
 class GradACOt (GradACO):
 

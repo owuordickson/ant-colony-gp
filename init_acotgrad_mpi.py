@@ -20,8 +20,8 @@ Description:
 
 
 import sys
+import os
 from optparse import OptionParser
-from mpi4py import MPI
 from src.algorithms.ant_colony.aco_tgrad_v2 import T_GradACO
 
 
@@ -88,6 +88,7 @@ if __name__ == "__main__":
     import numpy as np
     from pathlib import Path
     import h5py
+    from mpi4py import MPI
 
     start = time.time()
     comm = MPI.COMM_WORLD
@@ -101,9 +102,12 @@ if __name__ == "__main__":
         # master process
         print("master process " + str(rank) + " started ...")
 
-        if not os.path.exists(self.h5_file):
+        if not os.path.exists(h5_file):
             h5f = h5py.File(h5_file, 'w')  # to be removed
+        else:
+            h5f = h5py.File(h5_file, 'r')  # to be removed
 
+        print(h5f.mode)
         t_aco = T_GradACO(file_path, allow_eq, ref_col, min_sup, min_rep, h5f)
 
         h5f.close()  # to be removed

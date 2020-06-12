@@ -16,7 +16,6 @@ Description: updated version that uses aco-graank and parallel multi-processing
 import numpy as np
 import h5py
 from pathlib import Path
-import os
 from src.algorithms.ant_colony.aco_grad_v2 import GradACO
 from src.algorithms.common.fuzzy_mf import calculate_time_lag
 from src.algorithms.common.gp import GP, TGP
@@ -27,11 +26,11 @@ from src.algorithms.common.dataset import Dataset
 
 class Dataset_t(Dataset):
 
-    def __init__(self, file_path, min_sup=0, eq=False):
+    def __init__(self, file_path, min_sup=0, eq=False, h5f=None):
         self.h5_file = str(Path(file_path).stem) + str('.h5')
-        if os.path.exists(self.h5_file):
+        if h5f.mode == 'r':
             print("Fetching data from h5 file")
-            h5f = h5py.File(self.h5_file, 'r')
+            # h5f = h5py.File(self.h5_file, 'r')
             self.title = h5f['dataset/title'][:]
             self.time_cols = h5f['dataset/time_cols'][:]
             self.attr_cols = h5f['dataset/attr_cols'][:]
@@ -41,7 +40,7 @@ class Dataset_t(Dataset):
             self.attr_size = size[2]
             self.step_name = 'step_' + str(int(self.size - self.attr_size))
             self.invalid_bins = h5f['dataset/' + self.step_name + '/invalid_bins'][:]
-            h5f.close()
+            # h5f.close()
             self.thd_supp = min_sup
             self.equal = eq
             self.data = None
@@ -150,8 +149,9 @@ class T_GradACO:
     def __init__(self, f_path, eq, ref_item, min_sup, min_rep, h5f):
         # For tgraank
         # self.d_set = d_set
-        self.d_set = Dataset_t(f_path, min_sup=min_sup, eq=eq)
-        self.d_set.init_h5_groups(h5f)  # ignore if h5 file exists
+        self.d_set = Dataset_t(f_path, min_sup=min_sup, eq=eq, h5f=h5f)
+        if h5f.mode != 'r':
+            self.d_set.init_h5_groups(h5f)  # ignore if h5 file exists
         cols = self.d_set.time_cols
         if len(cols) > 0:
             print("Dataset Ok")
