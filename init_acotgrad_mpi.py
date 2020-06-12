@@ -86,16 +86,23 @@ if __name__ == "__main__":
 
     import time
     import numpy as np
-    start = time.time()
+    from pathlib import Path
+    import h5py
 
+    start = time.time()
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
     nprocs = comm.Get_size()
 
+    h5_file = str(Path(file_path).stem) + str('.h5')
+    # h5f = h5py.File(h5_file, 'w')  # for parallel
+
     if rank == 0:
         # master process
         print("master process " + str(rank) + " started ...")
-        t_aco = T_GradACO(file_path, allow_eq, ref_col, min_sup, min_rep)
+        h5f = h5py.File(h5_file, 'w')  # to be removed
+        t_aco = T_GradACO(file_path, allow_eq, ref_col, min_sup, min_rep, h5f)
+        h5f.close()  # to be removed
 
         steps = np.arange(t_aco.max_step)
         # determine the size of each sub-task
@@ -116,22 +123,25 @@ if __name__ == "__main__":
         t_aco = None
         steps = None
 
+    # h5f.close()  # for parallel
     steps = comm.scatter(steps, root=0)
     t_aco = comm.bcast(t_aco, root=0)
-    # t_aco.d_set.init_h5_groups(comm=comm)  # ignore if h5 file exists
 
+    # h5f = h5py.File(h5_file, 'r+')  # for parallel
     lst_tgp = list()
-    if rank == 0:
-        # t_aco.d_set.init_h5_groups()  # ignore if h5 file exists
+    if rank == 0:  # if-else to be removed
+        h5f = h5py.File(h5_file, 'w')  # to be removed
         for s in steps:
-            tgp = t_aco.fetch_patterns(s)
+            tgp = t_aco.fetch_patterns(s, h5f)
             lst_tgp.append(tgp)
+        h5f.close()  # to be removed
     else:
         for s in steps:
-            # tgp = t_aco.fetch_patterns(s)
+            # tgp = t_aco.fetch_patterns(s, h5f)
             tgp = False
             lst_tgp.append(tgp)
     lst_tgp = comm.gather(lst_tgp, root=0)
+    # h5f.close()  # for parallel
 
     if rank == 0:
         d_set = t_aco.d_set

@@ -24,9 +24,10 @@ from src.algorithms.common.dataset import Dataset
 
 class GradACOt (GradACO):
 
-    def __init__(self, d_set, attr_data, t_diffs):
+    def __init__(self, d_set, attr_data, t_diffs, h5f):
         self.d_set = d_set
         self.time_diffs = t_diffs
+        self.h5f = h5f
         self.attr_index = self.d_set.attr_cols
         self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=float)
         self.d_set.update_attributes(attr_data)
@@ -78,7 +79,7 @@ class GradACOt (GradACO):
                 continue
             else:
                 grp = 'dataset/' + self.d_set.step_name + '/valid_bins/' + gi.as_string()
-                temp = self.d_set.read_h5_dataset(grp)
+                temp = self.d_set.read_h5_dataset(grp, self.h5f)
                 if bin_data.size <= 0:
                     bin_data = np.array([temp, temp])
                     gen_pattern.add_gradual_item(gi)
@@ -101,10 +102,11 @@ class GradACOt (GradACO):
 
 class T_GradACO:
 
-    def __init__(self, f_path, eq, ref_item, min_sup, min_rep):
+    def __init__(self, f_path, eq, ref_item, min_sup, min_rep, h5f):
         # For tgraank
         # self.d_set = d_set
         self.d_set = Dataset(f_path, min_sup=min_sup, eq=eq, init=False)
+        self.d_set.init_h5_groups(h5f)  # ignore if h5 file exists
         cols = self.d_set.time_cols
         if len(cols) > 0:
             print("Dataset Ok")
@@ -135,7 +137,7 @@ class T_GradACO:
                 patterns.append(t_pattern)
         return patterns
 
-    def fetch_patterns(self, step):
+    def fetch_patterns(self, step, h5f):
         step += 1  # because for-loop is not inclusive from range: 0 - max_step
         # 1. Transform data
         d_set = self.d_set
@@ -143,7 +145,7 @@ class T_GradACO:
 
         # 2. Execute aco-graank for each transformation
         # d_set.update_attributes(attr_data)
-        ac = GradACOt(d_set, attr_data, time_diffs)
+        ac = GradACOt(d_set, attr_data, time_diffs, h5f)
         list_gp = ac.run_ant_colony()
         # print("\nPheromone Matrix")
         # print(ac.p_matrix)

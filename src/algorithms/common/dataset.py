@@ -246,18 +246,6 @@ class Dataset:
         if f is None:
             h5f.close()
 
-    def open_h5_read(self):
-        return h5py.File(self.h5_file, 'r')
-
-    def open_h5_update(self):
-        return h5py.File(self.h5_file, 'r+')
-
-    def open_h5_write(self):
-        return h5py.File(self.h5_file, 'w')
-
-    def close_h5(self, h5f):
-        h5f.close()
-
     @staticmethod
     def bin_rank(arr, equal=False):
         with np.errstate(invalid='ignore'):
