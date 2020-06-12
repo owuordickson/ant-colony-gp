@@ -2,5 +2,5 @@ matplotlib
 python-dateutil
 scikit-fuzzy
 h5py
-mpi4py
 cython
+mpi4py
