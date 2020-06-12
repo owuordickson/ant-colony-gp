@@ -135,8 +135,9 @@ class Dataset:
     def init_attributes(self, init):
         # (check) implement parallel multiprocessing
         # create h5 groups to store class attributes
-        self.init_h5_groups()
+        # self.init_h5_groups()
         if init:
+            self.init_h5_groups()
             # transpose csv array data
             attr_data = self.data.copy().T
             self.attr_size = len(attr_data[self.attr_cols[0]])
@@ -203,16 +204,19 @@ class Dataset:
         self.valid_bins = np.array(valid_bins)
         self.invalid_bins = np.array(invalid_bins)
 
-    def init_h5_groups(self):
-        with h5py.File(self.h5_file, 'w') as h5f:
-            grp = h5f.require_group('dataset')
-            grp.create_dataset('title', data=self.title)
-            data = np.array(self.data.copy()).astype('S')
-            grp.create_dataset('data', data=data)
-            grp.create_dataset('time_cols', data=self.time_cols)
-            grp.create_dataset('attr_cols', data=self.attr_cols)
-            h5f.close()
-            data = None
+    def init_h5_groups(self, comm=None):
+        if comm is None:
+            h5f = h5py.File(self.h5_file, 'w')
+        else:
+            h5f = h5py.File(self.h5_file, 'w', driver='mpio', comm=comm)
+        grp = h5f.require_group('dataset')
+        grp.create_dataset('title', data=self.title)
+        data = np.array(self.data.copy()).astype('S')
+        grp.create_dataset('data', data=data)
+        grp.create_dataset('time_cols', data=self.time_cols)
+        grp.create_dataset('attr_cols', data=self.attr_cols)
+        h5f.close()
+        data = None
 
     def read_h5_dataset(self, group):
         temp = np.array([])

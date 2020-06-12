@@ -14,14 +14,12 @@ Description: updated version that uses aco-graank and parallel multi-processing
 
 
 import numpy as np
-import multiprocessing as mp
 from src.algorithms.ant_colony.aco_grad_v2 import GradACO
 from src.algorithms.common.fuzzy_mf import calculate_time_lag
 from src.algorithms.common.gp import GP, TGP
 from src.algorithms.common.dataset import Dataset
 #from src.algorithms.ant_colony.cython.cyt_aco_grad import GradACO
 #from src.algorithms.common.cython.cyt_dataset import Dataset
-from src.algorithms.common.profile_cpu import Profile
 
 
 class GradACOt (GradACO):
@@ -32,6 +30,42 @@ class GradACOt (GradACO):
         self.attr_index = self.d_set.attr_cols
         self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=float)
         self.d_set.update_attributes(attr_data)
+
+    def run_ant_colony(self):
+        min_supp = self.d_set.thd_supp
+        winner_gps = list()  # subsets
+        loser_gps = list()  # supersets
+        repeated = 0
+        while repeated < 1:
+            rand_gp = self.generate_random_gp()
+            if len(rand_gp.gradual_items) > 1:
+                # print(rand_gp.get_pattern())
+                exits = GradACO.is_duplicate(rand_gp, winner_gps, loser_gps)
+                if not exits:
+                    repeated = 0
+                    # check for anti-monotony
+                    is_super = GradACO.check_anti_monotony(loser_gps, rand_gp, subset=False)
+                    is_sub = GradACO.check_anti_monotony(winner_gps, rand_gp, subset=True)
+                    if is_super or is_sub:
+                        continue
+                    gen_gp = self.validate_gp(rand_gp)
+                    if gen_gp.support >= min_supp:
+                        self.deposit_pheromone(gen_gp)
+                        is_present = GradACO.is_duplicate(gen_gp, winner_gps, loser_gps)
+                        is_sub = GradACO.check_anti_monotony(winner_gps, gen_gp, subset=True)
+                        if is_present or is_sub:
+                            repeated += 1
+                        else:
+                            winner_gps.append(gen_gp)
+                    else:
+                        loser_gps.append(gen_gp)
+                        # update pheromone as irrelevant with loss_sols
+                        # self.vaporize_pheromone(gen_gp, self.e_factor)
+                    if set(gen_gp.get_pattern()) != set(rand_gp.get_pattern()):
+                        loser_gps.append(rand_gp)
+                else:
+                    repeated += 1
+        return winner_gps
 
     def validate_gp(self, pattern):
         # pattern = [('2', '+'), ('4', '+')]
@@ -67,7 +101,7 @@ class GradACOt (GradACO):
 
 class T_GradACO:
 
-    def __init__(self, f_path, eq, ref_item, min_sup, min_rep, cores):
+    def __init__(self, f_path, eq, ref_item, min_sup, min_rep):
         # For tgraank
         # self.d_set = d_set
         self.d_set = Dataset(f_path, min_sup=min_sup, eq=eq, init=False)
@@ -82,7 +116,7 @@ class T_GradACO:
             self.d_set.data = np.array(self.d_set.data).astype('U')
             self.max_step = self.get_max_step(min_rep)
             self.orig_attr_data = self.d_set.data.copy().T
-            self.cores = cores
+            # self.cores = cores
         else:
             print("Dataset Error")
             self.time_ok = False
@@ -93,28 +127,13 @@ class T_GradACO:
         all_rows = len(self.d_set.data)
         return all_rows - int(min_rep * all_rows)
 
-    def run_tgraank(self, parallel=False):
-        if parallel:
-            # implement parallel multi-processing
-            if self.cores > 1:
-                num_cores = self.cores
-            else:
-                num_cores = Profile.get_num_cores()
-
-            self.cores = num_cores
-            steps = range(self.max_step)
-            pool = mp.Pool(num_cores)
-            patterns = pool.map(self.fetch_patterns, steps)
-            pool.close()
-            pool.join()
-            return patterns
-        else:
-            patterns = list()
-            for step in range(self.max_step):
-                t_pattern = self.fetch_patterns(step)
-                if t_pattern:
-                    patterns.append(t_pattern)
-            return patterns
+    def run_tgraank(self):
+        patterns = list()
+        for step in range(self.max_step):
+            t_pattern = self.fetch_patterns(step)
+            if t_pattern:
+                patterns.append(t_pattern)
+        return patterns
 
     def fetch_patterns(self, step):
         step += 1  # because for-loop is not inclusive from range: 0 - max_step
@@ -130,7 +149,7 @@ class T_GradACO:
         # print(ac.p_matrix)
         if len(list_gp) > 0:
             return list_gp
-        return False
+        return []
 
     def transform_data(self, step):  # optimized
         # NB: Restructure dataset based on reference item
