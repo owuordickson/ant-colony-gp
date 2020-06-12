@@ -35,9 +35,10 @@ if __name__ == "__main__":
     if not sys.argv:
         # pType = sys.argv[1]
         file_path = sys.argv[1]
-        ref_col = sys.argv[2]
-        min_sup = sys.argv[3]
-        min_rep = sys.argv[4]
+        min_sup = sys.argv[2]
+        allow_eq = sys.argv[3]
+        ref_col = sys.argv[4]
+        min_rep = sys.argv[5]
     else:
         optparser = OptionParser()
         optparser.add_option('-f', '--inputFile',
@@ -49,16 +50,21 @@ if __name__ == "__main__":
                              default='data/rain_temp2013-2015.csv',
                              #default='../data/Directio.csv',
                              type='string')
-        optparser.add_option('-c', '--refColumn',
-                             dest='refCol',
-                             help='reference column',
-                             default=1,
-                             type='int')
         optparser.add_option('-s', '--minSupport',
                              dest='minSup',
                              help='minimum support value',
                              default=0.5,
                              type='float')
+        optparser.add_option('-e', '--allowEqual',
+                             dest='allowEq',
+                             help='allow equal',
+                             default=None,
+                             type='int')
+        optparser.add_option('-c', '--refColumn',
+                             dest='refCol',
+                             help='reference column',
+                             default=1,
+                             type='int')
         optparser.add_option('-r', '--minRepresentativity',
                              dest='minRep',
                              help='minimum representativity',
@@ -73,49 +79,61 @@ if __name__ == "__main__":
         else:
             inFile = options.file
         file_path = inFile
-        ref_col = options.refCol
         min_sup = options.minSup
+        allow_eq = options.allowEq
+        ref_col = options.refCol
         min_rep = options.minRep
 
     import time
-    start = time.time()
-    # res_text = init_algorithm(file_path, ref_col, min_sup, min_rep, cores)
-    # end = time.time()
-    # wr_text = ("Run-time: " + str(end - start) + " seconds\n")
-    # wr_text += str(res_text)
-    # f_name = str('res_aco' + str(end).replace('.', '', 1) + '.txt')
-    # write_file(wr_text, f_name)
-    # print(wr_text)
-
     import numpy as np
+    start = time.time()
+
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
     nprocs = comm.Get_size()
 
     if rank == 0:
         # master process
-        print("master process " + str(rank))
-        # data = np.arange(nprocs)
-        eq = False
-        t_aco = T_GradACO(file_path, eq, ref_col, min_sup, min_rep)
+        print("master process " + str(rank) + " started ...")
+        t_aco = T_GradACO(file_path, allow_eq, ref_col, min_sup, min_rep)
+
+        steps = np.arange(t_aco.max_step)
+        # determine the size of each sub-task
+        ave, res = divmod(steps.size, nprocs)
+        counts = [ave + 1 if p < res else ave for p in range(nprocs)]
+
+        # determine the starting and ending indices of each sub-task
+        starts = [sum(counts[:p]) for p in range(nprocs)]
+        ends = [sum(counts[:p + 1]) for p in range(nprocs)]
+
+        # converts data into a list of arrays
+        steps = [steps[starts[p]:ends[p]] for p in range(nprocs)]
+        # swapping steps so that Process 0 has the smallest data
+        steps[0], steps[-1] = steps[-1], steps[0]
     else:
         # worker process
-        print("worker process " + str(rank))
+        print("worker process " + str(rank) + " started ...")
         t_aco = None
+        steps = None
 
+    steps = comm.scatter(steps, root=0)
     t_aco = comm.bcast(t_aco, root=0)
-    # t_aco.d_set.init_h5_groups(comm=comm)
-    # lst_tgp = t_aco.fetch_patterns(rank)
+    # t_aco.d_set.init_h5_groups(comm=comm)  # ignore if h5 file exists
+
+    lst_tgp = list()
+    if rank == 0:
+        # t_aco.d_set.init_h5_groups()  # ignore if h5 file exists
+        for s in steps:
+            tgp = t_aco.fetch_patterns(s)
+            lst_tgp.append(tgp)
+    else:
+        for s in steps:
+            # tgp = t_aco.fetch_patterns(s)
+            tgp = False
+            lst_tgp.append(tgp)
+    lst_tgp = comm.gather(lst_tgp, root=0)
 
     if rank == 0:
-        t_aco.d_set.init_h5_groups()
-        lst_tgp = t_aco.fetch_patterns(rank+1)
-
-        for i in range(1, nprocs):
-            req = comm.irecv(source=i, tag=rank)
-            data = req.wait()
-            print(data)
-
         d_set = t_aco.d_set
         wr_line = "Algorithm: ACO-TGRAANK (3.0) \n"
         wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
@@ -136,13 +154,13 @@ if __name__ == "__main__":
         wr_line += str("\nFile: " + file_path + '\n')
         wr_line += str("\nPattern : Support" + '\n')
 
+        # lst_tgp is gathered from all processes
         for obj in lst_tgp:
-            wr_line += (str(obj.to_string()) + ' : ' + str(obj.support) +
-                        ' | ' + str(obj.time_lag.to_string()) + '\n')
-            # if obj:
-            # for tgp in obj:
-            #    wr_line += (str(tgp.to_string()) + ' : ' + str(tgp.support) +
-            #    ' | ' + str(tgp.time_lag.to_string()) + '\n')
+            for pats in obj:
+                if pats:
+                    for tgp in pats:
+                        wr_line += (str(tgp.to_string()) + ' : ' + str(tgp.support) +
+                                    ' | ' + str(tgp.time_lag.to_string()) + '\n')
 
         end = time.time()
         wr_text = ("Run-time: " + str(end - start) + " seconds\n")
@@ -150,9 +168,3 @@ if __name__ == "__main__":
         f_name = str('res_aco' + str(end).replace('.', '', 1) + '.txt')
         # write_file(wr_text, f_name)
         print(wr_text)
-    else:
-        lst_tgp = t_aco.max_step * rank
-        # lst_tgp = tgp.fetch_patterns(rank)
-        req = comm.isend(lst_tgp, dest=0, tag=0)
-        req.wait()
-

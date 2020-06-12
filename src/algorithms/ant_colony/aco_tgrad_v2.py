@@ -149,7 +149,7 @@ class T_GradACO:
         # print(ac.p_matrix)
         if len(list_gp) > 0:
             return list_gp
-        return []
+        return False
 
     def transform_data(self, step):  # optimized
         # NB: Restructure dataset based on reference item
