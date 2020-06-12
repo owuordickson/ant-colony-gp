@@ -3,3 +3,4 @@ python-dateutil
 scikit-fuzzy
 h5py
 cython
+mpi4py

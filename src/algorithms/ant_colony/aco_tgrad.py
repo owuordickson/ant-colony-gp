@@ -71,6 +71,7 @@ class T_GradACO:
         # For tgraank
         # self.d_set = d_set
         self.d_set = Dataset(f_path, min_sup=min_sup, eq=eq, init=False)
+        self.d_set.init_h5_groups()
         cols = self.d_set.time_cols
         if len(cols) > 0:
             print("Dataset Ok")
