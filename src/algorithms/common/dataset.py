@@ -204,33 +204,56 @@ class Dataset:
         self.valid_bins = np.array(valid_bins)
         self.invalid_bins = np.array(invalid_bins)
 
-    def init_h5_groups(self, comm=None):
-        if comm is None:
+    def init_h5_groups(self, f=None):
+        if f is None:
             h5f = h5py.File(self.h5_file, 'w')
         else:
-            h5f = h5py.File(self.h5_file, 'w', driver='mpio', comm=comm)
+            h5f = f
         grp = h5f.require_group('dataset')
         grp.create_dataset('title', data=self.title)
         data = np.array(self.data.copy()).astype('S')
         grp.create_dataset('data', data=data)
         grp.create_dataset('time_cols', data=self.time_cols)
         grp.create_dataset('attr_cols', data=self.attr_cols)
-        h5f.close()
+        if f is None:
+            h5f.close()
         data = None
 
-    def read_h5_dataset(self, group):
+    def read_h5_dataset(self, group, f=None):
         temp = np.array([])
-        with h5py.File(self.h5_file, 'r') as h5f:
-            if group in h5f:
-                temp = h5f[group][:]
+        if f is None:
+            h5f = h5py.File(self.h5_file, 'r')
+        else:
+            h5f = f
+        if group in h5f:
+            temp = h5f[group][:]
+        if f is None:
+            h5f.close()
         return temp
 
-    def add_h5_dataset(self, group, data):
-        with h5py.File(self.h5_file, 'r+') as h5f:
+    def add_h5_dataset(self, group, data, f=None):
+        if f is None:
+            h5f = h5py.File(self.h5_file, 'r+')
+        else:
+            h5f = f
             # assert h5f.swmr_mode
-            if group in h5f:
-                del h5f[group]
-            h5f.create_dataset(group, data=data)
+        if group in h5f:
+            del h5f[group]
+        h5f.create_dataset(group, data=data)
+        if f is None:
+            h5f.close()
+
+    def open_h5_read(self):
+        return h5py.File(self.h5_file, 'r')
+
+    def open_h5_update(self):
+        return h5py.File(self.h5_file, 'r+')
+
+    def open_h5_write(self):
+        return h5py.File(self.h5_file, 'w')
+
+    def close_h5(self, h5f):
+        h5f.close()
 
     @staticmethod
     def bin_rank(arr, equal=False):
