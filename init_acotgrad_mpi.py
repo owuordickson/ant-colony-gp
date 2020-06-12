@@ -97,9 +97,9 @@ if __name__ == "__main__":
 
     h5_file = str(Path(file_path).stem) + str('.h5')
     # if not os.path.exists(h5_file):  # for parallel
-    #    h5f = h5py.File(h5_file, 'w')
+    #    h5f = h5py.File(h5_file, 'w', driver='mpio', comm=comm)
     # else:
-    #    h5f = h5py.File(h5_file, 'r')
+    #    h5f = h5py.File(h5_file, 'r', driver='mpio', comm=comm)
 
     if rank == 0:
         # master process

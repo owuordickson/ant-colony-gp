@@ -42,7 +42,6 @@ class Dataset_t(Dataset):
             self.thd_supp = min_sup
             self.equal = eq
             self.data = None
-            print(h5f['dataset/step_10'].keys())
         else:
             data = Dataset.read_csv(file_path)
             if len(data) <= 1:
@@ -156,11 +155,12 @@ class T_GradACO:
         # For tgraank
         # self.d_set = d_set
         self.d_set = Dataset_t(f_path, min_sup=min_sup, eq=eq, h5f=h5f)
-        if h5f.mode != 'r':
-            self.d_set.init_h5_groups(h5f)  # ignore if h5 file exists
         cols = self.d_set.time_cols
         if len(cols) > 0:
             print("Dataset Ok")
+            if h5f.mode != 'r':  # ignore if h5 file exists
+                # transfer d_set to hd5 file
+                self.d_set.init_h5_groups(h5f)
             self.time_ok = True
             self.time_cols = cols
             self.min_sup = min_sup

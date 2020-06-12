@@ -5,7 +5,7 @@ try:
     from setuptools import setup, Extension, find_packages
 except ImportError:
     from distutils.core import setup, Extension
-from Cython.Distutils import build_ext
+#from Cython.Distutils import build_ext
 # from Cython.Build import cythonize
 import numpy
 
