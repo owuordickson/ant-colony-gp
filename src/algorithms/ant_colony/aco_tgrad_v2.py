@@ -30,7 +30,6 @@ class Dataset_t(Dataset):
         self.h5_file = str(Path(file_path).stem) + str('.h5')
         if h5f.mode == 'r':
             print("Fetching data from h5 file")
-            # h5f = h5py.File(self.h5_file, 'r')
             self.title = h5f['dataset/title'][:]
             self.time_cols = h5f['dataset/time_cols'][:]
             self.attr_cols = h5f['dataset/attr_cols'][:]
@@ -40,10 +39,10 @@ class Dataset_t(Dataset):
             self.attr_size = size[2]
             self.step_name = 'step_' + str(int(self.size - self.attr_size))
             self.invalid_bins = h5f['dataset/' + self.step_name + '/invalid_bins'][:]
-            # h5f.close()
             self.thd_supp = min_sup
             self.equal = eq
             self.data = None
+            print(h5f['dataset/step_10'].keys())
         else:
             data = Dataset.read_csv(file_path)
             if len(data) <= 1:
@@ -73,8 +72,13 @@ class GradACOt (GradACO):
         self.time_diffs = t_diffs
         self.h5f = h5f
         self.attr_index = self.d_set.attr_cols
-        self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=float)
         self.d_set.update_attributes(attr_data, h5f)
+        grp = 'dataset/' + self.d_set.step_name + '/p_matrix'
+        p_matrix = self.d_set.read_h5_dataset(grp, h5f)
+        if p_matrix.size > 0:
+            self.p_matrix = p_matrix
+        else:
+            self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=float)
 
     def run_ant_colony(self):
         min_supp = self.d_set.thd_supp
@@ -110,6 +114,8 @@ class GradACOt (GradACO):
                         loser_gps.append(rand_gp)
                 else:
                     repeated += 1
+        grp = 'dataset/' + self.d_set.step_name + '/p_matrix'
+        self.d_set.add_h5_dataset(grp, self.p_matrix, self.h5f)
         return winner_gps
 
     def validate_gp(self, pattern):
@@ -173,14 +179,6 @@ class T_GradACO:
     def get_max_step(self, min_rep):  # optimized
         all_rows = len(self.d_set.data)
         return all_rows - int(min_rep * all_rows)
-
-    def run_tgraank(self):
-        patterns = list()
-        for step in range(self.max_step):
-            t_pattern = self.fetch_patterns(step)
-            if t_pattern:
-                patterns.append(t_pattern)
-        return patterns
 
     def fetch_patterns(self, step, h5f):
         step += 1  # because for-loop is not inclusive from range: 0 - max_step

@@ -96,18 +96,20 @@ if __name__ == "__main__":
     nprocs = comm.Get_size()
 
     h5_file = str(Path(file_path).stem) + str('.h5')
-    # h5f = h5py.File(h5_file, 'w')  # for parallel
+    # if not os.path.exists(h5_file):  # for parallel
+    #    h5f = h5py.File(h5_file, 'w')
+    # else:
+    #    h5f = h5py.File(h5_file, 'r')
 
     if rank == 0:
         # master process
         print("master process " + str(rank) + " started ...")
 
-        if not os.path.exists(h5_file):
+        if not os.path.exists(h5_file):  # to be removed
             h5f = h5py.File(h5_file, 'w')  # to be removed
         else:
             h5f = h5py.File(h5_file, 'r')  # to be removed
 
-        print(h5f.mode)
         t_aco = T_GradACO(file_path, allow_eq, ref_col, min_sup, min_rep, h5f)
 
         h5f.close()  # to be removed
