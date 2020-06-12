@@ -14,6 +14,9 @@ Description: updated version that uses aco-graank and parallel multi-processing
 
 
 import numpy as np
+import h5py
+from pathlib import Path
+import os
 import multiprocessing as mp
 from src.algorithms.ant_colony.aco_grad_v2 import GradACO
 from src.algorithms.common.fuzzy_mf import calculate_time_lag
@@ -22,6 +25,48 @@ from src.algorithms.common.dataset import Dataset
 #from src.algorithms.ant_colony.cython.cyt_aco_grad import GradACO
 #from src.algorithms.common.cython.cyt_dataset import Dataset
 from src.algorithms.common.profile_cpu import Profile
+
+
+class Dataset_t(Dataset):
+
+    def __init__(self, file_path, min_sup=0, eq=False):
+        self.h5_file = str(Path(file_path).stem) + str('.h5')
+        if os.path.exists(self.h5_file):
+            print("Fetching data from h5 file")
+            h5f = h5py.File(self.h5_file, 'r')
+            self.title = h5f['dataset/title'][:]
+            self.time_cols = h5f['dataset/time_cols'][:]
+            self.attr_cols = h5f['dataset/attr_cols'][:]
+            size = h5f['dataset/size'][:]
+            self.column_size = size[0]
+            self.size = size[1]
+            self.attr_size = size[2]
+            self.step_name = 'step_' + str(int(self.size - self.attr_size))
+            self.invalid_bins = h5f['dataset/' + self.step_name + '/invalid_bins'][:]
+            h5f.close()
+            self.thd_supp = min_sup
+            self.equal = eq
+            self.data = None
+        else:
+            data = Dataset.read_csv(file_path)
+            if len(data) <= 1:
+                self.data = np.array([])
+                print("csv file read error")
+                raise Exception("Unable to read csv file or file has no data")
+            else:
+                print("Data fetched from csv file")
+                self.data = np.array([])
+                self.title = self.get_title(data)  # optimized (numpy)
+                self.time_cols = self.get_time_cols()  # optimized (numpy)
+                self.attr_cols = self.get_attributes()  # optimized (numpy)
+                self.column_size = self.get_attribute_no()  # optimized (numpy)
+                self.size = self.get_size()  # optimized (numpy)
+                self.attr_size = 0
+                self.step_name = ''
+                self.thd_supp = min_sup
+                self.equal = eq
+                self.invalid_bins = np.array([])
+                data = None
 
 
 class GradACOt (GradACO):
@@ -70,7 +115,7 @@ class T_GradACO:
     def __init__(self, f_path, eq, ref_item, min_sup, min_rep, cores):
         # For tgraank
         # self.d_set = d_set
-        self.d_set = Dataset(f_path, min_sup=min_sup, eq=eq, init=False)
+        self.d_set = Dataset_t(f_path, min_sup=min_sup, eq=eq)
         self.d_set.init_h5_groups()
         cols = self.d_set.time_cols
         if len(cols) > 0:

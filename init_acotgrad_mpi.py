@@ -100,8 +100,12 @@ if __name__ == "__main__":
     if rank == 0:
         # master process
         print("master process " + str(rank) + " started ...")
-        h5f = h5py.File(h5_file, 'w')  # to be removed
+
+        if not os.path.exists(self.h5_file):
+            h5f = h5py.File(h5_file, 'w')  # to be removed
+
         t_aco = T_GradACO(file_path, allow_eq, ref_col, min_sup, min_rep, h5f)
+
         h5f.close()  # to be removed
 
         steps = np.arange(t_aco.max_step)
@@ -130,7 +134,7 @@ if __name__ == "__main__":
     # h5f = h5py.File(h5_file, 'r+')  # for parallel
     lst_tgp = list()
     if rank == 0:  # if-else to be removed
-        h5f = h5py.File(h5_file, 'w')  # to be removed
+        h5f = h5py.File(h5_file, 'r+')  # to be removed
         for s in steps:
             tgp = t_aco.fetch_patterns(s, h5f)
             lst_tgp.append(tgp)

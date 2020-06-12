@@ -32,7 +32,7 @@ import os
 
 class Dataset:
 
-    def __init__(self, file_path, min_sup=0, eq=False, init=True):
+    def __init__(self, file_path, min_sup=0, eq=False):
         self.h5_file = str(Path(file_path).stem) + str('.h5')
         if os.path.exists(self.h5_file):
             print("Fetching data from h5 file")
@@ -70,7 +70,7 @@ class Dataset:
                 self.equal = eq
                 self.invalid_bins = np.array([])
                 data = None
-                self.init_attributes(init)
+                self.init_attributes()
 
     def get_size(self):
         size = self.data.shape[0]
@@ -132,29 +132,28 @@ class Dataset:
         else:
             return np.array([])
 
-    def init_attributes(self, init):
+    def init_attributes(self):
         # (check) implement parallel multiprocessing
-        if init:
-            # transpose csv array data
-            attr_data = self.data.copy().T
-            self.attr_size = len(attr_data[self.attr_cols[0]])
-            # create h5 groups to store class attributes
-            self.init_h5_groups()
-            # construct and store 1-itemset valid bins
-            # self.construct_bins_v1(attr_data)
-            self.construct_bins(attr_data)
-            attr_data = None
-        # else:
-            # 1. do not construct bins (due to transformation)
-        gc.collect()
-
-    def update_attributes(self, attr_data):
+        # transpose csv array data
+        attr_data = self.data.copy().T
         self.attr_size = len(attr_data[self.attr_cols[0]])
+        # create h5 groups to store class attributes
+        self.init_h5_groups()
+        # construct and store 1-itemset valid bins
         # self.construct_bins_v1(attr_data)
         self.construct_bins(attr_data)
+        attr_data = None
+        # else:
+        # 1. do not construct bins (due to transformation)
         gc.collect()
 
-    def construct_bins(self, attr_data):
+    def update_attributes(self, attr_data, h5f=None):
+        self.attr_size = len(attr_data[self.attr_cols[0]])
+        # self.construct_bins_v1(attr_data)
+        self.construct_bins(attr_data, h5f=None)
+        gc.collect()
+
+    def construct_bins(self, attr_data, h5f=None):
         # execute binary rank to calculate support of pattern
         n = self.attr_size
         self.step_name = 'step_' + str(int(self.size - self.attr_size))
@@ -171,14 +170,14 @@ class Dataset:
                 invalid_bins.append(decr)
             else:
                 grp = 'dataset/' + self.step_name + '/valid_bins/' + str(col) + '_pos'
-                self.add_h5_dataset(grp, temp_pos)
+                self.add_h5_dataset(grp, temp_pos, h5f)
                 grp = 'dataset/' + self.step_name + '/valid_bins/' + str(col) + '_neg'
-                self.add_h5_dataset(grp, temp_pos.T)
+                self.add_h5_dataset(grp, temp_pos.T, h5f)
         self.invalid_bins = np.array(invalid_bins)
         grp = 'dataset/' + self.step_name + '/invalid_bins'
-        self.add_h5_dataset(grp, self.invalid_bins)
+        self.add_h5_dataset(grp, self.invalid_bins, h5f)
         data_size = np.array([self.column_size, self.size, self.attr_size])
-        self.add_h5_dataset('dataset/size', data_size)
+        self.add_h5_dataset('dataset/size', data_size, h5f)
         gc.collect()
 
     def construct_bins_v1(self, attr_data):
