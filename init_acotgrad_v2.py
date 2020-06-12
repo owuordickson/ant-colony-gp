@@ -25,49 +25,6 @@ from mpi4py import MPI
 from src.algorithms.ant_colony.aco_tgrad_v2 import T_GradACO
 
 
-def init_algorithm(f_path, refItem, minSup, minRep, noCores, eq=False):
-    try:
-        # tgp = TgradACO(f_path, eq, refItem, minSup, minRep, allowPara)
-        tgp = T_GradACO(f_path, eq, refItem, minSup, minRep)
-        if noCores > 1:
-            msg_para = "True"
-            # list_tgp = tgp.run_tgraank(parallel=True)
-        else:
-            msg_para = "False"
-            # list_tgp = tgp.run_tgraank()
-
-        d_set = tgp.d_set
-        wr_line = "Algorithm: ACO-TGRAANK (2.2) \n"
-        wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
-        wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
-        wr_line += "Minimum support: " + str(minSup) + '\n'
-        wr_line += "Minimum representativity: " + str(minRep) + '\n'
-        wr_line += "Multi-core execution: " + str(msg_para) + '\n'
-        wr_line += "Number of cores: " + str(noCores) + '\n'
-        wr_line += "Number of tasks: " + str(tgp.max_step) + '\n\n'
-
-        for txt in d_set.title:
-            col = int(txt[0])
-            if col == refItem:
-                wr_line += (str(txt[0]) + '. ' + str(txt[1].decode()) + '**' + '\n')
-            else:
-                wr_line += (str(txt[0]) + '. ' + str(txt[1].decode()) + '\n')
-
-        wr_line += str("\nFile: " + f_path + '\n')
-        wr_line += str("\nPattern : Support" + '\n')
-
-        for obj in list_tgp:
-            if obj:
-                for tgp in obj:
-                    wr_line += (str(tgp.to_string()) + ' : ' + str(tgp.support) +
-                                ' | ' + str(tgp.time_lag.to_string()) + '\n')
-        return wr_line
-    except ArithmeticError as error:
-        wr_line = "Failed: " + str(error)
-        print(error)
-        return wr_line
-
-
 def write_file(data, path):
     with open(path, 'w') as f:
         f.write(data)
@@ -147,12 +104,12 @@ if __name__ == "__main__":
         t_aco = None
 
     t_aco = comm.bcast(t_aco, root=0)
-    t_aco.d_set.init_h5_groups(comm=comm)
-    lst_tgp = t_aco.fetch_patterns(rank)
+    # t_aco.d_set.init_h5_groups(comm=comm)
+    # lst_tgp = t_aco.fetch_patterns(rank)
 
     if rank == 0:
-        # t_aco.d_set.init_h5_groups()
-        # lst_tgp = t_aco.fetch_patterns(rank+1)
+        t_aco.d_set.init_h5_groups()
+        lst_tgp = t_aco.fetch_patterns(rank+1)
 
         for i in range(1, nprocs):
             req = comm.irecv(source=i, tag=rank)
