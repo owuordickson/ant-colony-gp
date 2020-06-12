@@ -103,7 +103,7 @@ if __name__ == "__main__":
         optparser.add_option('-c', '--cores',
                              dest='numCores',
                              help='number of cores',
-                             default=0,
+                             default=1,
                              type='int')
         (options, args) = optparser.parse_args()
 
