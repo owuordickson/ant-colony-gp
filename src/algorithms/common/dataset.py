@@ -148,13 +148,13 @@ class Dataset:
         # 1. do not construct bins (due to transformation)
         gc.collect()
 
-    def update_attributes(self, attr_data, h5f=None):
+    def update_attributes(self, attr_data):
         self.attr_size = len(attr_data[self.attr_cols[0]])
         # self.construct_bins_v1(attr_data)
-        self.construct_bins(attr_data, h5f=None)
+        self.construct_bins(attr_data)
         gc.collect()
 
-    def construct_bins(self, attr_data, h5f=None):
+    def construct_bins(self, attr_data):
         # execute binary rank to calculate support of pattern
         n = self.attr_size
         self.step_name = 'step_' + str(int(self.size - self.attr_size))
@@ -171,14 +171,14 @@ class Dataset:
                 invalid_bins.append(decr)
             else:
                 grp = 'dataset/' + self.step_name + '/valid_bins/' + str(col) + '_pos'
-                self.add_h5_dataset(grp, temp_pos, h5f)
+                self.add_h5_dataset(grp, temp_pos)
                 grp = 'dataset/' + self.step_name + '/valid_bins/' + str(col) + '_neg'
-                self.add_h5_dataset(grp, temp_pos.T, h5f)
+                self.add_h5_dataset(grp, temp_pos.T)
         self.invalid_bins = np.array(invalid_bins)
         grp = 'dataset/' + self.step_name + '/invalid_bins'
-        self.add_h5_dataset(grp, self.invalid_bins, h5f)
+        self.add_h5_dataset(grp, self.invalid_bins)
         data_size = np.array([self.column_size, self.size, self.attr_size])
-        self.add_h5_dataset('dataset/size', data_size, h5f)
+        self.add_h5_dataset('dataset/size', data_size)
         gc.collect()
 
     def construct_bins_v1(self, attr_data):
@@ -203,45 +203,32 @@ class Dataset:
         self.valid_bins = np.array(valid_bins)
         self.invalid_bins = np.array(invalid_bins)
 
-    def init_h5_groups(self, f=None):
-        if f is None:
-            h5f = h5py.File(self.h5_file, 'w')
-        else:
-            h5f = f
+    def init_h5_groups(self):
+        h5f = h5py.File(self.h5_file, 'w')
         grp = h5f.require_group('dataset')
         grp.create_dataset('title', data=self.title)
         data = np.array(self.data.copy()).astype('S')
         grp.create_dataset('data', data=data)
         grp.create_dataset('time_cols', data=self.time_cols)
         grp.create_dataset('attr_cols', data=self.attr_cols)
-        if f is None:
-            h5f.close()
+        h5f.close()
         data = None
         self.data = None
 
-    def read_h5_dataset(self, group, f=None):
+    def read_h5_dataset(self, group):
         temp = np.array([])
-        if f is None:
-            h5f = h5py.File(self.h5_file, 'r')
-        else:
-            h5f = f
+        h5f = h5py.File(self.h5_file, 'r')
         if group in h5f:
             temp = h5f[group][:]
-        if f is None:
-            h5f.close()
+        h5f.close()
         return temp
 
-    def add_h5_dataset(self, group, data, f=None):
-        if f is None:
-            h5f = h5py.File(self.h5_file, 'r+')
-        else:
-            h5f = f
-            # assert h5f.swmr_mode
+    def add_h5_dataset(self, group, data):
+        h5f = h5py.File(self.h5_file, 'r+')
         if group in h5f:
             del h5f[group]
         h5f.create_dataset(group, data=data)
-        if f is None:
-            h5f.close()
+        h5f.close()
 
     @staticmethod
     def bin_rank(arr, equal=False):

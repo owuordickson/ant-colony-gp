@@ -22,34 +22,13 @@ Description:
 import sys
 import os
 from optparse import OptionParser
-from src.algorithms.ant_colony.mpi.aco_tgrad_mpi import Dataset_t, T_GradACO
+from src.algorithms.ant_colony.mpi.aco_tgrad_mpi import Dataset_t, T_GradACO, GradACOt
 
 
 def write_file(data, path):
     with open(path, 'w') as f:
         f.write(data)
         f.close()
-
-
-def fetch_patterns(self, step):
-    step += 1  # because for-loop is not inclusive from range: 0 - max_step
-    # 1. Transform data
-    d_set = self.d_set
-    attr_data, time_diffs = self.transform_data(step)
-
-    # 2. Execute aco-graank for each transformation
-    attr_size = len(attr_data[self.attr_cols[0]])
-    for col in d_set.attr_cols:
-        col_data = np.array(attr_data[col], dtype=float)
-        is_valid, temp = d_set.construct_bins(self, col, attr_size, col_data)
-
-    ac = GradACOt(d_set, time_diffs)
-    list_gp = ac.run_ant_colony()
-    # print("\nPheromone Matrix")
-    # print(ac.p_matrix)
-    if len(list_gp) > 0:
-        return list_gp
-    return False
 
 
 if __name__ == "__main__":
@@ -130,10 +109,11 @@ if __name__ == "__main__":
             # read data set from h5 file
             h5f = h5py.File(h5_file, 'r')  # to be removed
             h5f.close()  # to be removed
+            d_set = None
         else:
             # create new data set from csv file
-            d_set = None
-        t_aco = T_GradACO(d_set, ref_col, min_sup, min_rep)
+            d_set = Dataset_t(file_path, min_sup, eq=allow_eq)
+        t_aco = T_GradACO(d_set, ref_col, min_rep)
         steps = np.arange(t_aco.max_step)
 
         # determine the size of each sub-task
@@ -159,18 +139,31 @@ if __name__ == "__main__":
 
     # fetch TGPs
     lst_tgp = list()
-    if rank == 0:  # if-else to be removed
-        h5f = h5py.File(h5_file, 'r+')  # to be removed
-        for s in steps:
-            tgp = t_aco.fetch_patterns(s, h5f)
-            lst_tgp.append(tgp)
-        h5f.close()  # to be removed
-    else:
-        for s in steps:
-            # tgp = t_aco.fetch_patterns(s, h5f)
-            tgp = False
-            lst_tgp.append(tgp)
+    for step in steps:
+        step += 1  # because for-loop is not inclusive from range: 0 - max_step
+        d_set = t_aco.d_set
+        d_set.step_name = 'step_' + str(step)
 
+        # 1. Transform data for each step
+        attr_data, time_diffs = t_aco.transform_data(step)  # read from h5 file
+
+        # 2. fetch all valid/invalid bins and store in d_set
+        d_set.attr_size = len(attr_data[d_set.attr_cols[0]])  # read from h5 file
+        for col in d_set.attr_cols:
+            col_data = np.array(attr_data[col], dtype=float)
+            is_valid, temp = t_aco.construct_bins(col, d_set.attr_size, col_data)
+            if is_valid:
+                pass  # store in valid bins
+            else:
+                pass  # store in invalid bins
+
+        # 3. Execute aco-graank
+        p_matrix = None  # read from h5 file
+        ac = GradACOt(d_set, time_diffs, p_matrix)
+        tgps = ac.run_ant_colony()  # needs to read h5 file
+        # print(ac.p_matrix)  # store matrix in h5 file
+        if len(tgps) > 0:
+            lst_tgp.append(tgps)
 
     lst_tgp = comm.gather(lst_tgp, root=0)
     if rank == 0:

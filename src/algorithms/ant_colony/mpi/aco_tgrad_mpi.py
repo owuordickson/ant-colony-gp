@@ -25,7 +25,7 @@ from src.algorithms.common.dataset import Dataset
 
 class Dataset_t(Dataset):
 
-    def __init__(self, file_path, min_sup, min_rep, eq=False):
+    def __init__(self, file_path, min_sup, eq=False):
         data = Dataset.read_csv(file_path)
         if len(data) <= 1:
             self.data = np.array([])
@@ -45,19 +45,20 @@ class Dataset_t(Dataset):
             self.attr_size = 0
             self.step_name = ''
             self.invalid_bins = np.array([])
+            self.valid_bins = np.array([])  # to be removed
             data = None
 
 
 class GradACOt (GradACO):
 
-    def __init__(self, d_set, p_matrix, t_diffs):
+    def __init__(self, d_set, t_diffs, p_matrix=None):
         self.d_set = d_set
         self.time_diffs = t_diffs
         self.attr_index = self.d_set.attr_cols
         # self.d_set.update_attributes(attr_data, h5f)
         # grp = 'dataset/' + self.d_set.step_name + '/p_matrix'
         # p_matrix = self.d_set.read_h5_dataset(grp, h5f)
-        if p_matrix.size > 0:
+        if p_matrix is not None:
             self.p_matrix = p_matrix
         else:
             self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=float)
@@ -100,7 +101,7 @@ class GradACOt (GradACO):
         # self.d_set.add_h5_dataset(grp, self.p_matrix, self.h5f)
         return winner_gps
 
-    def validate_gp(self, pattern):
+    def validate_gp(self, pattern):  # needs to read from h5 file
         # pattern = [('2', '+'), ('4', '+')]
         min_supp = self.d_set.thd_supp
         gen_pattern = GP()
@@ -111,7 +112,7 @@ class GradACOt (GradACO):
                 continue
             else:
                 grp = 'dataset/' + self.d_set.step_name + '/valid_bins/' + gi.as_string()
-                temp = self.d_set.read_h5_dataset(grp, self.h5f)
+                temp = self.d_set.read_h5_dataset(grp)  # change
                 if bin_data.size <= 0:
                     bin_data = np.array([temp, temp])
                     gen_pattern.add_gradual_item(gi)
@@ -134,18 +135,18 @@ class GradACOt (GradACO):
 
 class T_GradACO:
 
-    def __init__(self, d_set, min_sup, ref_item, min_rep):
+    def __init__(self, d_set, ref_item, min_rep):
         # For tgraank
-        self.d_set = d_set
-        cols = self.d_set.time_cols
+        cols = d_set.time_cols
         if len(cols) > 0:
             print("Dataset Ok")
             self.time_ok = True
+            self.d_set = d_set
             self.time_cols = cols
-            self.min_sup = min_sup
+            self.min_sup = d_set.thd_supp
             self.ref_item = ref_item
             self.max_step = self.get_max_step(min_rep)
-            self.attr_data = self.d_set.data.copy().T
+            self.attr_data = d_set.data.copy().T
             # self.d_set.data = self.d_set.read_h5_dataset('dataset/data')
             # self.d_set.data = np.array(self.d_set.data).astype('U')
         else:
