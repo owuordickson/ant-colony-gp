@@ -25,28 +25,49 @@ from src.algorithms.common.dataset import Dataset
 
 class Dataset_t(Dataset):
 
-    def __init__(self, file_path, min_sup, eq=False):
-        data = Dataset.read_csv(file_path)
-        if len(data) <= 1:
-            self.data = np.array([])
-            data = None
-            print("csv file read error")
-            raise Exception("Unable to read csv file or file has no data")
-        else:
-            print("Data fetched from csv file")
-            self.data = np.array([])
+    def __init__(self, file_path=None, min_sup=None, eq=False, h5f=None):
+        if h5f is not None:
+            print("Fetching data from h5 file")
+
             self.thd_supp = min_sup
             self.equal = eq
-            self.title = self.get_title(data)  # optimized (numpy)
-            self.time_cols = self.get_time_cols()  # optimized (numpy)
-            self.attr_cols = self.get_attributes()  # optimized (numpy)
-            self.column_size = self.get_attribute_no()  # optimized (numpy)
-            self.size = self.get_size()  # optimized (numpy)
+            self.title = h5f['dataset/title'][:]
+            self.time_cols = h5f['dataset/time_cols'][:]
+            self.attr_cols = h5f['dataset/attr_cols'][:]
+            size = h5f['dataset/size'][:]
+            self.column_size = size[0]
+            self.size = size[1]
             self.attr_size = 0
             self.step_name = ''
-            self.invalid_bins = np.array([])
+            # self.step_name = 'step_' + str(int(self.size - self.attr_size))
+            # self.invalid_bins = h5f['dataset/' + self.step_name + '/invalid_bins'][:]
+            self.invalid_bins = np.array([])  # to be removed
             self.valid_bins = np.array([])  # to be removed
-            data = None
+
+            self.data = h5f['dataset/data'][:]
+            self.data = np.array(self.data).astype('U')
+        else:
+            data = Dataset.read_csv(file_path)
+            if len(data) <= 1:
+                self.data = np.array([])
+                data = None
+                print("csv file read error")
+                raise Exception("Unable to read csv file or file has no data")
+            else:
+                print("Data fetched from csv file")
+                self.data = np.array([])
+                self.thd_supp = min_sup
+                self.equal = eq
+                self.title = self.get_title(data)  # optimized (numpy)
+                self.time_cols = self.get_time_cols()  # optimized (numpy)
+                self.attr_cols = self.get_attributes()  # optimized (numpy)
+                self.column_size = self.get_attribute_no()  # optimized (numpy)
+                self.size = self.get_size()  # optimized (numpy)
+                self.attr_size = 0
+                self.step_name = ''
+                self.invalid_bins = np.array([])
+                self.valid_bins = np.array([])  # to be removed
+                data = None
 
 
 class GradACOt (GradACO):

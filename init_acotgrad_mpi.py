@@ -16,6 +16,10 @@ Description:
     s -> minimum support
     r -> representativity
 
+Credits:
+    https://www.kth.se/blogs/pdc/2019/08/parallel-programming-in-python-mpi4py-part-1/
+    http://what-when-how.com/Tutorial/topic-97chepqdi/Python-and-HDF5-137.html
+
 """
 
 
@@ -84,35 +88,34 @@ if __name__ == "__main__":
         ref_col = options.refCol
         min_rep = options.minRep
 
-    import time
     import numpy as np
     from pathlib import Path
     import h5py
     from mpi4py import MPI
 
-    start = time.time()
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
     nprocs = comm.Get_size()
 
     h5_file = str(Path(file_path).stem) + str('_mpi.h5')
-    # if not os.path.exists(h5_file):  # for parallel
-    #    h5f = h5py.File(h5_file, 'w', driver='mpio', comm=comm)
-    # else:
-    #    h5f = h5py.File(h5_file, 'r', driver='mpio', comm=comm)
+    exists = os.path.exists(h5_file)
+    if not exists:  # for parallel
+        h5f = h5py.File(h5_file, 'w', driver='mpio', comm=comm)
+    else:
+        h5f = h5py.File(h5_file, 'r+', driver='mpio', comm=comm)
 
+    start = MPI.Wtime()
     if rank == 0:
         # master process
         print("master process " + str(rank) + " started ...")
 
-        if os.path.exists(h5_file):  # to be removed
+        if exists:
             # read data set from h5 file
-            h5f = h5py.File(h5_file, 'r')  # to be removed
-            h5f.close()  # to be removed
-            d_set = None
+            print("reading")
+            d_set = Dataset_t(h5f=h5f)
         else:
             # create new data set from csv file
-            d_set = Dataset_t(file_path, min_sup, eq=allow_eq)
+            d_set = Dataset_t(file_path=file_path, min_sup=min_sup, eq=allow_eq)
         t_aco = T_GradACO(d_set, ref_col, min_rep)
         steps = np.arange(t_aco.max_step)
 
@@ -136,6 +139,20 @@ if __name__ == "__main__":
         steps = None
     steps = comm.scatter(steps, root=0)
     t_aco = comm.bcast(t_aco, root=0)
+
+    if not exists:
+        print("writing")
+        d_set = t_aco.d_set
+        grp = h5f.require_group('dataset')
+        grp.create_dataset('title', data=d_set.title)
+        data = np.array(d_set.data.copy()).astype('S')
+        grp.create_dataset('data', data=data)
+        grp.create_dataset('time_cols', data=d_set.time_cols)
+        grp.create_dataset('attr_cols', data=d_set.attr_cols)
+        grp.create_dataset('size', data=np.array([d_set.column_size, d_set.size]))
+        h5f.close()
+        data = None
+        # d_set.data = None
 
     # fetch TGPs
     lst_tgp = list()
@@ -174,6 +191,7 @@ if __name__ == "__main__":
             lst_tgp.append(tgps)
 
     lst_tgp = comm.gather(lst_tgp, root=0)
+    end = MPI.Wtime()
     if rank == 0:
         d_set = t_aco.d_set
         wr_line = "Algorithm: ACO-TGRAANK (3.0) \n"
@@ -203,9 +221,9 @@ if __name__ == "__main__":
                         wr_line += (str(tgp.to_string()) + ' : ' + str(tgp.support) +
                                     ' | ' + str(tgp.time_lag.to_string()) + '\n')
 
-        end = time.time()
         wr_text = ("Run-time: " + str(end - start) + " seconds\n")
         wr_text += str(wr_line)
         f_name = str('res_aco' + str(end).replace('.', '', 1) + '.txt')
         # write_file(wr_text, f_name)
         print(wr_text)
+    h5f.close()
