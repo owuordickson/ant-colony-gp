@@ -139,6 +139,7 @@ if __name__ == "__main__":
         steps = None
     steps = comm.scatter(steps, root=0)
     t_aco = comm.bcast(t_aco, root=0)
+    print(steps)
 
     if not exists:
         print("writing")
@@ -150,9 +151,8 @@ if __name__ == "__main__":
         grp.create_dataset('time_cols', data=d_set.time_cols)
         grp.create_dataset('attr_cols', data=d_set.attr_cols)
         grp.create_dataset('size', data=np.array([d_set.column_size, d_set.size]))
-        h5f.close()
+        # h5f.close()
         data = None
-        # d_set.data = None
 
     # fetch TGPs
     lst_tgp = list()
@@ -161,34 +161,59 @@ if __name__ == "__main__":
         d_set = t_aco.d_set
         d_set.step_name = 'step_' + str(step)
 
-        # 1. Transform data for each step
-        attr_data, time_diffs = t_aco.transform_data(step)  # read from h5 file
+        if exists:
+            # read from h5 file
+            d_set.attr_size = h5f['dataset/' + d_set.step_name + '/attr_size'][0]
+            d_set.invalid_bins = h5f['dataset/' + d_set.step_name + '/invalid_bins'][:]
+            time_diffs = h5f['dataset/' + d_set.step_name + '/time_diffs'][:]
+            h5f.close()
+        else:
+            # write to h5 file
+            # 1. Transform data for each step
+            attr_data, time_diffs = t_aco.transform_data(step)  # read from h5 file
 
-        # 2. fetch all valid/invalid bins and store in d_set
-        d_set.attr_size = len(attr_data[d_set.attr_cols[0]])  # read from h5 file
-        valid_bins = list()  # to be removed
-        invalid_bins = list()  # to be removed
-        for col in d_set.attr_cols:
-            col_data = np.array(attr_data[col], dtype=float)
-            is_valid, temps = t_aco.construct_bins(col, d_set.attr_size, col_data)
-            if is_valid:
-                # store in valid bins
-                for temp in temps:
-                    valid_bins.append(temp)
-            else:
-                # store in invalid bins
-                for temp in temps:
-                    invalid_bins.append(temp)
-        d_set.invalid_bins = np.array(invalid_bins)
-        d_set.valid_bins = np.array(valid_bins)
+            # 2. fetch all valid/invalid bins and store in d_set
+            d_set.attr_size = len(attr_data[d_set.attr_cols[0]])  # read from h5 file
+            n = d_set.attr_size
+            # valid_bins = list()  # to be removed
+            invalid_bins = list()  # to be removed
+            for col in d_set.attr_cols:
+                col_data = np.array(attr_data[col], dtype=float)
+                is_valid, temps = t_aco.construct_bins(col, n, col_data)
+                if is_valid:
+                    # store in valid bins
+                    ds = d_set.step_name + '/valid_bins/' + str(col) + '_pos'
+                    grp.create_dataset(ds, data=temps)
+                    ds = d_set.step_name + '/valid_bins/' + str(col) + '_neg'
+                    grp.create_dataset(ds, data=temps.T)
+                    # for temp in temps:
+                    #    valid_bins.append(temp)
+                else:
+                    # store in invalid bins
+                    for temp in temps:
+                        invalid_bins.append(temp)
+            d_set.invalid_bins = np.array(invalid_bins)
+            ds = d_set.step_name + '/invalid_bins'
+            grp.create_dataset(ds, data=d_set.invalid_bins)
+            # d_set.valid_bins = np.array(valid_bins)
+            ds = d_set.step_name + '/time_diffs'
+            grp.create_dataset(ds, data=time_diffs)
+            ds = d_set.step_name + '/attr_size'
+            grp.create_dataset(ds, data=np.array([d_set.attr_size]))
+            h5f.close()
 
         # 3. Execute aco-graank
-        p_matrix = None  # read from h5 file
-        ac = GradACOt(d_set, time_diffs, p_matrix)
+        h5f = h5py.File(h5_file, 'r', driver='mpio', comm=comm)
+        ac = GradACOt(d_set, time_diffs, h5f)
         tgps = ac.run_ant_colony()  # needs to read h5 file
         # print(ac.p_matrix)  # store matrix in h5 file
         if len(tgps) > 0:
             lst_tgp.append(tgps)
+        h5f.close()
+        h5f = h5py.File(h5_file, 'w', driver='mpio', comm=comm)
+        ds = 'dataset/' + d_set.step_name + '/p_matrix'
+        h5f.create_dataset(ds, data=ac.p_matrix)
+        h5f.close()
 
     lst_tgp = comm.gather(lst_tgp, root=0)
     end = MPI.Wtime()
@@ -226,4 +251,3 @@ if __name__ == "__main__":
         f_name = str('res_aco' + str(end).replace('.', '', 1) + '.txt')
         # write_file(wr_text, f_name)
         print(wr_text)
-    h5f.close()

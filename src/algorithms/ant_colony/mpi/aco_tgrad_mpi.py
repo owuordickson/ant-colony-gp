@@ -42,7 +42,7 @@ class Dataset_t(Dataset):
             # self.step_name = 'step_' + str(int(self.size - self.attr_size))
             # self.invalid_bins = h5f['dataset/' + self.step_name + '/invalid_bins'][:]
             self.invalid_bins = np.array([])  # to be removed
-            self.valid_bins = np.array([])  # to be removed
+            # self.valid_bins = np.array([])  # to be removed
 
             self.data = h5f['dataset/data'][:]
             self.data = np.array(self.data).astype('U')
@@ -66,17 +66,23 @@ class Dataset_t(Dataset):
                 self.attr_size = 0
                 self.step_name = ''
                 self.invalid_bins = np.array([])
-                self.valid_bins = np.array([])  # to be removed
+                # self.valid_bins = np.array([])  # to be removed
                 data = None
 
 
 class GradACOt (GradACO):
 
-    def __init__(self, d_set, t_diffs, p_matrix=None):
+    def __init__(self, d_set, t_diffs, h5f):
         self.d_set = d_set
         self.time_diffs = t_diffs
+        self.h5f = h5f
         self.attr_index = self.d_set.attr_cols
-        if p_matrix is not None:
+        grp = 'dataset/' + self.d_set.step_name + '/p_matrix'
+        if grp in h5f:
+            p_matrix = h5f[grp][:]
+        else:
+            p_matrix = np.array([])
+        if p_matrix.size > 0:
             self.p_matrix = p_matrix
         else:
             self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=float)
@@ -127,26 +133,23 @@ class GradACOt (GradACO):
             if self.d_set.invalid_bins.size > 0 and np.any(np.isin(self.d_set.invalid_bins, gi.gradual_item)):
                 continue
             else:
-                # grp = 'dataset/' + self.d_set.step_name + '/valid_bins/' + gi.as_string()
-                # temp = self.d_set.read_h5_dataset(grp)  # change
-                # print(gi.gradual_item)
-                # print(self.d_set.valid_bins[0][0])
-                # arg = np.argwhere(np.isin(self.d_set.valid_bins[:, 0], gi.gradual_item))
-                # print(arg)
-                # if len(arg) > 0:
-                    # print(gi.to_string())
-                #    i = arg[0][0]
-                #    temp = self.d_set.valid_bins[i][1]
-                # else:
-                #    continue
-                for obj in self.d_set.valid_bins:
-                    if obj[0] == gi.gradual_item:
-                        temp = obj[1]
-                        break
+                ds = 'dataset/' + self.d_set.step_name + '/valid_bins/' + gi.as_string()
+                if ds in self.h5f:
+                    temp = self.h5f[ds][:]
+                else:
+                    continue
+                    # temp = np.array([])
+                # for obj in self.d_set.valid_bins:
+                #    if obj[0] == gi.gradual_item:
+                #        temp = obj[1]
+                #        break
+                print(ds)
                 if bin_data.size <= 0:
-                    bin_data = np.array([temp, temp])
+                    print("Init " + str(len(temp)))
+                    bin_data = np.array([temp, np.array([])])
                     gen_pattern.add_gradual_item(gi)
                 else:
+                    print("Update " + str(len(temp)))
                     bin_data[1] = temp
                     temp_bin, supp = self.bin_and(bin_data, self.d_set.attr_size)
                     if supp >= min_supp:
@@ -256,19 +259,14 @@ class T_GradACO:
                 time_diffs.append([time_diff, i])
         return True, np.array(time_diffs)
 
-    def construct_bins(self, col, attr_size, col_data):
+    def construct_bins(self, col, n, col_data):
         # execute binary rank to calculate support of pattern
-        n = attr_size
         incr = np.array((col, '+'), dtype='i, S1')
         decr = np.array((col, '-'), dtype='i, S1')
-        temp_pos = Dataset_t.bin_rank(col_data, equal=self.d_set.equal)
+        temp_pos = Dataset.bin_rank(col_data, equal=self.d_set.equal)
         supp = float(np.sum(temp_pos)) / float(n * (n - 1.0) / 2.0)
 
-        gc.collect()
         if supp < self.min_sup:
-            return True, [incr, decr]
+            return False, [incr, decr]
         else:
-            valid_bins = list()
-            valid_bins.append([incr, temp_pos])
-            valid_bins.append([decr, temp_pos.T])
-            return True, valid_bins
+            return True, temp_pos
