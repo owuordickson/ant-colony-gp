@@ -95,7 +95,7 @@ if __name__ == "__main__":
     rank = comm.Get_rank()
     nprocs = comm.Get_size()
 
-    h5_file = str(Path(file_path).stem) + str('.h5')
+    h5_file = str(Path(file_path).stem) + str('_mpi.h5')
     # if not os.path.exists(h5_file):  # for parallel
     #    h5f = h5py.File(h5_file, 'w', driver='mpio', comm=comm)
     # else:
@@ -149,13 +149,21 @@ if __name__ == "__main__":
 
         # 2. fetch all valid/invalid bins and store in d_set
         d_set.attr_size = len(attr_data[d_set.attr_cols[0]])  # read from h5 file
+        valid_bins = list()  # to be removed
+        invalid_bins = list()  # to be removed
         for col in d_set.attr_cols:
             col_data = np.array(attr_data[col], dtype=float)
-            is_valid, temp = t_aco.construct_bins(col, d_set.attr_size, col_data)
+            is_valid, temps = t_aco.construct_bins(col, d_set.attr_size, col_data)
             if is_valid:
-                pass  # store in valid bins
+                # store in valid bins
+                for temp in temps:
+                    valid_bins.append(temp)
             else:
-                pass  # store in invalid bins
+                # store in invalid bins
+                for temp in temps:
+                    invalid_bins.append(temp)
+        d_set.invalid_bins = np.array(invalid_bins)
+        d_set.valid_bins = np.array(valid_bins)
 
         # 3. Execute aco-graank
         p_matrix = None  # read from h5 file

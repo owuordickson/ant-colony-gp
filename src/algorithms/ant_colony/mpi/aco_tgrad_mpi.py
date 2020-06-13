@@ -111,8 +111,22 @@ class GradACOt (GradACO):
             if self.d_set.invalid_bins.size > 0 and np.any(np.isin(self.d_set.invalid_bins, gi.gradual_item)):
                 continue
             else:
-                grp = 'dataset/' + self.d_set.step_name + '/valid_bins/' + gi.as_string()
-                temp = self.d_set.read_h5_dataset(grp)  # change
+                # grp = 'dataset/' + self.d_set.step_name + '/valid_bins/' + gi.as_string()
+                # temp = self.d_set.read_h5_dataset(grp)  # change
+                # print(gi.gradual_item)
+                # print(self.d_set.valid_bins[0][0])
+                # arg = np.argwhere(np.isin(self.d_set.valid_bins[:, 0], gi.gradual_item))
+                # print(arg)
+                # if len(arg) > 0:
+                    # print(gi.to_string())
+                #    i = arg[0][0]
+                #    temp = self.d_set.valid_bins[i][1]
+                # else:
+                #    continue
+                for obj in self.d_set.valid_bins:
+                    if obj[0] == gi.gradual_item:
+                        temp = obj[1]
+                        break
                 if bin_data.size <= 0:
                     bin_data = np.array([temp, temp])
                     gen_pattern.add_gradual_item(gi)
@@ -244,7 +258,10 @@ class T_GradACO:
             # invalid_bins.append(incr)
             # invalid_bins.append(decr)
         else:
-            return True, [temp_pos, temp_pos.T]
+            valid_bins = list()
+            valid_bins.append([incr, temp_pos])
+            valid_bins.append([decr, temp_pos.T])
+            return True, valid_bins
                 # grp = 'dataset/' + self.step_name + '/valid_bins/' + str(col) + '_pos'
                 # self.add_h5_dataset(grp, temp_pos, h5f)
                 # grp = 'dataset/' + self.step_name + '/valid_bins/' + str(col) + '_neg'
