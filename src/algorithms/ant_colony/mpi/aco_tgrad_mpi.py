@@ -55,9 +55,6 @@ class GradACOt (GradACO):
         self.d_set = d_set
         self.time_diffs = t_diffs
         self.attr_index = self.d_set.attr_cols
-        # self.d_set.update_attributes(attr_data, h5f)
-        # grp = 'dataset/' + self.d_set.step_name + '/p_matrix'
-        # p_matrix = self.d_set.read_h5_dataset(grp, h5f)
         if p_matrix is not None:
             self.p_matrix = p_matrix
         else:
@@ -97,8 +94,6 @@ class GradACOt (GradACO):
                         loser_gps.append(rand_gp)
                 else:
                     repeated += 1
-        # grp = 'dataset/' + self.d_set.step_name + '/p_matrix'
-        # self.d_set.add_h5_dataset(grp, self.p_matrix, self.h5f)
         return winner_gps
 
     def validate_gp(self, pattern):  # needs to read from h5 file
@@ -243,10 +238,6 @@ class T_GradACO:
     def construct_bins(self, col, attr_size, col_data):
         # execute binary rank to calculate support of pattern
         n = attr_size
-        # self.step_name = 'step_' + str(int(self.size - self.attr_size))
-        # invalid_bins = list()
-        # for col in self.attr_cols:
-        # col_data = np.array(attr_data[col], dtype=float)
         incr = np.array((col, '+'), dtype='i, S1')
         decr = np.array((col, '-'), dtype='i, S1')
         temp_pos = Dataset_t.bin_rank(col_data, equal=self.d_set.equal)
@@ -255,20 +246,8 @@ class T_GradACO:
         gc.collect()
         if supp < self.min_sup:
             return True, [incr, decr]
-            # invalid_bins.append(incr)
-            # invalid_bins.append(decr)
         else:
             valid_bins = list()
             valid_bins.append([incr, temp_pos])
             valid_bins.append([decr, temp_pos.T])
             return True, valid_bins
-                # grp = 'dataset/' + self.step_name + '/valid_bins/' + str(col) + '_pos'
-                # self.add_h5_dataset(grp, temp_pos, h5f)
-                # grp = 'dataset/' + self.step_name + '/valid_bins/' + str(col) + '_neg'
-                # self.add_h5_dataset(grp, temp_pos.T, h5f)
-        # self.invalid_bins = np.array(invalid_bins)
-        # grp = 'dataset/' + self.step_name + '/invalid_bins'
-        # self.add_h5_dataset(grp, self.invalid_bins, h5f)
-        # data_size = np.array([self.column_size, self.size, self.attr_size])
-        # self.add_h5_dataset('dataset/size', data_size, h5f)
-
