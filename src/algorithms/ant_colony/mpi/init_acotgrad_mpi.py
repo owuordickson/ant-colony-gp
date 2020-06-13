@@ -22,13 +22,34 @@ Description:
 import sys
 import os
 from optparse import OptionParser
-from src.algorithms.ant_colony.aco_tgrad_v2 import T_GradACO
+from src.algorithms.ant_colony.mpi.aco_tgrad_mpi import Dataset_t, T_GradACO
 
 
 def write_file(data, path):
     with open(path, 'w') as f:
         f.write(data)
         f.close()
+
+
+def fetch_patterns(self, step):
+    step += 1  # because for-loop is not inclusive from range: 0 - max_step
+    # 1. Transform data
+    d_set = self.d_set
+    attr_data, time_diffs = self.transform_data(step)
+
+    # 2. Execute aco-graank for each transformation
+    attr_size = len(attr_data[self.attr_cols[0]])
+    for col in d_set.attr_cols:
+        col_data = np.array(attr_data[col], dtype=float)
+        is_valid, temp = d_set.construct_bins(self, col, attr_size, col_data)
+
+    ac = GradACOt(d_set, time_diffs)
+    list_gp = ac.run_ant_colony()
+    # print("\nPheromone Matrix")
+    # print(ac.p_matrix)
+    if len(list_gp) > 0:
+        return list_gp
+    return False
 
 
 if __name__ == "__main__":
@@ -105,16 +126,16 @@ if __name__ == "__main__":
         # master process
         print("master process " + str(rank) + " started ...")
 
-        if not os.path.exists(h5_file):  # to be removed
-            h5f = h5py.File(h5_file, 'w')  # to be removed
-        else:
+        if os.path.exists(h5_file):  # to be removed
+            # read data set from h5 file
             h5f = h5py.File(h5_file, 'r')  # to be removed
-
-        t_aco = T_GradACO(file_path, allow_eq, ref_col, min_sup, min_rep, h5f)
-
-        h5f.close()  # to be removed
-
+            h5f.close()  # to be removed
+        else:
+            # create new data set from csv file
+            d_set = None
+        t_aco = T_GradACO(d_set, ref_col, min_sup, min_rep)
         steps = np.arange(t_aco.max_step)
+
         # determine the size of each sub-task
         ave, res = divmod(steps.size, nprocs)
         counts = [ave + 1 if p < res else ave for p in range(nprocs)]
@@ -130,14 +151,13 @@ if __name__ == "__main__":
     else:
         # worker process
         print("worker process " + str(rank) + " started ...")
+        # d_set = None
         t_aco = None
         steps = None
-
-    # h5f.close()  # for parallel
     steps = comm.scatter(steps, root=0)
     t_aco = comm.bcast(t_aco, root=0)
 
-    # h5f = h5py.File(h5_file, 'r+')  # for parallel
+    # fetch TGPs
     lst_tgp = list()
     if rank == 0:  # if-else to be removed
         h5f = h5py.File(h5_file, 'r+')  # to be removed
@@ -150,9 +170,9 @@ if __name__ == "__main__":
             # tgp = t_aco.fetch_patterns(s, h5f)
             tgp = False
             lst_tgp.append(tgp)
-    lst_tgp = comm.gather(lst_tgp, root=0)
-    # h5f.close()  # for parallel
 
+
+    lst_tgp = comm.gather(lst_tgp, root=0)
     if rank == 0:
         d_set = t_aco.d_set
         wr_line = "Algorithm: ACO-TGRAANK (3.0) \n"

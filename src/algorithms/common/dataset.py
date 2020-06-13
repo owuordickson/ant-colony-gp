@@ -54,6 +54,7 @@ class Dataset:
             data = Dataset.read_csv(file_path)
             if len(data) <= 1:
                 self.data = np.array([])
+                data = None
                 print("csv file read error")
                 raise Exception("Unable to read csv file or file has no data")
             else:

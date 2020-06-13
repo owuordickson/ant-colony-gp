@@ -14,9 +14,8 @@ Description: updated version that uses aco-graank and parallel multi-processing
 
 
 import numpy as np
-import h5py
-from pathlib import Path
-from src.algorithms.ant_colony.aco_grad_v2 import GradACO
+import gc
+from src.algorithms.ant_colony.mpi.aco_grad_mpi import GradACO
 from src.algorithms.common.fuzzy_mf import calculate_time_lag
 from src.algorithms.common.gp import GP, TGP
 from src.algorithms.common.dataset import Dataset
@@ -26,54 +25,38 @@ from src.algorithms.common.dataset import Dataset
 
 class Dataset_t(Dataset):
 
-    def __init__(self, file_path, min_sup=0, eq=False, h5f=None):
-        self.h5_file = str(Path(file_path).stem) + str('.h5')
-        if h5f.mode == 'r':
-            print("Fetching data from h5 file")
-            self.title = h5f['dataset/title'][:]
-            self.time_cols = h5f['dataset/time_cols'][:]
-            self.attr_cols = h5f['dataset/attr_cols'][:]
-            size = h5f['dataset/size'][:]
-            self.column_size = size[0]
-            self.size = size[1]
-            self.attr_size = size[2]
-            self.step_name = 'step_' + str(int(self.size - self.attr_size))
-            self.invalid_bins = h5f['dataset/' + self.step_name + '/invalid_bins'][:]
+    def __init__(self, file_path, min_sup, min_rep, eq=False):
+        data = Dataset.read_csv(file_path)
+        if len(data) <= 1:
+            self.data = np.array([])
+            data = None
+            print("csv file read error")
+            raise Exception("Unable to read csv file or file has no data")
+        else:
+            print("Data fetched from csv file")
+            self.data = np.array([])
             self.thd_supp = min_sup
             self.equal = eq
-            self.data = None
-        else:
-            data = Dataset.read_csv(file_path)
-            if len(data) <= 1:
-                self.data = np.array([])
-                print("csv file read error")
-                raise Exception("Unable to read csv file or file has no data")
-            else:
-                print("Data fetched from csv file")
-                self.data = np.array([])
-                self.title = self.get_title(data)  # optimized (numpy)
-                self.time_cols = self.get_time_cols()  # optimized (numpy)
-                self.attr_cols = self.get_attributes()  # optimized (numpy)
-                self.column_size = self.get_attribute_no()  # optimized (numpy)
-                self.size = self.get_size()  # optimized (numpy)
-                self.attr_size = 0
-                self.step_name = ''
-                self.thd_supp = min_sup
-                self.equal = eq
-                self.invalid_bins = np.array([])
-                data = None
+            self.title = self.get_title(data)  # optimized (numpy)
+            self.time_cols = self.get_time_cols()  # optimized (numpy)
+            self.attr_cols = self.get_attributes()  # optimized (numpy)
+            self.column_size = self.get_attribute_no()  # optimized (numpy)
+            self.size = self.get_size()  # optimized (numpy)
+            self.attr_size = 0
+            self.step_name = ''
+            self.invalid_bins = np.array([])
+            data = None
 
 
 class GradACOt (GradACO):
 
-    def __init__(self, d_set, attr_data, t_diffs, h5f):
+    def __init__(self, d_set, p_matrix, t_diffs):
         self.d_set = d_set
         self.time_diffs = t_diffs
-        self.h5f = h5f
         self.attr_index = self.d_set.attr_cols
-        self.d_set.update_attributes(attr_data, h5f)
-        grp = 'dataset/' + self.d_set.step_name + '/p_matrix'
-        p_matrix = self.d_set.read_h5_dataset(grp, h5f)
+        # self.d_set.update_attributes(attr_data, h5f)
+        # grp = 'dataset/' + self.d_set.step_name + '/p_matrix'
+        # p_matrix = self.d_set.read_h5_dataset(grp, h5f)
         if p_matrix.size > 0:
             self.p_matrix = p_matrix
         else:
@@ -113,8 +96,8 @@ class GradACOt (GradACO):
                         loser_gps.append(rand_gp)
                 else:
                     repeated += 1
-        grp = 'dataset/' + self.d_set.step_name + '/p_matrix'
-        self.d_set.add_h5_dataset(grp, self.p_matrix, self.h5f)
+        # grp = 'dataset/' + self.d_set.step_name + '/p_matrix'
+        # self.d_set.add_h5_dataset(grp, self.p_matrix, self.h5f)
         return winner_gps
 
     def validate_gp(self, pattern):
@@ -151,25 +134,20 @@ class GradACOt (GradACO):
 
 class T_GradACO:
 
-    def __init__(self, f_path, eq, ref_item, min_sup, min_rep, h5f):
+    def __init__(self, d_set, min_sup, ref_item, min_rep):
         # For tgraank
-        # self.d_set = d_set
-        self.d_set = Dataset_t(f_path, min_sup=min_sup, eq=eq, h5f=h5f)
+        self.d_set = d_set
         cols = self.d_set.time_cols
         if len(cols) > 0:
             print("Dataset Ok")
-            if h5f.mode != 'r':  # ignore if h5 file exists
-                # transfer d_set to hd5 file
-                self.d_set.init_h5_groups(h5f)
             self.time_ok = True
             self.time_cols = cols
             self.min_sup = min_sup
             self.ref_item = ref_item
-            self.d_set.data = self.d_set.read_h5_dataset('dataset/data')
-            self.d_set.data = np.array(self.d_set.data).astype('U')
             self.max_step = self.get_max_step(min_rep)
-            self.orig_attr_data = self.d_set.data.copy().T
-            # self.cores = cores
+            self.attr_data = self.d_set.data.copy().T
+            # self.d_set.data = self.d_set.read_h5_dataset('dataset/data')
+            # self.d_set.data = np.array(self.d_set.data).astype('U')
         else:
             print("Dataset Error")
             self.time_ok = False
@@ -179,22 +157,6 @@ class T_GradACO:
     def get_max_step(self, min_rep):  # optimized
         all_rows = len(self.d_set.data)
         return all_rows - int(min_rep * all_rows)
-
-    def fetch_patterns(self, step, h5f):
-        step += 1  # because for-loop is not inclusive from range: 0 - max_step
-        # 1. Transform data
-        d_set = self.d_set
-        attr_data, time_diffs = self.transform_data(step)
-
-        # 2. Execute aco-graank for each transformation
-        # d_set.update_attributes(attr_data)
-        ac = GradACOt(d_set, attr_data, time_diffs, h5f)
-        list_gp = ac.run_ant_colony()
-        # print("\nPheromone Matrix")
-        # print(ac.p_matrix)
-        if len(list_gp) > 0:
-            return list_gp
-        return False
 
     def transform_data(self, step):  # optimized
         # NB: Restructure dataset based on reference item
@@ -216,7 +178,7 @@ class T_GradACO:
                     raise Exception(msg)
                 else:
                     # 1. Split the transpose data set into column-tuples
-                    attr_data = self.orig_attr_data
+                    attr_data = self.attr_data
 
                     # 2. Transform the data using (row) n+step
                     new_attr_data = list()
@@ -262,3 +224,33 @@ class T_GradACO:
                 # time_diffs.append([time_diff, index])
                 time_diffs.append([time_diff, i])
         return True, np.array(time_diffs)
+
+    def construct_bins(self, col, attr_size, col_data):
+        # execute binary rank to calculate support of pattern
+        n = attr_size
+        # self.step_name = 'step_' + str(int(self.size - self.attr_size))
+        # invalid_bins = list()
+        # for col in self.attr_cols:
+        # col_data = np.array(attr_data[col], dtype=float)
+        incr = np.array((col, '+'), dtype='i, S1')
+        decr = np.array((col, '-'), dtype='i, S1')
+        temp_pos = Dataset_t.bin_rank(col_data, equal=self.d_set.equal)
+        supp = float(np.sum(temp_pos)) / float(n * (n - 1.0) / 2.0)
+
+        gc.collect()
+        if supp < self.min_sup:
+            return True, [incr, decr]
+            # invalid_bins.append(incr)
+            # invalid_bins.append(decr)
+        else:
+            return True, [temp_pos, temp_pos.T]
+                # grp = 'dataset/' + self.step_name + '/valid_bins/' + str(col) + '_pos'
+                # self.add_h5_dataset(grp, temp_pos, h5f)
+                # grp = 'dataset/' + self.step_name + '/valid_bins/' + str(col) + '_neg'
+                # self.add_h5_dataset(grp, temp_pos.T, h5f)
+        # self.invalid_bins = np.array(invalid_bins)
+        # grp = 'dataset/' + self.step_name + '/invalid_bins'
+        # self.add_h5_dataset(grp, self.invalid_bins, h5f)
+        # data_size = np.array([self.column_size, self.size, self.attr_size])
+        # self.add_h5_dataset('dataset/size', data_size, h5f)
+
