@@ -112,7 +112,7 @@ if __name__ == "__main__":
         if exists:
             # read data set from h5 file
             print("reading")
-            d_set = Dataset_t(h5f=h5f)
+            d_set = Dataset_t(min_sup=min_sup, eq=allow_eq, h5f=h5f)
         else:
             # create new data set from csv file
             d_set = Dataset_t(file_path=file_path, min_sup=min_sup, eq=allow_eq)
