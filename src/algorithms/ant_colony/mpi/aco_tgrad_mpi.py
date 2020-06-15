@@ -133,9 +133,9 @@ class GradACOt (GradACO):
             if self.d_set.invalid_bins.size > 0 and np.any(np.isin(self.d_set.invalid_bins, gi.gradual_item)):
                 continue
             else:
-                ds = 'dataset/' + self.d_set.step_name + '/valid_bin'# + gi.as_string()
+                ds = 'dataset/' + self.d_set.step_name + '/valid_bins'# + gi.as_string()
                 if ds in self.h5f:
-                    temp = self.h5f[ds][gi.attribute_col][:]
+                    temp = self.h5f[ds][int(gi.attribute_col)][:]
                 else:
                     continue
                     # temp = np.array([])

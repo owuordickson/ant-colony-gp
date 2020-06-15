@@ -181,13 +181,20 @@ if __name__ == "__main__":
 
         if exists:
             # read from h5 file
-            time_diffs = h5f['dataset/' + d_set.step_name + '/time_diffs'][:]#.keys()
+            time_diffs = h5f['dataset/' + d_set.step_name + '/time_diffs'][:]
             p_matrix = h5f['dataset/' + d_set.step_name + '/p_matrix'][:]
-            attr_size = h5f['dataset/step_1/attr_size'][0]
-            print(attr_size)
-            print("\n")
+            d_set.attr_size = h5f['dataset/' + d_set.step_name + '/attr_size'][0]
 
-            #print(np.sum(invalid_bins) == 0)
+            temp_bins = h5f['dataset/' + d_set.step_name + '/valid_bins'][:]
+            invalid_bins = []
+            for col in range(len(temp_bins)):
+                total = np.sum(temp_bins[col])
+                if total <= 0:
+                    incr = np.array((col, '+'), dtype='i, S1')
+                    decr = np.array((col, '-'), dtype='i, S1')
+                    invalid_bins.append(incr)
+                    invalid_bins.append(decr)
+            d_set.invalid_bins = np.array(invalid_bins)
         else:
             # write to h5 file
             # 1. Transform data for each step
