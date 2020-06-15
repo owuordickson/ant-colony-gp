@@ -143,13 +143,10 @@ class GradACOt (GradACO):
                 #    if obj[0] == gi.gradual_item:
                 #        temp = obj[1]
                 #        break
-                print(ds)
                 if bin_data.size <= 0:
-                    print("Init " + str(len(temp)))
                     bin_data = np.array([temp, np.array([])])
                     gen_pattern.add_gradual_item(gi)
                 else:
-                    print("Update " + str(len(temp)))
                     bin_data[1] = temp
                     temp_bin, supp = self.bin_and(bin_data, self.d_set.attr_size)
                     if supp >= min_supp:

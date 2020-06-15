@@ -167,9 +167,14 @@ if __name__ == "__main__":
 
             ds = step_name + '/attr_size'
             grp.create_dataset(ds, (1,), dtype='i4')
-
-        # asize_dset = grp.create_dataset('attr_size', data=arr_template)
         data = None
+    else:
+        d_set = t_aco.d_set
+        for st in range(t_aco.max_step):
+            st += 1
+            step_name = 'step_' + str(st)
+            ds = 'dataset/' + step_name + '/p_matrix'
+            h5f.require_dataset(ds, (d_set.column_size, 3), dtype='f4')
 
     # fetch TGPs
     lst_tgp = list()
@@ -182,7 +187,7 @@ if __name__ == "__main__":
         if exists:
             # read from h5 file
             time_diffs = h5f['dataset/' + d_set.step_name + '/time_diffs'][:]
-            p_matrix = h5f['dataset/' + d_set.step_name + '/p_matrix'][:]
+            # p_matrix = h5f['dataset/' + d_set.step_name + '/p_matrix'][:]
             d_set.attr_size = h5f['dataset/' + d_set.step_name + '/attr_size'][0]
 
             temp_bins = h5f['dataset/' + d_set.step_name + '/valid_bins'][:]
@@ -228,12 +233,12 @@ if __name__ == "__main__":
 
         # 3. Execute aco-graank
         ac = GradACOt(d_set, time_diffs, h5f)
-        #tgps = ac.run_ant_colony()  # needs to read h5 file
-        #if len(tgps) > 0:
-        #    lst_tgp.append(tgps)
+        tgps = ac.run_ant_colony()  # needs to read h5 file
+        if len(tgps) > 0:
+            lst_tgp.append(tgps)
 
-        ds = d_set.step_name + '/p_matrix'
-        #grp[ds][...] = ac.p_matrix
+        ds = 'dataset/' + d_set.step_name + '/p_matrix'
+        h5f[ds][...] = ac.p_matrix
 
     lst_tgp = comm.gather(lst_tgp, root=0)
     end = MPI.Wtime()
