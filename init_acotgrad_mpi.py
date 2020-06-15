@@ -3,9 +3,9 @@
 @author: "Dickson Owuor"
 @credits: "Joseph Orero and Anne Laurent,"
 @license: "MIT"
-@version: "2.0"
+@version: "3.0"
 @email: "owuordickson@gmail.com"
-@created: "19 November 2019"
+@created: "15 June 2020"
 
 Usage:
     $python3 init_acotgrad.py -f ../data/DATASET.csv -c 0 -s 0.5 -r 0.5 -p 1
