@@ -183,7 +183,8 @@ if __name__ == "__main__":
             # read from h5 file
             time_diffs = h5f['dataset/' + d_set.step_name + '/time_diffs'][:]#.keys()
             p_matrix = h5f['dataset/' + d_set.step_name + '/p_matrix'][:]
-            print(p_matrix)
+            attr_size = h5f['dataset/step_1/attr_size'][0]
+            print(attr_size)
             print("\n")
 
             #print(np.sum(invalid_bins) == 0)
@@ -215,18 +216,17 @@ if __name__ == "__main__":
             ds = d_set.step_name + '/time_diffs'
             grp[ds][...] = time_diffs
 
-            ds = step_name + '/attr_size'
-
+            ds = d_set.step_name + '/attr_size'
+            grp[ds][0] = d_set.attr_size
 
         # 3. Execute aco-graank
-        #h5f = h5py.File(h5_file, 'r', driver='mpio', comm=comm)
         ac = GradACOt(d_set, time_diffs, h5f)
         #tgps = ac.run_ant_colony()  # needs to read h5 file
         #if len(tgps) > 0:
         #    lst_tgp.append(tgps)
 
         ds = d_set.step_name + '/p_matrix'
-        grp[ds][...] = ac.p_matrix
+        #grp[ds][...] = ac.p_matrix
 
     lst_tgp = comm.gather(lst_tgp, root=0)
     end = MPI.Wtime()
