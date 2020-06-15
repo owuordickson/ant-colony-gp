@@ -139,7 +139,6 @@ if __name__ == "__main__":
         steps = None
     steps = comm.scatter(steps, root=0)
     t_aco = comm.bcast(t_aco, root=0)
-    print(steps)
 
     if not exists:
         print("writing")
@@ -151,22 +150,42 @@ if __name__ == "__main__":
         grp.create_dataset('time_cols', data=d_set.time_cols)
         grp.create_dataset('attr_cols', data=d_set.attr_cols)
         grp.create_dataset('size', data=np.array([d_set.column_size, d_set.size]))
+        for st in range(t_aco.max_step):
+            st += 1
+            step_name = 'step_' + str(st)
+            ds = step_name + '/valid_bins'
+            n = (d_set.size - st)
+            dt = np.dtype("({0}, {0})bool".format(n, n))
+            grp.create_dataset(ds, (d_set.column_size,), dtype=dt)
+
+            ds = step_name + '/time_diffs'
+            grp.create_dataset(ds, (n, 2), dtype='f')
+            # grp.create_dataset(ds, (n, 2), dtype='f4, i4')
+
+            ds = step_name + '/p_matrix'
+            grp.create_dataset(ds, (n, 3), dtype=)
+
+        # pmat_dset = grp.create_dataset('p_matrices', data=arr_template)
+        # arr_template = np.zeros(t_aco.max_step, dtype=int)
+        # asize_dset = grp.create_dataset('attr_size', data=arr_template)
         # h5f.close()
         data = None
 
     # fetch TGPs
     lst_tgp = list()
     for step in steps:
+        s = step
         step += 1  # because for-loop is not inclusive from range: 0 - max_step
         d_set = t_aco.d_set
         d_set.step_name = 'step_' + str(step)
 
         if exists:
             # read from h5 file
-            d_set.attr_size = h5f['dataset/' + d_set.step_name + '/attr_size'][0]
-            d_set.invalid_bins = h5f['dataset/' + d_set.step_name + '/invalid_bins'][:]
-            time_diffs = h5f['dataset/' + d_set.step_name + '/time_diffs'][:]
-            h5f.close()
+            x = h5f['dataset/step_12/time_diffs'][:]#.keys()
+            print(x)
+            print("\n")
+
+            #print(np.sum(invalid_bins) == 0)
         else:
             # write to h5 file
             # 1. Transform data for each step
@@ -179,41 +198,38 @@ if __name__ == "__main__":
             invalid_bins = list()  # to be removed
             for col in d_set.attr_cols:
                 col_data = np.array(attr_data[col], dtype=float)
-                is_valid, temps = t_aco.construct_bins(col, n, col_data)
+                is_valid, res = t_aco.construct_bins(col, n, col_data)
                 if is_valid:
                     # store in valid bins
-                    ds = d_set.step_name + '/valid_bins/' + str(col) + '_pos'
-                    grp.create_dataset(ds, data=temps)
-                    ds = d_set.step_name + '/valid_bins/' + str(col) + '_neg'
-                    grp.create_dataset(ds, data=temps.T)
-                    # for temp in temps:
-                    #    valid_bins.append(temp)
+                    ds = d_set.step_name + '/valid_bins'
+                    grp[ds][col] = res
                 else:
                     # store in invalid bins
-                    for temp in temps:
+                    for temp in res:
                         invalid_bins.append(temp)
             d_set.invalid_bins = np.array(invalid_bins)
-            ds = d_set.step_name + '/invalid_bins'
-            grp.create_dataset(ds, data=d_set.invalid_bins)
             # d_set.valid_bins = np.array(valid_bins)
+            # print(d_set.invalid_bins)
             ds = d_set.step_name + '/time_diffs'
-            grp.create_dataset(ds, data=time_diffs)
-            ds = d_set.step_name + '/attr_size'
-            grp.create_dataset(ds, data=np.array([d_set.attr_size]))
-            h5f.close()
+            grp[ds][...] = time_diffs
+            if step == 12:
+                print(time_diffs)
+
+
+
 
         # 3. Execute aco-graank
-        h5f = h5py.File(h5_file, 'r', driver='mpio', comm=comm)
-        ac = GradACOt(d_set, time_diffs, h5f)
-        tgps = ac.run_ant_colony()  # needs to read h5 file
-        # print(ac.p_matrix)  # store matrix in h5 file
-        if len(tgps) > 0:
-            lst_tgp.append(tgps)
-        h5f.close()
-        h5f = h5py.File(h5_file, 'w', driver='mpio', comm=comm)
-        ds = 'dataset/' + d_set.step_name + '/p_matrix'
-        h5f.create_dataset(ds, data=ac.p_matrix)
-        h5f.close()
+        #h5f = h5py.File(h5_file, 'r', driver='mpio', comm=comm)
+        #ac = GradACOt(d_set, time_diffs, h5f)
+        # tgps = ac.run_ant_colony()  # needs to read h5 file
+        #if len(tgps) > 0:
+        #    lst_tgp.append(tgps)
+        #h5f.close()
+        #h5f = h5py.File(h5_file, 'r+', driver='mpio', comm=comm)
+        # ds = 'dataset/' + d_set.step_name + '/p_matrix'
+        # h5f.create_dataset(ds, data=ac.p_matrix)
+        #pmat_dset[s] = ac.p_matrix
+        #h5f.close()
 
     lst_tgp = comm.gather(lst_tgp, root=0)
     end = MPI.Wtime()
@@ -251,3 +267,5 @@ if __name__ == "__main__":
         f_name = str('res_aco' + str(end).replace('.', '', 1) + '.txt')
         # write_file(wr_text, f_name)
         print(wr_text)
+
+    h5f.close()
