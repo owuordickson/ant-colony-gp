@@ -82,7 +82,7 @@ class GradACOt (GradACO):
             p_matrix = h5f[grp][:]
         else:
             p_matrix = np.array([])
-        if p_matrix.size > 0:
+        if np.sum(p_matrix) > 0:
             self.p_matrix = p_matrix
         else:
             self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=float)
@@ -133,9 +133,9 @@ class GradACOt (GradACO):
             if self.d_set.invalid_bins.size > 0 and np.any(np.isin(self.d_set.invalid_bins, gi.gradual_item)):
                 continue
             else:
-                ds = 'dataset/' + self.d_set.step_name + '/valid_bins/' + gi.as_string()
+                ds = 'dataset/' + self.d_set.step_name + '/valid_bin'# + gi.as_string()
                 if ds in self.h5f:
-                    temp = self.h5f[ds][:]
+                    temp = self.h5f[ds][gi.attribute_col][:]
                 else:
                     continue
                     # temp = np.array([])

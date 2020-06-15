@@ -163,12 +163,12 @@ if __name__ == "__main__":
             # grp.create_dataset(ds, (n, 2), dtype='f4, i4')
 
             ds = step_name + '/p_matrix'
-            grp.create_dataset(ds, (n, 3), dtype=)
+            grp.create_dataset(ds, (d_set.column_size, 3), dtype='f4')
 
-        # pmat_dset = grp.create_dataset('p_matrices', data=arr_template)
-        # arr_template = np.zeros(t_aco.max_step, dtype=int)
+            ds = step_name + '/attr_size'
+            grp.create_dataset(ds, (1,), dtype='i4')
+
         # asize_dset = grp.create_dataset('attr_size', data=arr_template)
-        # h5f.close()
         data = None
 
     # fetch TGPs
@@ -181,8 +181,9 @@ if __name__ == "__main__":
 
         if exists:
             # read from h5 file
-            x = h5f['dataset/step_12/time_diffs'][:]#.keys()
-            print(x)
+            time_diffs = h5f['dataset/' + d_set.step_name + '/time_diffs'][:]#.keys()
+            p_matrix = h5f['dataset/' + d_set.step_name + '/p_matrix'][:]
+            print(p_matrix)
             print("\n")
 
             #print(np.sum(invalid_bins) == 0)
@@ -210,26 +211,22 @@ if __name__ == "__main__":
             d_set.invalid_bins = np.array(invalid_bins)
             # d_set.valid_bins = np.array(valid_bins)
             # print(d_set.invalid_bins)
+
             ds = d_set.step_name + '/time_diffs'
             grp[ds][...] = time_diffs
-            if step == 12:
-                print(time_diffs)
 
-
+            ds = step_name + '/attr_size'
 
 
         # 3. Execute aco-graank
         #h5f = h5py.File(h5_file, 'r', driver='mpio', comm=comm)
-        #ac = GradACOt(d_set, time_diffs, h5f)
-        # tgps = ac.run_ant_colony()  # needs to read h5 file
+        ac = GradACOt(d_set, time_diffs, h5f)
+        #tgps = ac.run_ant_colony()  # needs to read h5 file
         #if len(tgps) > 0:
         #    lst_tgp.append(tgps)
-        #h5f.close()
-        #h5f = h5py.File(h5_file, 'r+', driver='mpio', comm=comm)
-        # ds = 'dataset/' + d_set.step_name + '/p_matrix'
-        # h5f.create_dataset(ds, data=ac.p_matrix)
-        #pmat_dset[s] = ac.p_matrix
-        #h5f.close()
+
+        ds = d_set.step_name + '/p_matrix'
+        grp[ds][...] = ac.p_matrix
 
     lst_tgp = comm.gather(lst_tgp, root=0)
     end = MPI.Wtime()
