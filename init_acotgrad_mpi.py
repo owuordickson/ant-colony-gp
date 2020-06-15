@@ -168,13 +168,6 @@ if __name__ == "__main__":
             ds = step_name + '/attr_size'
             grp.create_dataset(ds, (1,), dtype='i4')
         data = None
-    else:
-        d_set = t_aco.d_set
-        for st in range(t_aco.max_step):
-            st += 1
-            step_name = 'step_' + str(st)
-            ds = 'dataset/' + step_name + '/p_matrix'
-            h5f.require_dataset(ds, (d_set.column_size, 3), dtype='f4')
 
     # fetch TGPs
     lst_tgp = list()
@@ -222,8 +215,6 @@ if __name__ == "__main__":
                     for temp in res:
                         invalid_bins.append(temp)
             d_set.invalid_bins = np.array(invalid_bins)
-            # d_set.valid_bins = np.array(valid_bins)
-            # print(d_set.invalid_bins)
 
             ds = d_set.step_name + '/time_diffs'
             grp[ds][...] = time_diffs

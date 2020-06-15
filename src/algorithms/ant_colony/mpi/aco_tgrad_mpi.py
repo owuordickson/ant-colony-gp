@@ -39,10 +39,7 @@ class Dataset_t(Dataset):
             self.size = size[1]
             self.attr_size = 0
             self.step_name = ''
-            # self.step_name = 'step_' + str(int(self.size - self.attr_size))
-            # self.invalid_bins = h5f['dataset/' + self.step_name + '/invalid_bins'][:]
             self.invalid_bins = np.array([])  # to be removed
-            # self.valid_bins = np.array([])  # to be removed
 
             self.data = h5f['dataset/data'][:]
             self.data = np.array(self.data).astype('U')
@@ -66,7 +63,6 @@ class Dataset_t(Dataset):
                 self.attr_size = 0
                 self.step_name = ''
                 self.invalid_bins = np.array([])
-                # self.valid_bins = np.array([])  # to be removed
                 data = None
 
 
