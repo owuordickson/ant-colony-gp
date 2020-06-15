@@ -155,6 +155,8 @@ class GradACOt (GradACO):
         else:
             # t_lag = FuzzyMF.calculate_time_lag(FuzzyMF.get_patten_indices(bin_data[0]), t_diffs, min_supp)
             t_lag = calculate_time_lag(bin_data[0], self.time_diffs)
+            if t_lag.support <= 0:
+                gen_pattern.set_support(0)
             tgp = TGP(gp=gen_pattern, t_lag=t_lag)
             return tgp
 

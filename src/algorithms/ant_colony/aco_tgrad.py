@@ -18,7 +18,7 @@ import h5py
 from pathlib import Path
 import os
 import multiprocessing as mp
-from src.algorithms.ant_colony.aco_grad_v2 import GradACO
+from src.algorithms.ant_colony.aco_grad import GradACO
 from src.algorithms.common.fuzzy_mf import calculate_time_lag
 from src.algorithms.common.gp import GP, TGP
 from src.algorithms.common.dataset import Dataset
@@ -125,6 +125,8 @@ class GradACOt (GradACO):
         else:
             # t_lag = FuzzyMF.calculate_time_lag(FuzzyMF.get_patten_indices(bin_data[0]), t_diffs, min_supp)
             t_lag = calculate_time_lag(bin_data[0], self.time_diffs)
+            if t_lag.support <= 0:
+                gen_pattern.set_support(0)
             tgp = TGP(gp=gen_pattern, t_lag=t_lag)
             return tgp
 
