@@ -100,7 +100,7 @@ if __name__ == "__main__":
     h5_file = str(Path(file_path).stem) + str('_mpi.h5')
     exists = os.path.exists(h5_file)
     if not exists:  # for parallel
-        h5f = h5py.File(h5_file, 'w', driver='mpio', comm=comm)
+        h5f = h5py.File(h5_file, 'a', driver='mpio', comm=comm)
     else:
         h5f = h5py.File(h5_file, 'r+', driver='mpio', comm=comm)
 
