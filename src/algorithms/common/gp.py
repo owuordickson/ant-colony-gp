@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @author: "Dickson OWUOR"
-@credits: "Anne LAURENT, Joseph ORERO"
+@credits: "Anne LAURENT and Joseph ORERO"
 @version: "3.0"
 @email: "owuordickson@gmail.com"
 @created: "20 May 2020"

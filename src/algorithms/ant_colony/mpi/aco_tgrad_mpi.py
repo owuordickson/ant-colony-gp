@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 @author: "Dickson Owuor"
-@credits: "Joseph Orero and Anne Laurent,"
+@credits: "Thomas Runkler and Anne Laurent,"
 @license: "MIT"
-@version: "2.4"
+@version: "3.0"
 @email: "owuordickson@gmail.com"
 @created: "19 November 2019"
-@modified: "11 June 2020"
+@modified: "15 June 2020"
 
 Description: updated version that uses aco-graank and parallel multi-processing
 
