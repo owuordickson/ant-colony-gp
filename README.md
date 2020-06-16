@@ -34,7 +34,7 @@ To mine fuzzy-temporal gradual patterns:<br>
 $python3 src/init_acotgraank.py -f filename.csv -c refCol -s minSup  -r minRep
 ```
 
-* Parallel MPI and Parallel HDF5
+* Parallel (Python) MPI and Parallel HDF5
 
 ```
 $mpirun -n 4 python init_acotgrad_mpi.py -f filename.csv -c refCol -s minSup -r minRep
