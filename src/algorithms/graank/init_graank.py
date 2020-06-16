@@ -21,11 +21,6 @@ from algorithms.graank.graank_v2 import graank
 
 def init_algorithm(f_path, min_supp, cores, eq=False):
     try:
-        # wr_line = ""
-        # d_set = Dataset(f_path)
-        # if d_set.data:
-        #    titles = d_set.title
-        #    d_set.init_attributes(min_supp, eq)
         d_set, list_gp = graank(f_path, min_supp, eq)
 
         if cores > 1:
