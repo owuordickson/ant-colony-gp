@@ -149,6 +149,7 @@ class GradACOt (GradACO):
                         bin_data[0] = temp_bin
                         gen_pattern.add_gradual_item(gi)
                         gen_pattern.set_support(supp)
+        gc.collect()
         if len(gen_pattern.gradual_items) <= 1:
             tgp = TGP(gp=pattern)
             return tgp

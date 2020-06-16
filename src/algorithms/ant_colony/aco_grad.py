@@ -27,7 +27,7 @@ class GradACO:
         # fetch previous p_matrix from memory
         grp = 'dataset/' + self.d_set.step_name + '/p_matrix'
         p_matrix = self.d_set.read_h5_dataset(grp)
-        if p_matrix.size > 0:
+        if np.sum(p_matrix) > 0:
             self.p_matrix = p_matrix
         else:
             self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=float)

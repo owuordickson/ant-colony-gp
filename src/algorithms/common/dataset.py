@@ -75,8 +75,6 @@ class Dataset:
 
     def get_size(self):
         size = self.data.shape[0]
-        # if self.title.size > 0:
-        #    size += 1
         return size
 
     def get_attribute_no(self):
@@ -140,12 +138,9 @@ class Dataset:
         self.attr_size = len(attr_data[self.attr_cols[0]])
         # create h5 groups to store class attributes
         self.init_h5_groups()
-        # construct and store 1-itemset valid bins
-        # self.construct_bins_v1(attr_data)
+        # construct and store 1-item_set valid bins
         self.construct_bins(attr_data)
         attr_data = None
-        # else:
-        # 1. do not construct bins (due to transformation)
         gc.collect()
 
     def update_attributes(self, attr_data):

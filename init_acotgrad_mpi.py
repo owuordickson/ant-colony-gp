@@ -17,6 +17,8 @@ Description:
     r -> representativity
 
 Credits:
+    http://docs.h5py.org/en/latest/mpi.html
+    https://www.hdfgroup.org/downloads/hdf5/
     https://www.kth.se/blogs/pdc/2019/08/parallel-programming-in-python-mpi4py-part-1/
     http://what-when-how.com/Tutorial/topic-97chepqdi/Python-and-HDF5-137.html
 
@@ -197,10 +199,10 @@ if __name__ == "__main__":
         else:
             # write to h5 file
             # 1. Transform data for each step
-            attr_data, time_diffs = t_aco.transform_data(step)  # read from h5 file
+            attr_data, time_diffs = t_aco.transform_data(step)
 
             # 2. fetch all valid/invalid bins and store in d_set
-            d_set.attr_size = len(attr_data[d_set.attr_cols[0]])  # read from h5 file
+            d_set.attr_size = len(attr_data[d_set.attr_cols[0]])
             n = d_set.attr_size
             # valid_bins = list()  # to be removed
             invalid_bins = list()  # to be removed

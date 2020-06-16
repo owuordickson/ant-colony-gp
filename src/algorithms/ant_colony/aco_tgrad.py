@@ -191,7 +191,6 @@ class T_GradACO:
         attr_data, time_diffs = self.transform_data(step)
 
         # 2. Execute aco-graank for each transformation
-        # d_set.update_attributes(attr_data)
         ac = GradACOt(d_set, attr_data, time_diffs)
         list_gp = ac.run_ant_colony()
         # print("\nPheromone Matrix")
