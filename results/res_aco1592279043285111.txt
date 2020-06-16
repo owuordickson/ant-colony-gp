@@ -1,0 +1,26 @@
+Run-time: 0.11167097091674805 seconds
+Algorithm: ACO-TGRAANK (3.0)
+   - MPI4Py & H5Py implementation
+No. of (dataset) attributes: 3
+No. of (dataset) tuples: 24
+Minimum support: 0.5
+Minimum representativity: 0.5
+Multi-core execution: True
+Number of cores: 4
+Number of tasks: 12
+
+0. Date
+1. rain(mm)**
+2. temperature(cel)
+
+File: data/rain_temp2013-2015.csv
+
+Pattern : Support
+['2-', '1+'] : 0.641 | ~ +2.0 years : 0.846
+['2+', '1+'] : 0.641 | ~ +2.0 years : 0.846
+['1-', '2-'] : 0.606 | ~ +2.0 years : 1.0
+['2-', '1+'] : 0.606 | ~ +2.0 years : 1.0
+['2+', '1+'] : 0.544 | ~ +5.0 months : 0.737
+['1-', '2+'] : 0.544 | ~ +5.0 months : 0.737
+['2+', '1+'] : 0.601 | ~ +7.0 months : 0.444
+['1-', '2+'] : 0.601 | ~ +7.0 months : 0.444

@@ -8,7 +8,7 @@
 @created: "15 June 2020"
 
 Usage:
-    $python3 init_acotgrad.py -f ../data/DATASET.csv -c 0 -s 0.5 -r 0.5 -p 1
+    $mpirun -n 4 python init_acotgrad_mpi.py -f ../data/DATASET.csv -c 0 -s 0.5 -r 0.5
 
 Description:
     f -> file path (CSV)
@@ -26,6 +26,10 @@ Credits:
 import sys
 import os
 from optparse import OptionParser
+import numpy as np
+from pathlib import Path
+import h5py
+from mpi4py import MPI
 from src.algorithms.ant_colony.mpi.aco_tgrad_mpi import Dataset_t, T_GradACO, GradACOt
 
 
@@ -51,8 +55,8 @@ if __name__ == "__main__":
                              # default=None,
                              #default='../data/DATASET2.csv',
                              #default='../data/rain_temp2013-2015.csv',
-                             default='data/rain_temp2013-2015.csv',
-                             #default='../data/Directio.csv',
+                             # default='data/rain_temp2013-2015.csv',
+                             default='data/Directio.csv',
                              type='string')
         optparser.add_option('-s', '--minSupport',
                              dest='minSup',
@@ -88,11 +92,6 @@ if __name__ == "__main__":
         ref_col = options.refCol
         min_rep = options.minRep
 
-    import numpy as np
-    from pathlib import Path
-    import h5py
-    from mpi4py import MPI
-
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
     nprocs = comm.Get_size()
@@ -105,6 +104,7 @@ if __name__ == "__main__":
         h5f = h5py.File(h5_file, 'r+', driver='mpio', comm=comm)
 
     start = MPI.Wtime()
+    # fetch data from csv and distribute work among processes
     if rank == 0:
         # master process
         print("master process " + str(rank) + " started ...")
@@ -140,6 +140,7 @@ if __name__ == "__main__":
     steps = comm.scatter(steps, root=0)
     t_aco = comm.bcast(t_aco, root=0)
 
+    # store in h5 file
     if not exists:
         print("writing")
         d_set = t_aco.d_set
@@ -231,11 +232,15 @@ if __name__ == "__main__":
         ds = 'dataset/' + d_set.step_name + '/p_matrix'
         h5f[ds][...] = ac.p_matrix
 
+    # gather all patterns from all processes
     lst_tgp = comm.gather(lst_tgp, root=0)
     end = MPI.Wtime()
+
+    # display results and save to file
     if rank == 0:
         d_set = t_aco.d_set
         wr_line = "Algorithm: ACO-TGRAANK (3.0) \n"
+        wr_line = "   - MPI4Py & H5Py implementation \n"
         wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
         wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
         wr_line += "Minimum support: " + str(min_sup) + '\n'
