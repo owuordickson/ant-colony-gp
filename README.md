@@ -19,13 +19,25 @@ You will be required to install the following python dependencies before using <
 ### Usage:
 Use it a command line program with the local package:<br>
 To mine gradual patterns:<br>
+
+* Python and HDF5
+
 ```
 $python3 src/init_acograd.py -f filename.csv -s minSup
 ```
 
 To mine fuzzy-temporal gradual patterns:<br>
+
+* Python and HDF5
+
 ```
 $python3 src/init_acotgraank.py -f filename.csv -c refCol -s minSup  -r minRep
+```
+
+* Parallel MPI and Parallel HDF5
+
+```
+$mpirun -n 4 python init_acotgrad_mpi.py -f filename.csv -c refCol -s minSup -r minRep
 ```
 
 where you specify the input parameters as follows:<br>
