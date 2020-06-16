@@ -75,8 +75,8 @@ class Tgrad:
 
         # 2. Execute t-graank for each transformation
         d_set.update_attributes(attr_data)
-        tgps = graank(min_sup=self.min_sup, eq=False, t_diffs=time_diffs, d_set=d_set, step=step)
-        d_set.clean_memory()
+        tgps = graank(t_diffs=time_diffs, d_set=d_set, step=step)
+
         if len(tgps) > 0:
             return tgps
         return False

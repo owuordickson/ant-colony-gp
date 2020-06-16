@@ -20,6 +20,7 @@ class GI:
         self.symbol = symbol
         # self.gradual_item = tuple([attr_col, symbol])
         self.gradual_item = np.array((attr_col, symbol), dtype='i, S1')
+        self.tuple = tuple([attr_col, symbol])
 
     def inv(self):
         if self.symbol == '+':
