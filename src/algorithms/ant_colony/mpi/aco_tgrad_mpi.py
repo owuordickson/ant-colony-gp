@@ -15,7 +15,7 @@ Description: updated version that uses aco-graank and parallel multi-processing
 
 import numpy as np
 import gc
-from src.algorithms.ant_colony.mpi.aco_grad_mpi import GradACO
+from src.algorithms.ant_colony.aco_grad import GradACO
 from src.algorithms.common.fuzzy_mf import calculate_time_lag
 from src.algorithms.common.gp import GP, TGP
 from src.algorithms.common.dataset import Dataset

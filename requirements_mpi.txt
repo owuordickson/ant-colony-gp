@@ -1,8 +1,0 @@
-matplotlib~=2.2.4
-python-dateutil~=2.8.0
-scikit-fuzzy~=0.4.0
-h5py~=2.10.0
-cython~=0.29.17
-numpy~=1.16.2
-setuptools~=46.0.0
-mpi4py~=3.0.3

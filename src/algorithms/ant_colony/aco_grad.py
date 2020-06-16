@@ -3,10 +3,10 @@
 @author: "Dickson Owuor"
 @credits: "Thomas Runkler, Edmond Menya, and Anne Laurent,"
 @license: "MIT"
-@version: "2.4"
+@version: "3.0"
 @email: "owuordickson@gmail.com"
 @created: "12 July 2019"
-@modified: "11 June 2020"
+@modified: "16 June 2020"
 
 """
 
@@ -55,7 +55,7 @@ class GradACO:
         loser_gps = list()  # supersets
         repeated = 0
         while repeated < 1:
-            rand_gp = self.generate_rand_pattern()
+            rand_gp = self.generate_random_gp()
             if len(rand_gp.gradual_items) > 1:
                 # print(rand_gp.get_pattern())
                 exits = GradACO.is_duplicate(rand_gp, winner_gps, loser_gps)
@@ -87,7 +87,7 @@ class GradACO:
         self.d_set.add_h5_dataset(grp, self.p_matrix)
         return winner_gps
 
-    def generate_rand_pattern(self):
+    def generate_random_gp(self):
         p = self.p_matrix
         n = len(self.attr_index)
         pattern = GP()
