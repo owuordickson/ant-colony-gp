@@ -18,8 +18,8 @@ Description:
 
 import sys
 from optparse import OptionParser
-from src.algorithms.common.profile_cpu import Profile
-from src.algorithms.ant_colony.aco_grad import GradACO
+from algorithms.common.profile_cpu import Profile
+from algorithms.ant_colony.aco_grad import GradACO
 #from src.algorithms.ant_colony.cython.cyt_aco_grad import GradACO
 
 
@@ -56,7 +56,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
         wr_line += str(ac.p_matrix)
         # ac.plot_pheromone_matrix()
         return wr_line
-    except ArithmeticError as error:
+    except Exception as error:
         wr_line = "Failed: " + str(error)
         print(error)
         return wr_line

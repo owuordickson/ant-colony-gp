@@ -21,7 +21,7 @@ Description:
 
 import sys
 from optparse import OptionParser
-from src.algorithms.ant_colony.aco_tgrad import T_GradACO
+from algorithms.ant_colony.aco_tgrad import T_GradACO
 # from src.algorithms.ant_colony.aco_tgrad_v2 import T_GradACO
 
 
@@ -62,7 +62,7 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
                     wr_line += (str(tgp.to_string()) + ' : ' + str(tgp.support) +
                                 ' | ' + str(tgp.time_lag.to_string()) + '\n')
         return wr_line
-    except ArithmeticError as error:
+    except Exception as error:
         wr_line = "Failed: " + str(error)
         print(error)
         return wr_line

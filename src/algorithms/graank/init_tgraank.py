@@ -20,7 +20,7 @@ Description:
 
 import sys
 from optparse import OptionParser
-from src.algorithms.graank.t_graank import Tgrad
+from algorithms.graank.t_graank import Tgrad
 
 
 def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):

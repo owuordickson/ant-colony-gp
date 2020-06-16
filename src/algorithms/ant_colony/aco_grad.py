@@ -13,8 +13,8 @@
 import numpy as np
 from numpy import random as rand
 import matplotlib.pyplot as plt
-from src.algorithms.common.gp import GI, GP
-from src.algorithms.common.dataset import Dataset
+from ..common.gp import GI, GP
+from ..common.dataset import Dataset
 #from src.algorithms.common.cython.cyt_dataset import Dataset
 
 

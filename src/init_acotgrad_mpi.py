@@ -32,7 +32,7 @@ import numpy as np
 from pathlib import Path
 import h5py
 from mpi4py import MPI
-from src.algorithms.ant_colony.mpi.aco_tgrad_mpi import Dataset_t, T_GradACO, GradACOt
+from algorithms.ant_colony.mpi.aco_tgrad_mpi import Dataset_t, T_GradACO, GradACOt
 
 
 def write_file(data, path):
@@ -57,8 +57,8 @@ if __name__ == "__main__":
                              # default=None,
                              #default='../data/DATASET2.csv',
                              #default='../data/rain_temp2013-2015.csv',
-                             # default='data/rain_temp2013-2015.csv',
-                             default='data/Directio.csv',
+                             # default='../data/rain_temp2013-2015.csv',
+                             default='../data/Directio.csv',
                              type='string')
         optparser.add_option('-s', '--minSupport',
                              dest='minSup',

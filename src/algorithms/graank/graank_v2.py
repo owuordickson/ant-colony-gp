@@ -10,9 +10,9 @@
 import numpy as np
 import gc
 import json
-from src.algorithms.common.fuzzy_mf import calculate_time_lag
-from src.algorithms.common.dataset import Dataset
-from src.algorithms.common.gp import GI, GP, TGP
+from ..common.fuzzy_mf import calculate_time_lag
+from ..common.dataset import Dataset
+from ..common.gp import GI, GP, TGP
 
 
 def inv(g_item):

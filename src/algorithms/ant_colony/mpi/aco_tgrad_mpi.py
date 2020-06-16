@@ -15,10 +15,10 @@ Description: updated version that uses aco-graank and parallel multi-processing
 
 import numpy as np
 import gc
-from src.algorithms.ant_colony.aco_grad import GradACO
-from src.algorithms.common.fuzzy_mf import calculate_time_lag
-from src.algorithms.common.gp import GP, TGP
-from src.algorithms.common.dataset import Dataset
+from ..aco_grad import GradACO
+from ...common.fuzzy_mf import calculate_time_lag
+from ...common.gp import GP, TGP
+from ...common.dataset import Dataset
 #from src.algorithms.ant_colony.cython.cyt_aco_grad import GradACO
 #from src.algorithms.common.cython.cyt_dataset import Dataset
 
