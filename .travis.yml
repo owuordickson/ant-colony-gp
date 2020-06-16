@@ -4,6 +4,7 @@ python:
     - "3.6"
 
 before_install:
+  - sudo apt-get -y install libopenmpi-dev
   - "pip3 install cython"
   - "python setup.py install"
 
