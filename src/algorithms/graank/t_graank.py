@@ -44,6 +44,10 @@ class Tgrad:
             self.time_cols = []
             raise Exception('No date-time data found')
 
+    def get_max_step(self, min_rep):  # optimized
+        all_rows = len(self.d_set.data)
+        return all_rows - int(min_rep * all_rows)
+
     def run_tgraank(self, parallel=False):
         if parallel:
             # implement parallel multi-processing
@@ -127,10 +131,6 @@ class Tgrad:
         else:
             msg = "Fatal Error: Time format in column could not be processed"
             raise Exception(msg)
-
-    def get_max_step(self, min_rep):  # optimized
-        all_rows = len(self.d_set.data)
-        return all_rows - int(min_rep * all_rows)
 
     def get_time_diffs(self, step):  # optimized
         data = self.d_set.data

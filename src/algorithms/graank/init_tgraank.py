@@ -25,11 +25,6 @@ from algorithms.graank.t_graank import Tgrad
 
 def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
     try:
-        # wr_line = ""
-        # d_set = HandleData(f_path)
-        # if d_set.data:
-        #    titles = d_set.title
-        #    d_set.init_attributes(eq)
         tgp = Tgrad(f_path, eq, refItem, minSup, minRep, allowPara)
         if allowPara >= 1:
             msg_para = "True"
@@ -66,7 +61,7 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
                     wr_line += (str(tgp.to_string()) + ' : ' + str(tgp.support) +
                                 ' | ' + str(tgp.time_lag.to_string()) + '\n')
         return wr_line
-    except Exception as error:
+    except ArithmeticError as error:
         wr_line = "Failed: " + str(error)
         print(error)
         return wr_line
@@ -143,6 +138,6 @@ if __name__ == "__main__":
     # wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
     wr_text += str(res_text)
     f_name = str('res_temp' + str(end).replace('.', '', 1) + '.txt')
-    write_file(wr_text, f_name)
+    # write_file(wr_text, f_name)
     print(wr_text)
 
