@@ -35,7 +35,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
         wr_line += "Number of cores: " + str(num_cores) + '\n\n'
 
         for txt in d_set.title:
-            wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '\n')
+            wr_line += (str(txt[0]) + '. ' + str(txt[1].decode()) + '\n')
 
         wr_line += str("\nFile: " + f_path + '\n')
         wr_line += str("\nPattern : Support" + '\n')
@@ -44,7 +44,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
             wr_line += (str(gp.to_string()) + ' : ' + str(gp.support) + '\n')
 
         return wr_line
-    except ArithmeticError as error:
+    except Exception as error:
         wr_line = "Failed: " + str(error)
         print(error)
         return wr_line

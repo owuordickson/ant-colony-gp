@@ -9,7 +9,6 @@
 
 import numpy as np
 import gc
-import json
 from ..common.fuzzy_mf import calculate_time_lag
 from ..common.dataset import Dataset
 from ..common.gp import GI, GP, TGP
@@ -59,10 +58,6 @@ def gen_apriori_candidates(R, sup, n, d_set):
                         test = 0
                         break
                 if test == 1:
-                    # bin_obj1 = Dataset.read_json(R[i][1])
-                    # bin_obj2 = Dataset.read_json(R[j][1])
-                    # bin_data1 = np.array(bin_obj1['bin'])
-                    # bin_data2 = np.array(bin_obj2['bin'])
                     if R[i][1] is None:
                         # read from h5 file
                         gi = GI(R[i][0][0], R[i][0][1])
@@ -80,25 +75,10 @@ def gen_apriori_candidates(R, sup, n, d_set):
                     m = bin_data1 * bin_data2
                     t = float(np.sum(m)) / float(n * (n - 1.0) / 2.0)
                     if t > sup:
-                        # path = store_gp(temp, m, t, step)
                         res.append([temp, m])
                 I.append(temp)
                 gc.collect()
     return res
-
-
-def store_gp(gi, bin_data, supp, step):
-    gi_data = []
-    gi_tuple = []
-    gi_str = ""
-    for obj in gi:
-        gi_data.append([int(obj[0]), str(obj[1])])
-        gi_tuple.append(tuple([obj[0], obj[1]]))
-        gi_str += str(obj[0]) + str(obj[1])
-    path = 'gi_' + gi_str + str(step) + '.json'
-    content = {"gi": gi_data, "bin": bin_data.tolist(), "support": supp}
-    Dataset.write_file(json.dumps(content), path)
-    return [gi_tuple, path]
 
 
 def gen_valid_bins(invalid_bins, attr_cols):
@@ -115,7 +95,7 @@ def gen_valid_bins(invalid_bins, attr_cols):
     return valid_gi
 
 
-def graank(f_path=None, min_sup=None, eq=False, t_diffs=None, d_set=None, step=0):
+def graank(f_path=None, min_sup=None, eq=False, t_diffs=None, d_set=None):
     if d_set is None:
         d_set = Dataset(f_path, min_sup, eq)
     else:
@@ -124,19 +104,12 @@ def graank(f_path=None, min_sup=None, eq=False, t_diffs=None, d_set=None, step=0
     patterns = []
     n = d_set.attr_size
     lst_valid_gi = gen_valid_bins(d_set.invalid_bins, d_set.attr_cols)
-    # bin_paths = list(d_set.valid_gi_paths)
 
     while len(lst_valid_gi) > 0:
         lst_valid_gi = gen_apriori_candidates(lst_valid_gi, min_sup, n, d_set)
         i = 0
         while i < len(lst_valid_gi) and lst_valid_gi != []:
-            # temp = float(np.sum(G[i][1])) / float(n * (n - 1.0) / 2.0)
-            # d_set.gen_paths.append(lst_valid_gi[i][1])
-            # bin_obj = Dataset.read_json(lst_valid_gi[i][1])
-            # bin_data = np.array(bin_obj['bin'])
             gi_tuple = lst_valid_gi[i][0]
-            # print(gi_tuple)
-            # gi = GI(gi_tuple[0], gi_tuple[1])
             bin_data = lst_valid_gi[i][1]
             # grp = 'dataset/' + d_set.step_name + '/valid_bins/' + gi.as_string()
             # bin_data = d_set.read_h5_dataset(grp)
@@ -150,9 +123,7 @@ def graank(f_path=None, min_sup=None, eq=False, t_diffs=None, d_set=None, step=0
                         del patterns[z]
                     else:
                         z = z + 1
-                # return fetch indices (array) of G[1] where True
                 if t_diffs is not None:
-                    # t_lag = FuzzyMF.calculate_time_lag(FuzzyMF.get_patten_indices(bin_data), t_diffs, min_sup)
                     t_lag = calculate_time_lag(bin_data, t_diffs)
                     if t_lag.valid:
                         gp = GP()
