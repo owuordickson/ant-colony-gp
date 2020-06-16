@@ -37,10 +37,11 @@ $python3 src/init_acotgraank.py -f filename.csv -c refCol -s minSup  -r minRep
 * Parallel (Python) MPI and Parallel HDF5
 
 ```
-$mpirun -n 4 python init_acotgrad_mpi.py -f filename.csv -c refCol -s minSup -r minRep
+$mpirun -n nProcs python init_acotgrad_mpi.py -f filename.csv -c refCol -s minSup -r minRep
 ```
 
 where you specify the input parameters as follows:<br>
+* <strong>nProcs</strong> - [required] number of processes (only for MPI) <br>
 * <strong>filename.csv</strong> - [required] a file in csv format <br>
 * <strong>minSup</strong> - [optional] minimum support ```default = 0.5``` <br>
 * <strong>minRep</strong> - [optional] minimum representativity ```default = 0.5``` <br>
