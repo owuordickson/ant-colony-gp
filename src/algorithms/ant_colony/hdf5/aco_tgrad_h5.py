@@ -14,10 +14,6 @@ Description: updated version that uses aco-graank and parallel multi-processing
 
 
 import numpy as np
-import h5py
-from pathlib import Path
-import os
-import multiprocessing as mp
 from ...common.hdf5.dataset_h5 import Dataset_h5
 from .aco_grad_h5 import GradACO_h5
 from ...common.fuzzy_mf import calculate_time_lag
@@ -25,74 +21,20 @@ from ...common.gp import GP, TGP
 from src.algorithms.common.profile_cpu import Profile
 
 
-class Dataset_t(Dataset_h5):
-
-    def __init__(self, file_path, min_sup=0, eq=False):
-        self.h5_file = 'temp/' + str(Path(file_path).stem) + str('.h5')
-        if os.path.exists(self.h5_file):
-            print("Fetching data from h5 file")
-            h5f = h5py.File(self.h5_file, 'r')
-            self.title = h5f['dataset/title'][:]
-            self.time_cols = h5f['dataset/time_cols'][:]
-            self.attr_cols = h5f['dataset/attr_cols'][:]
-            size = h5f['dataset/size'][:]
-            self.column_size = size[0]
-            self.size = size[1]
-            self.attr_size = size[2]
-            self.step_name = 'step_' + str(int(self.size - self.attr_size))
-            self.invalid_bins = h5f['dataset/' + self.step_name + '/invalid_bins'][:]
-            h5f.close()
-            self.thd_supp = min_sup
-            self.equal = eq
-            self.data = None
-        else:
-            data = Dataset_t.read_csv(file_path)
-            if len(data) <= 1:
-                self.data = np.array([])
-                print("csv file read error")
-                raise Exception("Unable to read csv file or file has no data")
-            else:
-                print("Data fetched from csv file")
-                self.data = np.array([])
-                self.title = self.get_title(data)  # optimized (numpy)
-                self.time_cols = self.get_time_cols()  # optimized (numpy)
-                self.attr_cols = self.get_attributes()  # optimized (numpy)
-                self.column_size = self.get_attribute_no()  # optimized (numpy)
-                self.size = self.get_size()  # optimized (numpy)
-                self.attr_size = 0
-                self.step_name = ''
-                self.thd_supp = min_sup
-                self.equal = eq
-                self.invalid_bins = np.array([])
-                data = None
-
-    def init_h5_groups(self, f=None):
-        if os.path.exists(self.h5_file):
-            pass
-        else:
-            if f is None:
-                h5f = h5py.File(self.h5_file, 'w')
-            else:
-                h5f = f
-            grp = h5f.require_group('dataset')
-            grp.create_dataset('title', data=self.title)
-            data = np.array(self.data.copy()).astype('S')
-            grp.create_dataset('data', data=data)
-            grp.create_dataset('time_cols', data=self.time_cols)
-            grp.create_dataset('attr_cols', data=self.attr_cols)
-            if f is None:
-                h5f.close()
-            data = None
-            self.data = None
-
-
-class GradACOt (GradACO_h5):
+class GradACOt_h5 (GradACO_h5):
 
     def __init__(self, d_set, attr_data, t_diffs):
         self.d_set = d_set
         self.time_diffs = t_diffs
         self.attr_index = self.d_set.attr_cols
-        self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=float)
+        # self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=float)
+        # fetch previous p_matrix from memory
+        grp = 'dataset/' + self.d_set.step_name + '/p_matrix'
+        p_matrix = self.d_set.read_h5_dataset(grp)
+        if np.sum(p_matrix) > 0:
+            self.p_matrix = p_matrix
+        else:
+            self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=float)
         self.d_set.update_attributes(attr_data)
 
     def validate_gp(self, pattern):
@@ -134,7 +76,7 @@ class T_GradACO_h5:
     def __init__(self, f_path, eq, ref_item, min_sup, min_rep, cores):
         # For tgraank
         # self.d_set = d_set
-        self.d_set = Dataset_t(f_path, min_sup=min_sup, eq=eq)
+        self.d_set = Dataset_h5(f_path, min_sup=min_sup, eq=eq)
         self.d_set.init_h5_groups()
         cols = self.d_set.time_cols
         if len(cols) > 0:
@@ -176,7 +118,7 @@ class T_GradACO_h5:
         attr_data, time_diffs = self.transform_data(step)
 
         # 2. Execute aco-graank for each transformation
-        ac = GradACOt(d_set, attr_data, time_diffs)
+        ac = GradACOt_h5(d_set, attr_data, time_diffs)
         list_gp = ac.run_ant_colony()
         # print("\nPheromone Matrix")
         # print(ac.p_matrix)
@@ -241,8 +183,8 @@ class T_GradACO_h5:
                 col = self.time_cols[0]  # use only the first date-time value
                 temp_1 = str(data[i][int(col)])
                 temp_2 = str(data[i + step][int(col)])
-                stamp_1 = Dataset_t.get_timestamp(temp_1)
-                stamp_2 = Dataset_t.get_timestamp(temp_2)
+                stamp_1 = Dataset_h5.get_timestamp(temp_1)
+                stamp_2 = Dataset_h5.get_timestamp(temp_2)
                 if (not stamp_1) or (not stamp_2):
                     return False, [i + 1, i + step + 1]
                 time_diff = (stamp_2 - stamp_1)

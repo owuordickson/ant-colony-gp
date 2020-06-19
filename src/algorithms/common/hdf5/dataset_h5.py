@@ -72,18 +72,19 @@ class Dataset_h5(Dataset):
                 self.equal = eq
                 self.invalid_bins = np.array([])
                 data = None
-                self.init_attributes()
+            #    self.init_attributes()
 
     def init_attributes(self):
         # (check) implement parallel multiprocessing
-        # transpose csv array data
-        attr_data = self.data.copy().T
-        self.attr_size = len(attr_data[self.attr_cols[0]])
-        # create h5 groups to store class attributes
-        self.init_h5_groups()
-        # construct and store 1-item_set valid bins
-        self.construct_bins(attr_data)
-        attr_data = None
+        if self.data is not None:
+            # transpose csv array data
+            attr_data = self.data.copy().T
+            self.attr_size = len(attr_data[self.attr_cols[0]])
+            # create h5 groups to store class attributes
+            self.init_h5_groups()
+            # construct and store 1-item_set valid bins
+            self.construct_bins(attr_data)
+            attr_data = None
         gc.collect()
 
     def construct_bins(self, attr_data):
@@ -114,16 +115,17 @@ class Dataset_h5(Dataset):
         gc.collect()
 
     def init_h5_groups(self):
-        h5f = h5py.File(self.h5_file, 'w')
-        grp = h5f.require_group('dataset')
-        grp.create_dataset('title', data=self.title)
-        data = np.array(self.data.copy()).astype('S')
-        grp.create_dataset('data', data=data)
-        grp.create_dataset('time_cols', data=self.time_cols)
-        grp.create_dataset('attr_cols', data=self.attr_cols)
-        h5f.close()
-        data = None
-        self.data = None
+        if self.data is not None:
+            h5f = h5py.File(self.h5_file, 'w')
+            grp = h5f.require_group('dataset')
+            grp.create_dataset('title', data=self.title)
+            data = np.array(self.data.copy()).astype('S')
+            grp.create_dataset('data', data=data)
+            grp.create_dataset('time_cols', data=self.time_cols)
+            grp.create_dataset('attr_cols', data=self.attr_cols)
+            h5f.close()
+            data = None
+            self.data = None
 
     def read_h5_dataset(self, group):
         temp = np.array([])

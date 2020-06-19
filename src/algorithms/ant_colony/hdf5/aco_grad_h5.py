@@ -11,18 +11,16 @@
 """
 
 import numpy as np
-from numpy import random as rand
-import matplotlib.pyplot as plt
-from ...common.gp import GI, GP
+from ...common.gp import GP
 from ...common.hdf5.dataset_h5 import Dataset_h5
 from ..aco_grad import GradACO
-#from src.algorithms.common.cython.cyt_dataset import Dataset
 
 
 class GradACO_h5(GradACO):
 
     def __init__(self, f_path, min_supp, eq):
         self.d_set = Dataset_h5(f_path, min_supp, eq)
+        self.d_set.init_attributes()
         self.attr_index = self.d_set.attr_cols
         # self.e_factor = 0.1  # evaporation factor
         # fetch previous p_matrix from memory

@@ -47,7 +47,7 @@ class Dataset:
             self.invalid_bins = np.array([])
             self.valid_bins = np.array([])
             data = None
-            self.init_attributes()
+            # self.init_attributes()
 
     def get_size(self):
         size = self.data.shape[0]
