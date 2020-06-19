@@ -16,9 +16,7 @@ Changes
 3. Replaced loops for fetching binary rank with numpy function
 
 """
-import csv
-from dateutil.parser import parse
-import time
+
 import numpy as np
 from pathlib import Path
 import h5py

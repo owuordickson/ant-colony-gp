@@ -18,50 +18,16 @@ Description:
 
 import sys
 from optparse import OptionParser
+import numpy as np
+from mpi4py import MPI
+import h5py
+from pathlib import Path
+import os
+import gc
+from algorithms.ant_colony.mpi.aco_grad_mpi import Dataset_mpi, GradACO_mpi
 from algorithms.common.profile_cpu import Profile
 from algorithms.ant_colony.hdf5.aco_grad_h5 import GradACO_h5
 # from src.algorithms.ant_colony.cython.cyt_aco_grad import GradACO
-
-
-def init_algorithm(f_path, min_supp, cores, eq=False):
-    try:
-        ac = GradACO_h5(f_path, min_supp, eq)
-        list_gp = ac.run_ant_colony()
-
-        if cores > 1:
-            num_cores = cores
-        else:
-            num_cores = Profile.get_num_cores()
-
-        d_set = ac.d_set
-        wr_line = "Algorithm: ACO-GRAANK (3.0)\n"
-        wr_line += "   - H5Py implementation \n"
-        wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
-        wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
-        wr_line += "Minimum support: " + str(min_supp) + '\n'
-        wr_line += "Number of cores: " + str(num_cores) + '\n'
-        wr_line += "Number of patterns: " + str(len(list_gp)) + '\n\n'
-
-        for txt in d_set.title:
-            try:
-                wr_line += (str(txt.key) + '. ' + str(txt.value.decode()) + '\n')
-            except AttributeError:
-                wr_line += (str(txt[0]) + '. ' + str(txt[1].decode()) + '\n')
-
-        wr_line += str("\nFile: " + f_path + '\n')
-        wr_line += str("\nPattern : Support" + '\n')
-
-        for gp in list_gp:
-            wr_line += (str(gp.to_string()) + ' : ' + str(gp.support) + '\n')
-
-        wr_line += "\nPheromone Matrix\n"
-        wr_line += str(ac.p_matrix)
-        # ac.plot_pheromone_matrix()
-        return wr_line
-    except Exception as error:
-        wr_line = "Failed: " + str(error)
-        print(error)
-        return wr_line
 
 
 def write_file(data, path):
@@ -77,8 +43,8 @@ if __name__ == "__main__":
         pType = sys.argv[1]
         filePath = sys.argv[2]
         # refCol = sys.argv[3]
-        minSup = sys.argv[4]
-        # minRep = sys.argv[5]
+        minSup = sys.argv[3]
+        allowEq = sys.argv[4]
     else:
         optparser = OptionParser()
         optparser.add_option('-f', '--inputFile',
@@ -118,20 +84,132 @@ if __name__ == "__main__":
         allowEq = options.allowEq
         numCores = options.numCores
 
-    import time
-    # import tracemalloc
-    # from src.algorithms.common.profile_mem import Profile
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    nprocs = comm.Get_size()
 
-    start = time.time()
-    # tracemalloc.start()
-    res_text = init_algorithm(filePath, minSup, numCores)
-    # snapshot = tracemalloc.take_snapshot()
-    end = time.time()
+    h5_file = str(Path(filePath).stem) + str('_mpi.h5')
+    exists = os.path.exists(h5_file)
+    if not exists:  # for parallel
+        h5f = h5py.File(h5_file, 'a', driver='mpio', comm=comm)
+    else:
+        h5f = h5py.File(h5_file, 'r+', driver='mpio', comm=comm)
 
-    wr_text = ("Run-time: " + str(end - start) + " seconds\n")
-    # wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
-    wr_text += str(res_text)
-    f_name = str('res_aco' + str(end).replace('.', '', 1) + '.txt')
-    # write_file(wr_text, f_name)
-    print(wr_text)
+    start = MPI.Wtime()
+    # fetch data from csv and distribute work among processes
+    if rank == 0:
+        # master process
+        print("master process " + str(rank) + " started ...")
 
+        if exists:
+            # read data set from h5 file
+            print("reading")
+            d_set = Dataset_mpi(min_sup=minSup, eq=allowEq, h5f=h5f)
+            attr_data = None
+        else:
+            # create new data set from csv file
+            d_set = Dataset_mpi(file_path=filePath, min_sup=minSup, eq=allowEq)
+            attr_data = d_set.data.copy().T
+            d_set.attr_size = len(attr_data[d_set.attr_cols[0]])
+        a_count = d_set.attr_cols
+
+        # determine the size of each sub-task
+        ave, res = divmod(a_count.size, nprocs)
+        counts = [ave + 1 if p < res else ave for p in range(nprocs)]
+
+        # determine the starting and ending indices of each sub-task
+        starts = [sum(counts[:p]) for p in range(nprocs)]
+        ends = [sum(counts[:p + 1]) for p in range(nprocs)]
+
+        # converts data into a list of arrays
+        a_count = [a_count[starts[p]:ends[p]] for p in range(nprocs)]
+        # swapping steps so that Process 0 has the smallest data
+        a_count[0], a_count[-1] = a_count[-1], a_count[0]
+    else:
+        # worker process
+        print("worker process " + str(rank) + " started ...")
+        a_count = None
+        d_set = None
+        attr_data = None
+    a_count = comm.scatter(a_count, root=0)
+    d_set = comm.bcast(d_set, root=0)
+    attr_data = comm.bcast(attr_data, root=0)
+
+    # store in h5 file
+    if not exists:
+        print("writing")
+        grp = h5f.require_group('dataset')
+        grp.create_dataset('title', data=d_set.title)
+        # data = np.array(d_set.data.copy()).astype('S')
+        # grp.create_dataset('data', data=data)
+        grp.create_dataset('time_cols', data=d_set.time_cols)
+        grp.create_dataset('attr_cols', data=d_set.attr_cols)
+        grp.create_dataset('size', data=np.array([d_set.column_size, d_set.size, d_set.attr_size]))
+
+        n = d_set.attr_size
+        d_set.step_name = 'step_' + str(int(d_set.size - d_set.attr_size))
+        ds = d_set.step_name + '/p_matrix'
+        grp.create_dataset(ds, (d_set.column_size, 3), dtype='f4')
+        invalid_bins = list()
+        for col in d_set.attr_cols:
+            col_data = np.array(attr_data[col], dtype=float)
+            incr = np.array((col, '+'), dtype='i, S1')
+            decr = np.array((col, '-'), dtype='i, S1')
+            temp_pos = Dataset_mpi.bin_rank(col_data, equal=d_set.equal)
+            supp = float(np.sum(temp_pos)) / float(n * (n - 1.0) / 2.0)
+
+            if supp < d_set.thd_supp:
+                invalid_bins.append(incr)
+                invalid_bins.append(decr)
+            else:
+                ds = d_set.step_name + '/valid_bins/' + str(col) + '_pos'
+                grp.create_dataset(ds, data=temp_pos)
+                ds = d_set.step_name + '/valid_bins/' + str(col) + '_neg'
+                grp.create_dataset(ds, data=temp_pos.T)
+        d_set.invalid_bins = np.array(invalid_bins)
+        ds = d_set.step_name + '/invalid_bins'
+        grp.create_dataset(ds, data=d_set.invalid_bins)
+        attr_data = None
+        d_set.data = None
+        gc.collect()
+
+    # fetch GPs
+    ac = GradACO_mpi(d_set, h5f)
+    lst_gp = ac.run_ant_colony()
+    ds = 'dataset/' + d_set.step_name + '/p_matrix'
+    h5f[ds][...] = ac.p_matrix
+
+    # gather all patterns from all processes
+    lst_tgp = comm.gather(lst_gp, root=0)
+    end = MPI.Wtime()
+    # display results and save to file
+    if rank == 0:
+        wr_line = "Algorithm: ACO-GRAANK (3.0)\n"
+        wr_line += "   - MPI & H5Py parallel implementation \n"
+        wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
+        wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
+        wr_line += "Minimum support: " + str(minSup) + '\n'
+        wr_line += "Number of processes: " + str(nprocs) + '\n'
+        wr_line += "Number of patterns: " + str(len(lst_gp)) + '\n\n'
+
+        for txt in d_set.title:
+            try:
+                wr_line += (str(txt.key) + '. ' + str(txt.value.decode()) + '\n')
+            except AttributeError:
+                wr_line += (str(txt[0]) + '. ' + str(txt[1].decode()) + '\n')
+
+        wr_line += str("\nFile: " + filePath + '\n')
+        wr_line += str("\nPattern : Support" + '\n')
+
+        for gp in lst_gp:
+            wr_line += (str(gp.to_string()) + ' : ' + str(gp.support) + '\n')
+
+        wr_line += "\nPheromone Matrix\n"
+        wr_line += str(ac.p_matrix)
+
+        wr_text = ("Run-time: " + str(end - start) + " seconds\n")
+        wr_text += str(wr_line)
+        f_name = str('res_aco' + str(end).replace('.', '', 1) + '.txt')
+        # write_file(wr_text, f_name)
+        print(wr_text)
+    h5f.close()
