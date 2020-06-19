@@ -249,7 +249,7 @@ if __name__ == "__main__":
         wr_line += "Minimum representativity: " + str(min_rep) + '\n'
         wr_line += "Multi-core execution: True" + '\n'
         wr_line += "Number of cores: " + str(nprocs) + '\n'
-        wr_line += "Number of tasks: " + str(t_aco.max_step) + '\n\n'
+        wr_line += "Number of tasks: " + str(t_aco.max_step) + '\n'
 
         for txt in d_set.title:
             col = int(txt[0])
@@ -262,12 +262,15 @@ if __name__ == "__main__":
         wr_line += str("\nPattern : Support" + '\n')
 
         # lst_tgp is gathered from all processes
+        count = 0
         for obj in lst_tgp:
             for pats in obj:
                 if pats:
                     for tgp in pats:
+                        count += 1
                         wr_line += (str(tgp.to_string()) + ' : ' + str(tgp.support) +
                                     ' | ' + str(tgp.time_lag.to_string()) + '\n')
+        wr_line += "\n\n Number of patterns: " + str(count) + '\n'
 
         wr_text = ("Run-time: " + str(end - start) + " seconds\n")
         wr_text += str(wr_line)

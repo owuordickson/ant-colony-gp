@@ -38,7 +38,8 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
         wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
         wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
         wr_line += "Minimum support: " + str(min_supp) + '\n'
-        wr_line += "Number of cores: " + str(num_cores) + '\n\n'
+        wr_line += "Number of cores: " + str(num_cores) + '\n'
+        wr_line += "Number of patterns: " + str(len(list_gp)) + '\n\n'
 
         for txt in d_set.title:
             try:

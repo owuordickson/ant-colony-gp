@@ -44,7 +44,7 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
         wr_line += "Minimum representativity: " + str(minRep) + '\n'
         wr_line += "Multi-core execution: " + str(msg_para) + '\n'
         wr_line += "Number of cores: " + str(tgp.cores) + '\n'
-        wr_line += "Number of tasks: " + str(tgp.max_step) + '\n\n'
+        wr_line += "Number of tasks: " + str(tgp.max_step) + '\n'
 
         for txt in d_set.title:
             col = int(txt[0])
@@ -56,11 +56,15 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
         wr_line += str("\nFile: " + f_path + '\n')
         wr_line += str("\nPattern : Support" + '\n')
 
+        count = 0
         for obj in list_tgp:
             if obj:
                 for tgp in obj:
+                    count += 1
                     wr_line += (str(tgp.to_string()) + ' : ' + str(tgp.support) +
                                 ' | ' + str(tgp.time_lag.to_string()) + '\n')
+
+        wr_line += "\n\n Number of patterns: " + str(count) + '\n'
         return wr_line
     except Exception as error:
         wr_line = "Failed: " + str(error)
