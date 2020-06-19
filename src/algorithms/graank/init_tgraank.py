@@ -47,9 +47,9 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
         for txt in d_set.title:
             col = int(txt[0])
             if col == refItem:
-                wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '**' + '\n')
+                wr_line += (str(txt[0]) + '. ' + str(txt[1].decode()) + '**' + '\n')
             else:
-                wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '\n')
+                wr_line += (str(txt[0]) + '. ' + str(txt[1].decode()) + '\n')
 
         wr_line += str("\nFile: " + f_path + '\n')
         wr_line += str("\nPattern : Support" + '\n')
@@ -112,7 +112,7 @@ if __name__ == "__main__":
         optparser.add_option('-p', '--allowMultiprocessing',
                              dest='allowPara',
                              help='allow multiprocessing',
-                             default=0,
+                             default=1,
                              type='int')
         (options, args) = optparser.parse_args()
         inFile = None

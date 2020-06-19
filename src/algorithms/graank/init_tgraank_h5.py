@@ -47,9 +47,9 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
         for txt in d_set.title:
             col = int(txt[0])
             if col == refItem:
-                wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '**' + '\n')
+                wr_line += (str(txt[0]) + '. ' + str(txt[1].decode()) + '**' + '\n')
             else:
-                wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '\n')
+                wr_line += (str(txt[0]) + '. ' + str(txt[1].decode()) + '\n')
 
         wr_line += str("\nFile: " + f_path + '\n')
         wr_line += str("\nPattern : Support" + '\n')
