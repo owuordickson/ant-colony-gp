@@ -35,6 +35,7 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
 
         d_set = tgp.d_set
         wr_line = "Algorithm: T-GRAANK \n"
+        wr_line += "   - H5Py implementation \n"
         wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
         wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
         wr_line += "Minimum support: " + str(minSup) + '\n'

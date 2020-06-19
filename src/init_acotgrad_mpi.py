@@ -242,7 +242,7 @@ if __name__ == "__main__":
     if rank == 0:
         d_set = t_aco.d_set
         wr_line = "Algorithm: ACO-TGRAANK (3.0) \n"
-        wr_line = "   - MPI4Py & H5Py implementation \n"
+        wr_line += "   - MPI4Py & H5Py implementation \n"
         wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
         wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
         wr_line += "Minimum support: " + str(min_sup) + '\n'

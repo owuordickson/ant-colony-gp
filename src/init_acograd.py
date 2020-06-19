@@ -35,6 +35,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
 
         d_set = ac.d_set
         wr_line = "Algorithm: ACO-GRAANK (2.2)\n"
+        wr_line += "   - H5Py implementation \n"
         wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
         wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
         wr_line += "Minimum support: " + str(min_supp) + '\n'
