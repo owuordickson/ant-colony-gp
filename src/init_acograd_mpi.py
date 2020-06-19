@@ -19,12 +19,13 @@ Description:
 import sys
 from optparse import OptionParser
 from algorithms.common.profile_cpu import Profile
-from algorithms.ant_colony.aco_grad import GradACO
+from algorithms.ant_colony.hdf5.aco_grad_h5 import GradACO_h5
+#from src.algorithms.ant_colony.cython.cyt_aco_grad import GradACO - to be removed
 
 
 def init_algorithm(f_path, min_supp, cores, eq=False):
     try:
-        ac = GradACO(f_path, min_supp, eq)
+        ac = GradACO_h5(f_path, min_supp, eq)
         list_gp = ac.run_ant_colony()
 
         if cores > 1:
@@ -33,7 +34,8 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
             num_cores = Profile.get_num_cores()
 
         d_set = ac.d_set
-        wr_line = "Algorithm: ACO-GRAANK (2.0)\n"
+        wr_line = "Algorithm: ACO-GRAANK (3.0)\n"
+        wr_line += "   - H5Py implementation \n"
         wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
         wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
         wr_line += "Minimum support: " + str(min_supp) + '\n'

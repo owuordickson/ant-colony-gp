@@ -18,42 +18,75 @@ import h5py
 from pathlib import Path
 import os
 import multiprocessing as mp
-from .aco_grad import GradACO
-from ..common.fuzzy_mf import calculate_time_lag
-from ..common.gp import GP, TGP
-from ..common.dataset import Dataset
-#from src.algorithms.ant_colony.cython.cyt_aco_grad import GradACO
-#from src.algorithms.common.cython.cyt_dataset import Dataset
+from ...common.hdf5.dataset_h5 import Dataset_h5
+from .aco_grad_h5 import GradACO_h5
+from ...common.fuzzy_mf import calculate_time_lag
+from ...common.gp import GP, TGP
 from src.algorithms.common.profile_cpu import Profile
 
 
-class Dataset_t(Dataset):
+class Dataset_t(Dataset_h5):
 
     def __init__(self, file_path, min_sup=0, eq=False):
-        data = Dataset.read_csv(file_path)
-        if len(data) <= 1:
-            self.data = np.array([])
-            data = None
-            print("csv file read error")
-            raise Exception("Unable to read csv file or file has no data")
-        else:
-            print("Data fetched from csv file")
-            self.data = np.array([])
-            self.title = self.get_title(data)  # optimized (numpy)
-            self.time_cols = self.get_time_cols()  # optimized (numpy)
-            self.attr_cols = self.get_attributes()  # optimized (numpy)
-            self.column_size = self.get_attribute_no()  # optimized (numpy)
-            self.size = self.get_size()  # optimized (numpy)
-            self.attr_size = 0
-            self.step_name = ''
+        self.h5_file = 'temp/' + str(Path(file_path).stem) + str('.h5')
+        if os.path.exists(self.h5_file):
+            print("Fetching data from h5 file")
+            h5f = h5py.File(self.h5_file, 'r')
+            self.title = h5f['dataset/title'][:]
+            self.time_cols = h5f['dataset/time_cols'][:]
+            self.attr_cols = h5f['dataset/attr_cols'][:]
+            size = h5f['dataset/size'][:]
+            self.column_size = size[0]
+            self.size = size[1]
+            self.attr_size = size[2]
+            self.step_name = 'step_' + str(int(self.size - self.attr_size))
+            self.invalid_bins = h5f['dataset/' + self.step_name + '/invalid_bins'][:]
+            h5f.close()
             self.thd_supp = min_sup
             self.equal = eq
-            self.invalid_bins = np.array([])
-            self.valid_bins = np.array([])
+            self.data = None
+        else:
+            data = Dataset_t.read_csv(file_path)
+            if len(data) <= 1:
+                self.data = np.array([])
+                print("csv file read error")
+                raise Exception("Unable to read csv file or file has no data")
+            else:
+                print("Data fetched from csv file")
+                self.data = np.array([])
+                self.title = self.get_title(data)  # optimized (numpy)
+                self.time_cols = self.get_time_cols()  # optimized (numpy)
+                self.attr_cols = self.get_attributes()  # optimized (numpy)
+                self.column_size = self.get_attribute_no()  # optimized (numpy)
+                self.size = self.get_size()  # optimized (numpy)
+                self.attr_size = 0
+                self.step_name = ''
+                self.thd_supp = min_sup
+                self.equal = eq
+                self.invalid_bins = np.array([])
+                data = None
+
+    def init_h5_groups(self, f=None):
+        if os.path.exists(self.h5_file):
+            pass
+        else:
+            if f is None:
+                h5f = h5py.File(self.h5_file, 'w')
+            else:
+                h5f = f
+            grp = h5f.require_group('dataset')
+            grp.create_dataset('title', data=self.title)
+            data = np.array(self.data.copy()).astype('S')
+            grp.create_dataset('data', data=data)
+            grp.create_dataset('time_cols', data=self.time_cols)
+            grp.create_dataset('attr_cols', data=self.attr_cols)
+            if f is None:
+                h5f.close()
             data = None
+            self.data = None
 
 
-class GradACOt (GradACO):
+class GradACOt (GradACO_h5):
 
     def __init__(self, d_set, attr_data, t_diffs):
         self.d_set = d_set
@@ -72,20 +105,18 @@ class GradACOt (GradACO):
             if self.d_set.invalid_bins.size > 0 and np.any(np.isin(self.d_set.invalid_bins, gi.gradual_item)):
                 continue
             else:
-                arg = np.argwhere(np.isin(self.d_set.valid_bins[:, 0], gi.gradual_item))
-                if len(arg) > 0:
-                    i = arg[0][0]
-                    bin_obj = self.d_set.valid_bins[i]
-                    if bin_data.size <= 0:
-                        bin_data = np.array([bin_obj[1], bin_obj[1]])
+                grp = 'dataset/' + self.d_set.step_name + '/valid_bins/' + gi.as_string()
+                temp = self.d_set.read_h5_dataset(grp)
+                if bin_data.size <= 0:
+                    bin_data = np.array([temp, temp])
+                    gen_pattern.add_gradual_item(gi)
+                else:
+                    bin_data[1] = temp
+                    temp_bin, supp = self.bin_and(bin_data, self.d_set.attr_size)
+                    if supp >= min_supp:
+                        bin_data[0] = temp_bin
                         gen_pattern.add_gradual_item(gi)
-                    else:
-                        bin_data[1] = bin_data[1]
-                        temp_bin, supp = self.bin_and(bin_data, self.d_set.attr_size)
-                        if supp >= min_supp:
-                            bin_data[0] = temp_bin
-                            gen_pattern.add_gradual_item(gi)
-                            gen_pattern.set_support(supp)
+                        gen_pattern.set_support(supp)
         if len(gen_pattern.gradual_items) <= 1:
             tgp = TGP(gp=pattern)
             return tgp
@@ -98,12 +129,13 @@ class GradACOt (GradACO):
             return tgp
 
 
-class T_GradACO:
+class T_GradACO_h5:
 
     def __init__(self, f_path, eq, ref_item, min_sup, min_rep, cores):
         # For tgraank
         # self.d_set = d_set
         self.d_set = Dataset_t(f_path, min_sup=min_sup, eq=eq)
+        self.d_set.init_h5_groups()
         cols = self.d_set.time_cols
         if len(cols) > 0:
             print("Dataset Ok")
@@ -111,9 +143,14 @@ class T_GradACO:
             self.time_cols = cols
             self.min_sup = min_sup
             self.ref_item = ref_item
+            self.d_set.data = self.d_set.read_h5_dataset('dataset/data')
+            self.d_set.data = np.array(self.d_set.data).astype('U')
             self.max_step = self.get_max_step(min_rep)
             self.orig_attr_data = self.d_set.data.copy().T
-            self.cores = cores
+            if cores > 1:
+                self.cores = cores
+            else:
+                self.cores = Profile.get_num_cores()
         else:
             print("Dataset Error")
             self.time_ok = False
@@ -124,30 +161,13 @@ class T_GradACO:
         all_rows = len(self.d_set.data)
         return all_rows - int(min_rep * all_rows)
 
-    def run_tgraank(self, parallel=False):
-        if parallel:
-            # implement parallel multi-processing
-            if self.cores > 1:
-                num_cores = self.cores
-            else:
-                num_cores = Profile.get_num_cores()
-                self.cores = num_cores
-
-            self.cores = num_cores
-            steps = range(self.max_step)
-            # pool = mp.Pool(num_cores)
-            with mp.Pool(num_cores) as pool:
-                patterns = pool.map(self.fetch_patterns, steps)
-                # pool.close()
-                # pool.join()
-            return patterns
-        else:
-            patterns = list()
-            for step in range(self.max_step):
-                t_pattern = self.fetch_patterns(step)
-                if t_pattern:
-                    patterns.append(t_pattern)
-            return patterns
+    def run_tgraank(self):
+        patterns = list()
+        for step in range(self.max_step):
+            t_pattern = self.fetch_patterns(step)
+            if t_pattern:
+                patterns.append(t_pattern)
+        return patterns
 
     def fetch_patterns(self, step):
         step += 1  # because for-loop is not inclusive from range: 0 - max_step
@@ -221,8 +241,8 @@ class T_GradACO:
                 col = self.time_cols[0]  # use only the first date-time value
                 temp_1 = str(data[i][int(col)])
                 temp_2 = str(data[i + step][int(col)])
-                stamp_1 = Dataset.get_timestamp(temp_1)
-                stamp_2 = Dataset.get_timestamp(temp_2)
+                stamp_1 = Dataset_t.get_timestamp(temp_1)
+                stamp_2 = Dataset_t.get_timestamp(temp_2)
                 if (not stamp_1) or (not stamp_2):
                     return False, [i + 1, i + step + 1]
                 time_diff = (stamp_2 - stamp_1)

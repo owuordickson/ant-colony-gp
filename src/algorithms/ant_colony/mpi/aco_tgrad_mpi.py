@@ -18,12 +18,12 @@ import gc
 from ..aco_grad import GradACO
 from ...common.fuzzy_mf import calculate_time_lag
 from ...common.gp import GP, TGP
-from ...common.dataset import Dataset
+from ...common.hdf5.dataset_h5 import Dataset_h5
 #from src.algorithms.ant_colony.cython.cyt_aco_grad import GradACO
 #from src.algorithms.common.cython.cyt_dataset import Dataset
 
 
-class Dataset_t(Dataset):
+class Dataset_t(Dataset_h5):
 
     def __init__(self, file_path=None, min_sup=None, eq=False, h5f=None):
         if h5f is not None:
@@ -44,7 +44,7 @@ class Dataset_t(Dataset):
             self.data = h5f['dataset/data'][:]
             self.data = np.array(self.data).astype('U')
         else:
-            data = Dataset.read_csv(file_path)
+            data = Dataset_t.read_csv(file_path)
             if len(data) <= 1:
                 self.data = np.array([])
                 data = None
@@ -245,8 +245,8 @@ class T_GradACO:
                 col = self.time_cols[0]  # use only the first date-time value
                 temp_1 = str(data[i][int(col)])
                 temp_2 = str(data[i + step][int(col)])
-                stamp_1 = Dataset.get_timestamp(temp_1)
-                stamp_2 = Dataset.get_timestamp(temp_2)
+                stamp_1 = Dataset_t.get_timestamp(temp_1)
+                stamp_2 = Dataset_t.get_timestamp(temp_2)
                 if (not stamp_1) or (not stamp_2):
                     return False, [i + 1, i + step + 1]
                 time_diff = (stamp_2 - stamp_1)
@@ -259,7 +259,7 @@ class T_GradACO:
         # execute binary rank to calculate support of pattern
         incr = np.array((col, '+'), dtype='i, S1')
         decr = np.array((col, '-'), dtype='i, S1')
-        temp_pos = Dataset.bin_rank(col_data, equal=self.d_set.equal)
+        temp_pos = Dataset_t.bin_rank(col_data, equal=self.d_set.equal)
         supp = float(np.sum(temp_pos)) / float(n * (n - 1.0) / 2.0)
 
         if supp < self.min_sup:

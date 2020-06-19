@@ -24,13 +24,7 @@ class GradACO:
         self.d_set = Dataset(f_path, min_supp, eq)
         self.attr_index = self.d_set.attr_cols
         # self.e_factor = 0.1  # evaporation factor
-        # fetch previous p_matrix from memory
-        grp = 'dataset/' + self.d_set.step_name + '/p_matrix'
-        p_matrix = self.d_set.read_h5_dataset(grp)
-        if np.sum(p_matrix) > 0:
-            self.p_matrix = p_matrix
-        else:
-            self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=float)
+        self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=float)
 
     def deposit_pheromone(self, pattern):
         lst_attr = []
@@ -83,8 +77,6 @@ class GradACO:
                         loser_gps.append(rand_gp)
                 else:
                     repeated += 1
-        grp = 'dataset/' + self.d_set.step_name + '/p_matrix'
-        self.d_set.add_h5_dataset(grp, self.p_matrix)
         return winner_gps
 
     def generate_random_gp(self):
@@ -117,18 +109,22 @@ class GradACO:
             if self.d_set.invalid_bins.size > 0 and np.any(np.isin(self.d_set.invalid_bins, gi.gradual_item)):
                 continue
             else:
-                grp = 'dataset/' + self.d_set.step_name + '/valid_bins/' + gi.as_string()
-                temp = self.d_set.read_h5_dataset(grp)
-                if bin_data.size <= 0:
-                    bin_data = np.array([temp, temp])
-                    gen_pattern.add_gradual_item(gi)
-                else:
-                    bin_data[1] = temp
-                    temp_bin, supp = self.bin_and(bin_data, self.d_set.attr_size)
-                    if supp >= min_supp:
-                        bin_data[0] = temp_bin
+                #grp = 'dataset/' + self.d_set.step_name + '/valid_bins/' + gi.as_string()
+                #temp = self.d_set.read_h5_dataset(grp)
+                arg = np.argwhere(np.isin(self.d_set.valid_bins[:, 0], gi.gradual_item))
+                if len(arg) > 0:
+                    i = arg[0][0]
+                    bin_obj = self.d_set.valid_bins[i]
+                    if bin_data.size <= 0:
+                        bin_data = np.array([bin_obj[1], bin_obj[1]])
                         gen_pattern.add_gradual_item(gi)
-                        gen_pattern.set_support(supp)
+                    else:
+                        bin_data[1] = bin_data[1]
+                        temp_bin, supp = self.bin_and(bin_data, self.d_set.attr_size)
+                        if supp >= min_supp:
+                            bin_data[0] = temp_bin
+                            gen_pattern.add_gradual_item(gi)
+                            gen_pattern.set_support(supp)
         if len(gen_pattern.gradual_items) <= 1:
             return pattern
         else:

@@ -98,7 +98,7 @@ if __name__ == "__main__":
     rank = comm.Get_rank()
     nprocs = comm.Get_size()
 
-    h5_file = str(Path(file_path).stem) + str('_mpi.h5')
+    h5_file = 'temp/' + str(Path(file_path).stem) + str('_mpi.h5')
     exists = os.path.exists(h5_file)
     if not exists:  # for parallel
         h5f = h5py.File(h5_file, 'a', driver='mpio', comm=comm)

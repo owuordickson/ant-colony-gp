@@ -22,7 +22,6 @@ Description:
 import sys
 from optparse import OptionParser
 from algorithms.ant_colony.aco_tgrad import T_GradACO
-# from src.algorithms.ant_colony.aco_tgrad_v2 import T_GradACO
 
 
 def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
@@ -37,8 +36,7 @@ def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
             list_tgp = tgp.run_tgraank()
 
         d_set = tgp.d_set
-        wr_line = "Algorithm: ACO-TGRAANK (2.2) \n"
-        wr_line += "   - H5Py implementation \n"
+        wr_line = "Algorithm: ACO-TGRAANK (2.0) \n"
         wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
         wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
         wr_line += "Minimum support: " + str(minSup) + '\n'
@@ -115,7 +113,7 @@ if __name__ == "__main__":
         optparser.add_option('-p', '--allowMultiprocessing',
                              dest='allowPara',
                              help='allow multiprocessing',
-                             default=0,
+                             default=1,
                              type='int')
         (options, args) = optparser.parse_args()
         inFile = None
