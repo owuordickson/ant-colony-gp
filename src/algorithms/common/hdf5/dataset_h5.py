@@ -34,7 +34,7 @@ from ..dataset import Dataset
 class Dataset_h5(Dataset):
 
     def __init__(self, file_path, min_sup=0, eq=False):
-        self.h5_file = 'temp/' + str(Path(file_path).stem) + str('.h5')
+        self.h5_file = str(Path(file_path).stem) + str('.h5')
         if os.path.exists(self.h5_file):
             print("Fetching data from h5 file")
             h5f = h5py.File(self.h5_file, 'r')
@@ -115,7 +115,9 @@ class Dataset_h5(Dataset):
         gc.collect()
 
     def init_h5_groups(self):
-        if self.data is not None:
+        if os.path.exists(self.h5_file):
+            pass
+        else:
             h5f = h5py.File(self.h5_file, 'w')
             grp = h5f.require_group('dataset')
             grp.create_dataset('title', data=self.title)

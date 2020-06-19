@@ -20,12 +20,12 @@ Description:
 
 import sys
 from optparse import OptionParser
-from algorithms.graank.t_graank import Tgrad
+from algorithms.graank.hdf5.t_graank_h5 import Tgrad_5
 
 
 def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):
     try:
-        tgp = Tgrad(f_path, eq, refItem, minSup, minRep, allowPara)
+        tgp = Tgrad_5(f_path, eq, refItem, minSup, minRep, allowPara)
         if allowPara >= 1:
             msg_para = "True"
             list_tgp = tgp.run_tgraank(parallel=True)

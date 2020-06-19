@@ -9,9 +9,9 @@
 
 import numpy as np
 import gc
-from ..common.fuzzy_mf import calculate_time_lag
-from ..common.dataset import Dataset
-from ..common.gp import GI, GP, TGP
+from ...common.fuzzy_mf import calculate_time_lag
+from ...common.hdf5.dataset_h5 import Dataset_h5
+from ...common.gp import GI, GP, TGP
 
 
 def inv(g_item):
@@ -22,7 +22,7 @@ def inv(g_item):
     return temp
 
 
-def gen_apriori_candidates(R, sup, n):
+def gen_apriori_candidates(R, sup, n, d_set):
     res = []
     I = []
     if len(R) < 2:
@@ -58,7 +58,21 @@ def gen_apriori_candidates(R, sup, n):
                         test = 0
                         break
                 if test == 1:
-                    m = R[i][1] * R[j][1]
+                    if R[i][1] is None:
+                        # read from h5 file
+                        gi = GI(R[i][0][0], R[i][0][1])
+                        grp = 'dataset/' + d_set.step_name + '/valid_bins/' + gi.as_string()
+                        bin_data1 = d_set.read_h5_dataset(grp)
+                    else:
+                        bin_data1 = R[i][1]
+                    if R[j][1] is None:
+                        # read from h5 file
+                        gi = GI(R[j][0][0], R[j][0][1])
+                        grp = 'dataset/' + d_set.step_name + '/valid_bins/' + gi.as_string()
+                        bin_data2 = d_set.read_h5_dataset(grp)
+                    else:
+                        bin_data2 = R[j][1]
+                    m = bin_data1 * bin_data2
                     t = float(np.sum(m)) / float(n * (n - 1.0) / 2.0)
                     if t > sup:
                         res.append([temp, m])
@@ -67,29 +81,42 @@ def gen_apriori_candidates(R, sup, n):
     return res
 
 
-def graank(f_path=None, min_sup=None, eq=False, t_diffs=None, d_set=None):
+def gen_valid_bins(invalid_bins, attr_cols):
+    valid_gi = list()
+    invalid_cols = list()
+    for obj in invalid_bins:
+        invalid_cols.append(obj[0])
+    invalid_cols = np.array(invalid_cols, dtype=int)
+    invalid_cols = np.unique(invalid_cols)
+    valid_cols = np.setdiff1d(attr_cols, np.array(invalid_cols, dtype=int))
+    for col in valid_cols:
+        valid_gi.append([tuple([col, '+']), None])
+        valid_gi.append([tuple([col, '-']), None])
+    return valid_gi
+
+
+def graank_h5(f_path=None, min_sup=None, eq=False, t_diffs=None, d_set=None):
     if d_set is None:
-        d_set = Dataset(f_path, min_sup, eq)
+        d_set = Dataset_h5(f_path, min_sup, eq)
         d_set.init_attributes()
     else:
         d_set = d_set
         min_sup = d_set.thd_supp
     patterns = []
     n = d_set.attr_size
-    # lst_valid_gi = gen_valid_bins(d_set.invalid_bins, d_set.attr_cols)
-    valid_bins = d_set.valid_bins
+    lst_valid_gi = gen_valid_bins(d_set.invalid_bins, d_set.attr_cols)
 
-    while len(valid_bins) > 0:
-        valid_bins = gen_apriori_candidates(valid_bins, min_sup, n)
+    while len(lst_valid_gi) > 0:
+        lst_valid_gi = gen_apriori_candidates(lst_valid_gi, min_sup, n, d_set)
         i = 0
-        while i < len(valid_bins) and valid_bins != []:
-            gi_tuple = valid_bins[i][0]
-            bin_data = valid_bins[i][1]
+        while i < len(lst_valid_gi) and lst_valid_gi != []:
+            gi_tuple = lst_valid_gi[i][0]
+            bin_data = lst_valid_gi[i][1]
             # grp = 'dataset/' + d_set.step_name + '/valid_bins/' + gi.as_string()
             # bin_data = d_set.read_h5_dataset(grp)
             sup = float(np.sum(np.array(bin_data))) / float(n * (n - 1.0) / 2.0)
             if sup < min_sup:
-                del valid_bins[i]
+                del lst_valid_gi[i]
             else:
                 z = 0
                 while z < (len(patterns) - 1):
@@ -101,16 +128,16 @@ def graank(f_path=None, min_sup=None, eq=False, t_diffs=None, d_set=None):
                     t_lag = calculate_time_lag(bin_data, t_diffs)
                     if t_lag.valid:
                         gp = GP()
-                        for obj in valid_bins[i][0]:
-                            gi = GI(obj[0], obj[1].decode())
+                        for obj in lst_valid_gi[i][0]:
+                            gi = GI(obj[0], obj[1])
                             gp.add_gradual_item(gi)
                         gp.set_support(sup)
                         tgp = TGP(gp=gp, t_lag=t_lag)
                         patterns.append(tgp)
                 else:
                     gp = GP()
-                    for obj in valid_bins[i][0]:
-                        gi = GI(obj[0], obj[1].decode())
+                    for obj in lst_valid_gi[i][0]:
+                        gi = GI(obj[0], obj[1])
                         gp.add_gradual_item(gi)
                     gp.set_support(sup)
                     patterns.append(gp)
