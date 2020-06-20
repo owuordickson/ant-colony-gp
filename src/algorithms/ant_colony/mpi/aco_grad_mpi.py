@@ -6,7 +6,7 @@
 @version: "3.0"
 @email: "owuordickson@gmail.com"
 @created: "12 July 2019"
-@modified: "16 June 2020"
+@modified: "20 June 2020"
 
 """
 
@@ -24,7 +24,7 @@ class Dataset_mpi(Dataset_h5):
             print("Fetching data from h5 file")
 
             self.title = h5f['dataset/title'][:]
-            self.time_cols = h5f['dataset/time_cols'][:]
+            # self.time_cols = h5f['dataset/time_cols'][:]
             self.attr_cols = h5f['dataset/attr_cols'][:]
             size = h5f['dataset/size'][:]
             self.column_size = size[0]
@@ -34,7 +34,7 @@ class Dataset_mpi(Dataset_h5):
             self.invalid_bins = h5f['dataset/' + self.step_name + '/invalid_bins'][:]
 
             self.thd_supp = min_sup
-            self.equal = eq
+            # self.equal = eq
             self.data = None
         else:
             data = Dataset_mpi.read_csv(file_path)
@@ -57,7 +57,6 @@ class Dataset_mpi(Dataset_h5):
                 self.equal = eq
                 self.invalid_bins = np.array([])
                 data = None
-            #    self.init_attributes()
 
 
 class GradACO_mpi(GradACO_h5):
@@ -124,7 +123,7 @@ class GradACO_mpi(GradACO_h5):
             else:
                 ds = 'dataset/' + self.d_set.step_name + '/valid_bins/' + gi.as_string()
                 if ds in self.h5f:
-                    temp = self.h5f[ds][int(gi.attribute_col)][:]
+                    temp = self.h5f[ds][:]
                 else:
                     continue
                     # temp = np.array([])

@@ -3,10 +3,10 @@
 @author: "Dickson Owuor"
 @credits: "Anne Laurent"
 @license: "MIT"
-@version: "2.2"
+@version: "3.0"
 @email: "owuordickson@gmail.com"
 @created: "12 July 2019"
-@modified: "25 May 2020"
+@modified: "20 June 2020"
 
 Changes
 -------
@@ -14,6 +14,7 @@ Changes
    - this frees primary memory from storing nxn matrices
 2. Fetch all binaries during initialization
 3. Replaced loops for fetching binary rank with numpy function
+4. Used HDF5 storage
 
 """
 

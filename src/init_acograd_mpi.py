@@ -3,12 +3,14 @@
 @author: "Dickson Owuor"
 @credits: "Thomas Runkler, Edmond Menya, and Anne Laurent,"
 @license: "MIT"
-@version: "1.0"
+@version: "3.2"
 @email: "owuordickson@gmail.com"
-@created: "18 November 2019"
+@created: "20 June 2020"
+
+Optimized using MPI and Parallel HDF5
 
 Usage:
-    $python init_acograd.py -f ../data/DATASET.csv -s 0.5
+    $mpirun -n 4 python init_acograd_mpi.py -f ../data/DATASET.csv -s 0.5
 
 Description:
     f -> file path (CSV)
@@ -104,7 +106,7 @@ if __name__ == "__main__":
         if exists:
             # read data set from h5 file
             print("reading")
-            d_set = Dataset_mpi(min_sup=minSup, eq=allowEq, h5f=h5f)
+            d_set = Dataset_mpi(min_sup=minSup, h5f=h5f)
             attr_data = None
         else:
             # create new data set from csv file
@@ -184,7 +186,7 @@ if __name__ == "__main__":
     end = MPI.Wtime()
     # display results and save to file
     if rank == 0:
-        wr_line = "Algorithm: ACO-GRAANK (3.0)\n"
+        wr_line = "Algorithm: ACO-GRAANK (3.2)\n"
         wr_line += "   - MPI & H5Py parallel implementation \n"
         wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
         wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
@@ -210,6 +212,6 @@ if __name__ == "__main__":
         wr_text = ("Run-time: " + str(end - start) + " seconds\n")
         wr_text += str(wr_line)
         f_name = str('res_aco' + str(end).replace('.', '', 1) + '.txt')
-        # write_file(wr_text, f_name)
+        write_file(wr_text, f_name)
         print(wr_text)
     h5f.close()

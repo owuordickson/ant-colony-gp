@@ -3,12 +3,12 @@
 @author: "Dickson Owuor"
 @credits: "Thomas Runkler and Anne Laurent,"
 @license: "MIT"
-@version: "2.0"
+@version: "3.0"
 @email: "owuordickson@gmail.com"
-@created: "19 November 2019"
+@created: "20 June 2020"
 
 Usage:
-    $python3 init_acotgrad.py -f ../data/DATASET.csv -c 0 -s 0.5 -r 0.5 -p 1
+    $python3 init_acotgrad_h5.py -f ../data/DATASET.csv -c 0 -s 0.5 -r 0.5 -p 1
 
 Description:
     f -> file path (CSV)
@@ -138,5 +138,5 @@ if __name__ == "__main__":
     # wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
     wr_text += str(res_text)
     f_name = str('res_aco_t' + str(end).replace('.', '', 1) + '.txt')
-    # write_file(wr_text, f_name)
+    write_file(wr_text, f_name)
     print(wr_text)

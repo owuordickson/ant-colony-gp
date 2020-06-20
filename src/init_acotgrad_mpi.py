@@ -3,9 +3,11 @@
 @author: "Dickson Owuor"
 @credits: "Thomas Runkler and Anne Laurent,"
 @license: "MIT"
-@version: "3.0"
+@version: "3.2"
 @email: "owuordickson@gmail.com"
 @created: "15 June 2020"
+
+Optimized using MPI and Parallel HDF5
 
 Usage:
     $mpirun -n 4 python init_acotgrad_mpi.py -f ../data/DATASET.csv -c 0 -s 0.5 -r 0.5
@@ -241,7 +243,7 @@ if __name__ == "__main__":
     # display results and save to file
     if rank == 0:
         d_set = t_aco.d_set
-        wr_line = "Algorithm: ACO-TGRAANK (3.0) \n"
+        wr_line = "Algorithm: ACO-TGRAANK (3.2) \n"
         wr_line += "   - MPI4Py & H5Py implementation \n"
         wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
         wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
@@ -275,7 +277,7 @@ if __name__ == "__main__":
         wr_text = ("Run-time: " + str(end - start) + " seconds\n")
         wr_text += str(wr_line)
         f_name = str('res_aco_t' + str(end).replace('.', '', 1) + '.txt')
-        # write_file(wr_text, f_name)
+        write_file(wr_text, f_name)
         print(wr_text)
 
     h5f.close()
