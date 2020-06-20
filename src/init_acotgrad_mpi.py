@@ -161,14 +161,14 @@ if __name__ == "__main__":
             ds = step_name + '/valid_bins'
             n = (d_set.size - st)
             dt = np.dtype("({0}, {0})bool".format(n, n))
-            grp.create_dataset(ds, (d_set.column_size,), dtype=dt)
+            grp.create_dataset(ds, (d_set.column_size,), dtype=dt, chunks=True)
 
             ds = step_name + '/time_diffs'
-            grp.create_dataset(ds, (n, 2), dtype='f')
+            grp.create_dataset(ds, (n, 2), dtype='f', chunks=True)
             # grp.create_dataset(ds, (n, 2), dtype='f4, i4')
 
             ds = step_name + '/p_matrix'
-            grp.create_dataset(ds, (d_set.column_size, 3), dtype='f4')
+            grp.create_dataset(ds, (d_set.column_size, 3), dtype='f4', chunks=True)
 
             ds = step_name + '/attr_size'
             grp.create_dataset(ds, (1,), dtype='i4')

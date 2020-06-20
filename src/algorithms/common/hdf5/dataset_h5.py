@@ -121,7 +121,7 @@ class Dataset_h5(Dataset):
             grp = h5f.require_group('dataset')
             grp.create_dataset('title', data=self.title)
             data = np.array(self.data.copy()).astype('S')
-            grp.create_dataset('data', data=data)
+            grp.create_dataset('data', data=data, compression="gzip", compression_opts=9)
             grp.create_dataset('time_cols', data=self.time_cols)
             grp.create_dataset('attr_cols', data=self.attr_cols)
             h5f.close()
@@ -140,5 +140,5 @@ class Dataset_h5(Dataset):
         h5f = h5py.File(self.h5_file, 'r+')
         if group in h5f:
             del h5f[group]
-        h5f.create_dataset(group, data=data)
+        h5f.create_dataset(group, data=data, compression="gzip", compression_opts=9)
         h5f.close()
