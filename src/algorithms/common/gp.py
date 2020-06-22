@@ -60,6 +60,13 @@ class GP:
             pattern.append(item.gradual_item.tolist())
         return pattern
 
+    def get_tuples(self):
+        pattern = list()
+        for gi in self.gradual_items:
+            temp = tuple([gi.attribute_col, gi.symbol])
+            pattern.append(temp)
+        return pattern
+
     def inv_pattern(self):
         pattern = list()
         for gi in self.gradual_items:
