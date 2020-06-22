@@ -20,18 +20,17 @@ Description:
 import sys
 from optparse import OptionParser
 from algorithms.common.profile_cpu import Profile
-from algorithms.ant_colony.aco_grad import GradACO
+from algorithms.ant_colony.aco_grad_mp import GradACO_mp
 
 
 def init_algorithm(f_path, min_supp, cores, eq=False):
     try:
-        ac = GradACO(f_path, min_supp, eq)
-        list_gp = ac.run_ant_colony()
-
         if cores > 1:
             num_cores = cores
         else:
             num_cores = Profile.get_num_cores()
+        ac = GradACO_mp(f_path, min_supp, eq, num_cores)
+        list_gp = ac.run_ant_colony()
 
         d_set = ac.d_set
         wr_line = "Algorithm: ACO-GRAANK (2.0)\n"
