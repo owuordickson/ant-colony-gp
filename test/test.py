@@ -1,25 +1,36 @@
-import csv
+import numpy as np
+
+idx1 = np.array([0, 3, 1, 4, 2])
+idx2 = np.array([1, 4, 0, 3, 2])
+idx3 = np.array([0,  1,  2,  3, 6, 7,  4, 5])
+idx4 = np.array([0,  1,  2,  3, 4, 6,  5, 7])
+idx5 = np.array([0,  1,  2,  3,  4, 10,  5,  9,  6, 11,  7,  8])
+idx6 = np.array([0,  1,  2,  3, 10, 11,  4,  5,  9,  6,  7,  8])
 
 
-def read_csv(file):
-    # 1. retrieve data-set from file
-    with open(file, 'r') as f:
-        dialect = csv.Sniffer().sniff(f.readline(), delimiters=";,' '\t")
-        f.seek(0)
-        reader = csv.reader(f, dialect)
-        temp = list(reader)
-    for i in range(1, len(temp)):
-        row = temp[i]
-        for j in range(len(row)):
-            try:
-                x = float(temp[i][j])
-            except ValueError:
-                temp[i][j] = 0
-    with open(file, 'w') as f:
-        writer = csv.writer(f, delimiter=';')
-        for line in temp:
-            writer.writerow(line)
-    return temp
+def test(arr1, arr2):
+    temp = []
+    start = 0
+
+    for item in arr1:
+        ok = (np.argwhere(arr2 == item)[0][0] >= start)
+        if ok:
+            temp.append(item)
+        start += 1
+    return np.array(temp)
 
 
-read_csv('../data/FluTopicData-testsansdate-blank.csv')
+new_idx = np.array([])
+for i in range(len(idx1)):
+    temp1 = idx1[i:]
+    j = np.argwhere(idx2 == idx1[i])
+    if j.size > 0:
+        temp2 = idx2[j[0][0]:]
+        ok = True  # test(temp1.tolist(), temp2.tolist())
+        res = temp1[np.in1d(temp1, temp2)]
+        if res.size > new_idx.size:
+            new_idx = res
+        # print(str(ok) + ': ' + str(temp1) + ' - ' + str(temp2) + ' = ' + str(res))
+
+print(new_idx)
+print(test(idx1, idx2))

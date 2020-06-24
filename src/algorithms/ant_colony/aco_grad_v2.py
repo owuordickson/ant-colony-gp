@@ -14,13 +14,13 @@ import numpy as np
 from numpy import random as rand
 import matplotlib.pyplot as plt
 from ..common.gp import GI, GP
-from ..common.dataset import Dataset
-#from src.algorithms.common.cython.cyt_dataset import Dataset
+from ..common.dataset_v2 import Dataset
 
 
 class GradACO:
 
     def __init__(self, f_path, min_supp, eq):
+        print("GradACO: Version 2.0")
         self.d_set = Dataset(f_path, min_supp, eq)
         self.d_set.init_attributes()
         self.attr_index = self.d_set.attr_cols
@@ -103,27 +103,33 @@ class GradACO:
     def validate_gp(self, pattern):
         # pattern = [('2', '+'), ('4', '+')]
         min_supp = self.d_set.thd_supp
+        n = self.d_set.attr_size
         gen_pattern = GP()
-        bin_data = np.array([])
+        bin_data = []  # np.array([])
 
         for gi in pattern.gradual_items:
-            if self.d_set.invalid_bins.size > 0 and np.any(np.isin(self.d_set.invalid_bins, gi.gradual_item)):
-                continue
-            else:
-                arg = np.argwhere(np.isin(self.d_set.valid_bins[:, 0], gi.gradual_item))
-                if len(arg) > 0:
-                    i = arg[0][0]
-                    bin_obj = self.d_set.valid_bins[i]
-                    if bin_data.size <= 0:
-                        bin_data = np.array([bin_obj[1], bin_obj[1]])
-                        gen_pattern.add_gradual_item(gi)
-                    else:
-                        bin_data[1] = bin_obj[1]
-                        temp_bin, supp = self.bin_and(bin_data, self.d_set.attr_size)
-                        if supp >= min_supp:
-                            bin_data[0] = temp_bin
-                            gen_pattern.add_gradual_item(gi)
-                            gen_pattern.set_support(supp)
+            #if self.d_set.invalid_bins.size > 0 and np.any(np.isin(self.d_set.invalid_bins, gi.gradual_item)):
+            #    continue
+            #else:
+            arg = np.argwhere(np.isin(self.d_set.valid_idxs[:, 0], gi.gradual_item))
+            if len(arg) > 0:
+                i = arg[0][0]
+                bin_obj = self.d_set.valid_idxs[i]
+                #if len(bin_data) <= 0:
+                #    bin_data = [bin_obj[1], bin_obj[1]]
+                #    gen_pattern.add_gradual_item(gi)
+                #else:
+                #    bin_data[1] = bin_obj[1]
+                bin_data.append(bin_obj[1])
+                gen_pattern.add_gradual_item(gi)
+
+        if len(bin_data) > 1:
+            temp_bin, supp = self.index_count(bin_data, n)
+            if supp >= min_supp:
+                # bin_data[0] = temp_bin
+                # gen_pattern.add_gradual_item(gi)
+                gen_pattern.set_support(supp)
+
         if len(gen_pattern.gradual_items) <= 1:
             return pattern
         else:
@@ -186,8 +192,59 @@ class GradACO:
         return False
 
     @staticmethod
-    def bin_and(bins, n):
-        # bin_ = np.zeros((n, n), dtype=bool)
-        temp_bin = bins[0] * bins[1]
-        supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
-        return temp_bin, supp
+    def index_count1(idxs, n):
+        x = 0
+        new_idxs = list()
+        for i in range(len(idxs[0])):
+            obj_i = idxs[0][i]
+            for j in range(x, len(idxs[1])):
+                obj_j = idxs[1][j]
+                temp = np.intersect1d(obj_i, obj_j)
+                if len(temp) > 0:
+                    if x <= j:
+                        x = j
+                        new_idxs.append(temp)
+                    else:
+                        x = 0
+                        new_idxs = list()
+                # print(str(obj_i) + ' - ' + str(obj_j))
+        supp = float(len(new_idxs) / n)
+        print(new_idxs)
+        print("\n")
+        return idxs[0], supp
+
+    @staticmethod
+    def index_count2(idxs, n):
+        idx1 = idxs[0]
+        idx2 = idxs[1]
+        new_idx = np.array([])
+        for i in range(len(idx1)):
+            temp1 = idx1[i:]
+            j = np.argwhere(idx2 == idx1[i])
+            if j.size > 0:
+                temp2 = idx2[j[0][0]:]
+                res = temp1[np.in1d(temp1, temp2)]
+                if res.size > new_idx.size:
+                    new_idx = res
+                    print(str(temp1) + ' - ' + str(temp2) + ' = ' + str(res))
+        supp = float(len(new_idx) / n)
+        return new_idx, supp
+
+    @staticmethod
+    def index_count(idxs, n):
+        arr_1 = idxs[0]
+        # arr2 = idxs[1]
+        temp = []
+        start = 0
+        ok = False
+        for item in arr_1:
+            for i in range(1, len(idxs)):
+                arr_n = idxs[i]
+                ok = (np.argwhere(arr_n == item)[0][0] >= start)
+                if not ok:
+                    break
+            if ok:
+                temp.append(item)
+            start += 1
+        supp = float(len(temp) / n)
+        return np.array(temp), supp
