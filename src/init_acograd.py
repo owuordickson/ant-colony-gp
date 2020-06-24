@@ -20,7 +20,7 @@ Description:
 import sys
 from optparse import OptionParser
 from algorithms.common.profile_cpu import Profile
-from algorithms.ant_colony.aco_grad_v2 import GradACO
+from algorithms.ant_colony.aco_grad import GradACO
 
 
 def init_algorithm(f_path, min_supp, cores, eq=False):
