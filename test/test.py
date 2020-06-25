@@ -12,7 +12,7 @@ def test(arr1, arr2):
     temp = []
     start = 0
 
-    for item in arr1:
+    for item in np.nditer(arr1):
         ok = (np.argwhere(arr2 == item)[0][0] >= start)
         if ok:
             temp.append(item)

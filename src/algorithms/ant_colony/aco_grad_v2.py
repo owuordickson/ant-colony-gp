@@ -124,7 +124,7 @@ class GradACO:
                 gen_pattern.add_gradual_item(gi)
 
         if len(bin_data) > 1:
-            temp_bin, supp = self.index_count(bin_data, n)
+            temp_bin, supp = self.index_count(np.array(bin_data), n)
             if supp >= min_supp:
                 # bin_data[0] = temp_bin
                 # gen_pattern.add_gradual_item(gi)
@@ -192,55 +192,17 @@ class GradACO:
         return False
 
     @staticmethod
-    def index_count1(idxs, n):
-        x = 0
-        new_idxs = list()
-        for i in range(len(idxs[0])):
-            obj_i = idxs[0][i]
-            for j in range(x, len(idxs[1])):
-                obj_j = idxs[1][j]
-                temp = np.intersect1d(obj_i, obj_j)
-                if len(temp) > 0:
-                    if x <= j:
-                        x = j
-                        new_idxs.append(temp)
-                    else:
-                        x = 0
-                        new_idxs = list()
-                # print(str(obj_i) + ' - ' + str(obj_j))
-        supp = float(len(new_idxs) / n)
-        print(new_idxs)
-        print("\n")
-        return idxs[0], supp
-
-    @staticmethod
-    def index_count2(idxs, n):
-        idx1 = idxs[0]
-        idx2 = idxs[1]
-        new_idx = np.array([])
-        for i in range(len(idx1)):
-            temp1 = idx1[i:]
-            j = np.argwhere(idx2 == idx1[i])
-            if j.size > 0:
-                temp2 = idx2[j[0][0]:]
-                res = temp1[np.in1d(temp1, temp2)]
-                if res.size > new_idx.size:
-                    new_idx = res
-                    print(str(temp1) + ' - ' + str(temp2) + ' = ' + str(res))
-        supp = float(len(new_idx) / n)
-        return new_idx, supp
-
-    @staticmethod
     def index_count(idxs, n):
         arr_1 = idxs[0]
-        # arr2 = idxs[1]
+        arr_n = idxs[1:]
         temp = []
         start = 0
         ok = False
-        for item in arr_1:
-            for i in range(1, len(idxs)):
-                arr_n = idxs[i]
-                ok = (np.argwhere(arr_n == item)[0][0] >= start)
+        for item in np.nditer(arr_1):
+            for arr in arr_n:
+                arg = np.argwhere(arr == item)
+                if arg.size > 0:
+                    ok = (arg[0][0] >= start)
                 if not ok:
                     break
             if ok:

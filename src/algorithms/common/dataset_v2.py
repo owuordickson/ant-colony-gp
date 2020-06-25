@@ -159,16 +159,6 @@ class Dataset:
         return sort_idx, supp
 
     @staticmethod
-    def bin_rank(arr, equal=False):
-        with np.errstate(invalid='ignore'):
-            if not equal:
-                temp_pos = arr < arr[:, np.newaxis]
-            else:
-                temp_pos = arr <= arr[:, np.newaxis]
-                np.fill_diagonal(temp_pos, 0)
-            return temp_pos
-
-    @staticmethod
     def read_csv(file):
         # 1. retrieve data-set from file
         with open(file, 'r') as f:
