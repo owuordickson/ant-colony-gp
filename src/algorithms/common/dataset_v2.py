@@ -153,35 +153,64 @@ class Dataset:
                                 ('seq', 'i, i'),
                                 ('pattern', [('col', 'i'),
                                              ('var', 'i')],
-                                 (len(self.attr_cols),)),
-                                ('cost', 'f')
+                                 (len(self.attr_cols),))#,
+                                # ('cost', 'f')
                                 ])
         # self.encode_data(attr_data)
-        self.encoded_data = np.array(self.encode_data(attr_data),
-                                     dtype=encode_type)
+        #self.encoded_data = np.array(self.encode_data_v1(attr_data), dtype=encode_type)
+        self.encoded_data = np.array(self.encode_data_v2(attr_data))
         print(self.encoded_data)
         print(self.cost_matrix)
         gc.collect()
 
-    def encode_data(self, attr_data):
-        print(attr_data)
-        print("\n")
+    def encode_data_v2(self, attr_data):
         size = self.attr_size  # np.arange(self.attr_size)
         encoded_data = list()
-        test_d = list()
         for i in range(size):
-            #attr_data = attr_data[self.attr_cols]
+            # attr_data = attr_data[self.attr_cols]
+            if (i+1) >= size:
+                continue
             temp_d = list()
             for col in self.attr_cols:
                 row_in = attr_data[col][i]
                 row_js = attr_data[col][(i+1):size]
-                # row = [col, np.where(row_js > row_in, 1, np.where(row_js < row_in, -1, 0))]
-                row = [np.where(row_js > row_in, 1, np.where(row_js < row_in, -1, 0))]
+                row = np.where(row_js > row_in, 1, np.where(row_js < row_in, -1, 0))
                 temp_d.append(row)
-            print([i, temp_d])
-            print("\n")
+                pos_cost = np.count_nonzero(row == 1)
+                neg_cost = np.count_nonzero(row == -1)
+                self.cost_matrix[col][0] += pos_cost
+                self.cost_matrix[col][1] += neg_cost
+            encoded_data.append([i, self.attr_cols, temp_d])  # list(zip(temp_d))])
+        # return self.update_cost_v2(encoded_data)
+        return encoded_data
 
+    def update_cost_v2(self, encoded_data):
+        size = self.attr_size
+        for obj in encoded_data:
+            lst_cost = []
+            for j in range(len(obj[2][0])):
+                cost = 0
+                for i in range(len(obj[1])):
+                    col_id = obj[1][i]
+                    row = obj[2][i][j]
+                    if row == 1:
+                        cost += self.cost_matrix[col_id][0]
+                    elif row == -1:
+                        cost += self.cost_matrix[col_id][1]
+                if cost > 0:
+                    cost = size / cost
+                else:
+                    cost = 1
+                lst_cost.append(cost)
+            obj.append(lst_cost)
+        print(encoded_data)
+        return encoded_data
 
+    def encode_data_v1(self, attr_data):
+        size = self.attr_size  # np.arange(self.attr_size)
+        encoded_data = list()
+        test_d = list()
+        for i in range(size):
             for j in range(i+1, size):
                 gp = []
                 for attr in np.nditer(self.attr_cols):
@@ -200,10 +229,11 @@ class Dataset:
                         # gp.append(np.array((col, 0), dtype='i, i'))
                         gp.append(tuple([col, 0]))
                 encoded_data.append([(i, (i, j), gp)])
-        return self.update_cost(encoded_data)
-        # return encoded_data
+        self.update_cost_v2(test_d)
+        # return self.update_cost_v1(encoded_data)
+        return encoded_data
 
-    def update_cost(self, encoded_data):
+    def update_cost_v1(self, encoded_data):
         # encoded_data = list(encoded_data)
         size = self.attr_size
         # for obj in self.encoded_data:
