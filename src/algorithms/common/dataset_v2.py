@@ -180,30 +180,39 @@ class Dataset:
                 self.cost_matrix[col][0] += pos_cost
                 self.cost_matrix[col][1] += neg_cost
             encoded_data.append([i, self.attr_cols, np.array(temp_d).T])
-        # return self.update_cost_v2(encoded_data)
-        return encoded_data
+        return self.update_cost_v2(encoded_data)
+        # return encoded_data
 
     def update_cost_v2(self, encoded_data):
         size = self.attr_size
+        cost_data = []
         for obj in encoded_data:
-            lst_cost = []
-            for j in range(len(obj[2][0])):
+            # lst_cost = []
+            # for j in range(len(obj[2][0])):
+            new_rows = list()
+            rows = list(obj[2])
+            for j in range(len(rows)):
                 cost = 0
                 for i in range(len(obj[1])):
                     col_id = obj[1][i]
-                    row = obj[2][i][j]
-                    if row == 1:
+                    # row = rows[i][j]
+                    cell = rows[j][i]
+                    if cell == 1:
                         cost += self.cost_matrix[col_id][0]
-                    elif row == -1:
+                    elif cell == -1:
                         cost += self.cost_matrix[col_id][1]
                 if cost > 0:
                     cost = size / cost
                 else:
                     cost = 1
-                lst_cost.append(cost)
-            obj.append(lst_cost)
-        print(encoded_data)
-        return encoded_data
+                row = [rows[j], cost]
+                #obj[2][j] = row
+                new_rows.append(row)
+            cost_data.append([obj[0], obj[1], np.array(new_rows)])
+                # lst_cost.append(cost)
+            # obj.append(lst_cost)
+        print(cost_data)
+        return cost_data
 
     def encode_data_v1(self, attr_data):
         size = self.attr_size  # np.arange(self.attr_size)
