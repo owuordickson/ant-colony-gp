@@ -160,7 +160,7 @@ class Dataset:
         self.encoded_data = np.array(self.encode_data(attr_data),
                                      dtype=encode_type)
         # self.update_cost()
-        print(self.encoded_data[0]['cost'])
+        print(self.encoded_data)
         print(self.cost_matrix)
         gc.collect()
 
