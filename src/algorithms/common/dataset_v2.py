@@ -148,7 +148,7 @@ class Dataset:
         self.invalid_bins = np.array(invalid_bins)
 
     def construct_bins_v2(self, attr_data):
-        # 
+        # Encoding data for Depth-First Search
         encode_type = np.dtype([('id', 'i'),
                                 ('seq', 'i, i'),
                                 ('pattern', [('col', 'i'),
@@ -156,10 +156,11 @@ class Dataset:
                                  (len(self.attr_cols),)),
                                 ('cost', 'f')
                                 ])
-        #self.encoded_data = np.array(self.encode_data(attr_data),
-        #                             dtype=encode_type)
-        print(self.encode_data(attr_data))
-        # print(self.update_cost())
+        self.encoded_data = np.array(self.encode_data(attr_data),
+                                     dtype=encode_type)
+        self.update_cost()
+        # print(self.encoded_data)
+        print(self.cost_matrix)
         gc.collect()
 
     def encode_data(self, attr_data):
