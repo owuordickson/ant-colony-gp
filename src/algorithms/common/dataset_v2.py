@@ -152,7 +152,6 @@ class Dataset:
         self.encoded_data = np.array(self.encode_data_v2(attr_data))
         print(self.encoded_data)
         print(self.cost_matrix)
-        gc.collect()
 
     def encode_data_v2(self, attr_data):
         size = self.attr_size  # np.arange(self.attr_size)
@@ -171,6 +170,7 @@ class Dataset:
                 self.cost_matrix[col][0] += pos_cost
                 self.cost_matrix[col][1] += neg_cost
             encoded_data.append([i, self.attr_cols, np.array(temp_d).T])
+        gc.collect()
         return self.update_cost_v2(encoded_data)
         # return encoded_data
 
