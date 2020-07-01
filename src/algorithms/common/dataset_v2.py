@@ -112,7 +112,7 @@ class Dataset:
         attr_data = self.data.copy().T
         self.attr_size = len(attr_data[self.attr_cols[0]])
         # construct and store 1-item_set valid bins
-        #attr_data = attr_data[self.attr_cols]
+        # attr_data = attr_data[self.attr_cols]
         self.construct_bins_v2(attr_data)
         attr_data = None
         gc.collect()
@@ -149,15 +149,6 @@ class Dataset:
 
     def construct_bins_v2(self, attr_data):
         # Encoding data for Depth-First Search
-        encode_type = np.dtype([('id', 'i'),
-                                ('seq', 'i, i'),
-                                ('pattern', [('col', 'i'),
-                                             ('var', 'i')],
-                                 (len(self.attr_cols),))#,
-                                # ('cost', 'f')
-                                ])
-        # self.encode_data(attr_data)
-        #self.encoded_data = np.array(self.encode_data_v1(attr_data), dtype=encode_type)
         self.encoded_data = np.array(self.encode_data_v2(attr_data))
         print(self.encoded_data)
         print(self.cost_matrix)
@@ -206,6 +197,20 @@ class Dataset:
             cost_data.append([obj[0], obj[1], np.array(new_rows)])
         return cost_data
 
+    def construct_bins_v1(self, attr_data):
+        # Encoding data for Depth-First Search
+        encode_type = np.dtype([('id', 'i'),
+                                ('seq', 'i, i'),
+                                ('pattern', [('col', 'i'),
+                                             ('var', 'i')],
+                                 (len(self.attr_cols),)),
+                                ('cost', 'f')
+                                ])
+        self.encoded_data = np.array(self.encode_data_v1(attr_data), dtype=encode_type)
+        print(self.encoded_data)
+        print(self.cost_matrix)
+        gc.collect()
+
     def encode_data_v1(self, attr_data):
         size = self.attr_size  # np.arange(self.attr_size)
         encoded_data = list()
@@ -229,9 +234,8 @@ class Dataset:
                         # gp.append(np.array((col, 0), dtype='i, i'))
                         gp.append(tuple([col, 0]))
                 encoded_data.append([(i, (i, j), gp)])
-        self.update_cost_v2(test_d)
-        # return self.update_cost_v1(encoded_data)
-        return encoded_data
+        return self.update_cost_v1(encoded_data)
+        # return encoded_data
 
     def update_cost_v1(self, encoded_data):
         # encoded_data = list(encoded_data)
