@@ -20,7 +20,6 @@ import time
 import numpy as np
 import pandas as pd
 import gc
-from .gp import GI, GP
 
 
 class Dataset:
@@ -113,6 +112,7 @@ class Dataset:
         attr_data = self.data.copy().T
         self.attr_size = len(attr_data[self.attr_cols[0]])
         # construct and store 1-item_set valid bins
+        #attr_data = attr_data[self.attr_cols]
         self.construct_bins_v2(attr_data)
         attr_data = None
         gc.collect()
@@ -159,33 +159,47 @@ class Dataset:
         # self.encode_data(attr_data)
         self.encoded_data = np.array(self.encode_data(attr_data),
                                      dtype=encode_type)
-        # self.update_cost()
         print(self.encoded_data)
         print(self.cost_matrix)
         gc.collect()
 
     def encode_data(self, attr_data):
-        size = self.attr_size
+        print(attr_data)
+        print("\n")
+        size = self.attr_size  # np.arange(self.attr_size)
         encoded_data = list()
+        test_d = list()
         for i in range(size):
-            for j in range(i, size):
-                if i != j:
-                    gp = []
-                    for col in self.attr_cols:
-                        row_i = attr_data[col][i]
-                        row_j = attr_data[col][j]
-                        if row_i > row_j:
-                            # gp.append(np.array((col, 1), dtype='i, i'))
-                            gp.append(tuple([col, 1]))
-                            self.cost_matrix[col][0] += 1
-                        elif row_i < row_j:
-                            # gp.append(np.array((col, -1), dtype='i, i'))
-                            gp.append(tuple([col, -1]))
-                            self.cost_matrix[col][1] += 1
-                        else:
-                            # gp.append(np.array((col, 0), dtype='i, i'))
-                            gp.append(tuple([col, 0]))
-                    encoded_data.append([(i, (i, j), gp)])
+            #attr_data = attr_data[self.attr_cols]
+            temp_d = list()
+            for col in self.attr_cols:
+                row_in = attr_data[col][i]
+                row_js = attr_data[col][(i+1):size]
+                # row = [col, np.where(row_js > row_in, 1, np.where(row_js < row_in, -1, 0))]
+                row = [np.where(row_js > row_in, 1, np.where(row_js < row_in, -1, 0))]
+                temp_d.append(row)
+            print([i, temp_d])
+            print("\n")
+
+
+            for j in range(i+1, size):
+                gp = []
+                for attr in np.nditer(self.attr_cols):
+                    col = int(attr)
+                    row_i = attr_data[col][i]
+                    row_j = attr_data[col][j]
+                    if row_i < row_j:
+                        # gp.append(np.array((col, 1), dtype='i, i'))
+                        gp.append(tuple([col, 1]))
+                        self.cost_matrix[col][0] += 1
+                    elif row_i > row_j:
+                        # gp.append(np.array((col, -1), dtype='i, i'))
+                        gp.append(tuple([col, -1]))
+                        self.cost_matrix[col][1] += 1
+                    else:
+                        # gp.append(np.array((col, 0), dtype='i, i'))
+                        gp.append(tuple([col, 0]))
+                encoded_data.append([(i, (i, j), gp)])
         return self.update_cost(encoded_data)
         # return encoded_data
 
