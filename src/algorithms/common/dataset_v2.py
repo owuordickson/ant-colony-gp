@@ -156,10 +156,11 @@ class Dataset:
                                  (len(self.attr_cols),)),
                                 ('cost', 'f')
                                 ])
+        # self.encode_data(attr_data)
         self.encoded_data = np.array(self.encode_data(attr_data),
                                      dtype=encode_type)
-        self.update_cost()
-        # print(self.encoded_data)
+        # self.update_cost()
+        print(self.encoded_data[0]['cost'])
         print(self.cost_matrix)
         gc.collect()
 
@@ -184,23 +185,32 @@ class Dataset:
                         else:
                             # gp.append(np.array((col, 0), dtype='i, i'))
                             gp.append(tuple([col, 0]))
-                    encoded_data.append([(i, (i, j), gp, size)])
-        return encoded_data
+                    encoded_data.append([(i, (i, j), gp)])
+        return self.update_cost(encoded_data)
+        # return encoded_data
 
-    def update_cost(self):
+    def update_cost(self, encoded_data):
+        # encoded_data = list(encoded_data)
         size = self.attr_size
-        for obj in self.encoded_data:
-            gp = obj['pattern'][0]
+        # for obj in self.encoded_data:
+        for k in range(len(encoded_data)):
+            # gp = obj['pattern'][0]
+            gp = encoded_data[k][0][2]
             cost = 0
             for gi in gp:
                 if gi[1] == 1:
                     cost += self.cost_matrix[gi[0]][0]
                 elif gi[1] == -1:
                     cost += self.cost_matrix[gi[0]][1]
+            temp = list(encoded_data[k][0])
             if cost > 0:
                 cost = size / cost
-                obj['cost'][0] = cost
-        return self.cost_matrix
+                # obj['cost'][0] = cost
+                temp.append(cost)  # = cost
+            else:
+                temp.append(1)
+            encoded_data[k][0] = tuple(temp)
+        return encoded_data
 
     @staticmethod
     def index_rank(arr, n):

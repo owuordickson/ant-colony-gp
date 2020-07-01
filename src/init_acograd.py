@@ -19,7 +19,7 @@ Description:
 
 import sys
 from optparse import OptionParser
-from algorithms.common.profile_cpu import Profile
+from algorithms.common.profile_mem import Profile
 from algorithms.ant_colony.aco_grad_v2 import GradACO
 
 
@@ -117,17 +117,17 @@ if __name__ == "__main__":
         numCores = options.numCores
 
     import time
-    # import tracemalloc
+    #import tracemalloc
     # from src.algorithms.common.profile_mem import Profile
 
     start = time.time()
-    # tracemalloc.start()
+    #tracemalloc.start()
     res_text = init_algorithm(filePath, minSup, numCores)
-    # snapshot = tracemalloc.take_snapshot()
+    #snapshot = tracemalloc.take_snapshot()
     end = time.time()
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
-    # wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
+    #wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
     #wr_text += str(res_text)
     f_name = str('res_aco' + str(end).replace('.', '', 1) + '.txt')
     # write_file(wr_text, f_name)
