@@ -187,15 +187,12 @@ class Dataset:
         size = self.attr_size
         cost_data = []
         for obj in encoded_data:
-            # lst_cost = []
-            # for j in range(len(obj[2][0])):
             new_rows = list()
             rows = list(obj[2])
             for j in range(len(rows)):
                 cost = 0
                 for i in range(len(obj[1])):
                     col_id = obj[1][i]
-                    # row = rows[i][j]
                     cell = rows[j][i]
                     if cell == 1:
                         cost += self.cost_matrix[col_id][0]
@@ -205,13 +202,8 @@ class Dataset:
                     cost = size / cost
                 else:
                     cost = 1
-                row = [rows[j], cost]
-                #obj[2][j] = row
-                new_rows.append(row)
+                new_rows.append([rows[j], cost])
             cost_data.append([obj[0], obj[1], np.array(new_rows)])
-                # lst_cost.append(cost)
-            # obj.append(lst_cost)
-        print(cost_data)
         return cost_data
 
     def encode_data_v1(self, attr_data):
