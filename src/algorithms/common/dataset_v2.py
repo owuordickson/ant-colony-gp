@@ -20,6 +20,7 @@ import time
 import numpy as np
 import pandas as pd
 import gc
+from .gp import GI, GP
 
 
 class Dataset:
@@ -43,9 +44,9 @@ class Dataset:
             self.step_name = ''
             self.thd_supp = min_sup
             self.equal = eq
-            self.invalid_bins = np.array([])
-            self.valid_idxs = np.array([])
             data = None
+            self.cost_matrix = np.zeros((self.column_size, 2), dtype=int)
+            self.encoded_data = np.array([])
             # self.init_attributes()
 
     def get_size(self):
@@ -112,7 +113,7 @@ class Dataset:
         attr_data = self.data.copy().T
         self.attr_size = len(attr_data[self.attr_cols[0]])
         # construct and store 1-item_set valid bins
-        self.construct_bins(attr_data)
+        self.construct_bins_v2(attr_data)
         attr_data = None
         gc.collect()
 
@@ -145,6 +146,60 @@ class Dataset:
                 valid_idxs.append(np.array([decr.tolist(), temp_neg]))
         self.valid_idxs = np.array(valid_idxs)
         self.invalid_bins = np.array(invalid_bins)
+
+    def construct_bins_v2(self, attr_data):
+        # 
+        encode_type = np.dtype([('id', 'i'),
+                                ('seq', 'i, i'),
+                                ('pattern', [('col', 'i'),
+                                             ('var', 'i')],
+                                 (len(self.attr_cols),)),
+                                ('cost', 'f')
+                                ])
+        #self.encoded_data = np.array(self.encode_data(attr_data),
+        #                             dtype=encode_type)
+        print(self.encode_data(attr_data))
+        # print(self.update_cost())
+        gc.collect()
+
+    def encode_data(self, attr_data):
+        size = self.attr_size
+        encoded_data = list()
+        for i in range(size):
+            for j in range(i, size):
+                if i != j:
+                    gp = []
+                    for col in self.attr_cols:
+                        row_i = attr_data[col][i]
+                        row_j = attr_data[col][j]
+                        if row_i > row_j:
+                            # gp.append(np.array((col, 1), dtype='i, i'))
+                            gp.append(tuple([col, 1]))
+                            self.cost_matrix[col][0] += 1
+                        elif row_i < row_j:
+                            # gp.append(np.array((col, -1), dtype='i, i'))
+                            gp.append(tuple([col, -1]))
+                            self.cost_matrix[col][1] += 1
+                        else:
+                            # gp.append(np.array((col, 0), dtype='i, i'))
+                            gp.append(tuple([col, 0]))
+                    encoded_data.append([(i, (i, j), gp, size)])
+        return encoded_data
+
+    def update_cost(self):
+        size = self.attr_size
+        for obj in self.encoded_data:
+            gp = obj['pattern'][0]
+            cost = 0
+            for gi in gp:
+                if gi[1] == 1:
+                    cost += self.cost_matrix[gi[0]][0]
+                elif gi[1] == -1:
+                    cost += self.cost_matrix[gi[0]][1]
+            if cost > 0:
+                cost = size / cost
+                obj['cost'][0] = cost
+        return self.cost_matrix
 
     @staticmethod
     def index_rank(arr, n):
