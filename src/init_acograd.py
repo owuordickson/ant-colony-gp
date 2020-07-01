@@ -84,9 +84,9 @@ if __name__ == "__main__":
                              help='path to file containing csv',
                              # default=None,
                              #default='../data/DATASET.csv',
-                             default='../data/DATASET3.csv',
+                             #default='../data/DATASET3.csv',
                              #default='../data/Omnidir.csv',
-                             #default='../data/FluTopicData-testsansdate-blank.csv',
+                             default='../data/FluTopicData-testsansdate-blank.csv',
                              #default='../data/vehicle_silhouette_dataset.csv',
                              #default='../data/FARSmiss.csv',
                              type='string')

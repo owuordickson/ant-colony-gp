@@ -167,7 +167,6 @@ class Dataset:
         size = self.attr_size  # np.arange(self.attr_size)
         encoded_data = list()
         for i in range(size):
-            # attr_data = attr_data[self.attr_cols]
             if (i+1) >= size:
                 continue
             temp_d = list()
@@ -180,7 +179,7 @@ class Dataset:
                 neg_cost = np.count_nonzero(row == -1)
                 self.cost_matrix[col][0] += pos_cost
                 self.cost_matrix[col][1] += neg_cost
-            encoded_data.append([i, self.attr_cols, temp_d])  # list(zip(temp_d))])
+            encoded_data.append([i, self.attr_cols, np.array(temp_d).T])
         # return self.update_cost_v2(encoded_data)
         return encoded_data
 
