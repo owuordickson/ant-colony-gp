@@ -31,7 +31,6 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
             num_cores = Profile.get_num_cores()
         ac = GradACO(f_path, min_supp, eq)
         list_gp = ac.run_ant_colony()
-        print(ac.p_matrix)
 
         d_set = ac.d_set
         wr_line = "Algorithm: ACO-GRAANK (2.0)\n"
@@ -129,7 +128,7 @@ if __name__ == "__main__":
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
     #wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
-    #wr_text += str(res_text)
+    wr_text += str(res_text)
     f_name = str('res_aco' + str(end).replace('.', '', 1) + '.txt')
     # write_file(wr_text, f_name)
     print(wr_text)

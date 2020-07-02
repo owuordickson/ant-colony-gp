@@ -135,7 +135,8 @@ class GradACO:
         # path = np.where((lst_sym == st_nodes[2][:, lst_attr]), True, False)
         # node = GradACO.find_node(indx, arr_p[2][:, lst_attr], lst_sym)
         # print(str(lst_attr) + ' : ' + str(arr_p[2][:, lst_attr]) + ' + ' + str(lst_sym) + ' = ' + str(node))
-        while indx > 0:
+        while 0 < indx < (self.d_set.attr_size - 1):
+            # print("running " + str(indx) + " ...")
             arr_p = enc_data[indx]
             node = GradACO.find_node(indx, arr_p[2][:, lst_attr], lst_sym)
             if len(node) > 0:
@@ -146,7 +147,7 @@ class GradACO:
                 indx = node[1]
             else:
                 indx = -1
-        print(str(lst_attr) + ' , ' + str(lst_sym) + ' : length = ' + str(length))
+        # print(str(lst_attr) + ' , ' + str(lst_sym) + ' : length = ' + str(length))
         return length
 
     def plot_pheromone_matrix(self):
@@ -232,7 +233,7 @@ class GradACO:
         paths = np.argwhere(np.all(arr == pat, axis=1))
         # for p in paths:
         if len(paths) > 0:
-            temp = [i, (i + paths[0][0])]
+            temp = [i, (i + paths[0][0]) + 1]
         return temp
             # lst_nodes.append(temp)
         # return lst_nodes
