@@ -18,7 +18,6 @@ class GI:
     def __init__(self, attr_col, symbol):
         self.attribute_col = attr_col
         self.symbol = symbol
-        # self.gradual_item = tuple([attr_col, symbol])
         self.gradual_item = np.array((attr_col, symbol), dtype='i, S1')
         self.tuple = tuple([attr_col, symbol])
 
@@ -26,16 +25,29 @@ class GI:
         if self.symbol == '+':
             # temp = tuple([self.attribute_col, '-'])
             temp = np.array((self.attribute_col, '-'), dtype='i, S1')
-        else:
+        elif self.symbol == '-':
             # temp = tuple([self.attribute_col, '+'])
             temp = np.array((self.attribute_col, '+'), dtype='i, S1')
+        else:
+            temp = np.array((self.attribute_col, 'x'), dtype='i, S1')
+        return temp
+
+    def as_integer(self):
+        if self.symbol == '+':
+            temp = [self.attribute_col, 1]
+        elif self.symbol == '-':
+            temp = [self.attribute_col, -1]
+        else:
+            temp = [self.attribute_col, 0]
         return temp
 
     def as_string(self):
         if self.symbol == '+':
             temp = str(self.attribute_col) + '_pos'
-        else:
+        elif self.symbol == '-':
             temp = str(self.attribute_col) + '_neg'
+        else:
+            temp = str(self.attribute_col) + '_inv'
         return temp
 
     def to_string(self):
@@ -66,6 +78,15 @@ class GP:
             temp = tuple([gi.attribute_col, gi.symbol])
             pattern.append(temp)
         return pattern
+
+    def get_attributes(self):
+        attrs = list()
+        syms = list()
+        for item in self.gradual_items:
+            gi = item.as_integer()
+            attrs.append(gi[0])
+            syms.append(gi[1])
+        return attrs, syms
 
     def inv_pattern(self):
         pattern = list()

@@ -24,6 +24,7 @@ class GradACO:
         self.d_set = Dataset(f_path, min_supp, eq)
         self.d_set.init_attributes()
         self.attr_index = self.d_set.attr_cols
+        self.c_matrix = self.d_set.cost_matrix
         # self.e_factor = 0.1  # evaporation factor
         self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=float)
 
@@ -65,6 +66,7 @@ class GradACO:
 
     def generate_random_gp(self):
         p = self.p_matrix
+        c = self.c_matrix
         n = len(self.attr_index)
         pattern = GP()
         attrs = np.random.permutation(n)

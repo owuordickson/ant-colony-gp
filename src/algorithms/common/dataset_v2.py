@@ -44,7 +44,7 @@ class Dataset:
             self.thd_supp = min_sup
             self.equal = eq
             data = None
-            self.cost_matrix = np.zeros((self.column_size, 2), dtype=int)
+            self.cost_matrix = np.ones((self.column_size, 3), dtype=int)
             self.encoded_data = np.array([])
             # self.init_attributes()
 
@@ -167,8 +167,10 @@ class Dataset:
                 temp_d.append(row)
                 pos_cost = np.count_nonzero(row == 1)
                 neg_cost = np.count_nonzero(row == -1)
-                self.cost_matrix[col][0] += pos_cost
-                self.cost_matrix[col][1] += neg_cost
+                inv_cost = np.count_nonzero(row == 0)
+                self.cost_matrix[col][0] += (neg_cost + inv_cost)
+                self.cost_matrix[col][1] += (pos_cost + inv_cost)
+                self.cost_matrix[col][2] += (pos_cost + neg_cost)
             encoded_data.append([i, self.attr_cols, np.array(temp_d).T])
         gc.collect()
         return encoded_data
