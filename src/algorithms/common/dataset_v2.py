@@ -206,7 +206,8 @@ class Dataset:
                                  (len(self.attr_cols),)),
                                 ('cost', 'f')
                                 ])
-        self.encoded_data = np.array(self.encode_data_v1(attr_data), dtype=encode_type)
+        # self.encoded_data = np.array(self.encode_data_v1(attr_data), dtype=encode_type)
+        self.encoded_data = np.array(self.encode_data_v1(attr_data))
         print(self.encoded_data)
         print(self.cost_matrix)
         gc.collect()

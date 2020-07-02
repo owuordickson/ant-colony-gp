@@ -27,23 +27,6 @@ class GradACO:
         # self.e_factor = 0.1  # evaporation factor
         self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=float)
 
-    def deposit_pheromone(self, pattern):
-        lst_attr = []
-        for obj in pattern.gradual_items:
-            # print(obj.attribute_col)
-            attr = obj.attribute_col
-            symbol = obj.symbol
-            lst_attr.append(attr)
-            i = attr
-            if symbol == '+':
-                self.p_matrix[i][0] += 1
-            elif symbol == '-':
-                self.p_matrix[i][1] += 1
-        for index in self.attr_index:
-            if int(index) not in lst_attr:
-                i = int(index)
-                self.p_matrix[i][2] += 1
-
     def run_ant_colony(self):
         min_supp = self.d_set.thd_supp
         winner_gps = list()  # subsets
@@ -99,6 +82,23 @@ class GradACO:
                 continue
             pattern.add_gradual_item(temp)
         return pattern
+
+    def deposit_pheromone(self, pattern):
+        lst_attr = []
+        for obj in pattern.gradual_items:
+            # print(obj.attribute_col)
+            attr = obj.attribute_col
+            symbol = obj.symbol
+            lst_attr.append(attr)
+            i = attr
+            if symbol == '+':
+                self.p_matrix[i][0] += 1
+            elif symbol == '-':
+                self.p_matrix[i][1] += 1
+        for index in self.attr_index:
+            if int(index) not in lst_attr:
+                i = int(index)
+                self.p_matrix[i][2] += 1
 
     def validate_gp(self, pattern):
         # pattern = [('2', '+'), ('4', '+')]
