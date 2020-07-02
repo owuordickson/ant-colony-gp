@@ -67,9 +67,10 @@ class GradACO:
     def generate_random_gp(self):
         p = self.p_matrix
         c = self.c_matrix
-        n = len(self.attr_index)
+        attrs = self.attr_index.copy()
+        np.random.shuffle(attrs)
+        n = len(attrs)
         pattern = GP()
-        attrs = np.random.permutation(n)
         for i in attrs:
             max_extreme = n * 100
             x = float(rand.randint(1, max_extreme) / max_extreme)
