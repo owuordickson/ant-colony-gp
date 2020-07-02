@@ -129,9 +129,24 @@ class GradACO:
 
     def find_longest_path(self, lst_attr, lst_sym):
         lst_attr, lst_sym = zip(*sorted(zip(lst_attr, lst_sym)))
-        length = 3
         enc_data = self.d_set.encoded_data
-        print(str(lst_attr) + ' : ' + str(lst_sym))
+        indx = self.d_set.start_node[0]
+        length = 0
+        # path = np.where((lst_sym == st_nodes[2][:, lst_attr]), True, False)
+        # node = GradACO.find_node(indx, arr_p[2][:, lst_attr], lst_sym)
+        # print(str(lst_attr) + ' : ' + str(arr_p[2][:, lst_attr]) + ' + ' + str(lst_sym) + ' = ' + str(node))
+        while indx > 0:
+            arr_p = enc_data[indx]
+            node = GradACO.find_node(indx, arr_p[2][:, lst_attr], lst_sym)
+            if len(node) > 0:
+                if length == 0:
+                    length += 2
+                else:
+                    length += 1
+                indx = node[1]
+            else:
+                indx = -1
+        print(str(lst_attr) + ' , ' + str(lst_sym) + ' : length = ' + str(length))
         return length
 
     def plot_pheromone_matrix(self):
@@ -209,3 +224,17 @@ class GradACO:
             start += 1
         supp = float(len(temp) / n)
         return np.array(temp), supp
+
+    @staticmethod
+    def find_node(i, arr, pat):
+        # lst_nodes = []
+        temp = []
+        paths = np.argwhere(np.all(arr == pat, axis=1))
+        # for p in paths:
+        if len(paths) > 0:
+            temp = [i, (i + paths[0][0])]
+        return temp
+            # lst_nodes.append(temp)
+        # return lst_nodes
+
+
