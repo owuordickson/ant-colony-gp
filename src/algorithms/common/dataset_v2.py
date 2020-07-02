@@ -171,8 +171,8 @@ class Dataset:
                 self.cost_matrix[col][1] += neg_cost
             encoded_data.append([i, self.attr_cols, np.array(temp_d).T])
         gc.collect()
-        return self.update_cost_v2(encoded_data)
-        # return encoded_data
+        return encoded_data
+        # return self.update_cost_v2(encoded_data)
 
     def update_cost_v2(self, encoded_data):
         size = self.attr_size
