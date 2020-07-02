@@ -26,7 +26,7 @@ class GradACO:
         self.attr_index = self.d_set.attr_cols
         self.c_matrix = self.d_set.cost_matrix
         # self.e_factor = 0.1  # evaporation factor
-        self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=float)
+        self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=int)
 
     def run_ant_colony(self):
         min_supp = self.d_set.thd_supp
@@ -73,8 +73,11 @@ class GradACO:
         for i in attrs:
             max_extreme = n * 100
             x = float(rand.randint(1, max_extreme) / max_extreme)
-            pos = float(p[i][0] / (p[i][0] + p[i][1] + p[i][2]))
-            neg = float((p[i][0] + p[i][1]) / (p[i][0] + p[i][1] + p[i][2]))
+            p0 = p[i][0] * (1 / c[i][0])
+            p1 = p[i][1] * (1 / c[i][1])
+            p2 = p[i][2] * (1 / c[i][2])
+            pos = float(p0 / (p0 + p1 + p2))
+            neg = float((p0 + p1) / (p0 + p1 + p2))
             if x < pos:
                 temp = GI(self.attr_index[i], '+')
             elif (x >= pos) and (x < neg):
@@ -106,36 +109,30 @@ class GradACO:
         # pattern = [('2', '+'), ('4', '+')]
         min_supp = self.d_set.thd_supp
         n = self.d_set.attr_size
-        gen_pattern = GP()
-        bin_data = []  # np.array([])
+        attrs, symbs = pattern.get_attributes()
+        le = self.find_longest_path(attrs, symbs)
+        supp = float(le / n)
+        if supp > min_supp:
+            pattern.set_support(supp)
+        return pattern
+        # gen_pattern = GP()
+        # for gi in pattern.gradual_items:
+        #     gen_pattern.add_gradual_item(gi)
+        # if len(bin_data) > 1:
+        #    temp_bin, supp = self.index_count(np.array(bin_data), n)
+        # if supp >= min_supp:
+        #    gen_pattern.set_support(supp)
+        # if len(gen_pattern.gradual_items) <= 1:
+        #    return pattern
+        # else:
+        #    return gen_pattern
 
-        for gi in pattern.gradual_items:
-            #if self.d_set.invalid_bins.size > 0 and np.any(np.isin(self.d_set.invalid_bins, gi.gradual_item)):
-            #    continue
-            #else:
-            arg = np.argwhere(np.isin(self.d_set.valid_idxs[:, 0], gi.gradual_item))
-            if len(arg) > 0:
-                i = arg[0][0]
-                bin_obj = self.d_set.valid_idxs[i]
-                #if len(bin_data) <= 0:
-                #    bin_data = [bin_obj[1], bin_obj[1]]
-                #    gen_pattern.add_gradual_item(gi)
-                #else:
-                #    bin_data[1] = bin_obj[1]
-                bin_data.append(bin_obj[1])
-                gen_pattern.add_gradual_item(gi)
-
-        if len(bin_data) > 1:
-            temp_bin, supp = self.index_count(np.array(bin_data), n)
-            if supp >= min_supp:
-                # bin_data[0] = temp_bin
-                # gen_pattern.add_gradual_item(gi)
-                gen_pattern.set_support(supp)
-
-        if len(gen_pattern.gradual_items) <= 1:
-            return pattern
-        else:
-            return gen_pattern
+    def find_longest_path(self, lst_attr, lst_sym):
+        lst_attr, lst_sym = zip(*sorted(zip(lst_attr, lst_sym)))
+        length = 3
+        enc_data = self.d_set.encoded_data
+        print(str(lst_attr) + ' : ' + str(lst_sym))
+        return length
 
     def plot_pheromone_matrix(self):
         x_plot = np.array(self.p_matrix)
