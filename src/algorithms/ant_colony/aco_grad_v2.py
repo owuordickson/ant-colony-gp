@@ -125,17 +125,6 @@ class GradACO:
             gen_pattern.set_support(supp)
             return gen_pattern
         return pattern
-        # gen_pattern = GP()
-        # for gi in pattern.gradual_items:
-        #     gen_pattern.add_gradual_item(gi)
-        # if len(bin_data) > 1:
-        #    temp_bin, supp = self.index_count(np.array(bin_data), n)
-        # if supp >= min_supp:
-        #    gen_pattern.set_support(supp)
-        # if len(gen_pattern.gradual_items) <= 1:
-        #    return pattern
-        # else:
-        #    return gen_pattern
 
     def find_longest_path(self, attrs, syms):
         # 1. remove invalid attributes
@@ -148,12 +137,13 @@ class GradACO:
                 lst_attr.append(a)
                 lst_sym.append(b)
         if len(lst_attr) <= 0:
-            return 0
-        # 2.
+            return 0, zip(attrs, syms)
+
+        # 2. Find longest length
         lst_attr, lst_sym = zip(*sorted(zip(lst_attr, lst_sym)))
         enc_data = self.d_set.encoded_data
-        indx = 300  # self.d_set.start_node[0]
         length = 0
+        indx = 300  # self.d_set.start_node[0]
 
         lst_indx = [np.argwhere(self.attr_index == x)[0][0] for x in lst_attr]
         # print(str(lst_attr) + ' + ' + str(self.attr_index) + ' = ' + str(lst_indx))

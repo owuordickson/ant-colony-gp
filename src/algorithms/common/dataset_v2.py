@@ -174,7 +174,6 @@ class Dataset:
                 self.cost_matrix[col][0] += (neg_cost + inv_cost)
                 self.cost_matrix[col][1] += (pos_cost + inv_cost)
                 self.cost_matrix[col][2] += (pos_cost + neg_cost)
-
             # temp_arr = np.array(temp_d)
             # pos_cost = np.count_nonzero(temp_arr == 1)
             # neg_cost = np.count_nonzero(temp_arr == -1)
