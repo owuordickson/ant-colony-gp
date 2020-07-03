@@ -45,8 +45,8 @@ class Dataset:
             self.equal = eq
             data = None
             self.cost_matrix = np.ones((self.column_size, 3), dtype=int)
-            self.start_node = []
             self.encoded_data = np.array([])
+            # self.start_node = []
             # self.init_attributes()
 
     def get_size(self):
@@ -153,7 +153,7 @@ class Dataset:
         self.encoded_data = np.array(self.encode_data_v2(attr_data))
         # print(self.encoded_data)
         print(self.cost_matrix)
-        print(self.start_node)
+        # print(self.start_node)
         print("\n\n")
 
     def encode_data_v2(self, attr_data):
@@ -175,13 +175,15 @@ class Dataset:
                 self.cost_matrix[col][1] += (pos_cost + inv_cost)
                 self.cost_matrix[col][2] += (pos_cost + neg_cost)
 
-            pos_cost = np.count_nonzero(np.array(temp_d) == 1)
-            neg_cost = np.count_nonzero(np.array(temp_d) == -1)
-            if len(self.start_node) <= 0:
-                self.start_node = [i, [pos_cost, neg_cost]]
-            elif (pos_cost > self.start_node[1][0] and neg_cost > 0) or\
-                    (neg_cost > self.start_node[1][1] and pos_cost > 0):
-                self.start_node = [i, [pos_cost, neg_cost]]
+            # temp_arr = np.array(temp_d)
+            # pos_cost = np.count_nonzero(temp_arr == 1)
+            # neg_cost = np.count_nonzero(temp_arr == -1)
+            # print([i, [pos_cost, neg_cost]])
+            # if len(self.start_node) <= 0:
+            #    self.start_node = [i, [pos_cost, neg_cost]]
+            # elif (pos_cost > self.start_node[1][0] and neg_cost > 0) or\
+            #        (neg_cost > self.start_node[1][1] and pos_cost > 0):
+            #    self.start_node = [i, [pos_cost, neg_cost]]
             encoded_data.append([i, self.attr_cols, np.array(temp_d).T])
         gc.collect()
         return encoded_data

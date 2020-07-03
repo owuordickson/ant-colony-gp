@@ -25,8 +25,8 @@ class GradACO:
         self.d_set.init_attributes()
         self.attr_index = self.d_set.attr_cols
         self.c_matrix = self.d_set.cost_matrix
-        # self.e_factor = 0.1  # evaporation factor
         self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=int)
+        # self.e_factor = 0.1  # evaporation factor
 
     def run_ant_colony(self):
         min_supp = self.d_set.thd_supp
@@ -111,10 +111,19 @@ class GradACO:
         min_supp = self.d_set.thd_supp
         n = self.d_set.attr_size
         attrs, symbs = pattern.get_attributes()
-        le = self.find_longest_path(attrs, symbs)
+        le, raw = self.find_longest_path(attrs, symbs)
         supp = float(le / n)
         if supp > min_supp:
-            pattern.set_support(supp)
+            gen_pattern = GP()
+            for a, v in raw:
+                if v == 1:
+                    gen_pattern.add_gradual_item(GI(a, '+'))
+                elif v == -1:
+                    gen_pattern.add_gradual_item(GI(a, '-'))
+                # else:
+                #    gen_pattern.add_gradual_item(GI(a, 'x'))
+            gen_pattern.set_support(supp)
+            return gen_pattern
         return pattern
         # gen_pattern = GP()
         # for gi in pattern.gradual_items:
@@ -128,11 +137,24 @@ class GradACO:
         # else:
         #    return gen_pattern
 
-    def find_longest_path(self, lst_attr, lst_sym):
+    def find_longest_path(self, attrs, syms):
+        # 1. remove invalid attributes
+        lst_attr = []
+        lst_sym = []
+        for a, b in zip(attrs, syms):
+            valid = (self.c_matrix[a][0] < self.c_matrix[a][2]) or \
+                    (self.c_matrix[a][1] < self.c_matrix[a][2])
+            if valid:
+                lst_attr.append(a)
+                lst_sym.append(b)
+        if len(lst_attr) <= 0:
+            return 0
+        # 2.
         lst_attr, lst_sym = zip(*sorted(zip(lst_attr, lst_sym)))
         enc_data = self.d_set.encoded_data
-        indx = self.d_set.start_node[0]
+        indx = 300  # self.d_set.start_node[0]
         length = 0
+
         lst_indx = [np.argwhere(self.attr_index == x)[0][0] for x in lst_attr]
         # print(str(lst_attr) + ' + ' + str(self.attr_index) + ' = ' + str(lst_indx))
         # path = np.where((lst_sym == st_nodes[2][:, lst_attr]), True, False)
@@ -151,7 +173,7 @@ class GradACO:
             else:
                 indx = -1
         print(str(lst_attr) + ' , ' + str(lst_sym) + ' : length = ' + str(length))
-        return length
+        return length, zip(lst_attr, lst_sym)
 
     def plot_pheromone_matrix(self):
         x_plot = np.array(self.p_matrix)
