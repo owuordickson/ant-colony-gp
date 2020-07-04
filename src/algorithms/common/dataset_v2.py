@@ -138,32 +138,30 @@ class Dataset:
 
     def encode_data_v3(self, attr_data):
         size = self.attr_size  # np.arange(self.attr_size)
+        n = len(self.attr_cols) + 2
         encoded_data = list()
         for i in range(size):
             j = i + 1
             if j >= size:
                 continue
-            temp_d = list()
-            temp_d.append(np.repeat(i, (size - j)))
-            temp_d.append(np.arange(j, size))
+
+            temp_arr = np.empty([n, (size - j)], dtype=int)
+            temp_arr[0] = np.repeat(i, (size - j))
+            temp_arr[1] = np.arange(j, size)
+            k = 2
             for col in self.attr_cols:
                 row_in = attr_data[col][i]
                 row_js = attr_data[col][(i+1):size]
                 row = np.where(row_js > row_in, 1, np.where(row_js < row_in, -1, 0))
-                temp_d.append(row)
+                temp_arr[k] = row
+                k += 1
                 pos_cost = np.count_nonzero(row == 1)
                 neg_cost = np.count_nonzero(row == -1)
                 inv_cost = np.count_nonzero(row == 0)
                 self.cost_matrix[col][0] += (neg_cost + inv_cost)
                 self.cost_matrix[col][1] += (pos_cost + inv_cost)
                 self.cost_matrix[col][2] += (pos_cost + neg_cost)
-            temp_arr = np.array(temp_d).T
-            encoded_data += list(temp_arr)
-            # j = i
-            # for arr in temp_arr:
-            #    j += 1
-            #    node = np.array([i, j])
-            #    encoded_data.append([node, self.attr_cols, arr])
+            encoded_data.extend(temp_arr.T)
         gc.collect()
         return encoded_data
 
