@@ -61,13 +61,14 @@ class GradACO:
         _, inverse_rows = np.unique(rows, return_index=True)
         res = np.split(cols, inverse_rows[1:])
         # 2b. use indices to merge
-        n_data = list()
-        for obj in res:
-            row = self.d_set.encoded_data[obj]
-            nodes = row[:, [0, 1]]
-            data = row[0, 2:]
-            n_data.append([nodes, data])
-        self.d_set.encoded_data = np.array(n_data)
+        if len(res) > 1:
+            n_data = list()
+            for obj in res:
+                row = self.d_set.encoded_data[obj]
+                nodes = row[:, [0, 1]]
+                data = row[0, 2:]
+                n_data.append([nodes, data])
+            self.d_set.encoded_data = np.array(n_data)
 
     def run_ant_colony(self):
         min_supp = self.d_set.thd_supp
