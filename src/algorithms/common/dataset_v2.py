@@ -114,7 +114,7 @@ class Dataset:
         self.attr_size = len(attr_data[self.attr_cols[0]])
         # construct and store 1-item_set valid bins
         # attr_data = attr_data[self.attr_cols]
-        self.construct_bins_v2(attr_data)
+        self.construct_bins_v3(attr_data)
         attr_data = None
         gc.collect()
 
@@ -124,29 +124,48 @@ class Dataset:
         self.construct_bins(attr_data)
         gc.collect()
 
-    def construct_bins(self, attr_data):
-        # execute binary rank to calculate support of pattern
-        # valid_bins = list()  # numpy is very slow for append operations
-        n = self.attr_size
-        valid_idxs = list()
-        invalid_bins = list()
-        for col in self.attr_cols:
-            col_data = np.array(attr_data[col], dtype=float)
-            incr = np.array((col, '+'), dtype='i, S1')
-            decr = np.array((col, '-'), dtype='i, S1')
-            # temp_pos = Dataset.bin_rank(col_data, equal=self.equal)
-            temp_pos, supp = Dataset.index_rank(col_data, n)
-            # supp = float(len(temp_pos) / n)
+    def construct_bins_v3(self, attr_data):
+        # 1. Encoding data for Depth-First Search
+        self.encoded_data = np.array(self.encode_data_v3(attr_data))
 
-            if supp < self.thd_supp:
-                invalid_bins.append(incr)
-                invalid_bins.append(decr)
-            else:
-                temp_neg = temp_pos[::-1]
-                valid_idxs.append(np.array([incr.tolist(), temp_pos]))
-                valid_idxs.append(np.array([decr.tolist(), temp_neg]))
-        self.valid_idxs = np.array(valid_idxs)
-        self.invalid_bins = np.array(invalid_bins)
+        # 2. Data set reduction
+        print(self.encoded_data.shape)
+        print(self.attr_cols)
+        print(self.encoded_data)
+        print(self.cost_matrix)
+        # print(self.start_node)
+        print("\n\n")
+
+    def encode_data_v3(self, attr_data):
+        size = self.attr_size  # np.arange(self.attr_size)
+        encoded_data = list()
+        for i in range(size):
+            j = i + 1
+            if j >= size:
+                continue
+            temp_d = list()
+            temp_d.append(np.repeat(i, (size - j)))
+            temp_d.append(np.arange(j, size))
+            for col in self.attr_cols:
+                row_in = attr_data[col][i]
+                row_js = attr_data[col][(i+1):size]
+                row = np.where(row_js > row_in, 1, np.where(row_js < row_in, -1, 0))
+                temp_d.append(row)
+                pos_cost = np.count_nonzero(row == 1)
+                neg_cost = np.count_nonzero(row == -1)
+                inv_cost = np.count_nonzero(row == 0)
+                self.cost_matrix[col][0] += (neg_cost + inv_cost)
+                self.cost_matrix[col][1] += (pos_cost + inv_cost)
+                self.cost_matrix[col][2] += (pos_cost + neg_cost)
+            temp_arr = np.array(temp_d).T
+            encoded_data += list(temp_arr)
+            # j = i
+            # for arr in temp_arr:
+            #    j += 1
+            #    node = np.array([i, j])
+            #    encoded_data.append([node, self.attr_cols, arr])
+        gc.collect()
+        return encoded_data
 
     def construct_bins_v2(self, attr_data):
         # Encoding data for Depth-First Search
@@ -274,6 +293,30 @@ class Dataset:
                 temp.append(1)
             encoded_data[k][0] = tuple(temp)
         return encoded_data
+
+    def construct_bins(self, attr_data):
+        # execute binary rank to calculate support of pattern
+        # valid_bins = list()  # numpy is very slow for append operations
+        n = self.attr_size
+        valid_idxs = list()
+        invalid_bins = list()
+        for col in self.attr_cols:
+            col_data = np.array(attr_data[col], dtype=float)
+            incr = np.array((col, '+'), dtype='i, S1')
+            decr = np.array((col, '-'), dtype='i, S1')
+            # temp_pos = Dataset.bin_rank(col_data, equal=self.equal)
+            temp_pos, supp = Dataset.index_rank(col_data, n)
+            # supp = float(len(temp_pos) / n)
+
+            if supp < self.thd_supp:
+                invalid_bins.append(incr)
+                invalid_bins.append(decr)
+            else:
+                temp_neg = temp_pos[::-1]
+                valid_idxs.append(np.array([incr.tolist(), temp_pos]))
+                valid_idxs.append(np.array([decr.tolist(), temp_neg]))
+        self.valid_idxs = np.array(valid_idxs)
+        self.invalid_bins = np.array(invalid_bins)
 
     @staticmethod
     def index_rank(arr, n):

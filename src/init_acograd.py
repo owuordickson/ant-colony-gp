@@ -20,7 +20,7 @@ Description:
 import sys
 from optparse import OptionParser
 from algorithms.common.profile_mem import Profile
-from algorithms.ant_colony.aco_grad_v2 import GradACO
+from algorithms.ant_colony.aco_grad_dfs import GradACO
 
 
 def init_algorithm(f_path, min_supp, cores, eq=False):
@@ -30,7 +30,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
         else:
             num_cores = Profile.get_num_cores()
         ac = GradACO(f_path, min_supp, eq)
-        list_gp = ac.run_ant_colony()
+        list_gp = list() #ac.run_ant_colony()
 
         d_set = ac.d_set
         wr_line = "Algorithm: ACO-GRAANK (2.0)\n"
@@ -128,7 +128,7 @@ if __name__ == "__main__":
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
     #wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
-    wr_text += str(res_text)
+    #wr_text += str(res_text)
     f_name = str('res_aco' + str(end).replace('.', '', 1) + '.txt')
     # write_file(wr_text, f_name)
     print(wr_text)
