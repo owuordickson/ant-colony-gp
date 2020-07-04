@@ -26,7 +26,7 @@ class GradACO:
         self.c_matrix = self.d_set.cost_matrix
         self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=int)
         # Data set reduction and update: (p_matrix, attr_index)
-        self.reduce_data()
+        #self.reduce_data()
         self.attr_index = self.d_set.attr_cols
         # self.e_factor = 0.1  # evaporation factor
         print(self.d_set.encoded_data)

@@ -142,7 +142,7 @@ class Dataset:
 
     def encode_data_v3(self, attr_data):
         size = self.attr_size  # np.arange(self.attr_size)
-        n = len(self.attr_cols) + 2
+        n = len(self.attr_cols)  # + 1  # 2
         encoded_data = list()
         for i in range(size):
             j = i + 1
@@ -150,9 +150,9 @@ class Dataset:
                 continue
 
             temp_arr = np.empty([n, (size - j)], dtype=int)
-            temp_arr[0] = np.repeat(i, (size - j))
-            temp_arr[1] = np.arange(j, size)
-            k = 2
+            # temp_arr[0] = np.repeat(i, (size - j))
+            # temp_arr[1] = np.arange(j, size)
+            k = 0  # 1  # 2
             for col in self.attr_cols:
                 row_in = attr_data[col][i]
                 row_js = attr_data[col][(i+1):size]
@@ -165,7 +165,12 @@ class Dataset:
                 self.cost_matrix[col][0] += (neg_cost + inv_cost)
                 self.cost_matrix[col][1] += (pos_cost + inv_cost)
                 self.cost_matrix[col][2] += (pos_cost + neg_cost)
-            encoded_data.extend(temp_arr.T)
+            temp_arr = temp_arr.T
+            node = np.empty([2, (size - j)], dtype=int)
+            node[0] = np.repeat(i, (size - j))
+            node[1] = np.arange(j, size)
+            temp_zip = np.array(list(zip(node.T, temp_arr)))
+            encoded_data.extend(temp_zip)
         gc.collect()
         return encoded_data
 

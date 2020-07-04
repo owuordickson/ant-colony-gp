@@ -32,5 +32,10 @@ for i in range(len(idx1)):
             new_idx = res
         # print(str(ok) + ': ' + str(temp1) + ' - ' + str(temp2) + ' = ' + str(res))
 
-print(new_idx)
-print(test(idx1, idx2))
+# print(new_idx)
+# print(test(idx1, idx2))
+
+t1 = np.empty((2, 5))
+t1[0] = idx1
+t1[1] = idx2
+print(t1.T)
