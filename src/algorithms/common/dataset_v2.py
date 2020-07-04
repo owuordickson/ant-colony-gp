@@ -132,14 +132,13 @@ class Dataset:
         # print(self.encoded_data)
 
         # 2. Data set reduction
-        self.reduce_data()
-
+        # self.reduce_data()
         # print(self.encoded_data.shape)
-        print(self.attr_cols)
-        print(self.encoded_data)
-        print(self.cost_matrix)
+        #print(self.attr_cols)
+        #print(self.encoded_data)
+        #print(self.cost_matrix)
         # print(self.start_node)
-        print("\n\n")
+        #print("\n\n")
 
     def encode_data_v3(self, attr_data):
         size = self.attr_size  # np.arange(self.attr_size)
@@ -169,38 +168,6 @@ class Dataset:
             encoded_data.extend(temp_arr.T)
         gc.collect()
         return encoded_data
-
-    def reduce_data(self):
-        c_matrix = self.cost_matrix
-        # 1. remove invalid attributes
-        valid_a1 = list()
-        valid_a2 = [-2, -1]
-        for i in range(len(self.attr_cols)):
-            a = self.attr_cols[i]
-            valid = (c_matrix[a][0] < c_matrix[a][2]) or \
-                    (c_matrix[a][1] < c_matrix[a][2])
-            if valid:
-                valid_a1.append(i)
-                valid_a2.append(i)
-        self.attr_cols = self.attr_cols[valid_a1]
-        valid_a2 = np.array(valid_a2) + 2
-        self.encoded_data = self.encoded_data[:, valid_a2]
-
-        # 2. merge similar patterns
-        vals, inverse, count = np.unique(self.encoded_data[:, 2:],
-                                         return_inverse=True,
-                                         return_counts=True, axis=0)
-        idx_vals_repeated = np.where(count > 1)[0]
-        rows, cols = np.where(inverse == idx_vals_repeated[:, np.newaxis])
-        _, inverse_rows = np.unique(rows, return_index=True)
-        res = np.split(cols, inverse_rows[1:])
-        n_data = list()
-        for obj in res:
-            row = self.encoded_data[obj]
-            nodes = row[:, [0, 1]]
-            data = row[0, 2:]
-            n_data.append([nodes, data])
-        self.encoded_data = np.array(n_data)
 
     def construct_bins_v2(self, attr_data):
         # Encoding data for Depth-First Search
