@@ -151,7 +151,7 @@ class Dataset:
     def construct_bins_v2(self, attr_data):
         # Encoding data for Depth-First Search
         self.encoded_data = np.array(self.encode_data_v2(attr_data))
-        # print(self.encoded_data)
+        print(self.encoded_data)
         print(self.cost_matrix)
         # print(self.start_node)
         print("\n\n")

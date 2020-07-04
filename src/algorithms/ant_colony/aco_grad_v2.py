@@ -72,7 +72,7 @@ class GradACO:
         n = len(attrs)
         pattern = GP()
         for i in attrs:
-            max_extreme = n * 100
+            max_extreme = n  # * 100
             x = float(rand.randint(1, max_extreme) / max_extreme)
             p0 = p[i][0] * (1 / c[i][0])
             p1 = p[i][1] * (1 / c[i][1])
