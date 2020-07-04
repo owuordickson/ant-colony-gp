@@ -107,7 +107,7 @@ class Dataset:
         else:
             return np.array([])
 
-    def init_attributes(self):
+    def init_gp_attributes(self):
         # (check) implement parallel multiprocessing
         # transpose csv array data
         attr_data = self.data.copy().T
@@ -118,7 +118,7 @@ class Dataset:
         attr_data = None
         gc.collect()
 
-    def update_attributes(self, attr_data):
+    def update_gp_attributes(self, attr_data):
         self.attr_size = len(attr_data[self.attr_cols[0]])
         # self.construct_bins_v1(attr_data)
         self.construct_bins(attr_data)
@@ -126,10 +126,15 @@ class Dataset:
 
     def construct_bins_v3(self, attr_data):
         # 1. Encoding data for Depth-First Search
+        # [row_i, row_j, ..., data, ...]
         self.encoded_data = np.array(self.encode_data_v3(attr_data))
+        # print(self.attr_cols)
+        # print(self.encoded_data)
 
         # 2. Data set reduction
-        print(self.encoded_data.shape)
+        self.reduce_data()
+
+        # print(self.encoded_data.shape)
         print(self.attr_cols)
         print(self.encoded_data)
         print(self.cost_matrix)
@@ -164,6 +169,38 @@ class Dataset:
             encoded_data.extend(temp_arr.T)
         gc.collect()
         return encoded_data
+
+    def reduce_data(self):
+        c_matrix = self.cost_matrix
+        # 1. remove invalid attributes
+        valid_a1 = list()
+        valid_a2 = [-2, -1]
+        for i in range(len(self.attr_cols)):
+            a = self.attr_cols[i]
+            valid = (c_matrix[a][0] < c_matrix[a][2]) or \
+                    (c_matrix[a][1] < c_matrix[a][2])
+            if valid:
+                valid_a1.append(i)
+                valid_a2.append(i)
+        self.attr_cols = self.attr_cols[valid_a1]
+        valid_a2 = np.array(valid_a2) + 2
+        self.encoded_data = self.encoded_data[:, valid_a2]
+
+        # 2. merge similar patterns
+        vals, inverse, count = np.unique(self.encoded_data[:, 2:],
+                                         return_inverse=True,
+                                         return_counts=True, axis=0)
+        idx_vals_repeated = np.where(count > 1)[0]
+        rows, cols = np.where(inverse == idx_vals_repeated[:, np.newaxis])
+        _, inverse_rows = np.unique(rows, return_index=True)
+        res = np.split(cols, inverse_rows[1:])
+        n_data = list()
+        for obj in res:
+            row = self.encoded_data[obj]
+            nodes = row[:, [0, 1]]
+            data = row[0, 2:]
+            n_data.append([nodes, data])
+        self.encoded_data = np.array(n_data)
 
     def construct_bins_v2(self, attr_data):
         # Encoding data for Depth-First Search

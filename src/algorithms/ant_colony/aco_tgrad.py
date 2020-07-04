@@ -31,7 +31,7 @@ class GradACOt (GradACO):
         self.time_diffs = t_diffs
         self.attr_index = self.d_set.attr_cols
         self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=float)
-        self.d_set.update_attributes(attr_data)
+        self.d_set.update_gp_attributes(attr_data)
 
     def validate_gp(self, pattern):
         # pattern = [('2', '+'), ('4', '+')]

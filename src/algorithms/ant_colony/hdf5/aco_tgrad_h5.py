@@ -36,7 +36,7 @@ class GradACOt_h5 (GradACO_h5):
             self.p_matrix = p_matrix
         else:
             self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=float)
-        self.d_set.update_attributes(attr_data)
+        self.d_set.update_gp_attributes(attr_data)
 
     def validate_gp(self, pattern):
         # pattern = [('2', '+'), ('4', '+')]

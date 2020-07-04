@@ -22,7 +22,7 @@ class GradACO:
     def __init__(self, f_path, min_supp, eq):
         print("GradACO: Version 2.0")
         self.d_set = Dataset(f_path, min_supp, eq)
-        self.d_set.init_attributes()
+        self.d_set.init_gp_attributes()
         self.attr_index = self.d_set.attr_cols
         self.c_matrix = self.d_set.cost_matrix
         self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=int)
