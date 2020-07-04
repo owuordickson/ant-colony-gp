@@ -153,7 +153,7 @@ class GradACO:
         while 0 < indx < (self.d_set.attr_size - 1):
             # print("running " + str(indx) + " ...")
             arr_p = enc_data[indx]
-            node = GradACO.find_node(indx, arr_p[2][:, lst_indx], lst_sym)
+            node = GradACO.find_node(indx, arr_p[1][:, lst_indx], lst_sym)
             if len(node) > 0:
                 if length == 0:
                     length += 2

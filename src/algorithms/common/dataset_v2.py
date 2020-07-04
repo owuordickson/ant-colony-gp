@@ -183,7 +183,7 @@ class Dataset:
             # elif (pos_cost > self.start_node[1][0] and neg_cost > 0) or\
             #        (neg_cost > self.start_node[1][1] and pos_cost > 0):
             #    self.start_node = [i, [pos_cost, neg_cost]]
-            encoded_data.append([i, self.attr_cols, np.array(temp_d).T])
+            encoded_data.append([self.attr_cols, np.array(temp_d).T])
         gc.collect()
         return encoded_data
         # return self.update_cost_v2(encoded_data)
@@ -193,11 +193,11 @@ class Dataset:
         cost_data = []
         for obj in encoded_data:
             new_rows = list()
-            rows = list(obj[2])
+            rows = list(obj[1])
             for j in range(len(rows)):
                 cost = 0
-                for i in range(len(obj[1])):
-                    col_id = obj[1][i]
+                for i in range(len(obj[0])):
+                    col_id = obj[0][i]
                     cell = rows[j][i]
                     if cell == 1:
                         cost += self.cost_matrix[col_id][0]
@@ -208,7 +208,7 @@ class Dataset:
                 else:
                     cost = 1
                 new_rows.append([rows[j], cost])
-            cost_data.append([obj[0], obj[1], np.array(new_rows)])
+            cost_data.append([obj[0], np.array(new_rows)])
         return cost_data
 
     def construct_bins_v1(self, attr_data):
