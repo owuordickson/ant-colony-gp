@@ -53,16 +53,27 @@ class GradACO:
 
         # 2. merge similar patterns
         # 2a. get indices
-        vals, inverse, count = np.unique(self.d_set.encoded_data[:, 2:],
-                                         return_inverse=True,
-                                         return_counts=True, axis=0)
+        #vals, inverse, count = np.unique(self.d_set.encoded_data[:, 2:],
+        #                                 return_inverse=True,
+        #                                 return_counts=True, axis=0)
         #idx_vals_repeated = np.where(count > 1)[0]
         #rows, cols = np.where(inverse == idx_vals_repeated[:, np.newaxis])
         #_, inverse_rows = np.unique(rows, return_index=True)
         #res = np.split(cols, inverse_rows[1:])
         #print(res)
-        print(vals)
-        print(count)
+
+        #records_array = self.d_set.encoded_data[:, 2:]
+        #idx_sort = np.argsort(records_array)
+        #sorted_records_array = records_array[idx_sort]
+        #vals, idx_start, count = np.unique(sorted_records_array, return_counts=True, return_index=True, axis=0)
+        # sets of indices
+        #res = np.split(idx_sort, idx_start[1:])
+        # filter them with respect to their size, keeping only items occurring more than once
+        #vals = vals[count > 1]
+        #res = filter(lambda x: x.size > 1, res)
+        #print(list(res))
+        #print(vals)
+
         # 2b. use indices to merge
         # if len(res) > 1:
         #    n_data = list()
