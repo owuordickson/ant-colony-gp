@@ -31,8 +31,9 @@ class GradACO:
         # self.e_factor = 0.1  # evaporation factor
         print(self.attr_index)
         print(self.d_set.encoded_data)
-        print(self.bins)
+        # print(self.bins)
         # print(self.p_matrix)
+        print("\n\n")
 
     def reduce_data(self):
         c_matrix = self.c_matrix
@@ -174,14 +175,19 @@ class GradACO:
         if temp_i.size <= 0:
             return 0, zip(lst_attr, lst_sym)
         else:
-            indices = np.argwhere(self.indices == 0).ravel()
-            nodes = enc_data[indices, :2]
-            print(nodes)
-            print("Indices of " + str(lst_sym) + " are: " + str(indices))
-        # print(str(lst_attr) + ' + ' + str(self.attr_index) + ' = ' + str(lst_indx))
-        # print(str(str(lst_sym) + ' is at index ' + str(temp_i)))
-        # print(str(lst_attr) + ' , ' + str(lst_sym) + ' : length = ' + str(length))
-        return length, zip(lst_attr, lst_sym)
+            indices = []
+            for i in temp_i:
+                temp = np.argwhere(self.indices == i[0]).ravel()
+                indices.extend(temp)
+            arr_nodes = enc_data[indices, :2]
+            length = np.unique(arr_nodes[:, 0], axis=0).size + 1
+            # length = GradACO.count_nodes(arr_nodes)
+            # print(nodes)
+            # print("Indices of " + str(lst_sym) + " are: " + str(indices))
+            # print(str(lst_attr) + ' + ' + str(self.attr_index) + ' = ' + str(lst_indx))
+            # print(str(str(lst_sym) + ' is at index ' + str(temp_i)))
+            # print(str(lst_attr) + ' , ' + str(lst_sym) + ' : length = ' + str(length))
+            return length, zip(lst_attr, lst_sym)
 
         # indx = 300  # self.d_set.start_node[0]
 
@@ -260,6 +266,11 @@ class GradACO:
                     set(pattern.inv_pattern()) == set(pat.get_pattern()):
                 return True
         return False
+
+    @staticmethod
+    def count_nodes(arr_nodes):
+        le = np.unique(arr_nodes[:, 0], axis=0).size + 1
+        return le
 
     @staticmethod
     def index_count(idxs, n):
