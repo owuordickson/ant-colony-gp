@@ -29,8 +29,10 @@ class GradACO:
         self.bins, self.indices = self.reduce_data()
         self.attr_index = self.d_set.attr_cols
         # self.e_factor = 0.1  # evaporation factor
+        print(self.attr_index)
         print(self.d_set.encoded_data)
-        print(self.p_matrix)
+        print(self.bins)
+        # print(self.p_matrix)
 
     def reduce_data(self):
         c_matrix = self.c_matrix
@@ -163,34 +165,45 @@ class GradACO:
         return pattern
 
     def find_longest_path(self, attrs, syms):
-        # 1. remove invalid attributes
-
-
-        # 2. Find longest length
+        # 1. Find longest length
         lst_attr, lst_sym = zip(*sorted(zip(attrs, syms)))
         enc_data = self.d_set.encoded_data
-        length = 0
-        indx = 300  # self.d_set.start_node[0]
-
+        length = 3
         lst_indx = [np.argwhere(self.attr_index == x)[0][0] for x in lst_attr]
+        temp_i = np.argwhere(np.all(self.bins[:, lst_indx] == lst_sym, axis=1))
+        if temp_i.size <= 0:
+            return 0, zip(lst_attr, lst_sym)
+        else:
+            indices = np.argwhere(self.indices == 0).ravel()
+            nodes = enc_data[indices, :2]
+            print(nodes)
+            print("Indices of " + str(lst_sym) + " are: " + str(indices))
+        # print(str(lst_attr) + ' + ' + str(self.attr_index) + ' = ' + str(lst_indx))
+        # print(str(str(lst_sym) + ' is at index ' + str(temp_i)))
+        # print(str(lst_attr) + ' , ' + str(lst_sym) + ' : length = ' + str(length))
+        return length, zip(lst_attr, lst_sym)
+
+        # indx = 300  # self.d_set.start_node[0]
+
+        # lst_indx = [np.argwhere(self.attr_index == x)[0][0] for x in lst_attr]
         # print(str(lst_attr) + ' + ' + str(self.attr_index) + ' = ' + str(lst_indx))
         # path = np.where((lst_sym == st_nodes[2][:, lst_attr]), True, False)
         # node = GradACO.find_node(indx, arr_p[2][:, lst_attr], lst_sym)
         # print(str(lst_attr) + ' : ' + str(arr_p[2][:, lst_attr]) + ' + ' + str(lst_sym) + ' = ' + str(node))
-        while 0 < indx < (self.d_set.attr_size - 1):
+        # while 0 < indx < (self.d_set.attr_size - 1):
             # print("running " + str(indx) + " ...")
-            arr_p = enc_data[indx]
-            node = GradACO.find_node(indx, arr_p[1][:, lst_indx], lst_sym)
-            if len(node) > 0:
-                if length == 0:
-                    length += 2
-                else:
-                    length += 1
-                indx = node[1]
-            else:
-                indx = -1
-        print(str(lst_attr) + ' , ' + str(lst_sym) + ' : length = ' + str(length))
-        return length, zip(lst_attr, lst_sym)
+        #    arr_p = enc_data[indx]
+        #    node = GradACO.find_node(indx, arr_p[1][:, lst_indx], lst_sym)
+        #    if len(node) > 0:
+        #        if length == 0:
+        #            length += 2
+        #        else:
+        #            length += 1
+        #        indx = node[1]
+        #    else:
+        #        indx = -1
+        # print(str(lst_attr) + ' , ' + str(lst_sym) + ' : length = ' + str(length))
+        # return length, zip(lst_attr, lst_sym)
 
     def plot_pheromone_matrix(self):
         x_plot = np.array(self.p_matrix)
