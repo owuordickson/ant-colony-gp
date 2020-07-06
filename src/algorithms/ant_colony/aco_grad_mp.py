@@ -18,7 +18,7 @@ class GradACO_mp(GradACO):
 
     def __init__(self, f_path, min_supp, eq, cores):
         self.d_set = Dataset_mp(f_path, min_supp, eq, cores)
-        self.d_set.init_attributes()
+        self.d_set.init_gp_attributes()
         self.attr_index = self.d_set.attr_cols
         # self.e_factor = 0.1  # evaporation factor
         self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=float)

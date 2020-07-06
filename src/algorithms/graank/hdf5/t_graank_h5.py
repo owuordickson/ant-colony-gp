@@ -55,7 +55,7 @@ class Tgrad_5(Tgrad):
         attr_data, time_diffs = self.transform_data(step)
 
         # 2. Execute t-graank for each transformation
-        d_set.update_attributes(attr_data)
+        d_set.update_gp_attributes(attr_data)
         tgps = graank_h5(t_diffs=time_diffs, d_set=d_set)
 
         if len(tgps) > 0:

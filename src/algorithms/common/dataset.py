@@ -107,7 +107,7 @@ class Dataset:
         else:
             return np.array([])
 
-    def init_attributes(self):
+    def init_gp_attributes(self):
         # (check) implement parallel multiprocessing
         # transpose csv array data
         attr_data = self.data.copy().T
@@ -117,7 +117,7 @@ class Dataset:
         attr_data = None
         gc.collect()
 
-    def update_attributes(self, attr_data):
+    def update_gp_attributes(self, attr_data):
         self.attr_size = len(attr_data[self.attr_cols[0]])
         # self.construct_bins_v1(attr_data)
         self.construct_bins(attr_data)

@@ -20,7 +20,7 @@ class GradACO_h5(GradACO):
 
     def __init__(self, f_path, min_supp, eq):
         self.d_set = Dataset_h5(f_path, min_supp, eq)
-        self.d_set.init_attributes()
+        self.d_set.init_gp_attributes()
         self.attr_index = self.d_set.attr_cols
         # self.e_factor = 0.1  # evaporation factor
         # fetch previous p_matrix from memory

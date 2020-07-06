@@ -73,7 +73,7 @@ class Dataset_h5(Dataset):
                 data = None
             #    self.init_attributes()
 
-    def init_attributes(self):
+    def init_gp_attributes(self):
         # (check) implement parallel multiprocessing
         if self.data is not None:
             # transpose csv array data
