@@ -30,7 +30,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
         else:
             num_cores = Profile.get_num_cores()
         ac = GradACO(f_path, min_supp, eq)
-        list_gp = list() #ac.run_ant_colony()
+        list_gp = ac.run_ant_colony()
 
         d_set = ac.d_set
         wr_line = "Algorithm: ACO-GRAANK (2.0)\n"

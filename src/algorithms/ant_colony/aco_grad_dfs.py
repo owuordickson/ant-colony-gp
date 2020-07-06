@@ -26,7 +26,7 @@ class GradACO:
         self.c_matrix = self.d_set.cost_matrix
         self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=int)
         # Data set reduction and update: (p_matrix, attr_index)
-        self.reduce_data()
+        self.bins, self.indices = self.reduce_data()
         self.attr_index = self.d_set.attr_cols
         # self.e_factor = 0.1  # evaporation factor
         print(self.d_set.encoded_data)
@@ -53,36 +53,16 @@ class GradACO:
 
         # 2. merge similar patterns
         # 2a. get indices
-        #vals, inverse, count = np.unique(self.d_set.encoded_data[:, 2:],
-        #                                 return_inverse=True,
-        #                                 return_counts=True, axis=0)
-        #idx_vals_repeated = np.where(count > 1)[0]
-        #rows, cols = np.where(inverse == idx_vals_repeated[:, np.newaxis])
-        #_, inverse_rows = np.unique(rows, return_index=True)
-        #res = np.split(cols, inverse_rows[1:])
-        #print(res)
-
-        #records_array = self.d_set.encoded_data[:, 2:]
-        #idx_sort = np.argsort(records_array)
-        #sorted_records_array = records_array[idx_sort]
-        #vals, idx_start, count = np.unique(sorted_records_array, return_counts=True, return_index=True, axis=0)
-        # sets of indices
-        #res = np.split(idx_sort, idx_start[1:])
-        # filter them with respect to their size, keeping only items occurring more than once
-        #vals = vals[count > 1]
-        #res = filter(lambda x: x.size > 1, res)
-        #print(list(res))
-        #print(vals)
-
-        # 2b. use indices to merge
-        # if len(res) > 1:
-        #    n_data = list()
-        #    for obj in res:
-        #        row = self.d_set.encoded_data[obj]
-        #        nodes = row[:, [0,1]]
-        #        data = row[0, 2:]
-        #        n_data.append([nodes, data])
-        #    self.d_set.encoded_data = np.array(n_data)
+        vals, inverse, count = np.unique(self.d_set.encoded_data[:, 2:],
+                                         return_inverse=True,
+                                         return_counts=True,
+                                         axis=0)
+        # print(vals)
+        # print(inverse)
+        # print(count)
+        # index = np.argwhere(inverse == 0).ravel()
+        # print("Indices of 1 -1 -1 are: " + str(index))
+        return vals, inverse
 
     def run_ant_colony(self):
         min_supp = self.d_set.thd_supp
@@ -184,19 +164,10 @@ class GradACO:
 
     def find_longest_path(self, attrs, syms):
         # 1. remove invalid attributes
-        lst_attr = []
-        lst_sym = []
-        for a, b in zip(attrs, syms):
-            valid = (self.c_matrix[a][0] < self.c_matrix[a][2]) or \
-                    (self.c_matrix[a][1] < self.c_matrix[a][2])
-            if valid:
-                lst_attr.append(a)
-                lst_sym.append(b)
-        if len(lst_attr) <= 0:
-            return 0, zip(attrs, syms)
+
 
         # 2. Find longest length
-        lst_attr, lst_sym = zip(*sorted(zip(lst_attr, lst_sym)))
+        lst_attr, lst_sym = zip(*sorted(zip(attrs, syms)))
         enc_data = self.d_set.encoded_data
         length = 0
         indx = 300  # self.d_set.start_node[0]
