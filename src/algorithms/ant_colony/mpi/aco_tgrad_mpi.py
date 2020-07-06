@@ -15,7 +15,7 @@ Description: updated version that uses aco-graank and parallel multi-processing
 
 import numpy as np
 import gc
-from ..aco_grad import GradACO
+from ..aco_grad_bfs import GradACO
 from ...common.fuzzy_mf import calculate_time_lag
 from ...common.gp import GP, TGP
 from ...common.hdf5.dataset_h5 import Dataset_h5

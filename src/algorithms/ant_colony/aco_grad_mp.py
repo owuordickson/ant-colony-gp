@@ -11,7 +11,7 @@
 
 import numpy as np
 from ..common.dataset_mp import Dataset_mp
-from .aco_grad import GradACO
+from .aco_grad_bfs import GradACO
 
 
 class GradACO_mp(GradACO):

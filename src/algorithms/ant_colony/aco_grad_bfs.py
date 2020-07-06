@@ -8,6 +8,8 @@
 @created: "12 July 2019"
 @modified: "16 June 2020"
 
+Breath-First Search for gradual patterns (ACO-GRAANK)
+
 """
 
 import numpy as np

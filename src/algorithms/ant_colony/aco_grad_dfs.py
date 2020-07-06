@@ -8,6 +8,8 @@
 @created: "12 July 2019"
 @modified: "16 June 2020"
 
+Depth-First Search for gradual patterns (ACO-ParaMiner)
+
 """
 
 import numpy as np
@@ -29,11 +31,11 @@ class GradACO:
         self.bins, self.indices = self.reduce_data()
         self.attr_index = self.d_set.attr_cols
         # self.e_factor = 0.1  # evaporation factor
-        print(self.attr_index)
-        print(self.d_set.encoded_data)
+        # print(self.attr_index)
+        # print(self.d_set.encoded_data)
         # print(self.bins)
         # print(self.p_matrix)
-        print("\n\n")
+        # print("\n\n")
 
     def reduce_data(self):
         c_matrix = self.c_matrix
@@ -60,11 +62,6 @@ class GradACO:
                                          return_inverse=True,
                                          return_counts=True,
                                          axis=0)
-        # print(vals)
-        # print(inverse)
-        # print(count)
-        # index = np.argwhere(inverse == 0).ravel()
-        # print("Indices of 1 -1 -1 are: " + str(index))
         return vals, inverse
 
     def run_ant_colony(self):
@@ -169,11 +166,11 @@ class GradACO:
         # 1. Find longest length
         lst_attr, lst_sym = zip(*sorted(zip(attrs, syms)))
         enc_data = self.d_set.encoded_data
-        length = 3
+        length = 0
         lst_indx = [np.argwhere(self.attr_index == x)[0][0] for x in lst_attr]
         temp_i = np.argwhere(np.all(self.bins[:, lst_indx] == lst_sym, axis=1))
         if temp_i.size <= 0:
-            return 0, zip(lst_attr, lst_sym)
+            return length, zip(lst_attr, lst_sym)
         else:
             indices = []
             for i in temp_i:
@@ -188,7 +185,6 @@ class GradACO:
             # print(str(str(lst_sym) + ' is at index ' + str(temp_i)))
             # print(str(lst_attr) + ' , ' + str(lst_sym) + ' : length = ' + str(length))
             return length, zip(lst_attr, lst_sym)
-
         # indx = 300  # self.d_set.start_node[0]
 
         # lst_indx = [np.argwhere(self.attr_index == x)[0][0] for x in lst_attr]
@@ -266,11 +262,6 @@ class GradACO:
                     set(pattern.inv_pattern()) == set(pat.get_pattern()):
                 return True
         return False
-
-    @staticmethod
-    def count_nodes(arr_nodes):
-        le = np.unique(arr_nodes[:, 0], axis=0).size + 1
-        return le
 
     @staticmethod
     def index_count(idxs, n):

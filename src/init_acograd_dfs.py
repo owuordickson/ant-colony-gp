@@ -8,6 +8,8 @@
 @created: "18 November 2019"
 @modified: "20 June 2020"
 
+Depth-First Search for gradual patterns (ACO-ParaMiner)
+
 Usage:
     $python init_acograd.py -f ../data/DATASET.csv -s 0.5
 
@@ -72,21 +74,20 @@ def write_file(data, path):
 
 if __name__ == "__main__":
     if not sys.argv:
-        pType = sys.argv[1]
-        filePath = sys.argv[2]
-        # refCol = sys.argv[3]
-        minSup = sys.argv[4]
-        # minRep = sys.argv[5]
+        filePath = sys.argv[1]
+        minSup = sys.argv[2]
+        allowEq = sys.argv[3]
+        numCores = sys.argv[4]
     else:
         optparser = OptionParser()
         optparser.add_option('-f', '--inputFile',
                              dest='file',
                              help='path to file containing csv',
                              # default=None,
-                             default='../data/DATASET.csv',
+                             #default='../data/DATASET.csv',
                              #default='../data/DATASET3.csv',
                              #default='../data/Omnidir.csv',
-                             #default='../data/FluTopicData-testsansdate-blank.csv',
+                             default='../data/FluTopicData-testsansdate-blank.csv',
                              #default='../data/vehicle_silhouette_dataset.csv',
                              #default='../data/FARSmiss.csv',
                              type='string')
@@ -117,18 +118,18 @@ if __name__ == "__main__":
         numCores = options.numCores
 
     import time
-    #import tracemalloc
-    #from src.algorithms.common.profile_mem import Profile
+    # import tracemalloc
+    # from src.algorithms.common.profile_mem import Profile
 
     start = time.time()
-    #tracemalloc.start()
-    res_text = init_algorithm(filePath, minSup, numCores)
-    #snapshot = tracemalloc.take_snapshot()
+    # tracemalloc.start()
+    res_text = init_algorithm(filePath, minSup, numCores, allowEq)
+    # snapshot = tracemalloc.take_snapshot()
     end = time.time()
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
-    #wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
-    #wr_text += str(res_text)
+    # wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
+    wr_text += str(res_text)
     f_name = str('res_aco' + str(end).replace('.', '', 1) + '.txt')
     # write_file(wr_text, f_name)
     print(wr_text)

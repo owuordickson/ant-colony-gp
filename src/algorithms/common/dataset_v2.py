@@ -128,17 +128,6 @@ class Dataset:
         # 1. Encoding data for Depth-First Search
         # [row_i, row_j, ..., data, ...]
         self.encoded_data = np.array(self.encode_data_v3(attr_data))
-        # print(self.attr_cols)
-        # print(self.encoded_data)
-
-        # 2. Data set reduction
-        # self.reduce_data()
-        # print(self.encoded_data.shape)
-        #print(self.attr_cols)
-        #print(self.encoded_data)
-        #print(self.cost_matrix)
-        # print(self.start_node)
-        #print("\n\n")
 
     def encode_data_v3(self, attr_data):
         size = self.attr_size  # np.arange(self.attr_size)
