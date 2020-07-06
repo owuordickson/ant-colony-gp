@@ -31,11 +31,6 @@ class GradACO:
         self.bins, self.indices = self.reduce_data()
         self.attr_index = self.d_set.attr_cols
         # self.e_factor = 0.1  # evaporation factor
-        # print(self.attr_index)
-        # print(self.d_set.encoded_data)
-        # print(self.bins)
-        # print(self.p_matrix)
-        # print("\n\n")
 
     def reduce_data(self):
         c_matrix = self.c_matrix
@@ -262,37 +257,3 @@ class GradACO:
                     set(pattern.inv_pattern()) == set(pat.get_pattern()):
                 return True
         return False
-
-    @staticmethod
-    def index_count(idxs, n):
-        arr_1 = idxs[0]
-        arr_n = idxs[1:]
-        temp = []
-        start = 0
-        ok = False
-        for item in np.nditer(arr_1):
-            for arr in arr_n:
-                arg = np.argwhere(arr == item)
-                if arg.size > 0:
-                    ok = (arg[0][0] >= start)
-                if not ok:
-                    break
-            if ok:
-                temp.append(item)
-            start += 1
-        supp = float(len(temp) / n)
-        return np.array(temp), supp
-
-    @staticmethod
-    def find_node(i, arr, pat):
-        # lst_nodes = []
-        temp = []
-        paths = np.argwhere(np.all(arr == pat, axis=1))
-        # for p in paths:
-        if len(paths) > 0:
-            temp = [i, (i + paths[0][0]) + 1]
-        return temp
-            # lst_nodes.append(temp)
-        # return lst_nodes
-
-
