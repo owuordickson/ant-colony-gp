@@ -22,7 +22,7 @@ Description:
 import sys
 from optparse import OptionParser
 from algorithms.common.profile_cpu import Profile
-from algorithms.ant_colony.aco_grad_dfs import GradACO
+from algorithms.ant_colony.aco_grad_dfs import GradACO_dfs
 
 
 def init_algorithm(f_path, min_supp, cores, eq=False):
@@ -31,7 +31,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
             num_cores = cores
         else:
             num_cores = Profile.get_num_cores()
-        ac = GradACO(f_path, min_supp, eq)
+        ac = GradACO_dfs(f_path, min_supp, eq)
         list_gp = ac.run_ant_colony()
 
         d_set = ac.d_set

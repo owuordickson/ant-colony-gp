@@ -51,7 +51,7 @@ class GradACO:
         winner_gps = list()  # subsets
         loser_gps = list()  # supersets
         repeated = 0
-        if len(self.d_set.valid_bins) < 2:
+        if self.d_set.no_bins:
             return []
         while repeated < 1:
             rand_gp = self.generate_random_gp()

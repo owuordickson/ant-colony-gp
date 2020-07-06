@@ -40,6 +40,7 @@ class Dataset:
             self.attr_cols = self.get_attributes()  # optimized (numpy)
             self.column_size = self.get_attribute_no()  # optimized (numpy)
             self.size = self.get_size()  # optimized (numpy)
+            self.no_bins = False
             self.attr_size = 0
             self.step_name = ''
             self.thd_supp = min_sup
@@ -144,6 +145,8 @@ class Dataset:
                 valid_bins.append(np.array([decr.tolist(), temp_pos.T]))
         self.valid_bins = np.array(valid_bins)
         self.invalid_bins = np.array(invalid_bins)
+        if len(self.valid_bins) < 2:
+            self.no_bins = True
 
     @staticmethod
     def bin_rank(arr, equal=False):
