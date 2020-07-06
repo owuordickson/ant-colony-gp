@@ -5,8 +5,7 @@
 @license: "MIT"
 @version: "2.0"
 @email: "owuordickson@gmail.com"
-@created: "18 November 2019"
-@modified: "20 June 2020"
+@created: "06 July 2020"
 
 Breath-First Search for gradual patterns (ACO-GRAANK)
 
