@@ -2,10 +2,10 @@
 """
 @author: "Dickson Owuor"
 @email: "owuordickson@gmail.com"
-@created: "06 December 2019"
+@created: "08 July 2020"
 
 Usage:
-    $python init_graank.py -f ../data/DATASET.csv -s 0.5
+    $python init_lcmgrad.py -f ../data/DATASET.csv -s 0.5
 
 Description:
     f -> file path (CSV)
@@ -16,33 +16,32 @@ Description:
 import sys
 from optparse import OptionParser
 from algorithms.common.profile_cpu import Profile
-from algorithms.graank.graank_v2 import graank
+from algorithms.common.lcm_grad import LCM_g
 
 
-def init_algorithm(f_path, min_supp, cores, eq=False):
+def init_algorithm(f_path, min_supp, cores):
     try:
-        d_set, list_gp = graank(f_path, min_supp, eq)
-
         if cores > 1:
             num_cores = cores
         else:
             num_cores = Profile.get_num_cores()
 
-        wr_line = "Algorithm: GRAANK \n"
+        lcm = LCM_g(f_path, min_supp, n_jobs=1)  # num_cores)
+        gp = lcm.fit_discover(return_tids=False)
+
+        d_set = lcm.d_set
+        wr_line = "Algorithm: LCM-GRAD (1.0) \n"
         wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
         wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
-        wr_line += "Minimum support: " + str(min_supp) + '\n'
+        wr_line += "Minimum support: " + str(d_set.thd_supp) + '\n'
         wr_line += "Number of cores: " + str(num_cores) + '\n\n'
-        wr_line += "Number of patterns: " + str(len(list_gp)) + '\n'
+        # wr_line += "Number of patterns: " + str(len(list_gp)) + '\n'
 
         for txt in d_set.title:
             wr_line += (str(txt[0]) + '. ' + str(txt[1].decode()) + '\n')
 
-        wr_line += str("\nFile: " + f_path + '\n')
-        wr_line += str("\nPattern : Support" + '\n')
-
-        for gp in list_gp:
-            wr_line += (str(gp.to_string()) + ' : ' + str(gp.support) + '\n')
+        wr_line += str("\nFile: " + f_path + '\n\n')
+        wr_line += str(gp)
 
         return wr_line
     except ArithmeticError as error:
@@ -71,7 +70,7 @@ if __name__ == "__main__":
                              dest='file',
                              help='path to file containing csv',
                              # default=None,
-                             default='../../../data/DATASET.csv',
+                             default='../data/DATASET.csv',
                              #default='../data/Omnidir.csv',
                              #default='../data/FARSmiss.csv',
                              #default='../data/FluTopicData-testsansdate-blank.csv',
@@ -81,11 +80,6 @@ if __name__ == "__main__":
                              help='minimum support value',
                              default=0.5,
                              type='float')
-        optparser.add_option('-e', '--allowEqual',
-                             dest='allowEq',
-                             help='allow equal',
-                             default=None,
-                             type='int')
         optparser.add_option('-c', '--cores',
                              dest='numCores',
                              help='number of cores',
@@ -99,7 +93,6 @@ if __name__ == "__main__":
         else:
             filePath = options.file
         minSup = options.minSup
-        allowEq = options.allowEq
         numCores = options.numCores
 
     import time
@@ -114,7 +107,8 @@ if __name__ == "__main__":
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
     # wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
     wr_text += str(res_text)
-    f_name = str('res_graank' + str(end).replace('.', '', 1) + '.txt')
+    f_name = str('res_lcm' + str(end).replace('.', '', 1) + '.txt')
     # write_file(wr_text, f_name)
     print(wr_text)
+
 
