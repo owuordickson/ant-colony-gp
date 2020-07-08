@@ -218,7 +218,12 @@ class LCM:
             candidates = candidates[:candidates.bisect_left(limit)]
             for new_limit in candidates:
                 ids = self.item_to_tids[new_limit]
-                if tids.intersection_len(ids) >= self._min_supp:
+                # print(str(tids) + ' + ' + str(ids) + ' = ' + str(tids.intersection_len(ids)))
+                # if tids.intersection_len(ids) >= self._min_supp:
+                x = tids.intersection(ids)
+                if len(x) > 1:
+                    x = np.unique(np.array(list(x))[:, 0], axis=0)
+                if len(x) >= self._min_supp:
                     new_limit_tids = tids.intersection(ids)
                     yield from self._inner(p_prime, new_limit_tids, new_limit)
 
@@ -289,6 +294,7 @@ class LCM_g(LCM):
         self.verbose = verbose
 
     def _fit(self, D):
+        self.attr_size = 5
         self.n_transactions = 0  # reset for safety
         item_to_tids = defaultdict(set)
         # for transaction in D:
@@ -302,9 +308,16 @@ class LCM_g(LCM):
 
         if isinstance(self.min_supp, float):
             # make support absolute if needed
-            self._min_supp = self.min_supp * self.n_transactions
+            self._min_supp = self.min_supp * self.attr_size #self.n_transactions
+            print(self._min_supp)
 
-        low_supp_items = [k for k, v in item_to_tids.items() if len(v) < self._min_supp]
+        #for k, v in item_to_tids.items():
+        #    print(str(v) + ' = ' + str(len(v)))
+            # print(np.array(list(v)).shape)
+        #    print(np.unique(np.array(list(v))[:, 0], axis=0))
+        # if len(v) < self._min_supp
+
+        low_supp_items = [k for k, v in item_to_tids.items() if len(np.unique(np.array(list(v))[:, 0], axis=0)) < self._min_supp]
         for item in low_supp_items:
             del item_to_tids[item]
 

@@ -9,8 +9,8 @@ Dg = [[0, 1, 0, -1, 3], [0, 2, 0, 1, 3], [0, 3, 0, -1, 3], [0, 4, 0, 1, 3],
 # print(np.array(Dg))
 
 start = time.time()
-# lcm = LCM(min_supp=0.5)
-# p = lcm.fit_discover(D, return_tids=True)
+#lcm = LCM(min_supp=0.5)
+#p = lcm.fit_discover(D, return_tids=True)
 lcm = LCM_g(min_supp=0.5)
 p = lcm.fit_discover(np.array(Dg), return_tids=True)
 end = time.time()
