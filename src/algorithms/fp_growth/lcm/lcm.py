@@ -21,7 +21,7 @@ from .utils import filter_maximal
 from .bitmaps import Bitmap
 
 
-class LCM():
+class LCM:
     """
     Linear time Closed item set Miner.
     LCM can be used as a preprocessing step, yielding some patterns
