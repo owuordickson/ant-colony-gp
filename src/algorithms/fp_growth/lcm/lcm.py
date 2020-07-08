@@ -79,6 +79,8 @@ class LCM:
             for item in transaction:
                 item_to_tids[item].add(self.n_transactions)
             self.n_transactions += 1
+        print(D)
+        print(item_to_tids)
 
         if isinstance(self.min_supp, float):
             # make support absolute if needed
@@ -271,3 +273,40 @@ class LCMMax(LCM):
         patterns = super().fit_discover(D, return_tids=return_tids)
         maximums = [tuple(sorted(x)) for x in filter_maximal(patterns['itemset'])]
         return patterns[patterns.itemset.isin(maximums)]
+
+
+class LCM_g(LCM):
+
+    def __init__(self, *, min_supp=0.2, n_jobs=1, verbose=False):
+        # super().__init__(m)
+        _check_min_supp(min_supp)
+        self.min_supp = min_supp  # provided by user
+        self._min_supp = _check_min_supp(self.min_supp)
+        self.item_to_tids = None
+        self.n_transactions = 0
+        self.ctr = 0
+        self.n_jobs = n_jobs
+        self.verbose = verbose
+
+    def _fit(self, D):
+        self.n_transactions = 0  # reset for safety
+        item_to_tids = defaultdict(set)
+        # for transaction in D:
+        for t in range(len(D)):
+            transaction = D[t][2:]
+            for item in transaction:
+                item_to_tids[item].add(tuple(D[t][:2]))
+            self.n_transactions += 1
+        print(D)
+        print(item_to_tids)
+
+        if isinstance(self.min_supp, float):
+            # make support absolute if needed
+            self._min_supp = self.min_supp * self.n_transactions
+
+        low_supp_items = [k for k, v in item_to_tids.items() if len(v) < self._min_supp]
+        for item in low_supp_items:
+            del item_to_tids[item]
+
+        self.item_to_tids = SortedDict(item_to_tids)
+        return self

@@ -30,6 +30,7 @@ class GradACO_dfs(GradACO):
         self.bins, self.indices = self.reduce_data()
         self.attr_index = self.d_set.attr_cols
         # self.e_factor = 0.1  # evaporation factor
+        print(self.d_set.encoded_data)
 
     def reduce_data(self):
         c_matrix = self.c_matrix
