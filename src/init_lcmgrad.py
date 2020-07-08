@@ -27,7 +27,7 @@ def init_algorithm(f_path, min_supp, cores):
             num_cores = Profile.get_num_cores()
 
         lcm = LCM_g(f_path, min_supp, n_jobs=1)  # num_cores)
-        gp = lcm.fit_discover(return_tids=False)
+        gp = lcm.fit_discover(return_tids=True)
 
         d_set = lcm.d_set
         wr_line = "Algorithm: LCM-GRAD (1.0) \n"

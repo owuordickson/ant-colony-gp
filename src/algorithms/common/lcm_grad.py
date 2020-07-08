@@ -45,7 +45,7 @@ class LCM_g:
                 item_to_tids[item].add(tuple(D[t][:2]))
             self.n_transactions += 1
         # print(D)
-        # print(item_to_tids)
+        print(item_to_tids)
 
         if isinstance(self.min_supp, float):
             # make support absolute if needed
@@ -85,6 +85,7 @@ class LCM_g:
         return df
 
     def _inner(self, p, tids, limit):
+        print(str(p) + ' + ' + str(tids) + ' + ' + str(limit))
         # project and reduce DB w.r.t P
         cp = (
             item for item, ids in reversed(self.item_to_tids.items())
@@ -92,10 +93,11 @@ class LCM_g:
         )
 
         max_k = next(cp, None)  # items are in reverse order, so the first consumed is the max
-
+        print(str(set(cp)) + ' + ' + str({max_k}))
         if max_k and max_k == limit:
             p_prime = p | set(cp) | {max_k}  # max_k has been consumed when calling next()
             # sorted items in ouput for better reproducibility
+            print(str(p) + ' u ' + str(set(cp)) + ' u ' + str({max_k}) + ' = ' + str(p_prime) + '\n')
             raw_p = tuple(sorted(p_prime))
             pat = GP()
             for a in raw_p:
