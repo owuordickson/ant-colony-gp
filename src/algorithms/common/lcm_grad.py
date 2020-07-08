@@ -16,46 +16,52 @@ from sortedcontainers import SortedDict
 from roaringbitmap import RoaringBitmap as RB
 
 from .dataset_dfs import Dataset_dfs
+from .gp import GI, GP
 
 
-class LCM:
+class LCM_g:
 
-    def __init__(self, min_supp, n_jobs, verbose):
-        # LCM.check_min_supp(min_supp)
+    def __init__(self, file, min_supp=0.5, n_jobs=1, verbose=False):
         self.min_supp = min_supp  # provided by user
-        self._min_supp = LCM.check_min_supp(self.min_supp)
+        self._min_supp = LCM_g.check_min_supp(self.min_supp)
         self.item_to_tids = None
         self.n_transactions = 0
         self.ctr = 0
         self.n_jobs = n_jobs
         self.verbose = verbose
 
-    def _fit(self, D):
+        self.d_set = Dataset_dfs(file, min_supp, eq=False)
+        self.d_set.init_gp_attributes()
+        self.d_set.reduce_data()
+
+    def _fit(self):
+        D = self.d_set.encoded_data
         self.n_transactions = 0  # reset for safety
-        item_to_tids = defaultdict(RB)
-        for transaction in D:
+        item_to_tids = defaultdict(set)
+        # for transaction in D:
+        for t in range(len(D)):
+            transaction = D[t][2:]
             for item in transaction:
-                item_to_tids[item].add(self.n_transactions)
+                item_to_tids[item].add(tuple(D[t][:2]))
             self.n_transactions += 1
         print(D)
         print(item_to_tids)
 
         if isinstance(self.min_supp, float):
             # make support absolute if needed
-            self._min_supp = self.min_supp * self.n_transactions
+            self._min_supp = self.min_supp * self.d_set.attr_size
 
-        low_supp_items = [k for k, v in item_to_tids.items() if len(v) < self._min_supp]
+        low_supp_items = [k for k, v in item_to_tids.items() if len(np.unique(np.array(list(v))[:, 0], axis=0)) < self._min_supp]
         for item in low_supp_items:
             del item_to_tids[item]
 
         self.item_to_tids = SortedDict(item_to_tids)
         return self
 
-    def fit_discover(self, D, return_tids=False):
+    def fit_discover(self, return_tids=False):
 
-        self._fit(D)
-
-        empty_df = pd.DataFrame(columns=['itemset', 'tids'])
+        self._fit()
+        empty_df = pd.DataFrame(columns=['itemset', 'support', 'tids'])
 
         # reverse order of support
         supp_sorted_items = sorted(self.item_to_tids.items(), key=lambda e: len(e[1]), reverse=True)
@@ -64,31 +70,16 @@ class LCM:
             delayed(self._explore_item)(item, tids) for item, tids in supp_sorted_items
         )
 
-        dfs.append(empty_df) # make sure we have something to concat
+        dfs.append(empty_df)  # make sure we have something to concat
         df = pd.concat(dfs, axis=0, ignore_index=True)
         if not return_tids:
-            df.loc[:, 'support'] = df['tids'].map(len).astype(np.uint32)
+            # df.loc[:, 'support'] = df['tids'].map(len).astype(np.uint32)
             df.drop('tids', axis=1, inplace=True)
-        return df
-
-    def fit_transform(self, D):
-
-        patterns = self.fit_discover(D, return_tids=True)
-        tid_s = patterns.set_index('itemset').tids
-        by_supp = tid_s.map(len).sort_values(ascending=False)
-        patterns = tid_s.reindex(by_supp.index)
-
-        shape = (self.n_transactions, len(self.item_to_tids))
-        mat = np.zeros(shape, dtype=np.uint32)
-
-        df = pd.DataFrame(mat, columns=self.item_to_tids.keys())
-        for pattern, tids in tid_s.iteritems():
-            df.loc[tids, pattern] = len(tids)  # fill with support
         return df
 
     def _explore_item(self, item, tids):
         it = self._inner(frozenset(), tids, item)
-        df = pd.DataFrame(data=it, columns=['itemset', 'tids'])
+        df = pd.DataFrame(data=it, columns=['itemset', 'support', 'tids'])
         if self.verbose and not df.empty:
             print('LCM found {} new itemsets from item : {}'.format(len(df), item))
         return df
@@ -105,20 +96,38 @@ class LCM:
         if max_k and max_k == limit:
             p_prime = p | set(cp) | {max_k}  # max_k has been consumed when calling next()
             # sorted items in ouput for better reproducibility
-            yield tuple(sorted(p_prime)), tids
+            raw_p = tuple(sorted(p_prime))
+            pat = GP()
+            for a in raw_p:
+                if a < 0:
+                    sym = '-'
+                elif a > 0:
+                    sym = '+'
+                else:
+                    sym = 'x'
+                attr = abs(a) - 1
+                pat.add_gradual_item(GI(attr, sym))
+                pat.set_support(self.calculate_support(tids))
+            # yield tuple(sorted(p_prime)), tids
+            if len(raw_p) > 1:
+                yield pat.to_string(), pat.support, tids
 
             candidates = self.item_to_tids.keys() - p_prime
             candidates = candidates[:candidates.bisect_left(limit)]
             for new_limit in candidates:
                 ids = self.item_to_tids[new_limit]
-                # print(str(tids) + ' + ' + str(ids) + ' = ' + str(tids.intersection_len(ids)))
-                # if tids.intersection_len(ids) >= self._min_supp:
-                x = tids.intersection(ids)
-                if len(x) > 1:
-                    x = np.unique(np.array(list(x))[:, 0], axis=0)
-                if len(x) >= self._min_supp:
+                supp = self.calculate_support(tids.intersection(ids))
+                if supp >= self.min_supp:
                     new_limit_tids = tids.intersection(ids)
                     yield from self._inner(p_prime, new_limit_tids, new_limit)
+
+    def calculate_support(self, tids):
+        if len(tids) > 1:
+            x = np.unique(np.array(list(tids))[:, 0], axis=0)
+            supp = len(x) / self.d_set.attr_size
+            return supp
+        else:
+            return len(tids) / self.d_set.attr_size
 
     @staticmethod
     def check_min_supp(min_supp, accept_absolute=True):
@@ -135,44 +144,3 @@ class LCM:
         else:
             raise TypeError('Mimimum support must be of type int or float')
         return min_supp
-
-
-class LCM_g(LCM):
-
-    def __init__(self, file, min_supp=0.5, n_jobs=1, verbose=False):
-        super().__init__(min_supp, n_jobs, verbose)
-        self.d_set = Dataset_dfs(file, min_supp, eq=False)
-        self.d_set.init_gp_attributes()
-        self.d_set.reduce_data()
-
-    def _fit(self, D):
-        # D = self.d_set.encoded_data
-        self.attr_size = 5
-        self.n_transactions = 0  # reset for safety
-        item_to_tids = defaultdict(set)
-        # for transaction in D:
-        for t in range(len(D)):
-            transaction = D[t][2:]
-            for item in transaction:
-                item_to_tids[item].add(tuple(D[t][:2]))
-            self.n_transactions += 1
-        print(D)
-        print(item_to_tids)
-
-        if isinstance(self.min_supp, float):
-            # make support absolute if needed
-            self._min_supp = self.min_supp * self.attr_size #self.n_transactions
-            print(self._min_supp)
-
-        # for k, v in item_to_tids.items():
-        #    print(str(v) + ' = ' + str(len(v)))
-            # print(np.array(list(v)).shape)
-        #    print(np.unique(np.array(list(v))[:, 0], axis=0))
-        # if len(v) < self._min_supp
-
-        low_supp_items = [k for k, v in item_to_tids.items() if len(np.unique(np.array(list(v))[:, 0], axis=0)) < self._min_supp]
-        for item in low_supp_items:
-            del item_to_tids[item]
-
-        self.item_to_tids = SortedDict(item_to_tids)
-        return self

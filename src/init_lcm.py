@@ -10,11 +10,29 @@ Dg = [[0, 1, 0, -1, 3], [0, 2, 0, 1, 3], [0, 3, 0, -1, 3], [0, 4, 0, 1, 3],
 # print(np.array(Dg))
 
 start = time.time()
-#lcm = LCM(min_supp=0.5)
-#p = lcm.fit_discover(D, return_tids=True)
-lcm = LCM_g('../data/DATASET.csv', min_supp=0.5)
-p = lcm.fit_discover(lcm.d_set.encoded_data, return_tids=True)
-end = time.time()
-print("Run-time: " + str(end - start) + " seconds\n")
-print(p)
+# lcm = LCM(min_supp=0.5)
+# p = lcm.fit_discover(D, return_tids=True)
+f_path = '../data/DATASET.csv'
+lcm = LCM_g(f_path, min_supp=0.5)
+p = lcm.fit_discover(return_tids=False)
+d_set = lcm.d_set
+wr_line = "Algorithm: LCM-GRAD (1.0)\n"
+wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
+wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
+wr_line += "Minimum support: " + str(lcm.min_supp) + '\n'
+# wr_line += "Number of cores: " + str(num_cores) + '\n'
+# wr_line += "Number of patterns: " + str(len(list_gp)) + '\n\n'
 
+for txt in d_set.title:
+    try:
+        wr_line += (str(txt.key) + '. ' + str(txt.value.decode()) + '\n')
+    except AttributeError:
+        wr_line += (str(txt[0]) + '. ' + str(txt[1].decode()) + '\n')
+
+wr_line += str("\nFile: " + f_path + '\n')
+wr_line += str(p)
+
+end = time.time()
+wr_text = ("Run-time: " + str(end - start) + " seconds\n")
+wr_text += str(wr_line)
+print(wr_text)
