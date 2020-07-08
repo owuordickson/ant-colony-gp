@@ -86,14 +86,14 @@ if __name__ == "__main__":
                              #default='../data/DATASET.csv',
                              #default='../data/DATASET3.csv',
                              #default='../data/Omnidir.csv',
-                             default='../data/FluTopicData-testsansdate-blank.csv',
+                             #default='../data/FluTopicData-testsansdate-blank.csv',
                              #default='../data/vehicle_silhouette_dataset.csv',
-                             #default='../data/FARSmiss.csv',
+                             default='../data/FARSmiss.csv',
                              type='string')
         optparser.add_option('-s', '--minSupport',
                              dest='minSup',
                              help='minimum support value',
-                             default=0.4,
+                             default=0.5,
                              type='float')
         optparser.add_option('-e', '--allowEqual',
                              dest='allowEq',
