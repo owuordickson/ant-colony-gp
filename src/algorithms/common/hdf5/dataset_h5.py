@@ -23,7 +23,7 @@ from pathlib import Path
 import h5py
 import gc
 import os
-from ..dataset import Dataset
+from ..dataset_bfs import Dataset
 
 # import tables
 # from src.algorithms.common.gp import GI, GP

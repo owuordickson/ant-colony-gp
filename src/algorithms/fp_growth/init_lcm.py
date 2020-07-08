@@ -1,4 +1,5 @@
-from algorithms.fp_growth.lcm.lcm import LCM, LCM_g
+from algorithms.fp_growth.lcm.lcm import LCM
+from algorithms.common.lcm_grad import LCM_g
 import time
 import numpy as np
 

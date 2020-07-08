@@ -10,7 +10,7 @@
 import numpy as np
 import gc
 from ..common.fuzzy_mf import calculate_time_lag
-from ..common.dataset import Dataset
+from ..common.dataset_bfs import Dataset
 from ..common.gp import GI, GP, TGP
 
 

@@ -16,7 +16,7 @@ Changes
 
 import numpy as np
 import gc
-from .dataset import Dataset
+from .dataset_bfs import Dataset
 
 
 class Dataset_dfs(Dataset):

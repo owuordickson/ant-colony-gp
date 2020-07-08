@@ -19,7 +19,7 @@ import multiprocessing as mp
 import os
 from pathlib import Path
 import h5py
-from ..common.dataset import Dataset
+from ..common.dataset_bfs import Dataset
 from ..common.profile_cpu import Profile
 from .graank_v2 import graank
 

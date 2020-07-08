@@ -5,10 +5,9 @@
 @license: "MIT"
 @version: "2.0"
 @email: "owuordickson@gmail.com"
-@created: "18 November 2019"
-@modified: "20 June 2020"
+@created: "06 July 2020"
 
-Depth-First Search for gradual patterns (ACO-ParaMiner)
+Breath-First Search for gradual patterns (ACO-GRAANK)
 
 Usage:
     $python init_acograd.py -f ../data/DATASET.csv -s 0.5
@@ -22,7 +21,7 @@ Description:
 import sys
 from optparse import OptionParser
 from algorithms.common.profile_cpu import Profile
-from algorithms.ant_colony.aco_grad_dfs import GradACO_dfs
+from algorithms.ant_colony.aco_grad import GradACO
 
 
 def init_algorithm(f_path, min_supp, cores, eq=False):
@@ -31,7 +30,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
             num_cores = cores
         else:
             num_cores = Profile.get_num_cores()
-        ac = GradACO_dfs(f_path, min_supp, eq)
+        ac = GradACO(f_path, min_supp, eq)
         list_gp = ac.run_ant_colony()
 
         d_set = ac.d_set
@@ -84,12 +83,12 @@ if __name__ == "__main__":
                              dest='file',
                              help='path to file containing csv',
                              # default=None,
-                             default='../data/DATASET.csv',
+                             #default='../data/DATASET.csv',
                              #default='../data/DATASET3.csv',
                              #default='../data/Omnidir.csv',
                              #default='../data/FluTopicData-testsansdate-blank.csv',
                              #default='../data/vehicle_silhouette_dataset.csv',
-                             #default='../data/FARSmiss.csv',
+                             default='../data/FARSmiss.csv',
                              type='string')
         optparser.add_option('-s', '--minSupport',
                              dest='minSup',

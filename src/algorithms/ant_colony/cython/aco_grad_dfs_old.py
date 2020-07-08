@@ -27,7 +27,8 @@ class GradACO_dfs(GradACO):
         self.c_matrix = self.d_set.cost_matrix
         self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=int)
         # Data set reduction and update: (p_matrix, attr_index)
-        self.bins, self.indices = self.reduce_data()
+        # self.bins, self.indices = self.reduce_data()
+        self.reduce_data()
         self.attr_index = self.d_set.attr_cols
         # self.e_factor = 0.1  # evaporation factor
         print(self.d_set.encoded_data)
@@ -50,14 +51,13 @@ class GradACO_dfs(GradACO):
         self.d_set.attr_cols = self.d_set.attr_cols[valid_a1]
         valid_a2 = np.array(valid_a2) + 2
         self.d_set.encoded_data = self.d_set.encoded_data[:, valid_a2]
-
         # 2. merge similar patterns
         # 2a. get indices
-        vals, inverse, count = np.unique(self.d_set.encoded_data[:, 2:],
-                                         return_inverse=True,
-                                         return_counts=True,
-                                         axis=0)
-        return vals, inverse
+        # vals, inverse, count = np.unique(self.d_set.encoded_data[:, 2:],
+        #                                 return_inverse=True,
+        #                                 return_counts=True,
+        #                                 axis=0)
+        # return vals, inverse
 
     def generate_random_gp(self):
         p = self.p_matrix
@@ -120,31 +120,4 @@ class GradACO_dfs(GradACO):
                 indices.extend(temp)
             arr_nodes = enc_data[indices, :2]
             length = np.unique(arr_nodes[:, 0], axis=0).size + 1
-            # length = GradACO.count_nodes(arr_nodes)
-            # print(nodes)
-            # print("Indices of " + str(lst_sym) + " are: " + str(indices))
-            # print(str(lst_attr) + ' + ' + str(self.attr_index) + ' = ' + str(lst_indx))
-            # print(str(str(lst_sym) + ' is at index ' + str(temp_i)))
-            # print(str(lst_attr) + ' , ' + str(lst_sym) + ' : length = ' + str(length))
             return length, zip(lst_attr, lst_sym)
-        # indx = 300  # self.d_set.start_node[0]
-
-        # lst_indx = [np.argwhere(self.attr_index == x)[0][0] for x in lst_attr]
-        # print(str(lst_attr) + ' + ' + str(self.attr_index) + ' = ' + str(lst_indx))
-        # path = np.where((lst_sym == st_nodes[2][:, lst_attr]), True, False)
-        # node = GradACO.find_node(indx, arr_p[2][:, lst_attr], lst_sym)
-        # print(str(lst_attr) + ' : ' + str(arr_p[2][:, lst_attr]) + ' + ' + str(lst_sym) + ' = ' + str(node))
-        # while 0 < indx < (self.d_set.attr_size - 1):
-            # print("running " + str(indx) + " ...")
-        #    arr_p = enc_data[indx]
-        #    node = GradACO.find_node(indx, arr_p[1][:, lst_indx], lst_sym)
-        #    if len(node) > 0:
-        #        if length == 0:
-        #            length += 2
-        #        else:
-        #            length += 1
-        #        indx = node[1]
-        #    else:
-        #        indx = -1
-        # print(str(lst_attr) + ' , ' + str(lst_sym) + ' : length = ' + str(length))
-        # return length, zip(lst_attr, lst_sym)
