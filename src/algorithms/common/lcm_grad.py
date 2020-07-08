@@ -44,8 +44,8 @@ class LCM_g:
             for item in transaction:
                 item_to_tids[item].add(tuple(D[t][:2]))
             self.n_transactions += 1
-        print(D)
-        print(item_to_tids)
+        # print(D)
+        # print(item_to_tids)
 
         if isinstance(self.min_supp, float):
             # make support absolute if needed
@@ -61,7 +61,7 @@ class LCM_g:
     def fit_discover(self, return_tids=False):
 
         self._fit()
-        empty_df = pd.DataFrame(columns=['itemset', 'support', 'tids'])
+        empty_df = pd.DataFrame(columns=['pattern', 'support', 'tids'])
 
         # reverse order of support
         supp_sorted_items = sorted(self.item_to_tids.items(), key=lambda e: len(e[1]), reverse=True)
@@ -79,7 +79,7 @@ class LCM_g:
 
     def _explore_item(self, item, tids):
         it = self._inner(frozenset(), tids, item)
-        df = pd.DataFrame(data=it, columns=['itemset', 'support', 'tids'])
+        df = pd.DataFrame(data=it, columns=['pattern', 'support', 'tids'])
         if self.verbose and not df.empty:
             print('LCM found {} new itemsets from item : {}'.format(len(df), item))
         return df
