@@ -146,6 +146,7 @@ class LCM_g(LCM):
         self.d_set.reduce_data()
 
     def _fit(self, D):
+        # D = self.d_set.encoded_data
         self.attr_size = 5
         self.n_transactions = 0  # reset for safety
         item_to_tids = defaultdict(set)

@@ -66,11 +66,12 @@ class Dataset_dfs(Dataset):
             for col in self.attr_cols:
                 row_in = attr_data[col][i]
                 row_js = attr_data[col][(i+1):size]
-                row = np.where(row_js > row_in, 1, np.where(row_js < row_in, -1, 0))
+                v = col + 1
+                row = np.where(row_js > row_in, v, np.where(row_js < row_in, -v, 0))
                 temp_arr[k] = row
                 k += 1
-                pos_cost = np.count_nonzero(row == 1)
-                neg_cost = np.count_nonzero(row == -1)
+                pos_cost = np.count_nonzero(row == v)
+                neg_cost = np.count_nonzero(row == -v)
                 inv_cost = np.count_nonzero(row == 0)
                 self.cost_matrix[col][0] += (neg_cost + inv_cost)
                 self.cost_matrix[col][1] += (pos_cost + inv_cost)
