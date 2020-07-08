@@ -27,36 +27,10 @@ class GradACO_dfs:
         self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=int)
         # Data set reduction and update: (p_matrix, attr_index)
         # self.bins, self.indices = self.reduce_data()
-        self.reduce_data()
+        self.d_set.reduce_data(self.p_matrix)
         self.attr_index = self.d_set.attr_cols
         # self.e_factor = 0.1  # evaporation factor
         print(self.d_set.encoded_data)
-
-    def reduce_data(self):
-        c_matrix = self.c_matrix
-        # 1. remove invalid attributes
-        valid_a1 = list()
-        valid_a2 = [-2, -1]
-        for i in range(len(self.d_set.attr_cols)):
-            a = self.d_set.attr_cols[i]
-            valid = (c_matrix[a][0] < c_matrix[a][2]) or \
-                    (c_matrix[a][1] < c_matrix[a][2])
-            if valid:
-                valid_a1.append(i)
-                valid_a2.append(i)
-            else:
-                self.p_matrix[a][0] = 0
-                self.p_matrix[a][1] = 0
-        self.d_set.attr_cols = self.d_set.attr_cols[valid_a1]
-        valid_a2 = np.array(valid_a2) + 2
-        self.d_set.encoded_data = self.d_set.encoded_data[:, valid_a2]
-        # 2. merge similar patterns
-        # 2a. get indices
-        # vals, inverse, count = np.unique(self.d_set.encoded_data[:, 2:],
-        #                                 return_inverse=True,
-        #                                 return_counts=True,
-        #                                 axis=0)
-        # return vals, inverse
 
     def generate_random_gp(self):
         p = self.p_matrix

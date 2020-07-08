@@ -83,3 +83,32 @@ class Dataset_dfs(Dataset):
             encoded_data.extend(temp_arr)
         gc.collect()
         return encoded_data
+
+    def reduce_data(self, p_matrix=None):
+        c_matrix = self.cost_matrix
+        # 1. remove invalid attributes
+        valid_a1 = list()
+        valid_a2 = [-2, -1]
+        for i in range(len(self.attr_cols)):
+            a = self.attr_cols[i]
+            valid = (c_matrix[a][0] < c_matrix[a][2]) or \
+                    (c_matrix[a][1] < c_matrix[a][2])
+            if valid:
+                valid_a1.append(i)
+                valid_a2.append(i)
+            else:
+                if p_matrix is None:
+                    pass
+                else:
+                    p_matrix[a][0] = 0
+                    p_matrix[a][1] = 0
+        self.attr_cols = self.attr_cols[valid_a1]
+        valid_a2 = np.array(valid_a2) + 2
+        self.encoded_data = self.encoded_data[:, valid_a2]
+        # 2. merge similar patterns
+        # 2a. get indices
+        # vals, inverse, count = np.unique(self.d_set.encoded_data[:, 2:],
+        #                                 return_inverse=True,
+        #                                 return_counts=True,
+        #                                 axis=0)
+        # return vals, inverse

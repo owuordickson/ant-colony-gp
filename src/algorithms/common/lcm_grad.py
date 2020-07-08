@@ -15,6 +15,8 @@ from joblib import Parallel, delayed
 from sortedcontainers import SortedDict
 from roaringbitmap import RoaringBitmap as RB
 
+from .dataset_dfs import Dataset_dfs
+
 
 class LCM:
 
@@ -137,8 +139,11 @@ class LCM:
 
 class LCM_g(LCM):
 
-    def __init__(self, *, min_supp=0.2, n_jobs=1, verbose=False):
+    def __init__(self, file, min_supp=0.5, n_jobs=1, verbose=False):
         super().__init__(min_supp, n_jobs, verbose)
+        self.d_set = Dataset_dfs(file, min_supp, eq=False)
+        self.d_set.init_gp_attributes()
+        self.d_set.reduce_data()
 
     def _fit(self, D):
         self.attr_size = 5
