@@ -22,14 +22,14 @@ from ..common.dataset_dfs import Dataset_dfs
 
 class LcmACO(LCM_g):
 
-    def __init__(self, f_path, min_supp, eq):
+    def __init__(self, f_path, min_supp):
         print("LcmACO: Version 1.0")
         self.min_supp = min_supp  # provided by user
         self._min_supp = LCM_g.check_min_supp(self.min_supp)
         self.item_to_tids = None
         self.n_transactions = 0
         self.ctr = 0
-        # self.n_jobs = n_jobs
+        self.n_jobs = 1  # to be removed
 
         self.d_set = Dataset_dfs(f_path, min_supp, eq=False)
         self.d_set.init_gp_attributes()
