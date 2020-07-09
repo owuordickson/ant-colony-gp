@@ -45,7 +45,7 @@ class LCM_g:
                 item_to_tids[item].add(tuple(D[t][:2]))
             self.n_transactions += 1
         # print(D)
-        print(item_to_tids)
+        # print(item_to_tids)
 
         if isinstance(self.min_supp, float):
             # make support absolute if needed
@@ -65,9 +65,9 @@ class LCM_g:
 
         # reverse order of support
         supp_sorted_items = sorted(self.item_to_tids.items(), key=lambda e: len(e[1]), reverse=True)
-
         dfs = Parallel(n_jobs=self.n_jobs, prefer='processes')(
-            delayed(self._explore_item)(item, tids) for item, tids in supp_sorted_items
+            delayed(self._explore_item)(item, tids, 1) for item, tids in supp_sorted_items
+            # delayed(self._explore_item)(item, tids, 1) for item, tids in supp_sorted_items if item == 2
         )
 
         dfs.append(empty_df)  # make sure we have something to concat
@@ -77,15 +77,14 @@ class LCM_g:
             df.drop('tids', axis=1, inplace=True)
         return df
 
-    def _explore_item(self, item, tids):
-        it = self._inner(frozenset(), tids, item)
+    def _explore_item(self, item, tids, no):
+        it = self._inner(frozenset(), tids, item, no)
         df = pd.DataFrame(data=it, columns=['pattern', 'support', 'tids'])
         if self.verbose and not df.empty:
             print('LCM found {} new itemsets from item : {}'.format(len(df), item))
         return df
 
-    def _inner(self, p, tids, limit):
-        print(str(p) + ' + ' + str(tids) + ' + ' + str(limit))
+    def _inner(self, p, tids, limit, no):
         # project and reduce DB w.r.t P
         cp = (
             item for item, ids in reversed(self.item_to_tids.items())
@@ -93,11 +92,10 @@ class LCM_g:
         )
 
         max_k = next(cp, None)  # items are in reverse order, so the first consumed is the max
-        print(str(set(cp)) + ' + ' + str({max_k}))
+
         if max_k and max_k == limit:
             p_prime = p | set(cp) | {max_k}  # max_k has been consumed when calling next()
             # sorted items in ouput for better reproducibility
-            print(str(p) + ' u ' + str(set(cp)) + ' u ' + str({max_k}) + ' = ' + str(p_prime) + '\n')
             raw_p = tuple(sorted(p_prime))
             pat = GP()
             for a in raw_p:
@@ -118,10 +116,10 @@ class LCM_g:
             candidates = candidates[:candidates.bisect_left(limit)]
             for new_limit in candidates:
                 ids = self.item_to_tids[new_limit]
-                supp = self.calculate_support(tids.intersection(ids))
+                new_limit_tids = tids.intersection(ids)
+                supp = self.calculate_support(new_limit_tids)
                 if supp >= self.min_supp:
-                    new_limit_tids = tids.intersection(ids)
-                    yield from self._inner(p_prime, new_limit_tids, new_limit)
+                    yield from self._inner(p_prime, new_limit_tids, new_limit, 2)
 
     def calculate_support(self, tids):
         if len(tids) > 1:

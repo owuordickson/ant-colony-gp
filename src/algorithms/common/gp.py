@@ -64,7 +64,10 @@ class GP:
         self.support = round(support, 3)
 
     def add_gradual_item(self, item):
-        self.gradual_items.append(item)
+        if item.symbol == '-' or item.symbol == '+':
+            self.gradual_items.append(item)
+        else:
+            pass
 
     def get_pattern(self):
         pattern = list()
