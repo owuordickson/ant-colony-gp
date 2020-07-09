@@ -35,10 +35,10 @@ class LcmACO(LCM_g):
         self.d_set.init_gp_attributes()
         self.c_matrix = self.d_set.cost_matrix
         self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=int)
-        self.d_set.reduce_data()
+        self.d_set.reduce_data(p_matrix=self.p_matrix)
         self.attr_index = self.d_set.attr_cols
         # self.e_factor = 0.1  # evaporation factor
-        # print(self.d_set.cost_matrix)
+        print(self.d_set.cost_matrix)
         # print(self.d_set.encoded_data)
 
     def fit_discover(self, return_tids=False):
