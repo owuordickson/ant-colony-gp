@@ -32,7 +32,7 @@ def init_algorithm(f_path, min_supp, cores):
         else:
             num_cores = Profile.get_num_cores()
         ac = LcmACO(f_path, min_supp)
-        df_gp = ac.run_ant_colony(return_tids=True)
+        df_gp = ac.run_ant_colony(return_tids=False)
         # df_gp = ac.fit_discover(return_tids=True)
 
         d_set = ac.d_set

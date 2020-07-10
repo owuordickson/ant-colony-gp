@@ -15,7 +15,6 @@ import numpy as np
 from numpy import random as rand
 import pandas as pd
 from collections import defaultdict
-# from sortedcontainers import SortedDict
 
 # from joblib import Parallel, delayed
 from ..common.lcm_grad import LCM_g
@@ -29,9 +28,7 @@ class LcmACO(LCM_g):
         print("LcmACO: Version 1.0")
         self.min_supp = min_supp  # provided by user
         self._min_supp = LCM_g.check_min_supp(self.min_supp)
-        self.item_to_tids = None
-        self.n_transactions = 0
-        self.ctr = 0
+        # self.item_to_tids = None
         # self.n_jobs = 1  # to be removed
 
         self.d_set = Dataset_dfs(f_path, min_supp, eq=False)
@@ -51,7 +48,6 @@ class LcmACO(LCM_g):
 
     def _fit(self):
         D = self.d_set.encoded_data
-        self.n_transactions = 0  # reset for safety
         item_to_tids = defaultdict(set)
         # for transaction in D:
         for t in range(len(D)):
@@ -60,105 +56,17 @@ class LcmACO(LCM_g):
                 item_to_tids[item].add(tuple(D[t][:2]))
                 # cost_matrix[D[t][0], D[t][1]] += 1
                 # cost_matrix[D[t][1], D[t][0]] += 1
-            self.n_transactions += 1
 
         if isinstance(self.min_supp, float):
             # make support absolute if needed
             self._min_supp = self.min_supp * self.size
 
-        low_supp_items = [k for k, v in item_to_tids.items() if len(np.unique(np.array(list(v))[:, 0], axis=0)) < self._min_supp]
+        low_supp_items = [k for k, v in item_to_tids.items()
+                          if len(np.unique(np.array(list(v))[:, 0], axis=0))
+                          < self._min_supp]
         for item in low_supp_items:
             del item_to_tids[item]
-
-        tids = item_to_tids.values()
-        for nodes in tids:
-            idx = np.array(list(nodes))
-            np.add.at(self.c_matrix, (idx[:, 0], idx[:, 1]), 1)
-        self.c_matrix = 1 / self.c_matrix
-
-        # print(self.c_matrix)
-        # self.large_tids = np.argwhere(self.count_matrix ==
-        # self.count_matrix.max())
-        # print(self.large_tids)
-        print(self.c_matrix)
-        self.generate_random_node(0)
-        print("\n\n")
-
-        # self.item_to_tids = SortedDict(item_to_tids)
-        self.item_to_tids = item_to_tids
-        return self
-
-    def fit_discover(self, return_tids=False):
-
-        self._fit()
-        # self.attr_index = np.array(self.item_to_tids.keys())
-        empty_df = pd.DataFrame(columns=['pattern', 'support', 'tids'])
-
-        # reverse order of support
-        # supp_sorted_items = sorted(self.item_to_tids.items(), key=lambda e: len(e[1]), reverse=True)
-        # print(self.attr_index)
-        # print(supp_sorted_items)
-        # dfs = Parallel(n_jobs=self.n_jobs, prefer='processes')(
-        #    delayed(self._explore_item)(item, tids, 1) for item, tids in supp_sorted_items
-            # delayed(self._explore_item)(item, tids, 1) for item, tids in supp_sorted_items if item == 2
-        # )
-        dfs = list()
-        # for item, tids in supp_sorted_items:
-        #     dfs.append(self._explore_item(item, tids, 1))
-
-        dfs.append(empty_df)  # make sure we have something to concat
-        df = pd.concat(dfs, axis=0, ignore_index=True)
-        if not return_tids:
-            # df.loc[:, 'support'] = df['tids'].map(len).astype(np.uint32)
-            df.drop('tids', axis=1, inplace=True)
-        return df
-
-    def _explore_item(self, item, tids, no):
-        it = self._inner(frozenset(), tids, item, no)
-        df = pd.DataFrame(data=it, columns=['pattern', 'support', 'tids'])
-        return df
-
-    def _inner(self, p, tids, limit, no):
-        print(str(no) + '. ' + str(p) + ' + ' + str(tids) + ' + ' + str(limit))
-        # project and reduce DB w.r.t P
-        cp = (
-            item for item, ids in reversed(self.item_to_tids.items())
-            if tids.issubset(ids) if item not in p
-        )
-
-        max_k = next(cp, None)  # items are in reverse order, so the first consumed is the max
-        print(str(set(cp)) + ' + ' + str({max_k}))
-        if max_k and max_k == limit:
-            p_prime = p | set(cp) | {max_k}  # max_k has been consumed when calling next()
-            # sorted items in ouput for better reproducibility
-            print(str(p) + ' u ' + str(set(cp)) + ' u ' + str({max_k}) + ' = ' + str(p_prime) + '\n')
-            raw_p = tuple(sorted(p_prime))
-            pat = GP()
-            for a in raw_p:
-                if a < 0:
-                    sym = '-'
-                elif a > 0:
-                    sym = '+'
-                else:
-                    sym = 'x'
-                attr = abs(a) - 1
-                pat.add_gradual_item(GI(attr, sym))
-                pat.set_support(self.calculate_support(tids))
-            # yield tuple(sorted(p_prime)), tids
-            if len(raw_p) > 1:
-                yield pat.to_string(), pat.support, tids
-
-            candidates = self.item_to_tids.keys() - p_prime
-            # print(candidates)
-            # print(str(limit) + ' : ' + str(candidates.bisect_left(limit)))
-            candidates = candidates[:candidates.bisect_left(limit)]
-            # print(str(candidates) + '\n\n')
-            for new_limit in candidates:
-                ids = self.item_to_tids[new_limit]
-                new_limit_tids = tids.intersection(ids)
-                supp = self.calculate_support(new_limit_tids)
-                if supp >= self.min_supp:
-                    yield from self._inner(p_prime, new_limit_tids, new_limit, 2)
+        return item_to_tids
 
     def generate_random_node(self, i):
         C = self.c_matrix
@@ -227,27 +135,68 @@ class LcmACO(LCM_g):
             (1 - self.e_factor) * self.p_matrix[node[0], node[1]]
 
     def run_ant_colony(self, return_tids=False):
-        self._fit()
         empty_df = pd.DataFrame(columns=['pattern', 'support', 'tids'])
         dfs = list()
 
-        # reverse order of support
-        # supp_sorted_items = sorted(self.item_to_tids.items(), key=lambda e: len(e[1]), reverse=True)
-        # print(self.attr_index)
-        # print(supp_sorted_items)
-        # dfs = Parallel(n_jobs=self.n_jobs, prefer='processes')(
-        #    delayed(self._explore_item)(item, tids, 1) for item, tids in supp_sorted_items
-        # delayed(self._explore_item)(item, tids, 1) for item, tids in supp_sorted_items if item == 2
-        # )
-        # for item, tids in supp_sorted_items:
-        #     dfs.append(self._explore_item(item, tids, 1))
+        item_to_tids = self._fit()
+        tids = item_to_tids.values()
+        for nodes in tids:
+            idx = np.array(list(nodes))
+            np.add.at(self.c_matrix, (idx[:, 0], idx[:, 1]), 1)
+        self.c_matrix = 1 / self.c_matrix
 
+        i = 0
+        lst_attrs = list()
+        lst_gp = list()
+        while i < self.size:
+            temp_tid = None
+            temp_attrs = list()
+            node = self.generate_random_node(i)
+            if len(node) > 1:
+                for k, v in item_to_tids.items():
+                    if node in v:
+                        temp_attrs.append(k)
+                        if temp_tid is None:
+                            temp_tid = v
+                        else:
+                            temp_tid = temp_tid.intersection(v)
+                # check for subset or equality (attrs and temp_attrs)
+                if temp_attrs in lst_attrs or len(temp_tid) <= 0:
+                    i += 1
+                    # continue
+                    break
+                else:
+                    supp = self.calculate_support(temp_tid)
+                    if supp >= self.min_supp:
+                        self.deposit_pheromone(node)
+                        gp = LcmACO.construct_gp(temp_attrs, supp)
+                        lst_attrs.append(temp_attrs)
+                        lst_gp.append([gp.to_string(), supp, temp_tid])
+                    else:
+                        self.evaporate_pheromone(node)
+            i += 1
+
+        dfs.append(pd.DataFrame(data=lst_gp, columns=['pattern', 'support', 'tids']))
         dfs.append(empty_df)  # make sure we have something to concat
         df = pd.concat(dfs, axis=0, ignore_index=True)
         if not return_tids:
-            # df.loc[:, 'support'] = df['tids'].map(len).astype(np.uint32)
             df.drop('tids', axis=1, inplace=True)
         return df
+
+    @staticmethod
+    def construct_gp(lst_attrs, supp):
+        pat = GP()
+        for a in lst_attrs:
+            if a < 0:
+                sym = '-'
+            elif a > 0:
+                sym = '+'
+            else:
+                sym = 'x'
+            attr = abs(a) - 1
+            pat.add_gradual_item(GI(attr, sym))
+        pat.set_support(supp)
+        return pat
 
     # @staticmethod
     # def largest_index(a, k):
