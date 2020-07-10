@@ -26,7 +26,7 @@ def init_algorithm(f_path, min_supp, cores):
         else:
             num_cores = Profile.get_num_cores()
 
-        lcm = LCM_g(f_path, min_supp, n_jobs=1)  # num_cores)
+        lcm = LCM_g(f_path, min_supp, n_jobs=num_cores)
         gp = lcm.fit_discover(return_tids=False)
 
         d_set = lcm.d_set
@@ -70,10 +70,10 @@ if __name__ == "__main__":
                              dest='file',
                              help='path to file containing csv',
                              # default=None,
-                             default='../data/DATASET.csv',
+                             #default='../data/DATASET.csv',
                              #default='../data/Omnidir.csv',
                              #default='../data/FARSmiss.csv',
-                             #default='../data/FluTopicData-testsansdate-blank.csv',
+                             default='../data/FluTopicData-testsansdate-blank.csv',
                              type='string')
         optparser.add_option('-s', '--minSupport',
                              dest='minSup',

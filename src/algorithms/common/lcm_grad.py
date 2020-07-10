@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 from joblib import Parallel, delayed
 from sortedcontainers import SortedDict
-from roaringbitmap import RoaringBitmap as RB
+# from roaringbitmap import RoaringBitmap as RB
 
 from .dataset_dfs import Dataset_dfs
 from .gp import GI, GP
