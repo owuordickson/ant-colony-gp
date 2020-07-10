@@ -54,8 +54,6 @@ class LcmACO(LCM_g):
             transaction = D[t][2:]
             for item in transaction:
                 item_to_tids[item].add(tuple(D[t][:2]))
-                # cost_matrix[D[t][0], D[t][1]] += 1
-                # cost_matrix[D[t][1], D[t][0]] += 1
 
         if isinstance(self.min_supp, float):
             # make support absolute if needed
@@ -66,6 +64,11 @@ class LcmACO(LCM_g):
                           < self._min_supp]
         for item in low_supp_items:
             del item_to_tids[item]
+        tids = item_to_tids.values()
+        for nodes in tids:
+            idx = np.array(list(nodes))
+            np.add.at(self.c_matrix, (idx[:, 0], idx[:, 1]), 1)
+        self.c_matrix = 1 / self.c_matrix
         return item_to_tids
 
     def generate_random_node(self, i):
@@ -137,13 +140,7 @@ class LcmACO(LCM_g):
     def run_ant_colony(self, return_tids=False):
         empty_df = pd.DataFrame(columns=['pattern', 'support', 'tids'])
         dfs = list()
-
         item_to_tids = self._fit()
-        tids = item_to_tids.values()
-        for nodes in tids:
-            idx = np.array(list(nodes))
-            np.add.at(self.c_matrix, (idx[:, 0], idx[:, 1]), 1)
-        self.c_matrix = 1 / self.c_matrix
 
         i = 0
         lst_attrs = list()
@@ -197,10 +194,3 @@ class LcmACO(LCM_g):
             pat.add_gradual_item(GI(attr, sym))
         pat.set_support(supp)
         return pat
-
-    # @staticmethod
-    # def largest_index(a, k):
-        # idx = np.argsort(a.ravel())[:-k - 1:-1]
-        # return np.column_stack(np.unravel_index(idx, a.shape))
-        # idx = np.argpartition(a.ravel(), a.size - k)[-k:]
-        # return np.column_stack(np.unravel_index(idx, a.shape))
