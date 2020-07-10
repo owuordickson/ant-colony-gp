@@ -15,7 +15,7 @@ import numpy as np
 from numpy import random as rand
 import pandas as pd
 from collections import defaultdict
-from sortedcontainers import SortedDict
+# from sortedcontainers import SortedDict
 
 # from joblib import Parallel, delayed
 from ..common.lcm_grad import LCM_g
@@ -44,7 +44,7 @@ class LcmACO(LCM_g):
         self.c_matrix = np.ones((self.size, self.size), dtype=np.float64)
         self.p_matrix = np.ones((self.size, self.size), dtype=np.int64)
         np.fill_diagonal(self.p_matrix, 0)
-        self.e_factor = 0.1  # evaporation factor
+        self.e_factor = 0.5  # evaporation factor
         # self.large_tids = np.array([])
         # self.attr_index = self.d_set.attr_cols
         # self.e_factor = 0.1  # evaporation factor
@@ -100,16 +100,16 @@ class LcmACO(LCM_g):
         empty_df = pd.DataFrame(columns=['pattern', 'support', 'tids'])
 
         # reverse order of support
-        supp_sorted_items = sorted(self.item_to_tids.items(), key=lambda e: len(e[1]), reverse=True)
+        # supp_sorted_items = sorted(self.item_to_tids.items(), key=lambda e: len(e[1]), reverse=True)
         # print(self.attr_index)
-        print(supp_sorted_items)
+        # print(supp_sorted_items)
         # dfs = Parallel(n_jobs=self.n_jobs, prefer='processes')(
         #    delayed(self._explore_item)(item, tids, 1) for item, tids in supp_sorted_items
             # delayed(self._explore_item)(item, tids, 1) for item, tids in supp_sorted_items if item == 2
         # )
         dfs = list()
-        for item, tids in supp_sorted_items:
-            dfs.append(self._explore_item(item, tids, 1))
+        # for item, tids in supp_sorted_items:
+        #     dfs.append(self._explore_item(item, tids, 1))
 
         dfs.append(empty_df)  # make sure we have something to concat
         df = pd.concat(dfs, axis=0, ignore_index=True)
@@ -212,22 +212,26 @@ class LcmACO(LCM_g):
             # pattern.add_gradual_item(temp)
         # return candidate
 
-    def deposit_pheromone(self, pattern):
-        lst_attr = []
-        for obj in pattern.gradual_items:
-            # print(obj.attribute_col)
-            attr = obj.attribute_col
-            symbol = obj.symbol
-            lst_attr.append(attr)
-            i = attr
-            if symbol == '+':
-                self.p_matrix[i][0] += 1
-            elif symbol == '-':
-                self.p_matrix[i][1] += 1
-        for index in self.item_to_tids.keys():
-            if (int(index) - 1) not in lst_attr:
-                i = int(index)
-                self.p_matrix[i][2] += 1
+    def deposit_pheromone(self, node):
+        self.p_matrix[node[0], node[1]] += 1
+        # lst_attr = []
+        # for obj in pattern.gradual_items:
+        #     print(obj.attribute_col)
+        #    attr = obj.attribute_col
+        #    symbol = obj.symbol
+        #    lst_attr.append(attr)
+        #    i = attr
+        #    if symbol == '+':
+        #        self.p_matrix[i][0] += 1
+        #    elif symbol == '-':
+        #        self.p_matrix[i][1] += 1
+        # for index in self.item_to_tids.keys():
+        #    if (int(index) - 1) not in lst_attr:
+        #        i = int(index)
+        #        self.p_matrix[i][2] += 1
+
+    def evaporate_pheromone(self, node):
+        self.p_matrix[node[0], node[1]] = (1 - self.e_factor) * self.p_matrix[node[0], node[1]]
 
     def validate_gp(self, pattern):
         pass
