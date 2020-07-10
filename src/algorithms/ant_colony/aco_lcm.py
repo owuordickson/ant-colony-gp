@@ -36,11 +36,8 @@ class LcmACO(LCM_g):
 
         self.d_set = Dataset_dfs(f_path, min_supp, eq=False)
         self.d_set.init_gp_attributes()
-        # self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=np.int64)
-        # self.d_set.reduce_data(p_matrix=self.p_matrix)
         self.d_set.reduce_data()
         self.size = self.d_set.attr_size
-        # self.c_matrix = self.d_set.cost_matrix
         self.c_matrix = np.ones((self.size, self.size), dtype=np.float64)
         self.p_matrix = np.ones((self.size, self.size), dtype=np.int64)
         np.fill_diagonal(self.p_matrix, 0)
@@ -64,9 +61,6 @@ class LcmACO(LCM_g):
                 # cost_matrix[D[t][0], D[t][1]] += 1
                 # cost_matrix[D[t][1], D[t][0]] += 1
             self.n_transactions += 1
-        # print(D)
-        # print(cost_matrix)
-        # print(item_to_tids)
 
         if isinstance(self.min_supp, float):
             # make support absolute if needed
@@ -80,11 +74,12 @@ class LcmACO(LCM_g):
         for nodes in tids:
             idx = np.array(list(nodes))
             np.add.at(self.c_matrix, (idx[:, 0], idx[:, 1]), 1)
+        self.c_matrix = 1 / self.c_matrix
 
         # print(self.c_matrix)
-        # self.large_tids = np.argwhere(self.count_matrix == self.count_matrix.max())
+        # self.large_tids = np.argwhere(self.count_matrix ==
+        # self.count_matrix.max())
         # print(self.large_tids)
-        self.c_matrix = 1 / self.c_matrix
         print(self.c_matrix)
         self.generate_random_node(0)
         print("\n\n")
@@ -176,10 +171,7 @@ class LcmACO(LCM_g):
         for j in range((i + 1), n):
             p_sum = np.sum(ph[(i+1):(j+1)])
             pr = p_sum / tot_sum
-            # pr = ph[j] / tot_sum
-            print(pr)
             if x < pr:
-                print(tuple([i, j]))
                 return tuple([i, j])
         return tuple([])
         #    print(pr)
@@ -231,14 +223,35 @@ class LcmACO(LCM_g):
         #        self.p_matrix[i][2] += 1
 
     def evaporate_pheromone(self, node):
-        self.p_matrix[node[0], node[1]] = (1 - self.e_factor) * self.p_matrix[node[0], node[1]]
+        self.p_matrix[node[0], node[1]] = \
+            (1 - self.e_factor) * self.p_matrix[node[0], node[1]]
 
-    def validate_gp(self, pattern):
-        pass
+    def run_ant_colony(self, return_tids=False):
+        self._fit()
+        empty_df = pd.DataFrame(columns=['pattern', 'support', 'tids'])
+        dfs = list()
 
-    @staticmethod
-    def largest_index(a, k):
+        # reverse order of support
+        # supp_sorted_items = sorted(self.item_to_tids.items(), key=lambda e: len(e[1]), reverse=True)
+        # print(self.attr_index)
+        # print(supp_sorted_items)
+        # dfs = Parallel(n_jobs=self.n_jobs, prefer='processes')(
+        #    delayed(self._explore_item)(item, tids, 1) for item, tids in supp_sorted_items
+        # delayed(self._explore_item)(item, tids, 1) for item, tids in supp_sorted_items if item == 2
+        # )
+        # for item, tids in supp_sorted_items:
+        #     dfs.append(self._explore_item(item, tids, 1))
+
+        dfs.append(empty_df)  # make sure we have something to concat
+        df = pd.concat(dfs, axis=0, ignore_index=True)
+        if not return_tids:
+            # df.loc[:, 'support'] = df['tids'].map(len).astype(np.uint32)
+            df.drop('tids', axis=1, inplace=True)
+        return df
+
+    # @staticmethod
+    # def largest_index(a, k):
         # idx = np.argsort(a.ravel())[:-k - 1:-1]
         # return np.column_stack(np.unravel_index(idx, a.shape))
-        idx = np.argpartition(a.ravel(), a.size - k)[-k:]
-        return np.column_stack(np.unravel_index(idx, a.shape))
+        # idx = np.argpartition(a.ravel(), a.size - k)[-k:]
+        # return np.column_stack(np.unravel_index(idx, a.shape))
