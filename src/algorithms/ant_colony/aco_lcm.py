@@ -13,6 +13,7 @@ Depth-First Search for gradual patterns (ACO-LCM)
 
 import numpy as np
 from numpy import random as rand
+import gc
 import pandas as pd
 from collections import defaultdict
 
@@ -32,8 +33,7 @@ class LcmACO(LCM_g):
         # self.n_jobs = 1  # to be removed
 
         self.d_set = Dataset_dfs(f_path, min_supp, eq=False)
-        self.d_set.init_gp_attributes()
-        self.d_set.reduce_data()
+        self.D = self.d_set.remove_inv_attrs(self.d_set.encode_data())
         self.size = self.d_set.attr_size
         self.c_matrix = np.ones((self.size, self.size), dtype=np.float64)
         self.p_matrix = np.ones((self.size, self.size), dtype=np.int64)
@@ -47,14 +47,15 @@ class LcmACO(LCM_g):
         # print(self.p_matrix)
 
     def _fit(self):
-        D = self.d_set.encoded_data
         item_to_tids = defaultdict(set)
-        # for transaction in D:
-        for t in range(len(D)):
-            transaction = D[t][2:]
-            for item in transaction:
-                item_to_tids[item].add(tuple(D[t][:2]))
 
+        # 1. group similar items
+        for t in range(len(self.D)):
+            transaction = self.D[t][2:]
+            for item in transaction:
+                item_to_tids[item].add(tuple(self.D[t][:2]))
+
+        # 2. reduce data set
         if isinstance(self.min_supp, float):
             # make support absolute if needed
             self._min_supp = self.min_supp * self.size
@@ -64,11 +65,16 @@ class LcmACO(LCM_g):
                           < self._min_supp]
         for item in low_supp_items:
             del item_to_tids[item]
+
+        # 3. construct cost_matrix
         tids = item_to_tids.values()
         for nodes in tids:
             idx = np.array(list(nodes))
             np.add.at(self.c_matrix, (idx[:, 0], idx[:, 1]), 1)
         self.c_matrix = 1 / self.c_matrix
+
+        self.D = None
+        gc.collect()
         return item_to_tids
 
     def generate_random_node(self, i):
@@ -85,53 +91,9 @@ class LcmACO(LCM_g):
             if x < pr:
                 return tuple([i, j])
         return tuple([])
-        #    print(pr)
-        # for i in range(len(p)):
-        #    for j in range((i+1), self.size)):
-        #        p = p[i][j] * (1 / c[i][j])
-        # print(self.large_tids)
-        # p = self.p_matrix
-        # c = self.c_matrix
-        # attrs = self.attr_index.copy()
-        # np.random.shuffle(attrs)
-        # n = len(attrs)  # * 100
-        # candidate = attrs[0]
-        # pattern = GP()
-        # for i in attrs:
-            # i -= 1  # to take care of added
-            # x = float(rand.randint(1, n) / n)
-            # p0 = p[i][0] * (1 / c[i][0])
-            # p1 = p[i][1] * (1 / c[i][1])
-            # p2 = p[i][2] * (1 / c[i][2])
-            # pos = float(p0 / (p0 + p1 + p2))
-            # neg = float((p0 + p1) / (p0 + p1 + p2))
-            # if x < pos:
-            #    temp = GI(i, '+')
-            # elif (x >= pos) and (x < neg):
-            #    temp = GI(i, '-')
-            # else:
-            #     temp = GI(self.attr_index[i], 'x')
-            #    continue
-            # pattern.add_gradual_item(temp)
-        # return candidate
 
     def deposit_pheromone(self, node):
         self.p_matrix[node[0], node[1]] += 1
-        # lst_attr = []
-        # for obj in pattern.gradual_items:
-        #     print(obj.attribute_col)
-        #    attr = obj.attribute_col
-        #    symbol = obj.symbol
-        #    lst_attr.append(attr)
-        #    i = attr
-        #    if symbol == '+':
-        #        self.p_matrix[i][0] += 1
-        #    elif symbol == '-':
-        #        self.p_matrix[i][1] += 1
-        # for index in self.item_to_tids.keys():
-        #    if (int(index) - 1) not in lst_attr:
-        #        i = int(index)
-        #        self.p_matrix[i][2] += 1
 
     def evaporate_pheromone(self, node):
         self.p_matrix[node[0], node[1]] = \

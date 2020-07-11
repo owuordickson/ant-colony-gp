@@ -11,6 +11,7 @@ Modified by: Dickson Owuor <owuordickson@ieee.org>
 from collections import defaultdict
 import numpy as np
 import pandas as pd
+import gc
 from joblib import Parallel, delayed
 from sortedcontainers import SortedDict
 # from roaringbitmap import RoaringBitmap as RB
@@ -31,18 +32,16 @@ class LCM_g:
         self.verbose = verbose
 
         self.d_set = Dataset_dfs(file, min_supp, eq=False)
-        self.d_set.init_gp_attributes()
-        self.d_set.reduce_data()
+        self.D = self.d_set.remove_inv_attrs(self.d_set.encode_data())
 
     def _fit(self):
-        D = self.d_set.encoded_data
         self.n_transactions = 0  # reset for safety
         item_to_tids = defaultdict(set)
         # for transaction in D:
-        for t in range(len(D)):
-            transaction = D[t][2:]
+        for t in range(len(self.D)):
+            transaction = self.D[t][2:]
             for item in transaction:
-                item_to_tids[item].add(tuple(D[t][:2]))
+                item_to_tids[item].add(tuple(self.D[t][:2]))
             self.n_transactions += 1
         # print(D)
         # print(item_to_tids)
@@ -56,6 +55,8 @@ class LCM_g:
             del item_to_tids[item]
 
         self.item_to_tids = SortedDict(item_to_tids)
+        self.D = None
+        gc.collect()
         return self
 
     def fit_discover(self, return_tids=False):

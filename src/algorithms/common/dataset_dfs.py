@@ -36,22 +36,19 @@ class Dataset_dfs(Dataset):
             self.attr_cols = self.get_attributes()  # optimized (numpy)
             self.column_size = self.get_attribute_no()  # optimized (numpy)
             self.size = self.get_size()  # optimized (numpy)
-            self.no_bins = False
             self.attr_size = 0
-            self.step_name = ''
             self.thd_supp = min_sup
             self.equal = eq
             data = None
             self.cost_matrix = np.ones((self.column_size, 3), dtype=int)
-            self.encoded_data = np.array([])
+            # self.no_bins = False
+            # self.step_name = ''
+            # self.encoded_data = np.array([])
 
-    def construct_bins(self, attr_data):
-        # 1. Encoding data for Depth-First Search
-        # [row_i, row_j, ..., data, ...]
-        self.encoded_data = np.array(self.encode_data(attr_data))
-
-    def encode_data(self, attr_data):
-        size = self.attr_size  # np.arange(self.attr_size)
+    def encode_data(self):
+        attr_data = self.data.T
+        self.attr_size = len(attr_data[self.attr_cols[0]])
+        size = self.attr_size
         n = len(self.attr_cols) + 2
         encoded_data = list()
         for i in range(size):
@@ -77,15 +74,12 @@ class Dataset_dfs(Dataset):
                 self.cost_matrix[col][1] += (pos_cost + inv_cost)
                 self.cost_matrix[col][2] += (pos_cost + neg_cost)
             temp_arr = temp_arr.T
-            # node = np.empty([2, (size - j)], dtype=int)
-            # node[0] = np.repeat(i, (size - j))
-            # node[1] = np.arange(j, size)
-            # temp_zip = list(zip(node.T, temp_arr))
             encoded_data.extend(temp_arr)
+        self.data = None
         gc.collect()
-        return encoded_data
+        return np.array(encoded_data)
 
-    def reduce_data(self, p_matrix=None):
+    def remove_inv_attrs(self, encoded_data):
         c_matrix = self.cost_matrix
         # 1. remove invalid attributes
         valid_a1 = list()
@@ -97,19 +91,7 @@ class Dataset_dfs(Dataset):
             if valid:
                 valid_a1.append(i)
                 valid_a2.append(i)
-            else:
-                if p_matrix is None:
-                    pass
-                else:
-                    p_matrix[a][0] = 0
-                    p_matrix[a][1] = 0
         self.attr_cols = self.attr_cols[valid_a1]
         valid_a2 = np.array(valid_a2) + 2
-        self.encoded_data = self.encoded_data[:, valid_a2]
-        # 2. merge similar patterns
-        # 2a. get indices
-        # vals, inverse, count = np.unique(self.d_set.encoded_data[:, 2:],
-        #                                 return_inverse=True,
-        #                                 return_counts=True,
-        #                                 axis=0)
-        # return vals, inverse
+        encoded_data = encoded_data[:, valid_a2]
+        return encoded_data
