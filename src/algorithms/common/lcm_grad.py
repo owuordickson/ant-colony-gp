@@ -8,8 +8,8 @@ Modified by: Dickson Owuor <owuordickson@ieee.org>
 
 """
 
-from collections import defaultdict
 import numpy as np
+from collections import defaultdict
 from sortedcontainers import SortedDict
 import gc
 import multiprocessing as mp
