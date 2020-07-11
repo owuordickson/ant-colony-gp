@@ -36,7 +36,7 @@ def init_algorithm(f_path, min_supp, cores):
         # df_gp = ac.fit_discover(return_tids=True)
 
         d_set = ac.d_set
-        wr_line = "Algorithm: ACO-GRAANK (2.0)\n"
+        wr_line = "Algorithm: ACO-LCM (1.0)\n"
         wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
         wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
         wr_line += "Minimum support: " + str(ac.min_supp) + '\n'
@@ -85,9 +85,9 @@ if __name__ == "__main__":
                              dest='file',
                              help='path to file containing csv',
                              # default=None,
-                             default='../data/DATASET.csv',
+                             #default='../data/DATASET.csv',
                              #default='../data/DATASET3.csv',
-                             #default='../data/Omnidir.csv',
+                             default='../data/Omnidir.csv',
                              #default='../data/FluTopicData-testsansdate-blank.csv',
                              #default='../data/vehicle_silhouette_dataset.csv',
                              #default='../data/FARSmiss.csv',

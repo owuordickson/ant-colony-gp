@@ -76,8 +76,8 @@ if __name__ == "__main__":
                              dest='file',
                              help='path to file containing csv',
                              # default=None,
-                             default='../data/DATASET.csv',
-                             #default='../data/Omnidir.csv',
+                             #default='../data/DATASET.csv',
+                             default='../data/Omnidir.csv',
                              #default='../data/FARSmiss.csv',
                              #default='../data/FluTopicData-testsansdate-blank.csv',
                              type='string')

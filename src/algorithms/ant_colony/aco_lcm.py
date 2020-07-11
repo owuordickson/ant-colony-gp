@@ -49,9 +49,9 @@ class LcmACO(LCM_g):
         item_to_tids = self._fit()
 
         i = 0
-        lst_attrs = list()
+        winner_attrs = list()
         lst_gp = list()
-        while i < self.size:
+        for i in range(self.size):
             temp_tid = None
             temp_attrs = list()
             node = self.generate_random_node(i)
@@ -64,27 +64,21 @@ class LcmACO(LCM_g):
                         else:
                             temp_tid = temp_tid.intersection(v)
                 # check for subset or equality (attrs and temp_attrs)
-                if temp_attrs in lst_attrs or len(temp_tid) <= 0:
-                    i += 1
+                if (tuple(temp_attrs) in winner_attrs) or \
+                        set(tuple(temp_attrs)).issubset(set(winner_attrs)):
+                    break
+                if len(temp_tid) <= 0:
                     continue
-                    # break
                 else:
                     supp = self.calculate_support(temp_tid)
                     if supp >= self.min_supp:
                         self.deposit_pheromone(node)
                         gp = LcmACO.construct_gp(temp_attrs, supp)
-                        lst_attrs.append(temp_attrs)
+                        winner_attrs.append(tuple(temp_attrs))
                         # lst_gp.append([gp.to_string(), supp, temp_tid])
                         lst_gp.append(gp)
                     else:
                         self.evaporate_pheromone(node)
-            i += 1
-
-        #dfs.append(pd.DataFrame(data=lst_gp,
-        #                        columns=['pattern', 'support', 'tids']))
-        #df = pd.concat(dfs, axis=0, ignore_index=True)
-        #if not return_tids:
-        #    df.drop('tids', axis=1, inplace=True)
         return lst_gp
 
     def _fit(self):
