@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @author: "Dickson Owuor"
-@credits: "Thomas Runkler, Edmond Menya, and Anne Laurent,"
+@credits: "Thomas Runkler, and Anne Laurent,"
 @license: "MIT"
 @version: "1.0"
 @email: "owuordickson@gmail.com"
@@ -45,6 +45,48 @@ class LcmACO(LCM_g):
         # print(self.d_set.cost_matrix)
         # print(self.d_set.encoded_data)
         # print(self.p_matrix)
+
+    def run_ant_colony(self, return_tids=False):
+        dfs = list()
+        item_to_tids = self._fit()
+
+        i = 0
+        lst_attrs = list()
+        lst_gp = list()
+        while i < self.size:
+            temp_tid = None
+            temp_attrs = list()
+            node = self.generate_random_node(i)
+            if len(node) > 1:
+                for k, v in item_to_tids.items():
+                    if node in v:
+                        temp_attrs.append(k)
+                        if temp_tid is None:
+                            temp_tid = v
+                        else:
+                            temp_tid = temp_tid.intersection(v)
+                # check for subset or equality (attrs and temp_attrs)
+                if temp_attrs in lst_attrs or len(temp_tid) <= 0:
+                    i += 1
+                    # continue
+                    break
+                else:
+                    supp = self.calculate_support(temp_tid)
+                    if supp >= self.min_supp:
+                        self.deposit_pheromone(node)
+                        gp = LcmACO.construct_gp(temp_attrs, supp)
+                        lst_attrs.append(temp_attrs)
+                        lst_gp.append([gp.to_string(), supp, temp_tid])
+                    else:
+                        self.evaporate_pheromone(node)
+            i += 1
+
+        dfs.append(pd.DataFrame(data=lst_gp,
+                                columns=['pattern', 'support', 'tids']))
+        df = pd.concat(dfs, axis=0, ignore_index=True)
+        if not return_tids:
+            df.drop('tids', axis=1, inplace=True)
+        return df
 
     def _fit(self):
         item_to_tids = defaultdict(set)
@@ -98,49 +140,6 @@ class LcmACO(LCM_g):
     def evaporate_pheromone(self, node):
         self.p_matrix[node[0], node[1]] = \
             (1 - self.e_factor) * self.p_matrix[node[0], node[1]]
-
-    def run_ant_colony(self, return_tids=False):
-        empty_df = pd.DataFrame(columns=['pattern', 'support', 'tids'])
-        dfs = list()
-        item_to_tids = self._fit()
-
-        i = 0
-        lst_attrs = list()
-        lst_gp = list()
-        while i < self.size:
-            temp_tid = None
-            temp_attrs = list()
-            node = self.generate_random_node(i)
-            if len(node) > 1:
-                for k, v in item_to_tids.items():
-                    if node in v:
-                        temp_attrs.append(k)
-                        if temp_tid is None:
-                            temp_tid = v
-                        else:
-                            temp_tid = temp_tid.intersection(v)
-                # check for subset or equality (attrs and temp_attrs)
-                if temp_attrs in lst_attrs or len(temp_tid) <= 0:
-                    i += 1
-                    # continue
-                    break
-                else:
-                    supp = self.calculate_support(temp_tid)
-                    if supp >= self.min_supp:
-                        self.deposit_pheromone(node)
-                        gp = LcmACO.construct_gp(temp_attrs, supp)
-                        lst_attrs.append(temp_attrs)
-                        lst_gp.append([gp.to_string(), supp, temp_tid])
-                    else:
-                        self.evaporate_pheromone(node)
-            i += 1
-
-        dfs.append(pd.DataFrame(data=lst_gp, columns=['pattern', 'support', 'tids']))
-        dfs.append(empty_df)  # make sure we have something to concat
-        df = pd.concat(dfs, axis=0, ignore_index=True)
-        if not return_tids:
-            df.drop('tids', axis=1, inplace=True)
-        return df
 
     @staticmethod
     def construct_gp(lst_attrs, supp):
