@@ -45,6 +45,15 @@ class Profile:
             return False
 
     @staticmethod
+    def get_quick_mem_block(snapshot):
+        top_stats = snapshot.statistics('traceback')
+
+        # pick the biggest memory block
+        stat = top_stats[0]
+        wr_line = ("%s memory blocks: %.1f KiB" % (stat.count, stat.size / 1024))
+        return wr_line
+
+    @staticmethod
     def get_quick_mem_use(snapshot, key_type='lineno'):
         import tracemalloc
         snapshot = snapshot.filter_traces((

@@ -31,6 +31,7 @@ class LCM_g:
 
         self.d_set = Dataset_dfs(file, min_supp, eq=False)
         self.D = self.d_set.remove_inv_attrs(self.d_set.encode_data())
+        self._fit()
 
     def _fit(self):
         self.n_transactions = 0  # reset for safety
@@ -58,8 +59,6 @@ class LCM_g:
         return self
 
     def fit_discover(self):
-
-        self._fit()
         # empty_df = pd.DataFrame(columns=['pattern', 'support', 'tids'])
 
         # reverse order of support

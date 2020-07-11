@@ -21,7 +21,8 @@ Description:
 
 import sys
 from optparse import OptionParser
-from algorithms.common.profile_cpu import Profile
+import tracemalloc
+from algorithms.common.profile_mem import Profile
 from algorithms.ant_colony.aco_lcm import LcmACO
 
 
@@ -32,8 +33,11 @@ def init_algorithm(f_path, min_supp, cores):
         else:
             num_cores = Profile.get_num_cores()
         ac = LcmACO(f_path, min_supp)
+
+        tracemalloc.start()
         lst_gp = ac.run_ant_colony()
-        # df_gp = ac.fit_discover(return_tids=True)
+        snapshot = tracemalloc.take_snapshot()
+        print(Profile.get_quick_mem_use(snapshot))
 
         d_set = ac.d_set
         wr_line = "Algorithm: ACO-LCM (1.0)\n"
@@ -57,7 +61,7 @@ def init_algorithm(f_path, min_supp, cores):
         # wr_line += str(df_gp)
 
         wr_line += "\nPheromone Matrix\n"
-        wr_line += str(ac.p_matrix)
+        # wr_line += str(ac.p_matrix)
         # ac.plot_pheromone_matrix()
         return wr_line
     except ArithmeticError as error:
@@ -113,17 +117,17 @@ if __name__ == "__main__":
         numCores = options.numCores
 
     import time
-    import tracemalloc
-    from src.algorithms.common.profile_mem import Profile
+    # import tracemalloc
+    # from src.algorithms.common.profile_mem import Profile
 
     start = time.time()
-    tracemalloc.start()
+    # tracemalloc.start()
     res_text = init_algorithm(filePath, minSup, numCores)
-    snapshot = tracemalloc.take_snapshot()
+    # snapshot = tracemalloc.take_snapshot()
     end = time.time()
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
-    wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
+    # wr_text += (Profile.get_quick_mem_block(snapshot) + "\n")
     wr_text += str(res_text)
     f_name = str('res_acolcm' + str(end).replace('.', '', 1) + '.txt')
     # write_file(wr_text, f_name)

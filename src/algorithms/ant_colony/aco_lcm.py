@@ -28,16 +28,16 @@ class LcmACO(LCM_g):
         print("LcmACO: Version 1.0")
         self.min_supp = min_supp  # provided by user
         self._min_supp = LCM_g.check_min_supp(self.min_supp)
-        # self.item_to_tids = None
         # self.n_jobs = 1  # to be removed
 
         self.d_set = Dataset_dfs(f_path, min_supp, eq=False)
         self.D = self.d_set.remove_inv_attrs(self.d_set.encode_data())
         self.size = self.d_set.attr_size
         self.c_matrix = np.ones((self.size, self.size), dtype=np.float64)
-        self.p_matrix = np.ones((self.size, self.size), dtype=np.int64)
+        self.p_matrix = np.ones((self.size, self.size), dtype=np.float64)
         np.fill_diagonal(self.p_matrix, 0)
         self.e_factor = 0.5  # evaporation factor
+        self.item_to_tids = self._fit()
         # self.large_tids = np.array([])
         # self.attr_index = self.d_set.attr_cols
         # self.e_factor = 0.1  # evaporation factor
@@ -46,39 +46,42 @@ class LcmACO(LCM_g):
         # print(self.p_matrix)
 
     def run_ant_colony(self):
-        item_to_tids = self._fit()
+
+        import tracemalloc
+        from src.algorithms.common.profile_mem import Profile
+        tracemalloc.start()
 
         i = 0
         winner_attrs = list()
         lst_gp = list()
         for i in range(self.size):
-            temp_tid = None
+            temp_tids = None
             temp_attrs = list()
             node = self.generate_random_node(i)
             if len(node) > 1:
-                for k, v in item_to_tids.items():
+                for k, v in self.item_to_tids.items():
                     if node in v:
                         temp_attrs.append(k)
-                        if temp_tid is None:
-                            temp_tid = v
+                        if temp_tids is None:
+                            temp_tids = v
                         else:
-                            temp_tid = temp_tid.intersection(v)
+                            temp_tids = temp_tids.intersection(v)
                 # check for subset or equality (attrs and temp_attrs)
                 if (tuple(temp_attrs) in winner_attrs) or \
                         set(tuple(temp_attrs)).issubset(set(winner_attrs)):
                     break
-                if len(temp_tid) <= 0:
+                if len(temp_tids) <= 0:
                     continue
                 else:
-                    supp = self.calculate_support(temp_tid)
+                    supp = self.calculate_support(temp_tids)
                     if supp >= self.min_supp:
-                        self.deposit_pheromone(node)
+                        self.deposit_pheromone(temp_tids)
                         gp = LcmACO.construct_gp(temp_attrs, supp)
                         winner_attrs.append(tuple(temp_attrs))
-                        # lst_gp.append([gp.to_string(), supp, temp_tid])
+                        # lst_gp.append([gp.to_string(), supp, temp_tids])
                         lst_gp.append(gp)
                     else:
-                        self.evaporate_pheromone(node)
+                        self.evaporate_pheromone(temp_tids)
         return lst_gp
 
     def _fit(self):
@@ -127,12 +130,13 @@ class LcmACO(LCM_g):
                 return tuple([i, j])
         return tuple([])
 
-    def deposit_pheromone(self, node):
-        self.p_matrix[node[0], node[1]] += 1
+    def deposit_pheromone(self, tids):
+        for node in tids:
+            self.p_matrix[node] += 1
 
-    def evaporate_pheromone(self, node):
-        self.p_matrix[node[0], node[1]] = \
-            (1 - self.e_factor) * self.p_matrix[node[0], node[1]]
+    def evaporate_pheromone(self, tids):
+        for node in tids:
+            self.p_matrix[node] = (1 - self.e_factor) * self.p_matrix[node]
 
     @staticmethod
     def construct_gp(lst_attrs, supp):
