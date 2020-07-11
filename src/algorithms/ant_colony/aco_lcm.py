@@ -45,40 +45,6 @@ class LcmACO(LCM_g):
         # print(self.d_set.encoded_data)
         # print(self.p_matrix)
 
-    def run_ant_colony(self):
-
-        winner_attrs = list()
-        lst_gp = list()
-        for i in range(self.size):
-            temp_tids = None
-            temp_attrs = list()
-            node = self.generate_random_node(i)
-            if len(node) > 1:
-                for k, v in self.item_to_tids.items():
-                    if node in v:
-                        temp_attrs.append(k)
-                        if temp_tids is None:
-                            temp_tids = v
-                        else:
-                            temp_tids = temp_tids.intersection(v)
-                # check for subset or equality (attrs and temp_attrs)
-                if (tuple(temp_attrs) in winner_attrs) or \
-                        set(tuple(temp_attrs)).issubset(set(winner_attrs)):
-                    break
-                if len(temp_tids) <= 0:
-                    continue
-                else:
-                    supp = self.calculate_support(temp_tids)
-                    if supp >= self.min_supp:
-                        self.deposit_pheromone(temp_tids)
-                        gp = LcmACO.construct_gp(temp_attrs, supp)
-                        winner_attrs.append(tuple(temp_attrs))
-                        # lst_gp.append([gp.to_string(), supp, temp_tids])
-                        lst_gp.append(gp)
-                    else:
-                        self.evaporate_pheromone(temp_tids)
-        return lst_gp
-
     def _fit(self):
         item_to_tids = defaultdict(set)
 
@@ -109,6 +75,40 @@ class LcmACO(LCM_g):
         self.D = None
         gc.collect()
         return item_to_tids
+
+    def run_ant_colony(self):
+        winner_attrs = list()
+        lst_gp = list()
+
+        for i in range(self.size):
+            temp_tids = None
+            temp_attrs = list()
+            node = self.generate_random_node(i)
+            if len(node) > 1:
+                for k, v in self.item_to_tids.items():
+                    if node in v:
+                        temp_attrs.append(k)
+                        if temp_tids is None:
+                            temp_tids = v
+                        else:
+                            temp_tids = temp_tids.intersection(v)
+                # check for subset or equality (attrs and temp_attrs)
+                if (tuple(temp_attrs) in winner_attrs) or \
+                        set(tuple(temp_attrs)).issubset(set(winner_attrs)):
+                    break
+                if len(temp_tids) <= 0:
+                    continue
+                else:
+                    supp = self.calculate_support(temp_tids)
+                    if supp >= self.min_supp:
+                        self.deposit_pheromone(temp_tids)
+                        gp = LcmACO.construct_gp(temp_attrs, supp)
+                        winner_attrs.append(tuple(temp_attrs))
+                        # lst_gp.append([gp.to_string(), supp, temp_tids])
+                        lst_gp.append(gp)
+                    else:
+                        self.evaporate_pheromone(temp_tids)
+        return lst_gp
 
     def generate_random_node(self, i):
         C = self.c_matrix
