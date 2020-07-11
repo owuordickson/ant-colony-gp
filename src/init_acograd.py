@@ -83,12 +83,12 @@ if __name__ == "__main__":
                              dest='file',
                              help='path to file containing csv',
                              # default=None,
-                             #default='../data/DATASET.csv',
+                             default='../data/DATASET.csv',
                              #default='../data/DATASET3.csv',
                              #default='../data/Omnidir.csv',
                              #default='../data/FluTopicData-testsansdate-blank.csv',
                              #default='../data/vehicle_silhouette_dataset.csv',
-                             default='../data/FARSmiss.csv',
+                             #default='../data/FARSmiss.csv',
                              type='string')
         optparser.add_option('-s', '--minSupport',
                              dest='minSup',
@@ -117,17 +117,17 @@ if __name__ == "__main__":
         numCores = options.numCores
 
     import time
-    # import tracemalloc
-    # from src.algorithms.common.profile_mem import Profile
+    import tracemalloc
+    from src.algorithms.common.profile_mem import Profile
 
     start = time.time()
-    # tracemalloc.start()
+    tracemalloc.start()
     res_text = init_algorithm(filePath, minSup, numCores, allowEq)
-    # snapshot = tracemalloc.take_snapshot()
+    snapshot = tracemalloc.take_snapshot()
     end = time.time()
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
-    # wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
+    wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
     wr_text += str(res_text)
     f_name = str('res_aco' + str(end).replace('.', '', 1) + '.txt')
     # write_file(wr_text, f_name)

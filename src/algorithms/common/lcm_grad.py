@@ -10,11 +10,9 @@ Modified by: Dickson Owuor <owuordickson@ieee.org>
 
 from collections import defaultdict
 import numpy as np
-import pandas as pd
 import gc
 from joblib import Parallel, delayed
 from sortedcontainers import SortedDict
-# from roaringbitmap import RoaringBitmap as RB
 
 from .dataset_dfs import Dataset_dfs
 from .gp import GI, GP
@@ -28,7 +26,7 @@ class LCM_g:
         self.item_to_tids = None
         self.n_transactions = 0
         self.ctr = 0
-        self.n_jobs = n_jobs
+        self.n_jobs = 1  # n_jobs
         self.verbose = verbose
 
         self.d_set = Dataset_dfs(file, min_supp, eq=False)
@@ -59,33 +57,35 @@ class LCM_g:
         gc.collect()
         return self
 
-    def fit_discover(self, return_tids=False):
+    def fit_discover(self):
 
         self._fit()
-        empty_df = pd.DataFrame(columns=['pattern', 'support', 'tids'])
+        # empty_df = pd.DataFrame(columns=['pattern', 'support', 'tids'])
 
         # reverse order of support
         supp_sorted_items = sorted(self.item_to_tids.items(), key=lambda e: len(e[1]), reverse=True)
         dfs = Parallel(n_jobs=self.n_jobs, prefer='processes')(
-            delayed(self._explore_item)(item, tids, 1) for item, tids in supp_sorted_items
+            delayed(self._explore_item)(item, tids) for item, tids in supp_sorted_items
             # delayed(self._explore_item)(item, tids, 1) for item, tids in supp_sorted_items if item == 2
         )
 
-        dfs.append(empty_df)  # make sure we have something to concat
-        df = pd.concat(dfs, axis=0, ignore_index=True)
-        if not return_tids:
+        # dfs.append(empty_df)  # make sure we have something to concat
+        # df = pd.concat(dfs, axis=0, ignore_index=True)
+        # if not return_tids:
             # df.loc[:, 'support'] = df['tids'].map(len).astype(np.uint32)
-            df.drop('tids', axis=1, inplace=True)
-        return df
+        #    df.drop('tids', axis=1, inplace=True)
+        # return df
+        return dfs
 
-    def _explore_item(self, item, tids, no):
-        it = self._inner(frozenset(), tids, item, no)
-        df = pd.DataFrame(data=it, columns=['pattern', 'support', 'tids'])
-        if self.verbose and not df.empty:
-            print('LCM found {} new itemsets from item : {}'.format(len(df), item))
-        return df
+    def _explore_item(self, item, tids):
+        it = self._inner(frozenset(), tids, item)
+        # df = pd.DataFrame(data=it, columns=['pattern', 'support', 'tids'])
+        # if self.verbose and not df.empty:
+        #    print('LCM found {} new itemsets from item : {}'.format(len(df), item))
+        # return df
+        return list(it)
 
-    def _inner(self, p, tids, limit, no):
+    def _inner(self, p, tids, limit):
         # project and reduce DB w.r.t P
         cp = (
             item for item, ids in reversed(self.item_to_tids.items())
@@ -111,7 +111,8 @@ class LCM_g:
                 pat.set_support(self.calculate_support(tids))
             # yield tuple(sorted(p_prime)), tids
             if len(raw_p) > 1:
-                yield pat.to_string(), pat.support, tids
+                # yield pat.to_string(), pat.support, tids
+                yield pat
 
             candidates = self.item_to_tids.keys() - p_prime
             candidates = candidates[:candidates.bisect_left(limit)]
@@ -120,7 +121,7 @@ class LCM_g:
                 new_limit_tids = tids.intersection(ids)
                 supp = self.calculate_support(new_limit_tids)
                 if supp >= self.min_supp:
-                    yield from self._inner(p_prime, new_limit_tids, new_limit, 2)
+                    yield from self._inner(p_prime, new_limit_tids, new_limit)
 
     def calculate_support(self, tids):
         if len(tids) > 1:

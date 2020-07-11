@@ -27,7 +27,7 @@ def init_algorithm(f_path, min_supp, cores):
             num_cores = Profile.get_num_cores()
 
         lcm = LCM_g(f_path, min_supp, n_jobs=num_cores)
-        gp = lcm.fit_discover(return_tids=False)
+        lst_gp = lcm.fit_discover()
 
         d_set = lcm.d_set
         wr_line = "Algorithm: LCM-GRAD (1.0) \n"
@@ -35,13 +35,19 @@ def init_algorithm(f_path, min_supp, cores):
         wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
         wr_line += "Minimum support: " + str(d_set.thd_supp) + '\n'
         wr_line += "Number of cores: " + str(num_cores) + '\n\n'
-        # wr_line += "Number of patterns: " + str(len(list_gp)) + '\n'
+        wr_line += "Number of patterns: " + str(len(lst_gp)) + '\n'
 
         for txt in d_set.title:
             wr_line += (str(txt[0]) + '. ' + str(txt[1].decode()) + '\n')
 
-        wr_line += str("\nFile: " + f_path + '\n\n')
-        wr_line += str(gp)
+        wr_line += str("\nFile: " + f_path + '\n')
+        wr_line += str("\nPattern : Support" + '\n')
+
+        for obj in lst_gp:
+            if len(obj) > 1:
+                for gp in obj:
+                    wr_line += (str(gp.to_string()) + ' : ' + str(gp.support) + '\n')
+        # wr_line += str(gp)
 
         return wr_line
     except ArithmeticError as error:
@@ -96,16 +102,17 @@ if __name__ == "__main__":
         numCores = options.numCores
 
     import time
-    # import tracemalloc
+    import tracemalloc
+    from src.algorithms.common.profile_mem import Profile
 
     start = time.time()
-    # tracemalloc.start()
+    tracemalloc.start()
     res_text = init_algorithm(filePath, minSup, numCores)
-    # snapshot = tracemalloc.take_snapshot()
+    snapshot = tracemalloc.take_snapshot()
     end = time.time()
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
-    # wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
+    wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
     wr_text += str(res_text)
     f_name = str('res_lcm' + str(end).replace('.', '', 1) + '.txt')
     # write_file(wr_text, f_name)

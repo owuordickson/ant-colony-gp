@@ -32,7 +32,7 @@ def init_algorithm(f_path, min_supp, cores):
         else:
             num_cores = Profile.get_num_cores()
         ac = LcmACO(f_path, min_supp)
-        df_gp = ac.run_ant_colony(return_tids=False)
+        lst_gp = ac.run_ant_colony()
         # df_gp = ac.fit_discover(return_tids=True)
 
         d_set = ac.d_set
@@ -41,7 +41,7 @@ def init_algorithm(f_path, min_supp, cores):
         wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
         wr_line += "Minimum support: " + str(ac.min_supp) + '\n'
         wr_line += "Number of cores: " + str(num_cores) + '\n'
-        # wr_line += "Number of patterns: " + str(len(list_gp)) + '\n\n'
+        wr_line += "Number of patterns: " + str(len(lst_gp)) + '\n\n'
 
         for txt in d_set.title:
             try:
@@ -49,10 +49,12 @@ def init_algorithm(f_path, min_supp, cores):
             except AttributeError:
                 wr_line += (str(txt[0]) + '. ' + str(txt[1].decode()) + '\n')
 
-        wr_line += str("\nFile: " + f_path + '\n\n')
-        # wr_line += str("\nPattern : Support" + '\n')
+        wr_line += str("\nFile: " + f_path + '\n')
+        wr_line += str("\nPattern : Support" + '\n')
 
-        wr_line += str(df_gp)
+        for gp in lst_gp:
+            wr_line += (str(gp.to_string()) + ' : ' + str(gp.support) + '\n')
+        # wr_line += str(df_gp)
 
         wr_line += "\nPheromone Matrix\n"
         wr_line += str(ac.p_matrix)
@@ -111,17 +113,17 @@ if __name__ == "__main__":
         numCores = options.numCores
 
     import time
-    # import tracemalloc
-    # from src.algorithms.common.profile_mem import Profile
+    import tracemalloc
+    from src.algorithms.common.profile_mem import Profile
 
     start = time.time()
-    # tracemalloc.start()
+    tracemalloc.start()
     res_text = init_algorithm(filePath, minSup, numCores)
-    # snapshot = tracemalloc.take_snapshot()
+    snapshot = tracemalloc.take_snapshot()
     end = time.time()
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
-    # wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
+    wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
     wr_text += str(res_text)
     f_name = str('res_acolcm' + str(end).replace('.', '', 1) + '.txt')
     # write_file(wr_text, f_name)

@@ -14,7 +14,6 @@ Depth-First Search for gradual patterns (ACO-LCM)
 import numpy as np
 from numpy import random as rand
 import gc
-import pandas as pd
 from collections import defaultdict
 
 # from joblib import Parallel, delayed
@@ -46,8 +45,7 @@ class LcmACO(LCM_g):
         # print(self.d_set.encoded_data)
         # print(self.p_matrix)
 
-    def run_ant_colony(self, return_tids=False):
-        dfs = list()
+    def run_ant_colony(self):
         item_to_tids = self._fit()
 
         i = 0
@@ -68,25 +66,26 @@ class LcmACO(LCM_g):
                 # check for subset or equality (attrs and temp_attrs)
                 if temp_attrs in lst_attrs or len(temp_tid) <= 0:
                     i += 1
-                    # continue
-                    break
+                    continue
+                    # break
                 else:
                     supp = self.calculate_support(temp_tid)
                     if supp >= self.min_supp:
                         self.deposit_pheromone(node)
                         gp = LcmACO.construct_gp(temp_attrs, supp)
                         lst_attrs.append(temp_attrs)
-                        lst_gp.append([gp.to_string(), supp, temp_tid])
+                        # lst_gp.append([gp.to_string(), supp, temp_tid])
+                        lst_gp.append(gp)
                     else:
                         self.evaporate_pheromone(node)
             i += 1
 
-        dfs.append(pd.DataFrame(data=lst_gp,
-                                columns=['pattern', 'support', 'tids']))
-        df = pd.concat(dfs, axis=0, ignore_index=True)
-        if not return_tids:
-            df.drop('tids', axis=1, inplace=True)
-        return df
+        #dfs.append(pd.DataFrame(data=lst_gp,
+        #                        columns=['pattern', 'support', 'tids']))
+        #df = pd.concat(dfs, axis=0, ignore_index=True)
+        #if not return_tids:
+        #    df.drop('tids', axis=1, inplace=True)
+        return lst_gp
 
     def _fit(self):
         item_to_tids = defaultdict(set)
