@@ -30,14 +30,14 @@ def init_algorithm(f_path, min_supp, cores):
         tracemalloc.start()
         lcm = LCM_g(f_path, min_supp, n_jobs=num_cores)
         snapshot = tracemalloc.take_snapshot()
-        print("Initialization: " + (Profile.get_quick_mem_use(snapshot)))
+        wr_line = "Initialization: " + str(Profile.get_quick_mem_use(snapshot)) + "\n"
 
         lst_gp = lcm.fit_discover()
         snapshot = tracemalloc.take_snapshot()
-        print("Mining: " + (Profile.get_quick_mem_use(snapshot)))
+        wr_line += "Mining: " + str(Profile.get_quick_mem_use(snapshot)) + "\n"
 
         d_set = lcm.d_set
-        wr_line = "Algorithm: LCM-GRAD (1.0) \n"
+        wr_line += "Algorithm: LCM-GRAD (1.0) \n"
         wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
         wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
         wr_line += "Minimum support: " + str(d_set.thd_supp) + '\n'
