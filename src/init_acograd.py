@@ -31,12 +31,14 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
             num_cores = cores
         else:
             num_cores = Profile.get_num_cores()
-        ac = GradACO(f_path, min_supp, eq)
-
         tracemalloc.start()
+        ac = GradACO(f_path, min_supp, eq)
+        snapshot = tracemalloc.take_snapshot()
+        print("Initialization: " + (Profile.get_quick_mem_use(snapshot)))
+
         list_gp = ac.run_ant_colony()
         snapshot = tracemalloc.take_snapshot()
-        print(Profile.get_quick_mem_use(snapshot))
+        print("Mining: " + (Profile.get_quick_mem_use(snapshot)))
 
         d_set = ac.d_set
         wr_line = "Algorithm: ACO-GRAANK (2.0)\n"
@@ -123,7 +125,7 @@ if __name__ == "__main__":
 
     import time
     # import tracemalloc
-    # from src.algorithms.common.profile_mem import Profile
+    # from algorithms.common.profile_mem import Profile
 
     start = time.time()
     # tracemalloc.start()

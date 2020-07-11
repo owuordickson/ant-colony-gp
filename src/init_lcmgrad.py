@@ -27,12 +27,14 @@ def init_algorithm(f_path, min_supp, cores):
         else:
             num_cores = Profile.get_num_cores()
 
-        lcm = LCM_g(f_path, min_supp, n_jobs=num_cores)
-
         tracemalloc.start()
+        lcm = LCM_g(f_path, min_supp, n_jobs=num_cores)
+        snapshot = tracemalloc.take_snapshot()
+        print("Initialization: " + (Profile.get_quick_mem_use(snapshot)))
+
         lst_gp = lcm.fit_discover()
         snapshot = tracemalloc.take_snapshot()
-        print(Profile.get_quick_mem_use(snapshot))
+        print("Mining: " + (Profile.get_quick_mem_use(snapshot)))
 
         d_set = lcm.d_set
         wr_line = "Algorithm: LCM-GRAD (1.0) \n"

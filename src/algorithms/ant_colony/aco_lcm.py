@@ -24,11 +24,11 @@ from ..common.dataset_dfs import Dataset_dfs
 
 class LcmACO(LCM_g):
 
-    def __init__(self, f_path, min_supp):
+    def __init__(self, f_path, min_supp, n_jobs=1):
         print("LcmACO: Version 1.0")
         self.min_supp = min_supp  # provided by user
         self._min_supp = LCM_g.check_min_supp(self.min_supp)
-        # self.n_jobs = 1  # to be removed
+        self.n_jobs = 1  # n_jobs
 
         self.d_set = Dataset_dfs(f_path, min_supp, eq=False)
         self.D = self.d_set.remove_inv_attrs(self.d_set.encode_data())
@@ -47,11 +47,6 @@ class LcmACO(LCM_g):
 
     def run_ant_colony(self):
 
-        import tracemalloc
-        from src.algorithms.common.profile_mem import Profile
-        tracemalloc.start()
-
-        i = 0
         winner_attrs = list()
         lst_gp = list()
         for i in range(self.size):

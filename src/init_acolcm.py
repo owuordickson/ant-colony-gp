@@ -32,12 +32,15 @@ def init_algorithm(f_path, min_supp, cores):
             num_cores = cores
         else:
             num_cores = Profile.get_num_cores()
-        ac = LcmACO(f_path, min_supp)
 
         tracemalloc.start()
+        ac = LcmACO(f_path, min_supp, n_jobs=num_cores)
+        snapshot = tracemalloc.take_snapshot()
+        print("Initialization: " + (Profile.get_quick_mem_use(snapshot)))
+
         lst_gp = ac.run_ant_colony()
         snapshot = tracemalloc.take_snapshot()
-        print(Profile.get_quick_mem_use(snapshot))
+        print("Mining: " + (Profile.get_quick_mem_use(snapshot)))
 
         d_set = ac.d_set
         wr_line = "Algorithm: ACO-LCM (1.0)\n"

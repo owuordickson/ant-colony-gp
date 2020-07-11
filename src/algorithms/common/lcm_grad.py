@@ -10,9 +10,9 @@ Modified by: Dickson Owuor <owuordickson@ieee.org>
 
 from collections import defaultdict
 import numpy as np
-import gc
-from joblib import Parallel, delayed
 from sortedcontainers import SortedDict
+import gc
+import multiprocessing as mp
 
 from .dataset_dfs import Dataset_dfs
 from .gp import GI, GP
@@ -26,7 +26,7 @@ class LCM_g:
         self.item_to_tids = None
         self.n_transactions = 0
         self.ctr = 0
-        self.n_jobs = 1  # n_jobs
+        self.n_jobs = n_jobs
         self.verbose = verbose
 
         self.d_set = Dataset_dfs(file, min_supp, eq=False)
@@ -63,20 +63,20 @@ class LCM_g:
 
         # reverse order of support
         supp_sorted_items = sorted(self.item_to_tids.items(), key=lambda e: len(e[1]), reverse=True)
-        dfs = Parallel(n_jobs=self.n_jobs, prefer='processes')(
-            delayed(self._explore_item)(item, tids) for item, tids in supp_sorted_items
-            # delayed(self._explore_item)(item, tids, 1) for item, tids in supp_sorted_items if item == 2
-        )
+        with mp.Pool(self.n_jobs) as pool:
+            dfs = pool.map(self._explore_item, supp_sorted_items)
 
         # dfs.append(empty_df)  # make sure we have something to concat
         # df = pd.concat(dfs, axis=0, ignore_index=True)
         # if not return_tids:
-            # df.loc[:, 'support'] = df['tids'].map(len).astype(np.uint32)
+        #     df.loc[:, 'support'] = df['tids'].map(len).astype(np.uint32)
         #    df.drop('tids', axis=1, inplace=True)
         # return df
         return dfs
 
-    def _explore_item(self, item, tids):
+    def _explore_item(self, obj):
+        item = obj[0]
+        tids = obj[1]
         it = self._inner(frozenset(), tids, item)
         # df = pd.DataFrame(data=it, columns=['pattern', 'support', 'tids'])
         # if self.verbose and not df.empty:
