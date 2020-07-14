@@ -79,8 +79,11 @@ class LcmACO(LCM_g):
     def run_ant_colony(self):
         winner_attrs = list()
         lst_gp = list()
+        repeated = 0
+        i = 0
 
-        for i in range(self.size):
+        while repeated == 0 and i < self.size:
+            # for i in range(self.size):
             temp_tids = None
             temp_attrs = list()
             node = self.generate_random_node(i)
@@ -91,10 +94,16 @@ class LcmACO(LCM_g):
                         if temp_tids is None:
                             temp_tids = v
                         else:
-                            temp_tids = temp_tids.intersection(v)
+                            temp = temp_tids.copy()
+                            temp = temp.intersection(v)
+                            supp = self.calculate_support(temp)
+                            if supp >= self.min_supp:
+                                temp_tids = temp.copy()
+                                temp = None
                 # check for subset or equality (attrs and temp_attrs)
                 if (tuple(temp_attrs) in winner_attrs) or \
                         set(tuple(temp_attrs)).issubset(set(winner_attrs)):
+                    repeated = 1
                     break
                 if len(temp_tids) <= 0:
                     continue
@@ -108,6 +117,11 @@ class LcmACO(LCM_g):
                         lst_gp.append(gp)
                     else:
                         self.evaporate_pheromone(temp_tids)
+            if i >= (self.size - 1):
+                i = 0
+                repeated += 1
+            else:
+                i += 1
         return lst_gp
 
     def generate_random_node(self, i):
