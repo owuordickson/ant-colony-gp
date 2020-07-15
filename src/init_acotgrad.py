@@ -92,9 +92,9 @@ if __name__ == "__main__":
                              dest='file',
                              help='path to file containing csv',
                              # default=None,
-                             #default='../data/DATASET2.csv',
-                             # default='../data/rain_temp2013-2015.csv',
-                             default='../data/Directio.csv',
+                             # default='../data/DATASET2.csv',
+                             default='../data/rain_temp2013-2015.csv',
+                             # default='../data/Directio.csv',
                              type='string')
         optparser.add_option('-c', '--refColumn',
                              dest='refCol',
