@@ -1,6 +1,7 @@
 """
 LCM: Linear time Closed item set Miner
 as described in `http://lig-membres.imag.fr/termier/HLCM/hlcm.pdf`
+URL: https://github.com/scikit-mine/scikit-mine/tree/master/skmine
 Author: Rémi Adon <remi.adon@gmail.com>
 License: BSD 3 clause
 

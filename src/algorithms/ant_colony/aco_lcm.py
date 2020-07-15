@@ -16,7 +16,6 @@ from numpy import random as rand
 import gc
 from collections import defaultdict
 
-# from joblib import Parallel, delayed
 from ..common.lcm_grad import LCM_g
 from ..common.gp import GI, GP
 from ..common.dataset_dfs import Dataset_dfs
@@ -122,6 +121,7 @@ class LcmACO(LCM_g):
                 repeated += 1
             else:
                 i += 1
+        gc.collect()
         return lst_gp
 
     def generate_random_node(self, i):

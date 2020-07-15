@@ -6,4 +6,4 @@ cython~=0.29.17
 numpy~=1.16.2
 setuptools~=46.0.0
 mpi4py~=3.0.3
-pandas~=0.24.2
+sortedcontainers~=2.2.2
