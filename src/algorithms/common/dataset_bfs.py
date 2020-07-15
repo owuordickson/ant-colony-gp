@@ -145,7 +145,7 @@ class Dataset:
                 valid_bins.append(np.array([decr.tolist(), temp_pos.T]))
         self.valid_bins = np.array(valid_bins)
         self.invalid_bins = np.array(invalid_bins)
-        if len(self.valid_bins) < 2:
+        if len(self.valid_bins) < 3:
             self.no_bins = True
 
     @staticmethod
