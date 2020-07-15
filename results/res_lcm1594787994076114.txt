@@ -1,0 +1,22 @@
+Run-time: 0.1423790454864502 seconds
+Algorithm: LCM-GRAD (1.0) 
+No. of (dataset) attributes: 6
+No. of (dataset) tuples: 5
+Minimum support: 0.5
+Number of cores: 4
+Number of patterns: 4
+
+0. Age
+1. Salary
+2. Cars
+3. Expenses
+4. Invalid1
+5. Invalid2
+
+File: ../data/DATASET.csv
+
+Pattern : Support
+['3-', '0+'] : 0.6
+['1-', '0+'] : 0.6
+['0+', '1+'] : 0.8
+['3-', '0+', '1+'] : 0.6
