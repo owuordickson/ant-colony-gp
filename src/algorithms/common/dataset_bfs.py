@@ -136,7 +136,6 @@ class Dataset:
             decr = np.array((col, '-'), dtype='i, S1')
             temp_pos = Dataset.bin_rank(col_data, equal=self.equal)
             supp = float(np.sum(temp_pos)) / float(n * (n - 1.0) / 2.0)
-
             if supp < self.thd_supp:
                 invalid_bins.append(incr)
                 invalid_bins.append(decr)
