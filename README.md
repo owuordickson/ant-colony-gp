@@ -23,7 +23,7 @@ To mine gradual patterns:<br>
 * Python and HDF5
 
 ```
-$python3 src/init_acograd.py -f filename.csv -s minSup
+$python3 src/init_acograd_h5.py -f filename.csv -s minSup
 ```
 
 To mine fuzzy-temporal gradual patterns:<br>
@@ -31,7 +31,7 @@ To mine fuzzy-temporal gradual patterns:<br>
 * Python and HDF5
 
 ```
-$python3 src/init_acotgraank.py -f filename.csv -c refCol -s minSup  -r minRep
+$python3 src/init_acotgraank_h5.py -f filename.csv -c refCol -s minSup  -r minRep
 ```
 
 * Parallel (Python) MPI and Parallel HDF5

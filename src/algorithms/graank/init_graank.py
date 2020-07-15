@@ -15,24 +15,20 @@ Description:
 
 import sys
 from optparse import OptionParser
-import tracemalloc
 from algorithms.common.profile_mem import Profile
 from algorithms.graank.graank_v2 import graank
 
 
 def init_algorithm(f_path, min_supp, cores, eq=False):
     try:
-        tracemalloc.start()
         d_set, list_gp = graank(f_path, min_supp, eq)
-        snapshot = tracemalloc.take_snapshot()
-        wr_line = "Mining: " + str(Profile.get_quick_mem_use(snapshot)) + "\n"
 
         if cores > 1:
             num_cores = cores
         else:
             num_cores = Profile.get_num_cores()
 
-        wr_line += "Algorithm: GRAANK \n"
+        wr_line = "Algorithm: GRAANK \n"
         wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
         wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
         wr_line += "Minimum support: " + str(min_supp) + '\n'
@@ -119,6 +115,6 @@ if __name__ == "__main__":
     # wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
     wr_text += str(res_text)
     f_name = str('res_graank' + str(end).replace('.', '', 1) + '.txt')
-    # write_file(wr_text, f_name)
+    write_file(wr_text, f_name)
     print(wr_text)
 

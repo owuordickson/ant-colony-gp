@@ -15,7 +15,6 @@ Description:
 
 import sys
 from optparse import OptionParser
-import tracemalloc
 from algorithms.common.profile_mem import Profile
 from algorithms.common.lcm_grad import LCM_g
 
@@ -27,17 +26,11 @@ def init_algorithm(f_path, min_supp, cores):
         else:
             num_cores = Profile.get_num_cores()
 
-        tracemalloc.start()
         lcm = LCM_g(f_path, min_supp, n_jobs=num_cores)
-        snapshot = tracemalloc.take_snapshot()
-        wr_line = "Initialization: " + str(Profile.get_quick_mem_use(snapshot)) + "\n"
-
         lst_gp = lcm.fit_discover()
-        snapshot = tracemalloc.take_snapshot()
-        wr_line += "Mining: " + str(Profile.get_quick_mem_use(snapshot)) + "\n"
 
         d_set = lcm.d_set
-        wr_line += "Algorithm: LCM-GRAD (1.0) \n"
+        wr_line = "Algorithm: LCM-GRAD (1.0) \n"
         wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
         wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
         wr_line += "Minimum support: " + str(d_set.thd_supp) + '\n'
@@ -83,8 +76,8 @@ if __name__ == "__main__":
                              dest='file',
                              help='path to file containing csv',
                              # default=None,
-                             #default='../data/DATASET.csv',
-                             default='../data/Omnidir.csv',
+                             default='../data/DATASET.csv',
+                             #default='../data/Omnidir.csv',
                              #default='../data/FARSmiss.csv',
                              #default='../data/FluTopicData-testsansdate-blank.csv',
                              type='string')
@@ -122,7 +115,7 @@ if __name__ == "__main__":
     # wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
     wr_text += str(res_text)
     f_name = str('res_lcm' + str(end).replace('.', '', 1) + '.txt')
-    # write_file(wr_text, f_name)
+    write_file(wr_text, f_name)
     print(wr_text)
 
 
