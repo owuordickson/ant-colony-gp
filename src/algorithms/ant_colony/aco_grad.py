@@ -26,7 +26,7 @@ class GradACO:
         self.d_set = Dataset(f_path, min_supp, eq)
         self.d_set.init_gp_attributes()
         self.attr_index = self.d_set.attr_cols
-        # self.e_factor = 0.1  # evaporation factor
+        self.e_factor = 0.5  # evaporation factor
         self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=float)
 
     def deposit_pheromone(self, pattern):
@@ -45,6 +45,19 @@ class GradACO:
             if int(index) not in lst_attr:
                 i = int(index)
                 self.p_matrix[i][2] += 1
+
+    def evaporate_pheromone(self, pattern):
+        lst_attr = []
+        for obj in pattern.gradual_items:
+            # print(obj.attribute_col)
+            attr = obj.attribute_col
+            symbol = obj.symbol
+            lst_attr.append(attr)
+            i = attr
+            if symbol == '+':
+                self.p_matrix[i][0] = (1 - self.e_factor) * self.p_matrix[i][0]
+            elif symbol == '-':
+                self.p_matrix[i][1] = (1 - self.e_factor) * self.p_matrix[i][1]
 
     def run_ant_colony(self):
         min_supp = self.d_set.thd_supp
@@ -66,18 +79,18 @@ class GradACO:
                     if is_super or is_sub:
                         continue
                     gen_gp = self.validate_gp(rand_gp)
-                    if gen_gp.support >= min_supp:
-                        self.deposit_pheromone(gen_gp)
-                        is_present = GradACO.is_duplicate(gen_gp, winner_gps, loser_gps)
-                        is_sub = GradACO.check_anti_monotony(winner_gps, gen_gp, subset=True)
-                        if is_present or is_sub:
-                            repeated += 1
-                        else:
-                            winner_gps.append(gen_gp)
+                    is_present = GradACO.is_duplicate(gen_gp, winner_gps, loser_gps)
+                    is_sub = GradACO.check_anti_monotony(winner_gps, gen_gp, subset=True)
+                    if is_present or is_sub:
+                        repeated += 1
                     else:
-                        loser_gps.append(gen_gp)
-                        # update pheromone as irrelevant with loss_sols
-                        # self.vaporize_pheromone(gen_gp, self.e_factor)
+                        if gen_gp.support >= min_supp:
+                            self.deposit_pheromone(gen_gp)
+                            winner_gps.append(gen_gp)
+                        else:
+                            loser_gps.append(gen_gp)
+                            # update pheromone as irrelevant with loss_sols
+                            self.evaporate_pheromone(gen_gp)
                     if set(gen_gp.get_pattern()) != set(rand_gp.get_pattern()):
                         loser_gps.append(rand_gp)
                 else:
