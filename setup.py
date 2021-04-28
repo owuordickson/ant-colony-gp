@@ -7,7 +7,7 @@ except ImportError:
     from distutils.core import setup, Extension
 # from Cython.Distutils import build_ext
 # from Cython.Build import cythonize
-import numpy
+# import numpy
 
 
 with open('README.md') as readme_file:
@@ -56,7 +56,7 @@ setup(
     install_requires=requirements,
     # cmdclass={'build_ext': build_ext},
     # ext_modules=ext_modules,
-    include_dirs=[numpy.get_include()],
+    # include_dirs=[numpy.get_include()],
     license="MIT",
     zip_safe=False,
     keywords='aco, graank, gradual patterns',
