@@ -3,9 +3,6 @@ language: python
 python:
     - "3.6"
 
-before_install:
-  - "python setup.py install"
-
 install: pip3 install -r requirements.txt
 
 script: python3 src/algorithms/aco/init_acograd.py -f data/DATASET.csv
