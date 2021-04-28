@@ -22,7 +22,7 @@ test_requirements = [
 
 setup(
     name='aco-graank',
-    version='1.0',
+    version='3.0',
     description="A Python implementation of ACO-GRAANK algorithm.",
     long_description=readme + '\n\n' + history,
     author="Dickson Owuor",
@@ -33,7 +33,7 @@ setup(
     install_requires=requirements,
     license="MIT",
     zip_safe=False,
-    keywords='data crossing',
+    keywords='ant colony',
     classifiers=[
         'Development Status :: 1 - Production/Stable',
         'Intended Audience :: Developers',
