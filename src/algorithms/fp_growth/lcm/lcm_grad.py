@@ -15,8 +15,8 @@ from sortedcontainers import SortedDict
 import gc
 import multiprocessing as mp
 
-from .dataset_dfs import Dataset_dfs
-from .gp import GI, GP
+from src.common.dataset_dfs import Dataset_dfs
+from src.common.gp import GI, GP
 
 
 class LCM_g:

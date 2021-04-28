@@ -19,7 +19,7 @@ Changes
 
 import numpy as np
 import multiprocessing as mp
-from .dataset_bfs import Dataset
+from src.algorithms.common.dataset_bfs import Dataset
 
 
 class Dataset_mp(Dataset):

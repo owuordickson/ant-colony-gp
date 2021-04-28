@@ -2,10 +2,10 @@
 """
 @author: "Dickson Owuor"
 @email: "owuordickson@gmail.com"
-@created: "06 December 2019"
+@created: "08 July 2020"
 
 Usage:
-    $python init_graank.py -f ../data/DATASET.csv -s 0.5
+    $python init_lcmgrad.py -f ../data/DATASET.csv -s 0.5
 
 Description:
     f -> file path (CSV)
@@ -15,26 +15,27 @@ Description:
 
 import sys
 from optparse import OptionParser
-from algorithms.common.profile_cpu import Profile
-from algorithms.graank.hdf5.graank_h5 import graank_h5
+from src.common.profile_mem import Profile
+from lcm.lcm_grad import LCM_g
 
 
-def init_algorithm(f_path, min_supp, cores, eq=False):
+def init_algorithm(f_path, min_supp, cores):
     try:
-        d_set, list_gp = graank_h5(f_path, min_supp, eq)
-
         if cores > 1:
             num_cores = cores
         else:
             num_cores = Profile.get_num_cores()
 
-        wr_line = "Algorithm: GRAANK \n"
-        wr_line += "   - H5Py implementation \n"
+        lcm = LCM_g(f_path, min_supp, n_jobs=num_cores)
+        lst_gp = lcm.fit_discover()
+
+        d_set = lcm.d_set
+        wr_line = "Algorithm: LCM-GRAD (1.0) \n"
         wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
         wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
-        wr_line += "Minimum support: " + str(min_supp) + '\n'
+        wr_line += "Minimum support: " + str(d_set.thd_supp) + '\n'
         wr_line += "Number of cores: " + str(num_cores) + '\n'
-        wr_line += "Number of patterns: " + str(len(list_gp)) + '\n\n'
+        wr_line += "Number of patterns: " + str(len(lst_gp)) + '\n\n'
 
         for txt in d_set.title:
             wr_line += (str(txt[0]) + '. ' + str(txt[1].decode()) + '\n')
@@ -42,11 +43,14 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
         wr_line += str("\nFile: " + f_path + '\n')
         wr_line += str("\nPattern : Support" + '\n')
 
-        for gp in list_gp:
-            wr_line += (str(gp.to_string()) + ' : ' + str(gp.support) + '\n')
+        for obj in lst_gp:
+            if len(obj) > 1:
+                for gp in obj:
+                    wr_line += (str(gp.to_string()) + ' : ' + str(gp.support) + '\n')
+        # wr_line += str(gp)
 
         return wr_line
-    except Exception as error:
+    except ArithmeticError as error:
         wr_line = "Failed: " + str(error)
         print(error)
         return wr_line
@@ -65,6 +69,7 @@ if __name__ == "__main__":
         pType = sys.argv[1]
         filePath = sys.argv[2]
         minSup = sys.argv[3]
+        numCores = sys.argv[4]
     else:
         optparser = OptionParser()
         optparser.add_option('-f', '--inputFile',
@@ -81,11 +86,6 @@ if __name__ == "__main__":
                              help='minimum support value',
                              default=0.5,
                              type='float')
-        optparser.add_option('-e', '--allowEqual',
-                             dest='allowEq',
-                             help='allow equal',
-                             default=None,
-                             type='int')
         optparser.add_option('-c', '--cores',
                              dest='numCores',
                              help='number of cores',
@@ -99,11 +99,11 @@ if __name__ == "__main__":
         else:
             filePath = options.file
         minSup = options.minSup
-        allowEq = options.allowEq
         numCores = options.numCores
 
     import time
     # import tracemalloc
+    # from src.algorithms.common.profile_mem import Profile
 
     start = time.time()
     # tracemalloc.start()
@@ -114,7 +114,8 @@ if __name__ == "__main__":
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
     # wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
     wr_text += str(res_text)
-    f_name = str('res_graank' + str(end).replace('.', '', 1) + '.txt')
+    f_name = str('res_lcm' + str(end).replace('.', '', 1) + '.txt')
     write_file(wr_text, f_name)
     print(wr_text)
+
 

@@ -16,9 +16,9 @@ from numpy import random as rand
 import gc
 from collections import defaultdict
 
-from ..common.lcm_grad import LCM_g
-from ..common.gp import GI, GP
-from ..common.dataset_dfs import Dataset_dfs
+from src.algorithms.fp_growth.lcm.lcm_grad import LCM_g
+from src.common.gp import GI, GP
+from src.common.dataset_dfs import Dataset_dfs
 
 
 class LcmACO(LCM_g):

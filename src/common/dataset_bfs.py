@@ -140,8 +140,8 @@ class Dataset:
                 invalid_bins.append(incr)
                 invalid_bins.append(decr)
             else:
-                valid_bins.append(np.array([incr.tolist(), temp_pos]))
-                valid_bins.append(np.array([decr.tolist(), temp_pos.T]))
+                valid_bins.append(np.array([incr.tolist(), temp_pos], dtype=object))
+                valid_bins.append(np.array([decr.tolist(), temp_pos.T], dtype=object))
         self.valid_bins = np.array(valid_bins)
         self.invalid_bins = np.array(invalid_bins)
         if len(self.valid_bins) < 3:

@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/owuordickson/ant-colony-gp.svg?branch=master)](https://travis-ci.org/owuordickson/ant-colony-gp)
 ## ACO-GRAANK
-A Python implementation of the <em><strong>ACO</strong>-GRAANK</em> algorithm. The algorithm utilizes a pheromone-based (or probabilistic) strategy to optimize the <em>GRAANK</em> algorithm. The algorithm converges as the pheromone matrix values approach saturation. We have optimized the implementation of the algorithm by: (1) using Numpy functions for operations that are time consuming, (2) allowed parallel multi-processing through <em><strong>mpi4py</strong></em> and (3) allowed secondary storage of large data in order to free CPU memory during processing through <em><strong>Parallel HDF5 (enabled gzip compression) and Parallel h5py</strong></em>.
+A Python implementation of the <em><strong>ACO</strong>-GRAANK</em> algorithm. The algorithm utilizes a pheromone-based (or probabilistic) strategy to optimize the <em>GRAANK</em> algorithm. The algorithm converges as the pheromone matrix values approach saturation. <!-- We have optimized the implementation of the algorithm by: (1) using Numpy functions for operations that are time consuming, (2) allowed parallel multi-processing through <em><strong>mpi4py</strong></em> and (3) allowed secondary storage of large data in order to free CPU memory during processing through <em><strong>Parallel HDF5 (enabled gzip compression) and Parallel h5py</strong></em>. -->
 <!-- Research paper published at -- link<br> -->
 
 ### Requirements:
@@ -9,16 +9,16 @@ You will be required to install the following python dependencies before using <
                    install python (version => 3.6)
 
 ```
-
+<!-- python-dateutil scikit-fuzzy cython h5py mpi4py -->
 ```
-                    $ pip3 install numpy python-dateutil scikit-fuzzy cython h5py mpi4py
+                    $ pip3 install numpy
 
 ```
 
 ### Usage:
-Use it a command line program with the local package:<br>
-To mine gradual patterns:<br>
+Use it a command line program with the local package to mine gradual patterns:<br>
 
+<!--
 * Python and HDF5
 
 ```
@@ -39,6 +39,7 @@ $python3 src/init_acotgraank_h5.py -f filename.csv -c refCol -s minSup  -r minRe
 $mpirun -n nProcs python init_acotgrad_mpi.py -f filename.csv -c refCol -s minSup -r minRep
 ```
 
+
 where you specify the input parameters as follows:<br>
 * <strong>nProcs</strong> - [required] number of processes (only for MPI) <br>
 * <strong>filename.csv</strong> - [required] a file in csv format <br>
@@ -46,11 +47,17 @@ where you specify the input parameters as follows:<br>
 * <strong>minRep</strong> - [optional] minimum representativity ```default = 0.5``` <br>
 * <strong>refCol</strong> - [optional] reference column ```default = 1``` <br>
 
+-->
 
 For example we executed the <em><strong>ACO</strong>-GRAANK</em> algorithm on a sample data-set<br>
 ```
 $python3 init_acograd.py -f ../data/DATASET.csv
 ```
+
+where you specify the input parameters as follows:<br>
+* <strong>filename.csv</strong> - [required] a file in csv format <br>
+* <strong>minSup</strong> - [optional] minimum support ```default = 0.5``` <br>
+
 
 <strong>Output</strong><br>
 ```

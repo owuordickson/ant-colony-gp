@@ -19,7 +19,7 @@ from ..aco_grad import GradACO
 from ...common.fuzzy_mf import calculate_time_lag
 from ...common.gp import GP, TGP
 from ...common.hdf5.dataset_h5 import Dataset_h5
-#from src.algorithms.ant_colony.cython.cyt_aco_grad import GradACO
+#from src.algorithms.aco.cython.cyt_aco_grad import GradACO
 #from src.algorithms.common.cython.cyt_dataset import Dataset
 
 

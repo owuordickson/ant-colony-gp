@@ -15,8 +15,8 @@ Description:
 
 import sys
 from optparse import OptionParser
-from algorithms.common.profile_mem import Profile
-from algorithms.graank.graank_v2 import graank
+from src.common.profile_mem import Profile
+from graank_v2 import graank
 
 
 def init_algorithm(f_path, min_supp, cores, eq=False):

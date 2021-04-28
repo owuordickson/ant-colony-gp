@@ -3,14 +3,14 @@
 @author: "Dickson Owuor"
 @credits: "Thomas Runkler, Edmond Menya, and Anne Laurent,"
 @license: "MIT"
-@version: "3.0"
+@version: "2.0"
 @email: "owuordickson@gmail.com"
-@created: "20 June 2020"
+@created: "06 July 2020"
 
-Optimized using HDF5
+Breath-First Search for gradual patterns (ACO-GRAANK)
 
 Usage:
-    $python init_acograd_h5.py -f ../data/DATASET.csv -s 0.5
+    $python init_acograd.py -f ../data/DATASET.csv -s 0.5
 
 Description:
     f -> file path (CSV)
@@ -20,23 +20,22 @@ Description:
 
 import sys
 from optparse import OptionParser
-from algorithms.common.profile_cpu import Profile
-from algorithms.ant_colony.hdf5.aco_grad_h5 import GradACO_h5
+from src.common.profile_mem import Profile
+from aco_grad import GradACO
 
 
 def init_algorithm(f_path, min_supp, cores, eq=False):
     try:
-        ac = GradACO_h5(f_path, min_supp, eq)
-        list_gp = ac.run_ant_colony()
-
         if cores > 1:
             num_cores = cores
         else:
             num_cores = Profile.get_num_cores()
 
+        ac = GradACO(f_path, min_supp, eq)
+        list_gp = ac.run_ant_colony()
+
         d_set = ac.d_set
-        wr_line = "Algorithm: ACO-GRAANK (3.0)\n"
-        wr_line += "   - H5Py implementation \n"
+        wr_line = "Algorithm: ACO-GRAANK (2.0)\n"
         wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
         wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
         wr_line += "Minimum support: " + str(min_supp) + '\n'
@@ -59,7 +58,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
         wr_line += str(ac.p_matrix)
         # ac.plot_pheromone_matrix()
         return wr_line
-    except Exception as error:
+    except ArithmeticError as error:
         wr_line = "Failed: " + str(error)
         print(error)
         return wr_line
@@ -75,28 +74,28 @@ def write_file(data, path):
 
 if __name__ == "__main__":
     if not sys.argv:
-        pType = sys.argv[1]
-        filePath = sys.argv[2]
-        # refCol = sys.argv[3]
-        minSup = sys.argv[4]
-        # minRep = sys.argv[5]
+        filePath = sys.argv[1]
+        minSup = sys.argv[2]
+        allowEq = sys.argv[3]
+        numCores = sys.argv[4]
     else:
         optparser = OptionParser()
         optparser.add_option('-f', '--inputFile',
                              dest='file',
                              help='path to file containing csv',
                              # default=None,
-                             #default='../data/DATASET.csv',
+                             default='../../../data/DATASET.csv',
                              #default='../data/DATASET3.csv',
                              #default='../data/Omnidir.csv',
-                             default='../data/FluTopicData-testsansdate-blank.csv',
-                             #default='data/FluTopicData-testsansdate-blank.csv',
+                             #default='../data/FluTopicData-testsansdate-blank.csv',
+                             #default='../data/vehicle_silhouette_dataset.csv',
                              #default='../data/FARSmiss.csv',
+                             #default='../data/c2k_02k.csv',
                              type='string')
         optparser.add_option('-s', '--minSupport',
                              dest='minSup',
                              help='minimum support value',
-                             default=0.5,
+                             default=0.9,
                              type='float')
         optparser.add_option('-e', '--allowEqual',
                              dest='allowEq',
@@ -121,11 +120,11 @@ if __name__ == "__main__":
 
     import time
     # import tracemalloc
-    # from src.algorithms.common.profile_mem import Profile
+    # from algorithms.common.profile_mem import Profile
 
     start = time.time()
     # tracemalloc.start()
-    res_text = init_algorithm(filePath, minSup, numCores)
+    res_text = init_algorithm(filePath, minSup, numCores, allowEq)
     # snapshot = tracemalloc.take_snapshot()
     end = time.time()
 
