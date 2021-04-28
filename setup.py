@@ -5,7 +5,7 @@ try:
     from setuptools import setup, Extension, find_packages
 except ImportError:
     from distutils.core import setup, Extension
-#from Cython.Distutils import build_ext
+# from Cython.Distutils import build_ext
 # from Cython.Build import cythonize
 import numpy
 
@@ -23,6 +23,7 @@ test_requirements = [
     # TODO: put package test requirements here
 ]
 
+"""
 ext_modules = [
     Extension("src.algorithms.common.cython.cyt_dataset",
               ["src/algorithms/common/cython/cyt_dataset.pyx"]),
@@ -35,7 +36,7 @@ ext_modules = [
     Extension("src.algorithms.aco.cython.cyt_aco_grad",
               ["src/algorithms/aco/cython/cyt_aco_grad.pyx"]),
               #define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")])
-]
+]"""
 # ext_modules = cythonize("src/algorithms/common/cyt_dataset.pyx", annotate=True)
 
 setup(

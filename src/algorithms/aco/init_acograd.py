@@ -55,7 +55,7 @@ def init_algorithm(f_path, min_supp, cores, eq=False):
             wr_line += (str(gp.to_string()) + ' : ' + str(gp.support) + '\n')
 
         wr_line += "\nPheromone Matrix\n"
-        wr_line += str(ac.p_matrix)
+        # wr_line += str(ac.p_matrix)
         # ac.plot_pheromone_matrix()
         return wr_line
     except ArithmeticError as error:
