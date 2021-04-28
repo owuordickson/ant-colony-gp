@@ -2,6 +2,7 @@
 
 import random
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 # function that models the problem
@@ -15,7 +16,7 @@ c1 = 0.5
 c2 = 0.9
 target = 1
 
-n_iterations = 50  # int(input("Inform the number of iterations: "))
+n_iterations = 100  # int(input("Inform the number of iterations: "))
 target_error = 1e-6  #float(input("Inform the target error: "))
 n_particles = 30  # int(input("Inform the number of particles: "))
 
@@ -29,20 +30,21 @@ gbest_position = np.array([float('inf'), float('inf')])
 
 velocity_vector = ([np.array([0, 0]) for _ in range(n_particles)])
 iteration = 0
+bestpos = np.empty(n_iterations)
 while iteration < n_iterations:
     for i in range(n_particles):
-        fitness_cadidate = fitness_function(particle_position_vector[i])
-        print(fitness_cadidate, ' ', particle_position_vector[i])
+        fitness_candidate = fitness_function(particle_position_vector[i])
+        # print(fitness_candidate, ' ', particle_position_vector[i])
 
-        if (pbest_fitness_value[i] > fitness_cadidate):
-            pbest_fitness_value[i] = fitness_cadidate
+        if pbest_fitness_value[i] > fitness_candidate:
+            pbest_fitness_value[i] = fitness_candidate
             pbest_position[i] = particle_position_vector[i]
 
-        if (gbest_fitness_value > fitness_cadidate):
-            gbest_fitness_value = fitness_cadidate
+        if gbest_fitness_value > fitness_candidate:
+            gbest_fitness_value = fitness_candidate
             gbest_position = particle_position_vector[i]
-
-    if (abs(gbest_fitness_value - target) < target_error):
+    bestpos[iteration] = fitness_function(gbest_position)
+    if abs(gbest_fitness_value - target) < target_error:
         break
 
     for i in range(n_particles):
@@ -55,3 +57,14 @@ while iteration < n_iterations:
     iteration = iteration + 1
 
 print("The best position is ", gbest_position, "in iteration number ", iteration)
+
+
+# Results
+plt.plot(bestpos)
+plt.semilogy(bestpos)
+plt.xlim(0, n_iterations)
+plt.xlabel('Iterations')
+plt.ylabel('Global Best Position')
+plt.title('Pattern Swarm Algorithm (PSO)')
+plt.grid(True)
+plt.show()
