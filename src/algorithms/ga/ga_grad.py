@@ -59,6 +59,62 @@ class GradGA:
 
         return []
 
+    def validate_gp(self, pattern):
+        # pattern = [('2', '+'), ('4', '+')]
+        min_supp = self.d_set.thd_supp
+        n = self.d_set.attr_size
+        gen_pattern = GP()
+        bin_arr = np.array([])
+
+        for gi in pattern.gradual_items:
+            arg = np.argwhere(np.isin(self.d_set.valid_bins[:, 0], gi.gradual_item))
+            if len(arg) > 0:
+                i = arg[0][0]
+                valid_bin = self.d_set.valid_bins[i]
+                if bin_arr.size <= 0:
+                    bin_arr = np.array([valid_bin[1], valid_bin[1]])
+                    gen_pattern.add_gradual_item(gi)
+                else:
+                    bin_arr[1] = valid_bin[1].copy()
+                    temp_bin = np.multiply(bin_arr[0], bin_arr[1])
+                    supp = float(np.sum(temp_bin)) / float(n * (n - 1.0) / 2.0)
+                    if supp >= min_supp:
+                        bin_arr[0] = temp_bin.copy()
+                        gen_pattern.add_gradual_item(gi)
+                        gen_pattern.set_support(supp)
+        if len(gen_pattern.gradual_items) <= 1:
+            return pattern
+        else:
+            return gen_pattern
+
+    @staticmethod
+    def crossover(p_1, p_2):
+        c_1 = p_1.copy()
+        c_2 = p_1.copy()
+        choice = np.random.randint(2, size=c_1.gene.size).reshape(c_1.gene.shape).astype(bool)
+        c_1.gene = np.where(choice, p_1.gene, p_2.gene)
+        c_2.gene = np.where(choice, p_2.gene, p_1.gene)
+        return c_1, c_2
+
+    @staticmethod
+    def mutate(p_x):
+        p_y = p_x.copy()
+        rand_val_1 = np.random.randint(0, p_x.gene.shape[0])
+        rand_val_2 = np.random.randint(0, p_x.gene.shape[1])
+        if p_y.gene[rand_val_1, rand_val_2] == 0:
+            p_y.gene[rand_val_1, rand_val_2] = 1
+        else:
+            p_y.gene[rand_val_1, rand_val_2] = 0
+        return p_y
+
+    @staticmethod
+    def build_gene(prob, shape):
+        temp_gene = []
+        for i in range(shape[0]):
+            temp = np.random.choice(a=prob.vals, size=(shape[1],))
+            temp_gene.append(temp)
+        return np.array(temp_gene)
+
     @staticmethod
     def check_anti_monotony(lst_p, pattern, subset=True):
         result = False
