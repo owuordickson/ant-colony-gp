@@ -17,15 +17,6 @@ from ypstruct import structure
 import ga
 
 
-# GA for demand-jobs
-def nodes_count(x):
-    return x
-
-
-def jobs_cost(c):
-    return c
-
-
 def cost_func(gene, c_matrix, u_demand):
     cost = 0
     for i in range(gene.shape[0]):
@@ -36,16 +27,6 @@ def cost_func(gene, c_matrix, u_demand):
         for j in range(gene.shape[1]):
             cost += (gene[i][j]/total) * c_matrix[i][j] * u_demand[i]
     return cost
-
-
-# Demand: number of nodes, cost for every job (stored in matrix)
-# demand = structure()
-# demand.nodes = nodes_count
-# demand.cost = jobs_cost
-
-# Jobs: number of nodes
-# job = structure()
-# job.max_nodes = nodes_count
 
 
 # Problem definition

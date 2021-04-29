@@ -31,7 +31,7 @@ def init_algorithm(f_path, min_supp, cores):
             num_cores = Profile.get_num_cores()
 
         ga = GradGA(f_path, min_supp)
-        list_gp = []  # ac.run_ant_colony()
+        list_gp = ga.run_genetic_algorithm()
 
         d_set = ga.d_set
         wr_line = "Algorithm: GA-GRAANK (v1.0)\n"

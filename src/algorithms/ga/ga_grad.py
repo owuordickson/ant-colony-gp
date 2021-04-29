@@ -46,6 +46,19 @@ class GradGA:
         # print(d)
         return d, attr_keys
 
+    def run_genetic_algorithm(self):
+        min_supp = self.d_set.thd_supp
+        a = self.d_set.attr_size
+
+        if self.d_set.no_bins:
+            return []
+
+        # 1. Remove d[i][j] < frequency-count of min_supp
+        fr_count = ((min_supp * a * (a - 1)) / 2)
+        self.d[self.d < fr_count] = 0
+
+        return []
+
     @staticmethod
     def check_anti_monotony(lst_p, pattern, subset=True):
         result = False
