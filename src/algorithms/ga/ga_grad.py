@@ -92,6 +92,9 @@ class GradGA:
         else:
             return gen_pattern
 
+    def decode_gp(self, gene):
+        a = self.attr_keys
+
     @staticmethod
     def crossover(p_1, p_2):
         c_1 = p_1.copy()
