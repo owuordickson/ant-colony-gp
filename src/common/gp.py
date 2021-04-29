@@ -2,11 +2,13 @@
 """
 @author: "Dickson OWUOR"
 @credits: "Anne LAURENT and Joseph ORERO"
-@version: "3.0"
+@version: "4.8"
 @email: "owuordickson@gmail.com"
 @created: "20 May 2020"
+@modified: "10 Mar 2021"
 
-GP: Gradual Pattern
+GI: Gradual Item (0, +)
+GP: Gradual Pattern {(0, +), (1, -), (3, +)}
 TGP: Temporal Gradual Pattern
 
 """
@@ -20,6 +22,7 @@ class GI:
         self.symbol = symbol
         self.gradual_item = np.array((attr_col, symbol), dtype='i, S1')
         self.tuple = tuple([attr_col, symbol])
+        self.rank_sum = 0
 
     def inv(self):
         if self.symbol == '+':
@@ -53,6 +56,22 @@ class GI:
     def to_string(self):
         return str(self.attribute_col) + self.symbol
 
+    def is_decrement(self):
+        if self.symbol == '-':
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def parse_gi(gi_str):
+        txt = gi_str.split('_')
+        attr_col = int(txt[0])
+        if txt[1] == 'neg':
+            symbol = '-'
+        else:
+            symbol = '+'
+        return GI(attr_col, symbol)
+
 
 class GP:
 
@@ -75,6 +94,12 @@ class GP:
             pattern.append(item.gradual_item.tolist())
         return pattern
 
+    def get_np_pattern(self):
+        pattern = []
+        for item in self.gradual_items:
+            pattern.append(item.gradual_item)
+        return np.array(pattern)
+
     def get_tuples(self):
         pattern = list()
         for gi in self.gradual_items:
@@ -91,17 +116,45 @@ class GP:
             syms.append(gi[1])
         return attrs, syms
 
+    def get_index(self, gi):
+        for i in range(len(self.gradual_items)):
+            gi_obj = self.gradual_items[i]
+            if (gi.symbol == gi_obj.symbol) and (gi.attribute_col == gi_obj.attribute_col):
+                return i
+        return -1
+
     def inv_pattern(self):
         pattern = list()
         for gi in self.gradual_items:
             pattern.append(gi.inv().tolist())
         return pattern
 
+    def contains(self, gi):
+        if gi is None:
+            return False
+        if gi in self.gradual_items:
+            return True
+        return False
+
+    def contains_attr(self, gi):
+        if gi is None:
+            return False
+        for gi_obj in self.gradual_items:
+            if gi.attribute_col == gi_obj.attribute_col:
+                return True
+        return False
+
     def to_string(self):
         pattern = list()
         for item in self.gradual_items:
             pattern.append(item.to_string())
         return pattern
+
+    def to_dict(self):
+        gi_dict = {}
+        for gi in self.gradual_items:
+            gi_dict.update({gi.as_string(): 0})
+        return gi_dict
 
 
 class TimeLag:
@@ -169,5 +222,5 @@ class TGP(GP):
         self.support = gp.support
         self.time_lag = t_lag
 
-    def set_timeLag(self, t_lag):
+    def set_timelag(self, t_lag):
         self.time_lag = t_lag
