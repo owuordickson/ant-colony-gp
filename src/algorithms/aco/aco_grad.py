@@ -49,7 +49,6 @@ class GradACO:
 
     def run_ant_colony(self):
         min_supp = self.d_set.thd_supp
-        d = self.d
         a = self.d_set.attr_size
         winner_gps = list()  # subsets
         loser_gps = list()  # supersets
@@ -61,7 +60,7 @@ class GradACO:
 
         # 1. Remove d[i][j] < frequency-count of min_supp
         fr_count = ((min_supp * a * (a - 1)) / 2)
-        d[d < fr_count] = 0
+        self.d[self.d < fr_count] = 0
 
         # 2. Calculating the visibility of the next city
         # visibility(i,j)=1/d(i,j)
@@ -71,9 +70,7 @@ class GradACO:
         #    visibility[visibility == np.inf] = 0
 
         # 3. Initialize pheromones (p_matrix)
-        pheromones = np.ones(d.shape, dtype=float)
-        # print(pheromones)
-        # print("***\n")
+        pheromones = np.ones(self.d.shape, dtype=float)
 
         # 4. Iterations for ACO
         # while repeated < 1:
