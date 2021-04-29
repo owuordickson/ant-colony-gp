@@ -54,6 +54,7 @@ class GradACO:
         loser_gps = list()  # supersets
         repeated = 0
         it_count = 0
+        max_it = 100
 
         if self.d_set.no_bins:
             return []
@@ -74,7 +75,7 @@ class GradACO:
 
         # 4. Iterations for ACO
         # while repeated < 1:
-        while it_count < 10:
+        while it_count < max_it:
             rand_gp, pheromones = self.generate_aco_gp(pheromones)
             if len(rand_gp.gradual_items) > 1:
                 # print(rand_gp.get_pattern())

@@ -49,6 +49,8 @@ class GradGA:
     def run_genetic_algorithm(self):
         min_supp = self.d_set.thd_supp
         a = self.d_set.attr_size
+        it_count = 0
+        max_it = 100
 
         if self.d_set.no_bins:
             return []
@@ -56,6 +58,9 @@ class GradGA:
         # 1. Remove d[i][j] < frequency-count of min_supp
         fr_count = ((min_supp * a * (a - 1)) / 2)
         self.d[self.d < fr_count] = 0
+
+        while it_count < max_it:
+            pass
 
         return []
 
