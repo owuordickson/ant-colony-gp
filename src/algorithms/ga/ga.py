@@ -20,8 +20,6 @@ def run(problem, params):
 
     # Problem Information
     costfunc = problem.costfunc
-    vals = problem.vals
-    gene_length = 15
 
     # Parameters
     maxit = params.maxit

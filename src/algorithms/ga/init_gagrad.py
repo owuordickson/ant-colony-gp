@@ -20,6 +20,7 @@ Description:
 
 import sys
 from optparse import OptionParser
+import matplotlib.pyplot as plt
 from ga_grad import GradGA
 
 
@@ -31,7 +32,18 @@ def init_algorithm(f_path, min_supp, cores):
             num_cores = Profile.get_num_cores()
 
         ga = GradGA(f_path, min_supp)
-        list_gp = ga.run_genetic_algorithm()
+        out = ga.run_genetic_algorithm()
+        list_gp = out.bestpattern
+
+        # Results
+        plt.plot(out.bestcost)
+        plt.semilogy(out.bestcost)
+        plt.xlim(0, ga.max_it)
+        plt.xlabel('Iterations')
+        plt.ylabel('Best Cost')
+        plt.title('Genetic Algorithm (GA)')
+        plt.grid(True)
+        plt.show()
 
         d_set = ga.d_set
         wr_line = "Algorithm: GA-GRAANK (v1.0)\n"

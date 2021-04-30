@@ -12,6 +12,7 @@ Breath-First Search for gradual patterns (GA-GRAANK)
 
 """
 import numpy as np
+from ypstruct import structure
 from src.common.gp import GI, GP
 from src.common.dataset_bfs import Dataset
 
@@ -23,7 +24,11 @@ class GradGA:
         self.d_set.init_gp_attributes()
         self.attr_index = self.d_set.attr_cols
         self.iteration_count = 0
+        self.max_it = 100
+        self.npop = 20
+        self.pc = 1
         self.d, self.attr_keys = self.generate_d()  # distance matrix (d) & attributes corresponding to d
+        print(self.attr_keys)
 
     def generate_d(self):
         v_bins = self.d_set.valid_bins
@@ -49,8 +54,6 @@ class GradGA:
     def run_genetic_algorithm(self):
         min_supp = self.d_set.thd_supp
         a = self.d_set.attr_size
-        it_count = 0
-        max_it = 100
 
         if self.d_set.no_bins:
             return []
@@ -59,10 +62,130 @@ class GradGA:
         fr_count = ((min_supp * a * (a - 1)) / 2)
         self.d[self.d < fr_count] = 0
 
-        while it_count < max_it:
-            pass
+        # gene = self.build_gp_gene()
+        # gp = self.decode_gp(gene)
+        # print(gene)
+        # if not(gp is None):
+        #    print(gp.to_string())
+        # else:
+        #    print("Irrelevant gene")
 
-        return []
+        # Problem Information
+        costfunc = self.cost_func
+
+        # Parameters
+        it_count = 0
+        max_it = self.max_it
+        npop = self.npop
+        pc = self.pc
+        nc = int(np.round(pc * npop / 2) * 2)
+
+        # Empty Individual Template
+        empty_individual = structure()
+        empty_individual.gene = None
+        empty_individual.cost = None
+
+        # Best Solution Ever Found
+        bestsol = empty_individual.deepcopy()
+        bestsol.cost = np.inf
+
+        # Initialize Population
+        pop = empty_individual.repeat(npop)
+        for i in range(npop):
+            pop[i].gene = self.build_gp_gene()
+            pop[i].cost = costfunc(self.decode_gp(pop[i].gene))
+            if pop[i].cost < bestsol.cost:
+                bestsol = pop[i].deepcopy()
+
+        # Best Cost of Iteration
+        bestcost = np.empty(max_it)
+        bestgene = []
+        bestpattern = []
+
+        while it_count < max_it:
+
+            popc = []
+            for _ in range(nc // 2):
+                # Select Parents
+                q = np.random.permutation(npop)
+                p1 = pop[q[0]]
+                p2 = pop[q[1]]
+
+                # Perform Crossover
+                c1, c2 = self.crossover(p1, p2)
+
+                # Perform Mutation
+                c1 = self.mutate(c1)
+                c2 = self.mutate(c2)
+
+                # Apply Bound
+                # apply_bound(c1, varmin, varmax)
+                # apply_bound(c2, varmin, varmax)
+
+                # Evaluate First Offspring
+                c1.cost = costfunc(self.decode_gp(c1.gene))
+                if c1.cost < bestsol.cost:
+                    bestsol = c1.deepcopy()
+
+                # Evaluate Second Offspring
+                c2.cost = costfunc(self.decode_gp(c2.gene))
+                if c2.cost < bestsol.cost:
+                    bestsol = c2.deepcopy()
+
+                # Add Offsprings to popc
+                popc.append(c1)
+                popc.append(c2)
+
+            # Merge, Sort and Select
+            pop += popc
+            pop = sorted(pop, key=lambda x: x.cost)
+            pop = pop[0:npop]
+
+            # Store Best Cost
+            bestcost[it_count] = bestsol.cost
+            bestgene.append(bestsol.gene)
+            bestpattern.append(self.decode_gp(bestsol.gene))
+
+            # Show Iteration Information
+            print("Iteration {}: Best Cost = {}".format(it_count, bestcost[it_count]))
+            it_count += 1
+
+        # Output
+        out = structure()
+        out.pop = pop
+        out.bestsol = bestsol
+        out.bestcost = bestcost
+        out.bestpattern = bestpattern
+
+        return out
+
+    def build_gp_gene(self):
+        a = self.attr_keys
+        temp_gene = np.random.choice(a=[0, 1], size=(len(a),))
+        return temp_gene
+
+    def decode_gp(self, gene):
+        temp_gp = GP()
+        if gene is None:
+            return temp_gp
+        for i in range(gene.size):
+            gene_val = gene[i]
+            if gene_val == 1:
+                gi = GI.parse_gi(self.attr_keys[i])
+                if temp_gp.contains_attr(gi):
+                    return None
+                else:
+                    temp_gp.add_gradual_item(gi)
+        return temp_gp
+
+    def cost_func(self, raw_gp):
+        if raw_gp is None:
+            return np.inf
+        else:
+            gp = self.validate_gp(raw_gp)
+            if gp.support == 0:
+                return np.inf
+            return float(self.d_set.thd_supp / gp.support)
 
     def validate_gp(self, pattern):
         # pattern = [('2', '+'), ('4', '+')]
@@ -92,9 +215,6 @@ class GradGA:
         else:
             return gen_pattern
 
-    def decode_gp(self, gene):
-        a = self.attr_keys
-
     @staticmethod
     def crossover(p_1, p_2):
         c_1 = p_1.copy()
@@ -107,21 +227,12 @@ class GradGA:
     @staticmethod
     def mutate(p_x):
         p_y = p_x.copy()
-        rand_val_1 = np.random.randint(0, p_x.gene.shape[0])
-        rand_val_2 = np.random.randint(0, p_x.gene.shape[1])
-        if p_y.gene[rand_val_1, rand_val_2] == 0:
-            p_y.gene[rand_val_1, rand_val_2] = 1
+        rand_val = np.random.randint(0, p_x.gene.shape[0])
+        if p_y.gene[rand_val] == 0:
+            p_y.gene[rand_val] = 1
         else:
-            p_y.gene[rand_val_1, rand_val_2] = 0
+            p_y.gene[rand_val] = 0
         return p_y
-
-    @staticmethod
-    def build_gene(prob, shape):
-        temp_gene = []
-        for i in range(shape[0]):
-            temp = np.random.choice(a=prob.vals, size=(shape[1],))
-            temp_gene.append(temp)
-        return np.array(temp_gene)
 
     @staticmethod
     def check_anti_monotony(lst_p, pattern, subset=True):
