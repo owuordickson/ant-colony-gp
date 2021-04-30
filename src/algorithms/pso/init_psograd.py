@@ -36,8 +36,8 @@ def init_algorithm(f_path, min_supp, cores):
         list_gp = out.bestpattern
 
         # Results
-        plt.plot(out.bestcost)
-        plt.semilogy(out.bestcost)
+        plt.plot(out.bestpos)
+        plt.semilogy(out.bestpos)
         plt.xlim(0, pso.max_it)
         plt.xlabel('Iterations')
         plt.ylabel('Global Best Position')
