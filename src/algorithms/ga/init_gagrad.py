@@ -36,19 +36,21 @@ def init_algorithm(f_path, min_supp, cores):
         list_gp = out.bestpattern
 
         # Results
-        plt.plot(out.bestcost)
-        plt.semilogy(out.bestcost)
-        plt.xlim(0, ga.max_it)
-        plt.xlabel('Iterations')
-        plt.ylabel('Best Cost')
-        plt.title('Genetic Algorithm (GA)')
-        plt.grid(True)
-        plt.show()
+        # plt.plot(out.bestcost)
+        # plt.semilogy(out.bestcost)
+        # plt.xlim(0, ga.max_it)
+        # plt.xlabel('Iterations')
+        # plt.ylabel('Best Cost')
+        # plt.title('Genetic Algorithm (GA)')
+        # plt.grid(True)
+        # plt.show()
 
         d_set = ga.d_set
         wr_line = "Algorithm: GA-GRAANK (v1.0)\n"
         wr_line += "No. of (dataset) attributes: " + str(ga.d_set.col_count) + '\n'
         wr_line += "No. of (dataset) tuples: " + str(ga.d_set.row_count) + '\n'
+        wr_line += "Population size: " + str(ga.n_pop) + '\n'
+
         wr_line += "Minimum support: " + str(min_supp) + '\n'
         wr_line += "Number of cores: " + str(num_cores) + '\n'
         wr_line += "Number of patterns: " + str(len(list_gp)) + '\n'
@@ -66,6 +68,8 @@ def init_algorithm(f_path, min_supp, cores):
         for gp in list_gp:
             wr_line += (str(gp.to_string()) + ' : ' + str(gp.support) + '\n')
 
+        wr_line += '\n\nIterations \n'
+        wr_line += out.iterations
         return wr_line
     except ArithmeticError as error:
         wr_line = "Failed: " + str(error)

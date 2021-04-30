@@ -79,6 +79,7 @@ class GradPSO:
         velocity_vector = ([np.zeros((len(self.attr_keys),)) for _ in range(n_particles)])
         bestpos = np.empty(max_it)
         bestpattern = []
+        str_plt = ''
 
         while it_count < max_it:
             for i in range(n_particles):
@@ -110,7 +111,8 @@ class GradPSO:
                 bestpattern.append(best_gp)
 
             # Show Iteration Information
-            print("Iteration {}: Best Position = {}".format(it_count, bestpos[it_count]))
+            # print("Iteration {}: Best Position = {}".format(it_count, bestpos[it_count]))
+            str_plt += "Iteration {}: Best Position: {} \n".format(it_count, bestpos[it_count])
             it_count += 1
 
         # Output
@@ -119,6 +121,7 @@ class GradPSO:
         out.bestpos = bestpos
         out.gbest_position = gbest_position
         out.bestpattern = bestpattern
+        out.iterations = str_plt
 
         self.iteration_count = it_count
         return out

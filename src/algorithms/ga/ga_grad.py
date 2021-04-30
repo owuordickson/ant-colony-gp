@@ -92,6 +92,7 @@ class GradGA:
         bestcost = np.empty(max_it)
         bestgene = []
         bestpattern = []
+        str_plt = ''
 
         while it_count < max_it:
 
@@ -144,7 +145,8 @@ class GradGA:
                 bestpattern.append(best_gp)
 
             # Show Iteration Information
-            print("Iteration {}: Best Cost = {}".format(it_count, bestcost[it_count]))
+            # print("Iteration {}: Best Cost = {}".format(it_count, bestcost[it_count]))
+            str_plt += "Iteration {}: Best Cost: {} \n".format(it_count, bestcost[it_count])
             it_count += 1
 
         # Output
@@ -153,6 +155,7 @@ class GradGA:
         out.bestsol = bestsol
         out.bestcost = bestcost
         out.bestpattern = bestpattern
+        out.iterations = str_plt
 
         self.iteration_count = it_count
         return out

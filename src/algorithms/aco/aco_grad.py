@@ -78,6 +78,7 @@ class GradACO:
         # Best Cost of Iteration
         bestcost = np.empty(max_it)
         best_cost = np.inf
+        str_plt = ''
 
         # 4. Iterations for ACO
         # while repeated < 1:
@@ -112,13 +113,15 @@ class GradACO:
             # it_count += 1
             # Show Iteration Information
             bestcost[it_count] = best_cost
-            print("Iteration {}: Best Cost = {}".format(it_count, bestcost[it_count]))
+            # print("Iteration {}: Best Cost: {}".format(it_count, bestcost[it_count]))
+            str_plt += "Iteration {}: Best Cost: {} \n".format(it_count, bestcost[it_count])
             it_count += 1
 
         # Output
         out = structure()
         out.bestcost = bestcost
         out.bestpattern = winner_gps
+        out.iterations = str_plt
 
         self.iteration_count = it_count
         return out

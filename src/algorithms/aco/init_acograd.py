@@ -37,19 +37,21 @@ def init_algorithm(f_path, min_supp, cores):
         list_gp = out.bestpattern
 
         # Results
-        plt.plot(out.bestcost)
-        plt.semilogy(out.bestcost)
-        plt.xlim(0, ac.max_it)
-        plt.xlabel('Iterations')
-        plt.ylabel('Best Cost')
-        plt.title('Ant Colony optimization (ACO)')
-        plt.grid(True)
-        plt.show()
+        # plt.plot(out.bestcost)
+        # plt.semilogy(out.bestcost)
+        # plt.xlim(0, ac.max_it)
+        # plt.xlabel('Iterations')
+        # plt.ylabel('Best Cost')
+        # plt.title('Ant Colony optimization (ACO)')
+        # plt.grid(True)
+        # plt.show()
 
         d_set = ac.d_set
         wr_line = "Algorithm: ACO-GRAANK (v4.0)\n"
         wr_line += "No. of (dataset) attributes: " + str(ac.d_set.col_count) + '\n'
         wr_line += "No. of (dataset) tuples: " + str(ac.d_set.row_count) + '\n'
+        wr_line += "Evaporation factor: " + str(ac.e_factor) + '\n'
+
         wr_line += "Minimum support: " + str(min_supp) + '\n'
         wr_line += "Number of cores: " + str(num_cores) + '\n'
         wr_line += "Number of patterns: " + str(len(list_gp)) + '\n'
@@ -70,6 +72,8 @@ def init_algorithm(f_path, min_supp, cores):
         # wr_line += "\nPheromone Matrix\n"
         # wr_line += str(ac.p_matrix)
         # ac.plot_pheromone_matrix()
+        wr_line += '\n\nIterations \n'
+        wr_line += out.iterations
         return wr_line
     except ArithmeticError as error:
         wr_line = "Failed: " + str(error)
