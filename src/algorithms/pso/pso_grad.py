@@ -31,7 +31,7 @@ class GradPSO:
         self.c2 = 0.9
         # self.target = 1
         # self.target_error = 1e-6
-        self.n_particles = 20
+        self.n_particles = 50
         self.d, self.attr_keys = self.generate_d()  # distance matrix (d) & attributes corresponding to d
 
     def generate_d(self):
