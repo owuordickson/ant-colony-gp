@@ -61,14 +61,6 @@ class GradGA:
         fr_count = ((min_supp * a * (a - 1)) / 2)
         self.d[self.d < fr_count] = 0
 
-        # gene = self.build_gp_gene()
-        # gp = self.decode_gp(gene)
-        # print(gene)
-        # if not(gp is None):
-        #    print(gp.to_string())
-        # else:
-        #    print("Irrelevant gene")
-
         # Problem Information
         costfunc = self.cost_func
 
