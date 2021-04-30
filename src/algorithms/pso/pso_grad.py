@@ -29,8 +29,8 @@ class GradPSO:
         self.W = 0.5
         self.c1 = 0.5
         self.c2 = 0.9
-        self.target = 1
-        self.target_error = 1e-6
+        # self.target = 1
+        # self.target_error = 1e-6
         self.n_particles = 20
         self.d, self.attr_keys = self.generate_d()  # distance matrix (d) & attributes corresponding to d
 
@@ -83,7 +83,6 @@ class GradPSO:
         while it_count < max_it:
             for i in range(n_particles):
                 fitness_candidate = self.fitness_function(self.decode_gp(particle_position_vector[i]))
-                # print(fitness_candidate, ' ', particle_position_vector[i])
 
                 if pbest_fitness_value[i] > fitness_candidate:
                     pbest_fitness_value[i] = fitness_candidate
@@ -93,8 +92,8 @@ class GradPSO:
                     gbest_fitness_value = fitness_candidate
                     gbest_position = particle_position_vector[i]
             bestpos[it_count] = self.fitness_function(self.decode_gp(gbest_position))
-            if abs(gbest_fitness_value - self.target) < self.target_error:
-                break
+            # if abs(gbest_fitness_value - self.target) < self.target_error:
+            #    break
 
             for i in range(n_particles):
                 new_velocity = (self.W * velocity_vector[i]) + (self.c1 * random.random()) * (
@@ -110,9 +109,9 @@ class GradPSO:
             if not (is_present or is_sub):
                 bestpattern.append(best_gp)
 
+            # Show Iteration Information
+            print("Iteration {}: Best Position = {}".format(it_count, bestpos[it_count]))
             it_count += 1
-
-        print("The best position is ", gbest_position, "in iteration number ", it_count)
 
         # Output
         out = structure()
@@ -133,8 +132,8 @@ class GradPSO:
         if gene is None:
             return temp_gp
         for i in range(gene.size):
-            gene_val = gene[i]
-            if gene_val == 1:
+            gene_val = round(gene[i])
+            if gene_val >= 1:
                 gi = GI.parse_gi(self.attr_keys[i])
                 if not temp_gp.contains_attr(gi):
                     temp_gp.add_gradual_item(gi)
