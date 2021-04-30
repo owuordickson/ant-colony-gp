@@ -112,11 +112,7 @@ class GradPSO:
         return result
 
     @staticmethod
-    def is_duplicate(pattern, lst_winners, lst_losers):
-        for pat in lst_losers:
-            if set(pattern.get_pattern()) == set(pat.get_pattern()) or \
-                    set(pattern.inv_pattern()) == set(pat.get_pattern()):
-                return True
+    def is_duplicate(pattern, lst_winners):
         for pat in lst_winners:
             if set(pattern.get_pattern()) == set(pat.get_pattern()) or \
                     set(pattern.inv_pattern()) == set(pat.get_pattern()):
