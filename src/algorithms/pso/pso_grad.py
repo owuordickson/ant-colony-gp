@@ -12,6 +12,8 @@ Breath-First Search for gradual patterns (PSO-GRAANK)
 
 """
 import numpy as np
+import random
+from ypstruct import structure
 from src.common.gp import GI, GP
 from src.common.dataset_bfs import Dataset
 
@@ -56,8 +58,6 @@ class GradPSO:
     def run_particle_swarm(self):
         min_supp = self.d_set.thd_supp
         a = self.d_set.attr_size
-        it_count = 0
-        max_it = 100
 
         if self.d_set.no_bins:
             return []
@@ -66,10 +66,62 @@ class GradPSO:
         fr_count = ((min_supp * a * (a - 1)) / 2)
         self.d[self.d < fr_count] = 0
 
-        while it_count < max_it:
-            pass
+        it_count = 0
+        max_it = self.max_it
+        n_particles = self.n_particles
 
-        return []
+        particle_position_vector = np.array([self.build_gp_gene() for _ in range(n_particles)])
+        pbest_position = particle_position_vector
+        pbest_fitness_value = np.array([float('inf') for _ in range(n_particles)])
+        gbest_fitness_value = float('inf')
+        gbest_position = np.array([float('inf'), float('inf')])
+
+        velocity_vector = ([np.zeros((len(self.attr_keys),)) for _ in range(n_particles)])
+        bestpos = np.empty(max_it)
+        bestpattern = []
+
+        while it_count < max_it:
+            for i in range(n_particles):
+                fitness_candidate = self.fitness_function(self.decode_gp(particle_position_vector[i]))
+                # print(fitness_candidate, ' ', particle_position_vector[i])
+
+                if pbest_fitness_value[i] > fitness_candidate:
+                    pbest_fitness_value[i] = fitness_candidate
+                    pbest_position[i] = particle_position_vector[i]
+
+                if gbest_fitness_value > fitness_candidate:
+                    gbest_fitness_value = fitness_candidate
+                    gbest_position = particle_position_vector[i]
+            bestpos[it_count] = self.fitness_function(self.decode_gp(gbest_position))
+            if abs(gbest_fitness_value - self.target) < self.target_error:
+                break
+
+            for i in range(n_particles):
+                new_velocity = (self.W * velocity_vector[i]) + (self.c1 * random.random()) * (
+                        pbest_position[i] - particle_position_vector[i]) + (self.c2 * random.random()) * (
+                                       gbest_position - particle_position_vector[i])
+                new_position = new_velocity + particle_position_vector[i]
+                particle_position_vector[i] = new_position
+
+            best_gp = self.decode_gp(gbest_position)
+            best_gp.support = float(1 / bestpos[it_count])
+            is_present = GradPSO.is_duplicate(best_gp, bestpattern)
+            is_sub = GradPSO.check_anti_monotony(bestpattern, best_gp, subset=True)
+            if not (is_present or is_sub):
+                bestpattern.append(best_gp)
+
+            it_count += 1
+
+        print("The best position is ", gbest_position, "in iteration number ", it_count)
+
+        # Output
+        out = structure()
+        out.pop = particle_position_vector
+        out.bestpos = bestpos
+        out.gbest_position = gbest_position
+        out.bestpattern = bestpattern
+
+        return out
 
     def build_gp_gene(self):
         a = self.attr_keys
@@ -88,7 +140,7 @@ class GradPSO:
                     temp_gp.add_gradual_item(gi)
         return self.validate_gp(temp_gp)
 
-    def cost_func(self, gp):
+    def fitness_function(self, gp):
         if gp is None:
             return np.inf
         else:
