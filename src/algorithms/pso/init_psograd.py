@@ -20,6 +20,7 @@ Description:
 
 import sys
 from optparse import OptionParser
+import matplotlib.pyplot as plt
 from pso_grad import GradPSO
 
 
@@ -31,7 +32,18 @@ def init_algorithm(f_path, min_supp, cores):
             num_cores = Profile.get_num_cores()
 
         pso = GradPSO(f_path, min_supp)
-        list_gp = pso.run_particle_swarm()
+        out = pso.run_particle_swarm()
+        list_gp = out.bestpattern
+
+        # Results
+        plt.plot(out.bestcost)
+        plt.semilogy(out.bestcost)
+        plt.xlim(0, pso.max_it)
+        plt.xlabel('Iterations')
+        plt.ylabel('Global Best Position')
+        plt.title('Pattern Swarm Algorithm (PSO)')
+        plt.grid(True)
+        plt.show()
 
         d_set = pso.d_set
         wr_line = "Algorithm: PSO-GRAANK (v1.0)\n"

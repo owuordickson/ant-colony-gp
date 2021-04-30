@@ -25,7 +25,7 @@ class GradGA:
         self.attr_index = self.d_set.attr_cols
         self.iteration_count = 0
         self.max_it = 100
-        self.npop = 20
+        self.n_pop = 20
         self.pc = 1
         self.d, self.attr_keys = self.generate_d()  # distance matrix (d) & attributes corresponding to d
 
@@ -67,7 +67,7 @@ class GradGA:
         # Parameters
         it_count = 0
         max_it = self.max_it
-        npop = self.npop
+        npop = self.n_pop
         pc = self.pc
         nc = int(np.round(pc * npop / 2) * 2)
 

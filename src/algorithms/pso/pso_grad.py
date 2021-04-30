@@ -23,6 +23,13 @@ class GradPSO:
         self.d_set.init_gp_attributes()
         self.attr_index = self.d_set.attr_cols
         self.iteration_count = 0
+        self.max_it = 100
+        self.W = 0.5
+        self.c1 = 0.5
+        self.c2 = 0.9
+        self.target = 1
+        self.target_error = 1e-6
+        self.n_particles = 20
         self.d, self.attr_keys = self.generate_d()  # distance matrix (d) & attributes corresponding to d
 
     def generate_d(self):
@@ -63,6 +70,31 @@ class GradPSO:
             pass
 
         return []
+
+    def build_gp_gene(self):
+        a = self.attr_keys
+        temp_gene = np.random.choice(a=[0, 1], size=(len(a),))
+        return temp_gene
+
+    def decode_gp(self, gene):
+        temp_gp = GP()
+        if gene is None:
+            return temp_gp
+        for i in range(gene.size):
+            gene_val = gene[i]
+            if gene_val == 1:
+                gi = GI.parse_gi(self.attr_keys[i])
+                if not temp_gp.contains_attr(gi):
+                    temp_gp.add_gradual_item(gi)
+        return self.validate_gp(temp_gp)
+
+    def cost_func(self, gp):
+        if gp is None:
+            return np.inf
+        else:
+            if gp.support <= self.d_set.thd_supp:
+                return np.inf
+            return float(1 / gp.support)
 
     def validate_gp(self, pattern):
         # pattern = [('2', '+'), ('4', '+')]
