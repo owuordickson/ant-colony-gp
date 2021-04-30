@@ -12,6 +12,7 @@ Breath-First Search for gradual patterns (ACO-GRAANK)
 
 """
 import numpy as np
+from ypstruct import structure
 from src.common.gp import GI, GP
 from src.common.dataset_bfs import Dataset
 
@@ -23,6 +24,7 @@ class GradACO:
         self.d_set.init_gp_attributes()
         self.attr_index = self.d_set.attr_cols
         self.e_factor = 0.5  # evaporation factor
+        self.max_it = 100
         self.iteration_count = 0
         self.d, self.attr_keys = self.generate_d()  # distance matrix (d) & attributes corresponding to d
 
@@ -54,7 +56,7 @@ class GradACO:
         loser_gps = list()  # supersets
         repeated = 0
         it_count = 0
-        max_it = 100
+        max_it = self.max_it
 
         if self.d_set.no_bins:
             return []
@@ -72,6 +74,10 @@ class GradACO:
 
         # 3. Initialize pheromones (p_matrix)
         pheromones = np.ones(self.d.shape, dtype=float)
+
+        # Best Cost of Iteration
+        bestcost = np.empty(max_it)
+        best_cost = np.inf
 
         # 4. Iterations for ACO
         # while repeated < 1:
@@ -96,15 +102,27 @@ class GradACO:
                         if gen_gp.support >= min_supp:
                             pheromones = self.update_pheromones(gen_gp, pheromones)
                             winner_gps.append(gen_gp)
+                            best_cost = round((1 / gen_gp.support), 2)
                         else:
                             loser_gps.append(gen_gp)
                     if set(gen_gp.get_pattern()) != set(rand_gp.get_pattern()):
                         loser_gps.append(rand_gp)
                 else:
                     repeated += 1
+            # it_count += 1
+            # Show Iteration Information
+            bestcost[it_count] = best_cost
+            print("Iteration {}: Best Cost = {}".format(it_count, bestcost[it_count]))
             it_count += 1
+
+        # Output
+        out = structure()
+        out.bestcost = bestcost
+        out.bestpattern = winner_gps
+
         self.iteration_count = it_count
-        return winner_gps
+        return out
+        # return winner_gps
 
     def generate_aco_gp(self, p_matrix):
         attr_keys = self.attr_keys

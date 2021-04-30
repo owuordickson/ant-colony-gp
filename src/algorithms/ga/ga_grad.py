@@ -154,6 +154,7 @@ class GradGA:
         out.bestcost = bestcost
         out.bestpattern = bestpattern
 
+        self.iteration_count = it_count
         return out
 
     def build_gp_gene(self):
@@ -183,7 +184,7 @@ class GradGA:
         else:
             if gp.support <= self.d_set.thd_supp:
                 return np.inf
-            return float(1 / gp.support)
+            return round((1 / gp.support), 2)
 
     def validate_gp(self, pattern):
         # pattern = [('2', '+'), ('4', '+')]

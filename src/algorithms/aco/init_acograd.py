@@ -20,6 +20,7 @@ Description:
 
 import sys
 from optparse import OptionParser
+import matplotlib.pyplot as plt
 from aco_grad import GradACO
 
 
@@ -31,7 +32,19 @@ def init_algorithm(f_path, min_supp, cores):
             num_cores = Profile.get_num_cores()
 
         ac = GradACO(f_path, min_supp)
-        list_gp = ac.run_ant_colony()
+        # list_gp = ac.run_ant_colony()
+        out = ac.run_ant_colony()
+        list_gp = out.bestpattern
+
+        # Results
+        plt.plot(out.bestcost)
+        plt.semilogy(out.bestcost)
+        plt.xlim(0, ac.max_it)
+        plt.xlabel('Iterations')
+        plt.ylabel('Best Cost')
+        plt.title('Ant Colony optimization (ACO)')
+        plt.grid(True)
+        plt.show()
 
         d_set = ac.d_set
         wr_line = "Algorithm: ACO-GRAANK (v4.0)\n"
@@ -83,14 +96,14 @@ if __name__ == "__main__":
                              dest='file',
                              help='path to file containing csv',
                              # default=None,
-                             default='../../../data/DATASET.csv',
+                             # default='../../../data/DATASET.csv',
                              # default='../data/DATASET2.csv',
                              # default='../data/DATASET3.csv',
                              # default='../data/Omnidir.csv',
                              # default='../data/FluTopicData-testsansdate-blank.csv',
                              # default='../data/vehicle_silhouette_dataset.csv',
                              # default='../data/FARSmiss.csv',
-                             # default='../data/c2k_02k.csv',
+                             default='../../../data/c2k_02k.csv',
                              # default='../data/Directio_site15k.csv',
                              type='string')
         optparser.add_option('-s', '--minSupport',
@@ -127,5 +140,5 @@ if __name__ == "__main__":
     wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
     wr_text += str(res_text)
     f_name = str('res_aco' + str(end).replace('.', '', 1) + '.txt')
-    # write_file(wr_text, f_name)
+    write_file(wr_text, f_name)
     print(wr_text)
