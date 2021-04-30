@@ -28,7 +28,6 @@ class GradGA:
         self.npop = 20
         self.pc = 1
         self.d, self.attr_keys = self.generate_d()  # distance matrix (d) & attributes corresponding to d
-        print(self.attr_keys)
 
     def generate_d(self):
         v_bins = self.d_set.valid_bins
@@ -144,7 +143,13 @@ class GradGA:
             # Store Best Cost
             bestcost[it_count] = bestsol.cost
             bestgene.append(bestsol.gene)
-            bestpattern.append(self.decode_gp(bestsol.gene))
+
+            best_gp = self.decode_gp(bestsol.gene)
+            best_gp.support = float(1 / bestsol.cost)
+            is_present = GradGA.is_duplicate(best_gp, bestpattern)
+            is_sub = GradGA.check_anti_monotony(bestpattern, best_gp, subset=True)
+            if not (is_present or is_sub):
+                bestpattern.append(best_gp)
 
             # Show Iteration Information
             print("Iteration {}: Best Cost = {}".format(it_count, bestcost[it_count]))
@@ -172,20 +177,21 @@ class GradGA:
             gene_val = gene[i]
             if gene_val == 1:
                 gi = GI.parse_gi(self.attr_keys[i])
-                if temp_gp.contains_attr(gi):
-                    return None
-                else:
+                # if temp_gp.contains_attr(gi):
+                    # return None
+                #    continue
+                # else:
+                if not temp_gp.contains_attr(gi):
                     temp_gp.add_gradual_item(gi)
-        return temp_gp
+        return self.validate_gp(temp_gp)
 
-    def cost_func(self, raw_gp):
-        if raw_gp is None:
+    def cost_func(self, gp):
+        if gp is None:
             return np.inf
         else:
-            gp = self.validate_gp(raw_gp)
-            if gp.support == 0:
+            if gp.support <= self.d_set.thd_supp:
                 return np.inf
-            return float(self.d_set.thd_supp / gp.support)
+            return float(1 / gp.support)
 
     def validate_gp(self, pattern):
         # pattern = [('2', '+'), ('4', '+')]
@@ -254,11 +260,7 @@ class GradGA:
         return result
 
     @staticmethod
-    def is_duplicate(pattern, lst_winners, lst_losers):
-        for pat in lst_losers:
-            if set(pattern.get_pattern()) == set(pat.get_pattern()) or \
-                    set(pattern.inv_pattern()) == set(pat.get_pattern()):
-                return True
+    def is_duplicate(pattern, lst_winners):
         for pat in lst_winners:
             if set(pattern.get_pattern()) == set(pat.get_pattern()) or \
                     set(pattern.inv_pattern()) == set(pat.get_pattern()):
