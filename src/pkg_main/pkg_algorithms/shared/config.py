@@ -3,15 +3,12 @@
 # Global Configurations
 MAX_ITERATIONS = 1000
 
-
 # ACO-GRAD Configurations:
 EVAPORATION_FACTOR = 0.5
-
 
 # GA-GRAD Configurations:
 N_POPULATION = 20
 PC = 1
-
 
 # PSO-GRAD Configurations:
 VELOCITY = 0.5
