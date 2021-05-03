@@ -4,8 +4,9 @@
 MIN_SUPPORT = 0.5
 CPU_CORES = 4
 DATASET = "../../data/DATASET.csv"
+ALGORITHM = 'aco'
 # Uncomment for Terminal:
-# DATASET = "data/DATASET.csv"
+DATASET = "data/DATASET.csv"
 
 
 def write_file(data, path):
