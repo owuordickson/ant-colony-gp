@@ -8,4 +8,4 @@ before_install:
 
 install: pip3 install -r requirements.txt
 
-script: python3 src/algorithms/aco/init_acograd.py -f data/DATASET.csv
+script: python3 src/pkg_main/main.py -f data/DATASET.csv
