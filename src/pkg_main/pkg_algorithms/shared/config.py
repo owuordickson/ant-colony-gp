@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*-
 
 # Global Configurations
-MAX_ITERATIONS = 1000
+MAX_ITERATIONS = 100
 
 
 # ACO-GRAD Configurations:
 EVAPORATION_FACTOR = 0.5
-
-
-# ACO-LCM Configurations:
-JOB_COUNT = 1
 
 
 # GA-GRAD Configurations:
@@ -24,4 +20,3 @@ GLOBAL_COEFF = 0.9
 TARGET = 1
 TARGET_ERROR = 1e-6
 N_PARTICLES = 50
-

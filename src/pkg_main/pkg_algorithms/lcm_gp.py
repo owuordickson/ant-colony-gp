@@ -15,24 +15,24 @@ from sortedcontainers import SortedDict
 import gc
 import multiprocessing as mp
 
-from .shared.dataset_dfs import Dataset_dfs
+from .shared.dataset_dfs import DatasetDFS
 from .shared.gp import GI, GP
 from .shared.profile import Profile
 # from .shared import config as cfg
 
 
-class LCM_g:
+class LcmGP:
 
-    def __init__(self, file, min_supp=0.5, n_jobs=1, verbose=False):
+    def __init__(self, file, min_supp=0.5, n_jobs=1):  # , verbose=False):
         self.min_supp = min_supp  # provided by user
-        self._min_supp = LCM_g.check_min_supp(self.min_supp)
+        self._min_supp = LcmGP.check_min_supp(self.min_supp)
         self.item_to_tids = None
         self.n_transactions = 0
         # self.ctr = 0
         self.n_jobs = n_jobs
         # self.verbose = verbose
 
-        self.d_set = Dataset_dfs(file, min_supp, eq=False)
+        self.d_set = DatasetDFS(file, min_supp, eq=False)
         self.D = self.d_set.remove_inv_attrs(self.d_set.encode_data())
         self._fit()
 
@@ -52,7 +52,8 @@ class LCM_g:
             # make support absolute if needed
             self._min_supp = self.min_supp * self.d_set.attr_size
 
-        low_supp_items = [k for k, v in item_to_tids.items() if len(np.unique(np.array(list(v))[:, 0], axis=0)) < self._min_supp]
+        low_supp_items = [k for k, v in item_to_tids.items() if
+                          len(np.unique(np.array(list(v))[:, 0], axis=0)) < self._min_supp]
         for item in low_supp_items:
             del item_to_tids[item]
 
@@ -98,7 +99,7 @@ class LCM_g:
 
         if max_k and max_k == limit:
             p_prime = p | set(cp) | {max_k}  # max_k has been consumed when calling next()
-            # sorted items in ouput for better reproducibility
+            # sorted items in output for better reproducibility
             raw_p = tuple(sorted(p_prime))
             pat = GP()
             for a in raw_p:
@@ -146,7 +147,7 @@ class LCM_g:
             if min_supp < 0 or min_supp > 1:
                 raise ValueError('Minimum support must be between 0 and 1')
         else:
-            raise TypeError('Mimimum support must be of type int or float')
+            raise TypeError('Minimum support must be of type int or float')
         return min_supp
 
 
@@ -157,7 +158,7 @@ def init(f_path, min_supp, cores):
         else:
             num_cores = Profile.get_num_cores()
 
-        lcm = LCM_g(f_path, min_supp, n_jobs=num_cores)
+        lcm = LcmGP(f_path, min_supp, n_jobs=num_cores)
         lst_gp = lcm.fit_discover()
 
         d_set = lcm.d_set

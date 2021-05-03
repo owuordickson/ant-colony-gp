@@ -73,4 +73,3 @@ def calculate_support(memberships):  # optimized
 def get_indices(bin_data):  # optimized
     indices = np.argwhere(bin_data == 1)
     return indices
-

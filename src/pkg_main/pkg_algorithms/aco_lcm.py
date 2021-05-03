@@ -16,22 +16,23 @@ from numpy import random as rand
 import gc
 from collections import defaultdict
 
-from .lcm_grad import LCM_g
+from .lcm_gp import LcmGP
 from .shared.gp import GI, GP
-from .shared.dataset_dfs import Dataset_dfs
+from .shared.dataset_dfs import DatasetDFS
 from .shared.profile import Profile
 from .shared import config as cfg
 
 
-class LcmACO(LCM_g):
+class LcmACO(LcmGP):
 
     def __init__(self, f_path, min_supp, n_jobs=1):
+        # super().__init__(file, min_supp, n_jobs)
         print("LcmACO: Version 1.0")
         self.min_supp = min_supp  # provided by user
-        self._min_supp = LCM_g.check_min_supp(self.min_supp)
-        self.n_jobs = cfg.JOB_COUNT  # n_jobs
+        self._min_supp = LcmGP.check_min_supp(self.min_supp)
+        self.n_jobs = n_jobs  # n_jobs
 
-        self.d_set = Dataset_dfs(f_path, min_supp, eq=False)
+        self.d_set = DatasetDFS(f_path, min_supp, eq=False)
         self.D = self.d_set.remove_inv_attrs(self.d_set.encode_data())
         self.size = self.d_set.attr_size
         self.c_matrix = np.ones((self.size, self.size), dtype=np.float64)

@@ -65,14 +65,14 @@ class GradGA:
         self.d[self.d < fr_count] = 0
 
         # Problem Information
-        costfunc = self.cost_func
+        cost_func = self.cost_func
 
         # Parameters
         it_count = 0
         max_it = self.max_it
-        npop = self.n_pop
+        n_pop = self.n_pop
         pc = self.pc
-        nc = int(np.round(pc * npop / 2) * 2)
+        nc = int(np.round(pc * n_pop / 2) * 2)
 
         # Empty Individual Template
         empty_individual = structure()
@@ -80,29 +80,29 @@ class GradGA:
         empty_individual.cost = None
 
         # Best Solution Ever Found
-        bestsol = empty_individual.deepcopy()
-        bestsol.cost = np.inf
+        best_sol = empty_individual.deepcopy()
+        best_sol.cost = np.inf
 
         # Initialize Population
-        pop = empty_individual.repeat(npop)
-        for i in range(npop):
+        pop = empty_individual.repeat(n_pop)
+        for i in range(n_pop):
             pop[i].gene = self.build_gp_gene()
-            pop[i].cost = costfunc(self.decode_gp(pop[i].gene))
-            if pop[i].cost < bestsol.cost:
-                bestsol = pop[i].deepcopy()
+            pop[i].cost = cost_func(self.decode_gp(pop[i].gene))
+            if pop[i].cost < best_sol.cost:
+                best_sol = pop[i].deepcopy()
 
         # Best Cost of Iteration
-        bestcost = np.empty(max_it)
-        bestgene = []
-        bestpattern = []
+        best_costs = np.empty(max_it)
+        best_genes = []
+        best_patterns = []
         str_plt = ''
 
         while it_count < max_it:
 
-            popc = []
+            c_pop = []
             for _ in range(nc // 2):
                 # Select Parents
-                q = np.random.permutation(npop)
+                q = np.random.permutation(n_pop)
                 p1 = pop[q[0]]
                 p2 = pop[q[1]]
 
@@ -114,50 +114,50 @@ class GradGA:
                 c2 = self.mutate(c2)
 
                 # Apply Bound
-                # apply_bound(c1, varmin, varmax)
-                # apply_bound(c2, varmin, varmax)
+                # apply_bound(c1, var_min, var_max)
+                # apply_bound(c2, var_min, var_max)
 
                 # Evaluate First Offspring
-                c1.cost = costfunc(self.decode_gp(c1.gene))
-                if c1.cost < bestsol.cost:
-                    bestsol = c1.deepcopy()
+                c1.cost = cost_func(self.decode_gp(c1.gene))
+                if c1.cost < best_sol.cost:
+                    best_sol = c1.deepcopy()
 
                 # Evaluate Second Offspring
-                c2.cost = costfunc(self.decode_gp(c2.gene))
-                if c2.cost < bestsol.cost:
-                    bestsol = c2.deepcopy()
+                c2.cost = cost_func(self.decode_gp(c2.gene))
+                if c2.cost < best_sol.cost:
+                    best_sol = c2.deepcopy()
 
-                # Add Offsprings to popc
-                popc.append(c1)
-                popc.append(c2)
+                # Add Offsprings to c_pop
+                c_pop.append(c1)
+                c_pop.append(c2)
 
             # Merge, Sort and Select
-            pop += popc
+            pop += c_pop
             pop = sorted(pop, key=lambda x: x.cost)
-            pop = pop[0:npop]
+            pop = pop[0:n_pop]
 
             # Store Best Cost
-            bestcost[it_count] = bestsol.cost
-            bestgene.append(bestsol.gene)
+            best_costs[it_count] = best_sol.cost
+            best_genes.append(best_sol.gene)
 
-            best_gp = self.decode_gp(bestsol.gene)
-            best_gp.support = float(1 / bestsol.cost)
-            is_present = GradGA.is_duplicate(best_gp, bestpattern)
-            is_sub = GradGA.check_anti_monotony(bestpattern, best_gp, subset=True)
+            best_gp = self.decode_gp(best_sol.gene)
+            best_gp.support = float(1 / best_sol.cost)
+            is_present = GradGA.is_duplicate(best_gp, best_patterns)
+            is_sub = GradGA.check_anti_monotony(best_patterns, best_gp, subset=True)
             if not (is_present or is_sub):
-                bestpattern.append(best_gp)
+                best_patterns.append(best_gp)
 
             # Show Iteration Information
-            # print("Iteration {}: Best Cost = {}".format(it_count, bestcost[it_count]))
-            str_plt += "Iteration {}: Best Cost: {} \n".format(it_count, bestcost[it_count])
+            # print("Iteration {}: Best Cost = {}".format(it_count, best_costs[it_count]))
+            str_plt += "Iteration {}: Best Cost: {} \n".format(it_count, best_costs[it_count])
             it_count += 1
 
         # Output
         out = structure()
         out.pop = pop
-        out.bestsol = bestsol
-        out.bestcost = bestcost
-        out.bestpattern = bestpattern
+        out.best_sol = best_sol
+        out.best_costs = best_costs
+        out.best_patterns = best_patterns
         out.iterations = str_plt
 
         self.iteration_count = it_count
@@ -176,10 +176,6 @@ class GradGA:
             gene_val = gene[i]
             if gene_val == 1:
                 gi = GI.parse_gi(self.attr_keys[i])
-                # if temp_gp.contains_attr(gi):
-                    # return None
-                #    continue
-                # else:
                 if not temp_gp.contains_attr(gi):
                     temp_gp.add_gradual_item(gi)
         return self.validate_gp(temp_gp)
@@ -276,11 +272,11 @@ def init(f_path, min_supp, cores):
 
         ga = GradGA(f_path, min_supp)
         out = ga.run_genetic_algorithm()
-        list_gp = out.bestpattern
+        list_gp = out.best_patterns
 
         # Results
-        # plt.plot(out.bestcost)
-        # plt.semilogy(out.bestcost)
+        # plt.plot(out.best_costs)
+        # plt.semilogy(out.best_costs)
         # plt.xlim(0, ga.max_it)
         # plt.xlabel('Iterations')
         # plt.ylabel('Best Cost')

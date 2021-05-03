@@ -79,7 +79,7 @@ class GradACO:
         pheromones = np.ones(self.d.shape, dtype=float)
 
         # Best Cost of Iteration
-        bestcost = np.empty(max_it)
+        best_cost_arr = np.empty(max_it)
         best_cost = np.inf
         str_plt = ''
 
@@ -115,15 +115,15 @@ class GradACO:
                     repeated += 1
             # it_count += 1
             # Show Iteration Information
-            bestcost[it_count] = best_cost
-            # print("Iteration {}: Best Cost: {}".format(it_count, bestcost[it_count]))
-            str_plt += "Iteration {}: Best Cost: {} \n".format(it_count, bestcost[it_count])
+            best_cost_arr[it_count] = best_cost
+            # print("Iteration {}: Best Cost: {}".format(it_count, best_cost_arr[it_count]))
+            str_plt += "Iteration {}: Best Cost: {} \n".format(it_count, best_cost_arr[it_count])
             it_count += 1
 
         # Output
         out = structure()
-        out.bestcost = bestcost
-        out.bestpattern = winner_gps
+        out.best_costs = best_cost_arr
+        out.best_patterns = winner_gps
         out.iterations = str_plt
 
         self.iteration_count = it_count
@@ -236,11 +236,11 @@ def init(f_path, min_supp, cores):
         ac = GradACO(f_path, min_supp)
         # list_gp = ac.run_ant_colony()
         out = ac.run_ant_colony()
-        list_gp = out.bestpattern
+        list_gp = out.best_patterns
 
         # Results
-        # plt.plot(out.bestcost)
-        # plt.semilogy(out.bestcost)
+        # plt.plot(out.best_costs)
+        # plt.semilogy(out.best_costs)
         # plt.xlim(0, ac.max_it)
         # plt.xlabel('Iterations')
         # plt.ylabel('Best Cost')
