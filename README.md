@@ -51,7 +51,7 @@ where you specify the input parameters as follows:<br>
 
 For example we executed the <em><strong>ACO</strong>-GRAANK</em> algorithm on a sample data-set<br>
 ```
-$python3 init_acograd.py -f ../data/DATASET.csv
+$python3 src/pkg_main/main.py -a 'aco' -f data/DATASET.csv
 ```
 
 where you specify the input parameters as follows:<br>
