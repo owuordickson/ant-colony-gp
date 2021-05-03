@@ -14,9 +14,6 @@ Breath-First Search for gradual patterns (ACO-GRAANK)
 import numpy as np
 from ypstruct import structure
 
-# Importing shared files
-# import sys
-# sys.path.append("../")
 from .shared.gp import GI, GP
 from .shared.dataset_bfs import Dataset
 

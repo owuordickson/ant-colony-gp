@@ -8,6 +8,7 @@ DATASET = "../../data/DATASET.csv"
 
 
 def write_file(data, path):
+    return None
     with open(path, 'w') as f:
         f.write(data)
         f.close()

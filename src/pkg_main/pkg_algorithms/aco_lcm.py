@@ -16,9 +16,9 @@ from numpy import random as rand
 import gc
 from collections import defaultdict
 
-from ..fp_growth.lcm.lcm_grad import LCM_g
-from ..common.gp import GI, GP
-from ..common.dataset_dfs import Dataset_dfs
+from .lcm_grad import LCM_g
+from .shared.gp import GI, GP
+from .shared.dataset_dfs import Dataset_dfs
 
 
 class LcmACO(LCM_g):
@@ -163,7 +163,7 @@ class LcmACO(LCM_g):
         return pat
 
 
-def init_algorithm(f_path, min_supp, cores):
+def init(f_path, min_supp, cores):
     try:
         if cores > 1:
             num_cores = cores

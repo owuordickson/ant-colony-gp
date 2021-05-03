@@ -9,9 +9,10 @@
 
 import numpy as np
 import gc
-from src.common.fuzzy_mf import calculate_time_lag
-from src.common.dataset_bfs import Dataset
-from src.common.gp import GI, GP, TGP
+
+from .shared.fuzzy_mf import calculate_time_lag
+from .shared.dataset_bfs import Dataset
+from .shared.gp import GI, GP, TGP
 
 
 def inv(g_item):
@@ -119,3 +120,35 @@ def graank(f_path=None, min_sup=None, eq=False, t_diffs=None, d_set=None):
         return d_set, patterns
     else:
         return patterns
+
+
+def init(f_path, min_supp, cores, eq=False):
+    try:
+        d_set, list_gp = graank(f_path, min_supp, eq)
+
+        if cores > 1:
+            num_cores = cores
+        else:
+            num_cores = Profile.get_num_cores()
+
+        wr_line = "Algorithm: GRAANK \n"
+        wr_line += "No. of (dataset) attributes: " + str(d_set.col_count) + '\n'
+        wr_line += "No. of (dataset) tuples: " + str(d_set.row_count) + '\n'
+        wr_line += "Minimum support: " + str(min_supp) + '\n'
+        wr_line += "Number of cores: " + str(num_cores) + '\n'
+        wr_line += "Number of patterns: " + str(len(list_gp)) + '\n\n'
+
+        for txt in d_set.titles:
+            wr_line += (str(txt[0]) + '. ' + str(txt[1].decode()) + '\n')
+
+        wr_line += str("\nFile: " + f_path + '\n')
+        wr_line += str("\nPattern : Support" + '\n')
+
+        for gp in list_gp:
+            wr_line += (str(gp.to_string()) + ' : ' + str(gp.support) + '\n')
+
+        return wr_line
+    except ArithmeticError as error:
+        wr_line = "Failed: " + str(error)
+        print(error)
+        return wr_line

@@ -15,8 +15,8 @@ from sortedcontainers import SortedDict
 import gc
 import multiprocessing as mp
 
-from src.common.dataset_dfs import Dataset_dfs
-from src.common.gp import GI, GP
+from .shared.dataset_dfs import Dataset_dfs
+from .shared.gp import GI, GP
 
 
 class LCM_g:
@@ -146,3 +146,40 @@ class LCM_g:
         else:
             raise TypeError('Mimimum support must be of type int or float')
         return min_supp
+
+
+def init(f_path, min_supp, cores):
+    try:
+        if cores > 1:
+            num_cores = cores
+        else:
+            num_cores = Profile.get_num_cores()
+
+        lcm = LCM_g(f_path, min_supp, n_jobs=num_cores)
+        lst_gp = lcm.fit_discover()
+
+        d_set = lcm.d_set
+        wr_line = "Algorithm: LCM-GRAD (1.0) \n"
+        wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
+        wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
+        wr_line += "Minimum support: " + str(d_set.thd_supp) + '\n'
+        wr_line += "Number of cores: " + str(num_cores) + '\n'
+        wr_line += "Number of patterns: " + str(len(lst_gp)) + '\n\n'
+
+        for txt in d_set.title:
+            wr_line += (str(txt[0]) + '. ' + str(txt[1].decode()) + '\n')
+
+        wr_line += str("\nFile: " + f_path + '\n')
+        wr_line += str("\nPattern : Support" + '\n')
+
+        for obj in lst_gp:
+            if len(obj) > 1:
+                for gp in obj:
+                    wr_line += (str(gp.to_string()) + ' : ' + str(gp.support) + '\n')
+        # wr_line += str(gp)
+
+        return wr_line
+    except ArithmeticError as error:
+        wr_line = "Failed: " + str(error)
+        print(error)
+        return wr_line
