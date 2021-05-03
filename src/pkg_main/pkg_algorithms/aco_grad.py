@@ -13,8 +13,12 @@ Breath-First Search for gradual patterns (ACO-GRAANK)
 """
 import numpy as np
 from ypstruct import structure
-from src.common.gp import GI, GP
-from src.common.dataset_bfs import Dataset
+
+# Importing shared files
+# import sys
+# sys.path.append("../")
+from .shared.gp import GI, GP
+from .shared.dataset_bfs import Dataset
 
 
 class GradACO:
@@ -221,3 +225,60 @@ class GradACO:
                     set(pattern.inv_pattern()) == set(pat.get_pattern()):
                 return True
         return False
+
+
+def init(f_path, min_supp, cores):
+    try:
+        if cores > 1:
+            num_cores = cores
+        else:
+            num_cores = Profile.get_num_cores()
+
+        ac = GradACO(f_path, min_supp)
+        # list_gp = ac.run_ant_colony()
+        out = ac.run_ant_colony()
+        list_gp = out.bestpattern
+
+        # Results
+        # plt.plot(out.bestcost)
+        # plt.semilogy(out.bestcost)
+        # plt.xlim(0, ac.max_it)
+        # plt.xlabel('Iterations')
+        # plt.ylabel('Best Cost')
+        # plt.title('Ant Colony optimization (ACO)')
+        # plt.grid(True)
+        # plt.show()
+
+        d_set = ac.d_set
+        wr_line = "Algorithm: ACO-GRAANK (v4.0)\n"
+        wr_line += "No. of (dataset) attributes: " + str(ac.d_set.col_count) + '\n'
+        wr_line += "No. of (dataset) tuples: " + str(ac.d_set.row_count) + '\n'
+        wr_line += "Evaporation factor: " + str(ac.e_factor) + '\n'
+
+        wr_line += "Minimum support: " + str(min_supp) + '\n'
+        wr_line += "Number of cores: " + str(num_cores) + '\n'
+        wr_line += "Number of patterns: " + str(len(list_gp)) + '\n'
+        wr_line += "Number of iterations: " + str(ac.iteration_count) + '\n\n'
+
+        for txt in d_set.titles:
+            try:
+                wr_line += (str(txt.key) + '. ' + str(txt.value.decode()) + '\n')
+            except AttributeError:
+                wr_line += (str(txt[0]) + '. ' + str(txt[1].decode()) + '\n')
+
+        wr_line += str("\nFile: " + f_path + '\n')
+        wr_line += str("\nPattern : Support" + '\n')
+
+        for gp in list_gp:
+            wr_line += (str(gp.to_string()) + ' : ' + str(gp.support) + '\n')
+
+        # wr_line += "\nPheromone Matrix\n"
+        # wr_line += str(ac.p_matrix)
+        # ac.plot_pheromone_matrix()
+        wr_line += '\n\nIterations \n'
+        wr_line += out.iterations
+        return wr_line
+    except ArithmeticError as error:
+        wr_line = "Failed: " + str(error)
+        print(error)
+        return wr_line

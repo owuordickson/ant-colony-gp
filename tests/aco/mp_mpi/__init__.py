@@ -4,4 +4,4 @@ __author__ = 'Dickson Owuor'
 __email__ = 'owuordickson@ieee.org'
 __version__ = '3.0'
 
-__all__ = ["acotgrad_mpi.py"]
+__all__ = ["aco_grad_mpi"]

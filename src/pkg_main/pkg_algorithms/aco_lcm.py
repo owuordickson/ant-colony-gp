@@ -16,9 +16,9 @@ from numpy import random as rand
 import gc
 from collections import defaultdict
 
-from src.algorithms.fp_growth.lcm.lcm_grad import LCM_g
-from src.common.gp import GI, GP
-from src.common.dataset_dfs import Dataset_dfs
+from ..fp_growth.lcm.lcm_grad import LCM_g
+from ..common.gp import GI, GP
+from ..common.dataset_dfs import Dataset_dfs
 
 
 class LcmACO(LCM_g):
@@ -161,3 +161,44 @@ class LcmACO(LCM_g):
             pat.add_gradual_item(GI(attr, sym))
         pat.set_support(supp)
         return pat
+
+
+def init_algorithm(f_path, min_supp, cores):
+    try:
+        if cores > 1:
+            num_cores = cores
+        else:
+            num_cores = Profile.get_num_cores()
+
+        ac = LcmACO(f_path, min_supp, n_jobs=num_cores)
+        lst_gp = ac.run_ant_colony()
+
+        d_set = ac.d_set
+        wr_line = "Algorithm: ACO-LCM (1.0)\n"
+        wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
+        wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
+        wr_line += "Minimum support: " + str(ac.min_supp) + '\n'
+        wr_line += "Number of cores: " + str(num_cores) + '\n'
+        wr_line += "Number of patterns: " + str(len(lst_gp)) + '\n\n'
+
+        for txt in d_set.title:
+            try:
+                wr_line += (str(txt.key) + '. ' + str(txt.value.decode()) + '\n')
+            except AttributeError:
+                wr_line += (str(txt[0]) + '. ' + str(txt[1].decode()) + '\n')
+
+        wr_line += str("\nFile: " + f_path + '\n')
+        wr_line += str("\nPattern : Support" + '\n')
+
+        for gp in lst_gp:
+            wr_line += (str(gp.to_string()) + ' : ' + str(gp.support) + '\n')
+        # wr_line += str(df_gp)
+
+        wr_line += "\nPheromone Matrix\n"
+        # wr_line += str(ac.p_matrix)
+        # ac.plot_pheromone_matrix()
+        return wr_line
+    except ArithmeticError as error:
+        wr_line = "Failed: " + str(error)
+        print(error)
+        return wr_line
