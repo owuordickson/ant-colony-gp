@@ -17,6 +17,7 @@ from ypstruct import structure
 from .shared.gp import GI, GP
 from .shared.dataset_bfs import Dataset
 from .shared.profile import Profile
+from .shared import config as cfg
 
 
 class GradACO:
@@ -25,8 +26,8 @@ class GradACO:
         self.d_set = Dataset(f_path, min_supp)
         self.d_set.init_gp_attributes()
         self.attr_index = self.d_set.attr_cols
-        self.e_factor = 0.5  # evaporation factor
-        self.max_it = 100
+        self.e_factor = cfg.EVAPORATION_FACTOR  # evaporation factor
+        self.max_it = cfg.MAX_ITERATIONS
         self.iteration_count = 0
         self.d, self.attr_keys = self.generate_d()  # distance matrix (d) & attributes corresponding to d
 

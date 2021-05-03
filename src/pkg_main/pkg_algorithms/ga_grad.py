@@ -17,6 +17,7 @@ from ypstruct import structure
 from .shared.gp import GI, GP
 from .shared.dataset_bfs import Dataset
 from .shared.profile import Profile
+from .shared import config as cfg
 
 
 class GradGA:
@@ -26,9 +27,9 @@ class GradGA:
         self.d_set.init_gp_attributes()
         self.attr_index = self.d_set.attr_cols
         self.iteration_count = 0
-        self.max_it = 100
-        self.n_pop = 20
-        self.pc = 1
+        self.max_it = cfg.MAX_ITERATIONS
+        self.n_pop = cfg.N_POPULATION
+        self.pc = cfg.PC
         self.d, self.attr_keys = self.generate_d()  # distance matrix (d) & attributes corresponding to d
 
     def generate_d(self):

@@ -18,6 +18,7 @@ import multiprocessing as mp
 from .shared.dataset_dfs import Dataset_dfs
 from .shared.gp import GI, GP
 from .shared.profile import Profile
+# from .shared import config as cfg
 
 
 class LCM_g:
@@ -27,9 +28,9 @@ class LCM_g:
         self._min_supp = LCM_g.check_min_supp(self.min_supp)
         self.item_to_tids = None
         self.n_transactions = 0
-        self.ctr = 0
+        # self.ctr = 0
         self.n_jobs = n_jobs
-        self.verbose = verbose
+        # self.verbose = verbose
 
         self.d_set = Dataset_dfs(file, min_supp, eq=False)
         self.D = self.d_set.remove_inv_attrs(self.d_set.encode_data())

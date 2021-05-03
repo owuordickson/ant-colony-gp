@@ -18,6 +18,7 @@ from ypstruct import structure
 from .shared.gp import GI, GP
 from .shared.dataset_bfs import Dataset
 from .shared.profile import Profile
+from .shared import config as cfg
 
 
 class GradPSO:
@@ -27,13 +28,13 @@ class GradPSO:
         self.d_set.init_gp_attributes()
         self.attr_index = self.d_set.attr_cols
         self.iteration_count = 0
-        self.max_it = 100
-        self.W = 0.5
-        self.c1 = 0.5
-        self.c2 = 0.9
+        self.max_it = cfg.MAX_ITERATIONS
+        self.W = cfg.VELOCITY
+        self.c1 = cfg.PERSONAL_COEFF
+        self.c2 = cfg.GLOBAL_COEFF
         # self.target = 1
         # self.target_error = 1e-6
-        self.n_particles = 50
+        self.n_particles = cfg.N_PARTICLES
         self.d, self.attr_keys = self.generate_d()  # distance matrix (d) & attributes corresponding to d
 
     def generate_d(self):

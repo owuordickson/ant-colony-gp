@@ -20,6 +20,7 @@ from .lcm_grad import LCM_g
 from .shared.gp import GI, GP
 from .shared.dataset_dfs import Dataset_dfs
 from .shared.profile import Profile
+from .shared import config as cfg
 
 
 class LcmACO(LCM_g):
@@ -28,7 +29,7 @@ class LcmACO(LCM_g):
         print("LcmACO: Version 1.0")
         self.min_supp = min_supp  # provided by user
         self._min_supp = LCM_g.check_min_supp(self.min_supp)
-        self.n_jobs = 1  # n_jobs
+        self.n_jobs = cfg.JOB_COUNT  # n_jobs
 
         self.d_set = Dataset_dfs(f_path, min_supp, eq=False)
         self.D = self.d_set.remove_inv_attrs(self.d_set.encode_data())
@@ -36,11 +37,10 @@ class LcmACO(LCM_g):
         self.c_matrix = np.ones((self.size, self.size), dtype=np.float64)
         self.p_matrix = np.ones((self.size, self.size), dtype=np.float64)
         np.fill_diagonal(self.p_matrix, 0)
-        self.e_factor = 0.5  # evaporation factor
+        self.e_factor = cfg.EVAPORATION_FACTOR  # evaporation factor
         self.item_to_tids = self._fit()
         # self.large_tids = np.array([])
         # self.attr_index = self.d_set.attr_cols
-        # self.e_factor = 0.1  # evaporation factor
         # print(self.d_set.cost_matrix)
         # print(self.d_set.encoded_data)
         # print(self.p_matrix)
