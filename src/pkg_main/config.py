@@ -1,0 +1,13 @@
+# -*- coding: utf-8 -*-
+
+MIN_SUPPORT = 0.5
+CPU_CORES = 4
+DATASET = "../../data/DATASET.csv"
+# Uncomment for Terminal
+# DATASET = "data/DATASET.csv"
+
+
+def write_file(data, path):
+    with open(path, 'w') as f:
+        f.write(data)
+        f.close()
