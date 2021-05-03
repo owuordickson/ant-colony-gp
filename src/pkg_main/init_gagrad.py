@@ -3,7 +3,7 @@ import config as cfg
 import time
 import tracemalloc
 from pkg_algorithms.ga_grad import init
-from pkg_algorithms.shared.profile_mem import Profile
+from pkg_algorithms.shared.profile import Profile
 
 # res = init(cfg.DATASET, cfg.MIN_SUPPORT, cfg.CPU_CORES)
 # print(res)

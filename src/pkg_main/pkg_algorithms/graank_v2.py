@@ -13,6 +13,7 @@ import gc
 from .shared.fuzzy_mf import calculate_time_lag
 from .shared.dataset_bfs import Dataset
 from .shared.gp import GI, GP, TGP
+from .shared.profile import Profile
 
 
 def inv(g_item):

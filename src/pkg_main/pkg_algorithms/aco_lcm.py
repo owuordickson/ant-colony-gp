@@ -19,6 +19,7 @@ from collections import defaultdict
 from .lcm_grad import LCM_g
 from .shared.gp import GI, GP
 from .shared.dataset_dfs import Dataset_dfs
+from .shared.profile import Profile
 
 
 class LcmACO(LCM_g):
@@ -175,13 +176,13 @@ def init(f_path, min_supp, cores):
 
         d_set = ac.d_set
         wr_line = "Algorithm: ACO-LCM (1.0)\n"
-        wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
-        wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
+        wr_line += "No. of (dataset) attributes: " + str(d_set.col_count) + '\n'
+        wr_line += "No. of (dataset) tuples: " + str(d_set.row_count) + '\n'
         wr_line += "Minimum support: " + str(ac.min_supp) + '\n'
         wr_line += "Number of cores: " + str(num_cores) + '\n'
         wr_line += "Number of patterns: " + str(len(lst_gp)) + '\n\n'
 
-        for txt in d_set.title:
+        for txt in d_set.titles:
             try:
                 wr_line += (str(txt.key) + '. ' + str(txt.value.decode()) + '\n')
             except AttributeError:

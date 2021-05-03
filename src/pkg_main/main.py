@@ -60,7 +60,7 @@ if __name__ == "__main__":
 
     import time
     import tracemalloc
-    from pkg_algorithms.shared.profile_mem import Profile
+    from pkg_algorithms.shared.profile import Profile
 
     if algChoice == 'aco':
         # ACO-GRAANK

@@ -17,6 +17,7 @@ from ypstruct import structure
 
 from .shared.gp import GI, GP
 from .shared.dataset_bfs import Dataset
+from .shared.profile import Profile
 
 
 class GradPSO:

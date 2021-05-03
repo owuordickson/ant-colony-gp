@@ -17,6 +17,7 @@ import multiprocessing as mp
 
 from .shared.dataset_dfs import Dataset_dfs
 from .shared.gp import GI, GP
+from .shared.profile import Profile
 
 
 class LCM_g:
@@ -160,13 +161,13 @@ def init(f_path, min_supp, cores):
 
         d_set = lcm.d_set
         wr_line = "Algorithm: LCM-GRAD (1.0) \n"
-        wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
-        wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
+        wr_line += "No. of (dataset) attributes: " + str(d_set.col_count) + '\n'
+        wr_line += "No. of (dataset) tuples: " + str(d_set.row_count) + '\n'
         wr_line += "Minimum support: " + str(d_set.thd_supp) + '\n'
         wr_line += "Number of cores: " + str(num_cores) + '\n'
         wr_line += "Number of patterns: " + str(len(lst_gp)) + '\n\n'
 
-        for txt in d_set.title:
+        for txt in d_set.titles:
             wr_line += (str(txt[0]) + '. ' + str(txt[1].decode()) + '\n')
 
         wr_line += str("\nFile: " + f_path + '\n')
