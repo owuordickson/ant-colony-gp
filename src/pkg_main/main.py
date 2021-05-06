@@ -16,7 +16,7 @@ Description:
 import sys
 from optparse import OptionParser
 import config as cfg
-from pkg_algorithms import aco_grad, ga_grad, pso_grad
+from pkg_algorithms import aco_grad, ga_grad, pso_grad, graank_v2, aco_lcm, lcm_gp
 
 
 if __name__ == "__main__":
@@ -50,7 +50,7 @@ if __name__ == "__main__":
         (options, args) = optparser.parse_args()
 
         if options.file is None:
-            print("Usage: $python3 main.py -f filename.csv ")
+            print("Usage: $python3 main.py -a 'aco' -f filename.csv ")
             sys.exit('System will exit')
         else:
             filePath = options.file
@@ -102,6 +102,48 @@ if __name__ == "__main__":
         wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
         wr_text += str(res_text)
         f_name = str('res_pso' + str(end).replace('.', '', 1) + '.txt')
+        Profile.write_file(wr_text, f_name)
+        print(wr_text)
+    elif algChoice == 'graank':
+        # GRAANK
+        start = time.time()
+        tracemalloc.start()
+        res_text = graank_v2.init(filePath, minSup, numCores)
+        snapshot = tracemalloc.take_snapshot()
+        end = time.time()
+
+        wr_text = ("Run-time: " + str(end - start) + " seconds\n")
+        wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
+        wr_text += str(res_text)
+        f_name = str('res_graank' + str(end).replace('.', '', 1) + '.txt')
+        Profile.write_file(wr_text, f_name)
+        print(wr_text)
+    elif algChoice == 'acolcm':
+        # ACO-LCM
+        start = time.time()
+        tracemalloc.start()
+        res_text = aco_lcm.init(filePath, minSup, numCores)
+        snapshot = tracemalloc.take_snapshot()
+        end = time.time()
+
+        wr_text = ("Run-time: " + str(end - start) + " seconds\n")
+        wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
+        wr_text += str(res_text)
+        f_name = str('res_acolcm' + str(end).replace('.', '', 1) + '.txt')
+        Profile.write_file(wr_text, f_name)
+        print(wr_text)
+    elif algChoice == 'lcm':
+        # LCM
+        start = time.time()
+        tracemalloc.start()
+        res_text = lcm_gp.init(filePath, minSup, numCores)
+        snapshot = tracemalloc.take_snapshot()
+        end = time.time()
+
+        wr_text = ("Run-time: " + str(end - start) + " seconds\n")
+        wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
+        wr_text += str(res_text)
+        f_name = str('res_lcm' + str(end).replace('.', '', 1) + '.txt')
         Profile.write_file(wr_text, f_name)
         print(wr_text)
     else:
