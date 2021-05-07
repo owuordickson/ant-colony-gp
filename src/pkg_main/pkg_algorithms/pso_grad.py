@@ -84,7 +84,9 @@ class GradPSO:
         best_patterns = []
         str_plt = ''
 
+        repeated = 0
         while it_count < max_it:
+        # while repeated < 1:
             for i in range(n_particles):
                 fitness_candidate = self.fitness_function(self.decode_gp(particle_position_vector[i]))
 
@@ -110,7 +112,9 @@ class GradPSO:
             best_gp.support = float(1 / best_pos[it_count])
             is_present = GradPSO.is_duplicate(best_gp, best_patterns)
             is_sub = GradPSO.check_anti_monotony(best_patterns, best_gp, subset=True)
-            if not (is_present or is_sub):
+            if is_present or is_sub:
+                repeated += 1
+            else:
                 best_patterns.append(best_gp)
 
             # Show Iteration Information

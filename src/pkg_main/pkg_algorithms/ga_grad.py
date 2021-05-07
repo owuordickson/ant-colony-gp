@@ -97,7 +97,9 @@ class GradGA:
         best_patterns = []
         str_plt = ''
 
+        repeated = 0
         while it_count < max_it:
+        # while repeated < 1:
 
             c_pop = []
             for _ in range(nc // 2):
@@ -144,7 +146,9 @@ class GradGA:
             best_gp.support = float(1 / best_sol.cost)
             is_present = GradGA.is_duplicate(best_gp, best_patterns)
             is_sub = GradGA.check_anti_monotony(best_patterns, best_gp, subset=True)
-            if not (is_present or is_sub):
+            if is_present or is_sub:
+                repeated += 1
+            else:
                 best_patterns.append(best_gp)
 
             # Show Iteration Information
@@ -289,6 +293,7 @@ def init(f_path, min_supp, cores):
         wr_line += "No. of (dataset) attributes: " + str(ga.d_set.col_count) + '\n'
         wr_line += "No. of (dataset) tuples: " + str(ga.d_set.row_count) + '\n'
         wr_line += "Population size: " + str(ga.n_pop) + '\n'
+        wr_line += "PC: " + str(ga.pc) + '\n'
 
         wr_line += "Minimum support: " + str(min_supp) + '\n'
         wr_line += "Number of cores: " + str(num_cores) + '\n'
