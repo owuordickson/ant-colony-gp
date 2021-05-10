@@ -44,8 +44,8 @@ class GradGA:
         it_count = 0
         max_it = self.max_it
         n_pop = self.n_pop
-        pc = self.pc
-        nc = int(np.round(pc * n_pop / 2) * 2)
+        pc = self.pc  # Proportion of children (if its 1, then nc == npop
+        nc = int(np.round(pc * n_pop / 2) * 2)  # Number of children. np.round is used to get even number of children
 
         # Empty Individual Template
         empty_individual = structure()
@@ -74,7 +74,7 @@ class GradGA:
         while it_count < max_it:
         # while repeated < 1:
 
-            c_pop = []
+            c_pop = []  # Children population
             for _ in range(nc // 2):
                 # Select Parents
                 q = np.random.permutation(n_pop)
