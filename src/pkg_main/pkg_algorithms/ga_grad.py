@@ -30,39 +30,12 @@ class GradGA:
         self.max_it = cfg.MAX_ITERATIONS
         self.n_pop = cfg.N_POPULATION
         self.pc = cfg.PC
-        self.d, self.attr_keys = self.generate_d()  # distance matrix (d) & attributes corresponding to d
-
-    def generate_d(self):
-        v_bins = self.d_set.valid_bins
-        # 1. Fetch valid bins group
-        attr_keys = [GI(x[0], x[1].decode()).as_string() for x in v_bins[:, 0]]
-
-        # 2. Initialize an empty d-matrix
-        n = len(attr_keys)
-        d = np.zeros((n, n), dtype=np.dtype('i8'))  # cumulative sum of all segments
-        for i in range(n):
-            for j in range(n):
-                if GI.parse_gi(attr_keys[i]).attribute_col == GI.parse_gi(attr_keys[j]).attribute_col:
-                    # Ignore similar attributes (+ or/and -)
-                    continue
-                else:
-                    bin_1 = v_bins[i][1]
-                    bin_2 = v_bins[j][1]
-                    # Cumulative sum of all segments for 2x2 (all attributes) gradual items
-                    d[i][j] += np.sum(np.multiply(bin_1, bin_2))
-        # print(d)
-        return d, attr_keys
+        self.attr_keys = [GI(x[0], x[1].decode()).as_string() for x in self.d_set.valid_bins[:, 0]]
 
     def run_genetic_algorithm(self):
-        min_supp = self.d_set.thd_supp
-        a = self.d_set.attr_size
 
         if self.d_set.no_bins:
             return []
-
-        # 1. Remove d[i][j] < frequency-count of min_supp
-        fr_count = ((min_supp * a * (a - 1)) / 2)
-        self.d[self.d < fr_count] = 0
 
         # Problem Information
         cost_func = self.cost_func
