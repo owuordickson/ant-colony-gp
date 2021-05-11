@@ -115,9 +115,12 @@ class GradACO:
                     repeated += 1
             # it_count += 1
             # Show Iteration Information
-            best_cost_arr[it_count] = best_cost
-            # print("Iteration {}: Best Cost: {}".format(it_count, best_cost_arr[it_count]))
-            str_plt += "Iteration {}: Best Cost: {} \n".format(it_count, best_cost_arr[it_count])
+            try:
+                best_cost_arr[it_count] = best_cost
+                # print("Iteration {}: Best Cost: {}".format(it_count, best_cost_arr[it_count]))
+                str_plt += "Iteration {}: Best Cost: {} \n".format(it_count, best_cost_arr[it_count])
+            except IndexError:
+                pass
             it_count += 1
 
         # Output

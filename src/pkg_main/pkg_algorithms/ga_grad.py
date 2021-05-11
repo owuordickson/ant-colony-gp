@@ -111,10 +111,6 @@ class GradGA:
             pop = sorted(pop, key=lambda x: x.cost)
             pop = pop[0:n_pop]
 
-            # Store Best Cost
-            best_costs[it_count] = best_sol.cost
-            best_genes.append(best_sol.gene)
-
             best_gp = self.decode_gp(best_sol.gene)
             best_gp.support = float(1 / best_sol.cost)
             is_present = GradGA.is_duplicate(best_gp, best_patterns)
@@ -124,9 +120,15 @@ class GradGA:
             else:
                 best_patterns.append(best_gp)
 
-            # Show Iteration Information
-            # print("Iteration {}: Best Cost = {}".format(it_count, best_costs[it_count]))
-            str_plt += "Iteration {}: Best Cost: {} \n".format(it_count, best_costs[it_count])
+            try:
+                # Show Iteration Information
+                # Store Best Cost
+                best_costs[it_count] = best_sol.cost
+                best_genes.append(best_sol.gene)
+                # print("Iteration {}: Best Cost = {}".format(it_count, best_costs[it_count]))
+                str_plt += "Iteration {}: Best Cost: {} \n".format(it_count, best_costs[it_count])
+            except IndexError:
+                pass
             it_count += 1
 
         # Output

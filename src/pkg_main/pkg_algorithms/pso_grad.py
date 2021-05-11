@@ -52,7 +52,8 @@ class GradPSO:
         gbest_position = np.array([float('inf'), float('inf')])
 
         velocity_vector = ([np.zeros((len(self.attr_keys),)) for _ in range(n_particles)])
-        best_pos = np.empty(max_it)
+        best_pos_arr = np.empty(max_it)
+        best_pos = np.inf
         best_patterns = []
         str_plt = ''
 
@@ -69,7 +70,7 @@ class GradPSO:
                 if gbest_fitness_value > fitness_candidate:
                     gbest_fitness_value = fitness_candidate
                     gbest_position = particle_position_vector[i]
-            best_pos[it_count] = self.fitness_function(self.decode_gp(gbest_position))
+            best_pos = self.fitness_function(self.decode_gp(gbest_position))
             # if abs(gbest_fitness_value - self.target) < self.target_error:
             #    break
 
@@ -81,7 +82,7 @@ class GradPSO:
                 particle_position_vector[i] = new_position
 
             best_gp = self.decode_gp(gbest_position)
-            best_gp.support = float(1 / best_pos[it_count])
+            best_gp.support = float(1 / best_pos)
             is_present = GradPSO.is_duplicate(best_gp, best_patterns)
             is_sub = GradPSO.check_anti_monotony(best_patterns, best_gp, subset=True)
             if is_present or is_sub:
@@ -89,15 +90,19 @@ class GradPSO:
             else:
                 best_patterns.append(best_gp)
 
-            # Show Iteration Information
-            # print("Iteration {}: Best Position = {}".format(it_count, best_pos[it_count]))
-            str_plt += "Iteration {}: Best Position: {} \n".format(it_count, best_pos[it_count])
+            try:
+                # Show Iteration Information
+                best_pos_arr[it_count] = best_pos
+                # print("Iteration {}: Best Position = {}".format(it_count, best_pos_arr[it_count]))
+                str_plt += "Iteration {}: Best Position: {} \n".format(it_count, best_pos_arr[it_count])
+            except IndexError:
+                pass
             it_count += 1
 
         # Output
         out = structure()
         out.pop = particle_position_vector
-        out.best_pos = best_pos
+        out.best_pos = best_pos_arr
         out.gbest_position = gbest_position
         out.best_patterns = best_patterns
         out.iterations = str_plt
