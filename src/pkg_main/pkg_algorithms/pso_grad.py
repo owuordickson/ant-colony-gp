@@ -49,7 +49,7 @@ class GradPSO:
         pbest_position = particle_position_vector
         pbest_fitness_value = np.array([float('inf') for _ in range(n_particles)])
         gbest_fitness_value = float('inf')
-        gbest_position = np.array([float('inf'), float('inf')])
+        gbest_position = particle_position_vector[0]  # np.array([float('inf'), float('inf')])
 
         velocity_vector = ([np.zeros((len(self.attr_keys),)) for _ in range(n_particles)])
         best_pos_arr = np.empty(max_it)
@@ -75,9 +75,15 @@ class GradPSO:
             #    break
 
             for i in range(n_particles):
-                new_velocity = (self.W * velocity_vector[i]) + (self.c1 * random.random()) * (
-                        pbest_position[i] - particle_position_vector[i]) + (self.c2 * random.random()) * (
-                                       gbest_position - particle_position_vector[i])
+                x1 = np.dot(self.W, velocity_vector[i])
+                x2 = np.dot(self.c1, random.random())
+                x3 = (pbest_position[i] - particle_position_vector[i])
+                x4 = np.dot(self.c2, random.random())
+                x5 = (gbest_position - particle_position_vector[i])
+                # new_velocity = (self.W * velocity_vector[i]) + (self.c1 * random.random()) * (
+                #        pbest_position[i] - particle_position_vector[i]) + (self.c2 * random.random()) * (
+                #                       gbest_position - particle_position_vector[i])
+                new_velocity = x1 + np.dot(x2, x3) + np.dot(x4, x5)
                 new_position = new_velocity + particle_position_vector[i]
                 particle_position_vector[i] = new_position
 
