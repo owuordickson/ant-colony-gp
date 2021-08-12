@@ -10,6 +10,9 @@
 
 Breath-First Search for gradual patterns (ACO-GRAANK)
 
+Changes:
+* Implements distance matrix (d)
+
 """
 import numpy as np
 from ypstruct import structure
