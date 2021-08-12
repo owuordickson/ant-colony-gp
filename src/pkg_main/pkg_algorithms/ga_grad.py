@@ -284,7 +284,7 @@ def execute(f_path, min_supp, cores, max_iteration, max_evaluations, n_pop, pc, 
         # Results
         Profile.plot_curve(out, 'Genetic Algorithm (GA)')
 
-        wr_line = "Algorithm: GA-GRAANK (v2.0)\n"
+        wr_line = "Algorithm: GA-GRAANK (v1.0)\n"
         wr_line += "No. of (dataset) attributes: " + str(out.col_count) + '\n'
         wr_line += "No. of (dataset) tuples: " + str(out.row_count) + '\n'
         wr_line += "Population size: " + str(out.n_pop) + '\n'

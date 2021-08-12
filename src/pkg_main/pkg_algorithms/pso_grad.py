@@ -65,7 +65,8 @@ def run_particle_swarm(f_path, min_supp, max_iteration, max_evaluations, n_parti
     str_iter = ''
 
     repeated = 0
-    while it_count < max_iteration:
+    while eval_count < max_evaluations:
+        # while it_count < max_iteration:
         # while repeated < 1:
         for i in range(n_particles):
             particle_pop[i].fitness = fitness_function(particle_pop[i].position, attr_keys_spl, d_set)
@@ -246,7 +247,7 @@ def execute(f_path, min_supp, cores, max_iteration, max_evaluations, n_particles
         # Results
         Profile.plot_curve(out, 'Pattern Swarm Algorithm (PSO)')
 
-        wr_line = "Algorithm: PSO-GRAANK (v2.0)\n"
+        wr_line = "Algorithm: PSO-GRAANK (v1.0)\n"
         wr_line += "No. of (dataset) attributes: " + str(out.col_count) + '\n'
         wr_line += "No. of (dataset) tuples: " + str(out.row_count) + '\n'
         wr_line += "Velocity coeff.: " + str(out.W) + '\n'
