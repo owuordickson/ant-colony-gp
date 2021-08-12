@@ -2,7 +2,7 @@
 
 # Configurations for Gradual Patterns:
 # INITIALIZATIONS = 3
-ALGORITHM = 'aco'
+ALGORITHM = 'pls'
 MIN_SUPPORT = 0.5
 CPU_CORES = 4
 

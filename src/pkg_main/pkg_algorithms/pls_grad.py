@@ -67,8 +67,9 @@ def run_hill_climbing(f_path, min_supp, max_iteration, max_evaluations, step_siz
         # while it_count < max_iteration:
         # take a step
         candidate.position = None
-        while candidate.position is None:
-            candidate.position = best_sol.position + (random.randrange(var_min, var_max) * step_size)
+        if candidate.position is None:
+            alpha = np.random.uniform(-step_size, 1 + step_size, best_sol.position.shape[1])
+            candidate.position = alpha*best_sol.position
         candidate.cost = cost_func(candidate.position, attr_keys_spl, d_set)
         eval_count += 1
 
