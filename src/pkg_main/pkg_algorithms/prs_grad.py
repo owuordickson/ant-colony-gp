@@ -61,7 +61,7 @@ def run_pure_random_search(f_path, min_supp, max_iteration, max_evaluations, nva
     while eval_count < max_evaluations:
         # while it_count < max_iteration:
 
-        candidate.position = ((var_min + random.random()) * (var_max - var_min))
+        candidate.position =  random.random() * build_gp_gene(attr_keys_spl)  # ((var_min + random.random()) * (var_max - var_min))
         candidate.cost = cost_func(candidate.position, attr_keys_spl, d_set)
         eval_count += 1
 
