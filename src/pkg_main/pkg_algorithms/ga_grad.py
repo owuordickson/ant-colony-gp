@@ -72,7 +72,7 @@ class GradGA:
 
         repeated = 0
         while it_count < max_it:
-        # while repeated < 1:
+            # while repeated < 1:
 
             c_pop = []  # Children population
             for _ in range(nc // 2):
