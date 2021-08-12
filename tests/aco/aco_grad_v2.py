@@ -16,10 +16,10 @@ import numpy as np
 from numpy import random as rand
 from ypstruct import structure
 
-from .shared.gp import GI, GP
-from .shared.dataset_bfs import Dataset
-from .shared.profile import Profile
-from .shared import config as cfg
+from src.pkg_main.pkg_algorithms.shared.gp import GI, GP
+from src.pkg_main.pkg_algorithms.shared.dataset_bfs import Dataset
+from src.pkg_main.pkg_algorithms.shared.profile import Profile
+from src.pkg_main.pkg_algorithms.shared import config as cfg
 
 
 class GradACO:

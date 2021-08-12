@@ -16,7 +16,7 @@ Description:
 import sys
 from optparse import OptionParser
 import config as cfg
-from pkg_algorithms import aco_grad_v2, ga_grad, pso_grad
+from pkg_algorithms import aco_grad_v4, ga_grad, pso_grad
 from pkg_algorithms import graank_v2, aco_lcm, lcm_gp
 
 
