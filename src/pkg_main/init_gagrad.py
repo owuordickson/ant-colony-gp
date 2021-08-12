@@ -2,7 +2,7 @@
 import config as cfg
 import time
 import tracemalloc
-from pkg_algorithms.ga_grad import init
+from pkg_algorithms.ga_grad import execute
 from pkg_algorithms.shared.profile import Profile
 
 # res = init(cfg.DATASET, cfg.MIN_SUPPORT, cfg.CPU_CORES)
@@ -10,7 +10,8 @@ from pkg_algorithms.shared.profile import Profile
 
 start = time.time()
 tracemalloc.start()
-res_text = init(cfg.DATASET, cfg.MIN_SUPPORT, cfg.CPU_CORES)
+res_text = execute(cfg.DATASET, cfg.MIN_SUPPORT, cfg.CPU_CORES, cfg.MAX_ITERATIONS, cfg.MAX_EVALUATIONS,
+                   cfg.N_POPULATION, cfg.PC, cfg.GAMMA, cfg.MU, cfg.SIGMA, cfg.N_VAR)
 snapshot = tracemalloc.take_snapshot()
 end = time.time()
 

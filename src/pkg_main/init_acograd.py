@@ -5,12 +5,12 @@ import tracemalloc
 from pkg_algorithms.aco_grad_v4 import init
 from pkg_algorithms.shared.profile import Profile
 
-# res = init(cfg.DATASET, cfg.MIN_SUPPORT, cfg.CPU_CORES)
+# res = pkg_exec(cfg.DATASET, cfg.MIN_SUPPORT, cfg.CPU_CORES)
 # print(res)
 
 start = time.time()
 tracemalloc.start()
-res_text = init(cfg.DATASET, cfg.MIN_SUPPORT, cfg.CPU_CORES)
+res_text = execute(cfg.DATASET, cfg.MIN_SUPPORT, cfg.CPU_CORES, cfg.EVAPORATION_FACTOR, cfg.MAX_ITERATIONS)
 snapshot = tracemalloc.take_snapshot()
 end = time.time()
 

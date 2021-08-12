@@ -12,7 +12,7 @@ You will be required to install the following python dependencies before using <
 ```
 <!-- python-dateutil scikit-fuzzy cython h5py mpi4py -->
 ```
-                    $ pip3 install numpy
+                    $ pip3 install numpy pandas ypstruct~=0.0.2 sortedcontainers~=2.4.0 scikit-fuzzy~=0.4.0 python-dateutil~=2.8.2 matplotlib~=3.4.2
 
 ```
 
