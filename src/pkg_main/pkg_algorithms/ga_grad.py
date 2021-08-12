@@ -150,27 +150,6 @@ def run_genetic_algorithm(f_path, min_supp, max_iteration, max_evaluations, n_po
     return out
 
 
-def build_gp_gene(attr_keys):
-    a = attr_keys
-    temp_gene = np.random.choice(a=[0, 1], size=(len(a), 2))
-    return temp_gene
-
-
-def decode_gp(attr_keys, gene):
-    temp_gp = GP()
-    if gene is None:
-        return temp_gp
-    for a in range(gene.shape[0]):
-        gi = None
-        if gene[a][0] > gene[a][1]:
-            gi = GI.parse_gi(attr_keys[a][0])
-        elif gene[a][1] > gene[a][0]:
-            gi = GI.parse_gi(attr_keys[a][1])
-        if not(gi is None) and (not temp_gp.contains_attr(gi)):
-            temp_gp.add_gradual_item(gi)
-    return temp_gp
-
-
 def cost_func(gene, attr_keys, d_set):
     pattern = decode_gp(attr_keys, gene)
     temp_bin = np.array([])
@@ -196,6 +175,44 @@ def cost_func(gene, attr_keys, d_set):
         str_eval += "{}: {} \n".format(eval_count, cost)
 
     return cost
+
+
+def crossover(p1, p2, gamma=0.1):
+    c1 = p1.deepcopy()
+    c2 = p2.deepcopy()
+    alpha = np.random.uniform(-gamma, 1+gamma, c1.gene.shape[1])
+    c1.gene = alpha*p1.gene + (1-alpha)*p2.gene
+    c2.gene = alpha*p2.gene + (1-alpha)*p1.gene
+    return c1, c2
+
+
+def mutate(x, mu, sigma):
+    y = x.deepcopy()
+    flag = np.random.rand(*x.gene.shape) <= mu
+    ind = flag  # np.argwhere(flag)
+    y.gene += sigma*np.random.rand(*ind.shape)
+    return y
+
+
+def build_gp_gene(attr_keys):
+    a = attr_keys
+    temp_gene = np.random.choice(a=[0, 1], size=(len(a), 2))
+    return temp_gene
+
+
+def decode_gp(attr_keys, gene):
+    temp_gp = GP()
+    if gene is None:
+        return temp_gp
+    for a in range(gene.shape[0]):
+        gi = None
+        if gene[a][0] > gene[a][1]:
+            gi = GI.parse_gi(attr_keys[a][0])
+        elif gene[a][1] > gene[a][0]:
+            gi = GI.parse_gi(attr_keys[a][1])
+        if not(gi is None) and (not temp_gp.contains_attr(gi)):
+            temp_gp.add_gradual_item(gi)
+    return temp_gp
 
 
 def validate_gp(d_set, pattern):
@@ -225,23 +242,6 @@ def validate_gp(d_set, pattern):
         return pattern
     else:
         return gen_pattern
-
-
-def crossover(p1, p2, gamma=0.1):
-    c1 = p1.deepcopy()
-    c2 = p2.deepcopy()
-    alpha = np.random.uniform(-gamma, 1+gamma, c1.gene.shape[1])
-    c1.gene = alpha*p1.gene + (1-alpha)*p2.gene
-    c2.gene = alpha*p2.gene + (1-alpha)*p1.gene
-    return c1, c2
-
-
-def mutate(x, mu, sigma):
-    y = x.deepcopy()
-    flag = np.random.rand(*x.gene.shape) <= mu
-    ind = flag  # np.argwhere(flag)
-    y.gene += sigma*np.random.rand(*ind.shape)
-    return y
 
 
 def check_anti_monotony(lst_p, pattern, subset=True):

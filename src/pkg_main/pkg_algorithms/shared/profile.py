@@ -104,7 +104,7 @@ class Profile:
             pass
 
     @staticmethod
-    def plot_curve(out, title, pl=True):
+    def plot_curve(out, title, pl=False):
         if pl:
             # Results
             plt.plot(out.best_costs)
