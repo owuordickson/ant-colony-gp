@@ -32,14 +32,13 @@ def run_pure_random_search(f_path, min_supp, max_iteration, max_evaluations, nva
     d_set = Dataset(f_path, min_supp)
     d_set.init_gp_attributes()
     attr_keys = [GI(x[0], x[1].decode()).as_string() for x in d_set.valid_bins[:, 0]]
+    attr_keys_spl = [attr_keys[x:x + 2] for x in range(0, len(attr_keys), 2)]
 
     if d_set.no_bins:
         return []
 
     # Parameters
     it_count = 0
-    var_min = 0
-    var_max = int(''.join(['1'] * len(attr_keys)), 2)
     eval_count = 0
 
     # Empty Individual Template
@@ -49,8 +48,8 @@ def run_pure_random_search(f_path, min_supp, max_iteration, max_evaluations, nva
 
     # INITIALIZE
     best_sol = candidate.deepcopy()
-    best_sol.position = np.random.uniform(var_min, var_max, nvar)
-    best_sol.cost = cost_func(best_sol.position, attr_keys, d_set)
+    best_sol.position = build_gp_gene(attr_keys_spl)
+    best_sol.cost = cost_func(best_sol.position, attr_keys_spl, d_set)
 
     # Best Cost of Iteration
     best_costs = np.empty(max_iteration)
@@ -63,15 +62,14 @@ def run_pure_random_search(f_path, min_supp, max_iteration, max_evaluations, nva
         # while it_count < max_iteration:
 
         candidate.position = ((var_min + random.random()) * (var_max - var_min))
-        apply_bound(candidate, var_min, var_max)
-        candidate.cost = cost_func(candidate.position, attr_keys, d_set)
+        candidate.cost = cost_func(candidate.position, attr_keys_spl, d_set)
         eval_count += 1
 
         if candidate.cost < best_sol.cost:
             best_sol = candidate.deepcopy()
         str_eval += "{}: {} \n".format(eval_count, best_sol.cost)
 
-        best_gp = validate_gp(d_set, decode_gp(attr_keys, best_sol.position))
+        best_gp = validate_gp(d_set, decode_gp(attr_keys_spl, best_sol.position))
         is_present = is_duplicate(best_gp, best_patterns)
         is_sub = check_anti_monotony(best_patterns, best_gp, subset=True)
         if is_present or is_sub:
@@ -129,25 +127,24 @@ def cost_func(position, attr_keys, d_set):
     return cost
 
 
-def apply_bound(x, var_min, var_max):
-    x.position = np.maximum(x.position, var_min)
-    x.position = np.minimum(x.position, var_max)
+def build_gp_gene(attr_keys):
+    a = attr_keys
+    temp_gene = np.random.choice(a=[0, 1], size=(len(a), 2))
+    return temp_gene
 
 
-def decode_gp(attr_keys, position):
+def decode_gp(attr_keys, gene):
     temp_gp = GP()
-    if position is None:
+    if gene is None:
         return temp_gp
-
-    bin_str = bin(int(position))[2:]
-    bin_arr = np.array(list(bin_str), dtype=int)
-
-    for i in range(bin_arr.size):
-        gene_val = bin_arr[i]
-        if gene_val == 1:
-            gi = GI.parse_gi(attr_keys[i])
-            if not temp_gp.contains_attr(gi):
-                temp_gp.add_gradual_item(gi)
+    for a in range(gene.shape[0]):
+        gi = None
+        if gene[a][0] > gene[a][1]:
+            gi = GI.parse_gi(attr_keys[a][0])
+        elif gene[a][1] > gene[a][0]:
+            gi = GI.parse_gi(attr_keys[a][1])
+        if not(gi is None) and (not temp_gp.contains_attr(gi)):
+            temp_gp.add_gradual_item(gi)
     return temp_gp
 
 
