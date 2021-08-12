@@ -10,10 +10,10 @@ CPU_CORES = 4
 # DATASET = "../../data/hcv_data.csv"
 
 # Uncomment for Main:
-DATASET = "../../data/DATASET.csv"
+DATASET = "../data/DATASET.csv"
 
 # Uncomment for Terminal:
-# DATASET = "data/DATASET.csv"
+DATASET = "data/DATASET.csv"
 
 # Global Swarm Configurations
 MAX_ITERATIONS = 100

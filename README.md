@@ -17,42 +17,11 @@ You will be required to install the following python dependencies before using <
 ```
 
 ### Usage:
-Use it a command line program with the local package to mine gradual patterns:<br>
-
-<!--
-* Python and HDF5
-
-```
-$python3 src/init_acograd_h5.py -f filename.csv -s minSup
-```
-
-To mine fuzzy-temporal gradual patterns:<br>
-
-* Python and HDF5
-
-```
-$python3 src/init_acotgraank_h5.py -f filename.csv -c refCol -s minSup  -r minRep
-```
-
-* Parallel (Python) MPI and Parallel HDF5
-
-```
-$mpirun -n nProcs python init_acotgrad_mpi.py -f filename.csv -c refCol -s minSup -r minRep
-```
-
-
-where you specify the input parameters as follows:<br>
-* <strong>nProcs</strong> - [required] number of processes (only for MPI) <br>
-* <strong>filename.csv</strong> - [required] a file in csv format <br>
-* <strong>minSup</strong> - [optional] minimum support ```default = 0.5``` <br>
-* <strong>minRep</strong> - [optional] minimum representativity ```default = 0.5``` <br>
-* <strong>refCol</strong> - [optional] reference column ```default = 1``` <br>
-
--->
+Use it a command line program with the local package to mine gradual patterns:
 
 For example we executed the <em><strong>ACO</strong>-GRAANK</em> algorithm on a sample data-set<br>
 ```
-$python3 src/pkg_main/main.py -a 'aco' -f data/DATASET.csv
+$python3 src/main.py -a 'aco' -f data/DATASET.csv
 ```
 
 where you specify the input parameters as follows:<br>
