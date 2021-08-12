@@ -95,7 +95,7 @@ class Profile:
         return wr_line
 
     @staticmethod
-    def write_file(data, path, wr=True):
+    def write_file(data, path, wr=False):
         if wr:
             with open(path, 'w') as f:
                 f.write(data)
@@ -104,7 +104,7 @@ class Profile:
             pass
 
     @staticmethod
-    def plot_curve(out, title, pl=False):
+    def plot_curve(out, title, pl=True):
         if pl:
             # Results
             plt.plot(out.best_costs)

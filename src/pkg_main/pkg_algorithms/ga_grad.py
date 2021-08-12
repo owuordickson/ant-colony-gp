@@ -32,6 +32,7 @@ def run_genetic_algorithm(f_path, min_supp, max_iteration, max_evaluations, n_po
     d_set = Dataset(f_path, min_supp)
     d_set.init_gp_attributes()
     attr_keys = [GI(x[0], x[1].decode()).as_string() for x in d_set.valid_bins[:, 0]]
+    attr_keys_spl = [attr_keys[x:x + 2] for x in range(0, len(attr_keys), 2)]
 
     if d_set.no_bins:
         return []
@@ -48,17 +49,16 @@ def run_genetic_algorithm(f_path, min_supp, max_iteration, max_evaluations, n_po
     empty_individual.gene = None
     empty_individual.cost = None
 
-    # Best Solution Ever Found
-    best_sol = empty_individual.deepcopy()
-    best_sol.cost = np.inf
-
     # Initialize Population
     pop = empty_individual.repeat(n_pop)
     for i in range(n_pop):
-        pop[i].gene = build_gp_gene(attr_keys)
-        pop[i].cost = cost_func(decode_gp(d_set, attr_keys, pop[i].gene))
-        if pop[i].cost < best_sol.cost:
-            best_sol = pop[i].deepcopy()
+        pop[i].gene = build_gp_gene(attr_keys_spl)
+        pop[i].cost = 1
+
+    # Best Solution Ever Found
+    best_sol = empty_individual.deepcopy()
+    best_sol.gene = pop[0].gene
+    best_sol.cost = cost_func(best_sol.gene, attr_keys_spl, d_set)
 
     # Best Cost of Iteration
     best_costs = np.empty(max_iteration)
@@ -67,7 +67,8 @@ def run_genetic_algorithm(f_path, min_supp, max_iteration, max_evaluations, n_po
     str_iter = ''
 
     repeated = 0
-    while it_count < max_iteration:
+    while eval_count < max_evaluations:
+        # while it_count < max_iteration:
         # while repeated < 1:
 
         c_pop = []  # Children population
@@ -78,23 +79,23 @@ def run_genetic_algorithm(f_path, min_supp, max_iteration, max_evaluations, n_po
             p2 = pop[q[1]]
 
             # Perform Crossover
-            c1, c2 = crossover(p1, p2)
+            c1, c2 = crossover(p1, p2, gamma)
 
             # Perform Mutation
-            c1 = mutate(c1)
-            c2 = mutate(c2)
+            c1 = mutate(c1, mu, sigma)
+            c2 = mutate(c2, mu, sigma)
 
             # Apply Bound
             # apply_bound(c1, var_min, var_max)
             # apply_bound(c2, var_min, var_max)
 
             # Evaluate First Offspring
-            c1.cost = cost_func(decode_gp(d_set, attr_keys, c1.gene))
+            c1.cost = cost_func(c1.gene, attr_keys_spl, d_set)
             if c1.cost < best_sol.cost:
                 best_sol = c1.deepcopy()
 
             # Evaluate Second Offspring
-            c2.cost = cost_func(decode_gp(d_set, attr_keys, c2.gene))
+            c2.cost = cost_func(c2.gene, attr_keys_spl, d_set)
             if c2.cost < best_sol.cost:
                 best_sol = c2.deepcopy()
 
@@ -107,14 +108,16 @@ def run_genetic_algorithm(f_path, min_supp, max_iteration, max_evaluations, n_po
         pop = sorted(pop, key=lambda x: x.cost)
         pop = pop[0:n_pop]
 
-        best_gp = decode_gp(d_set, attr_keys, best_sol.gene)
-        best_gp.support = float(1 / best_sol.cost)
+        best_gp = validate_gp(d_set, decode_gp(attr_keys_spl, best_sol.gene))
         is_present = is_duplicate(best_gp, best_patterns)
         is_sub = check_anti_monotony(best_patterns, best_gp, subset=True)
         if is_present or is_sub:
             repeated += 1
         else:
-            best_patterns.append(best_gp)
+            if best_gp.support >= min_supp:
+                best_patterns.append(best_gp)
+            # else:
+            #    best_sol.cost = 1
 
         try:
             # Show Iteration Information
@@ -149,38 +152,50 @@ def run_genetic_algorithm(f_path, min_supp, max_iteration, max_evaluations, n_po
 
 def build_gp_gene(attr_keys):
     a = attr_keys
-    temp_gene = np.random.choice(a=[0, 1], size=(len(a),))
+    temp_gene = np.random.choice(a=[0, 1], size=(len(a), 2))
     return temp_gene
 
 
-def decode_gp(d_set, attr_keys, gene):
+def decode_gp(attr_keys, gene):
     temp_gp = GP()
     if gene is None:
         return temp_gp
-    for i in range(gene.size):
-        gene_val = gene[i]
-        if gene_val == 1:
-            gi = GI.parse_gi(attr_keys[i])
-            if not temp_gp.contains_attr(gi):
-                temp_gp.add_gradual_item(gi)
-    return validate_gp(d_set, temp_gp)
+    for a in range(gene.shape[0]):
+        gi = None
+        if gene[a][0] > gene[a][1]:
+            gi = GI.parse_gi(attr_keys[a][0])
+        elif gene[a][1] > gene[a][0]:
+            gi = GI.parse_gi(attr_keys[a][1])
+        if not(gi is None) and (not temp_gp.contains_attr(gi)):
+            temp_gp.add_gradual_item(gi)
+    return temp_gp
 
 
-def cost_func(gp):
+def cost_func(gene, attr_keys, d_set):
+    pattern = decode_gp(attr_keys, gene)
+    temp_bin = np.array([])
+    for gi in pattern.gradual_items:
+        arg = np.argwhere(np.isin(d_set.valid_bins[:, 0], gi.gradual_item))
+        if len(arg) > 0:
+            i = arg[0][0]
+            valid_bin = d_set.valid_bins[i]
+            if temp_bin.size <= 0:
+                temp_bin = valid_bin[1].copy()
+            else:
+                temp_bin = np.multiply(temp_bin, valid_bin[1])
+    bin_sum = np.sum(temp_bin)
+    if bin_sum > 0:
+        cost = (1 / bin_sum)
+    else:
+        cost = 1
+
     global str_eval
     global eval_count
     if eval_count < max_evals:
         eval_count += 1
+        str_eval += "{}: {} \n".format(eval_count, cost)
 
-    if gp is None:
-        str_eval += "{}: {} \n".format(eval_count, 1)
-        return 1
-    else:
-        if gp.support <= 0:
-            str_eval += "{}: {} \n".format(eval_count, 1)
-            return 1
-        str_eval += "{}: {} \n".format(eval_count, (1 / gp.support), 2)
-        return round((1 / gp.support), 2)
+    return cost
 
 
 def validate_gp(d_set, pattern):
@@ -212,23 +227,21 @@ def validate_gp(d_set, pattern):
         return gen_pattern
 
 
-def crossover(p_1, p_2):
-    c_1 = p_1.copy()
-    c_2 = p_1.copy()
-    choice = np.random.randint(2, size=c_1.gene.size).reshape(c_1.gene.shape).astype(bool)
-    c_1.gene = np.where(choice, p_1.gene, p_2.gene)
-    c_2.gene = np.where(choice, p_2.gene, p_1.gene)
-    return c_1, c_2
+def crossover(p1, p2, gamma=0.1):
+    c1 = p1.deepcopy()
+    c2 = p2.deepcopy()
+    alpha = np.random.uniform(-gamma, 1+gamma, c1.gene.shape[1])
+    c1.gene = alpha*p1.gene + (1-alpha)*p2.gene
+    c2.gene = alpha*p2.gene + (1-alpha)*p1.gene
+    return c1, c2
 
 
-def mutate(p_x):
-    p_y = p_x.copy()
-    rand_val = np.random.randint(0, p_x.gene.shape[0])
-    if p_y.gene[rand_val] == 0:
-        p_y.gene[rand_val] = 1
-    else:
-        p_y.gene[rand_val] = 0
-    return p_y
+def mutate(x, mu, sigma):
+    y = x.deepcopy()
+    flag = np.random.rand(*x.gene.shape) <= mu
+    ind = flag  # np.argwhere(flag)
+    y.gene += sigma*np.random.rand(*ind.shape)
+    return y
 
 
 def check_anti_monotony(lst_p, pattern, subset=True):

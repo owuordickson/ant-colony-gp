@@ -56,7 +56,7 @@ while iteration < n_iterations:
 
     iteration = iteration + 1
 
-print("The best position is ", gbest_position, "in iteration number ", iteration)
+print("The best gene is ", gbest_position, "in iteration number ", iteration)
 
 
 # Results

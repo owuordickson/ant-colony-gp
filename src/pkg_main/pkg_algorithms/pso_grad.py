@@ -109,7 +109,7 @@ def run_particle_swarm(f_path, min_supp, max_iteration, max_evaluations, n_parti
     out = structure()
     out.pop = particle_position_vector  # particle_pop
     out.best_costs = best_pos_arr  # best_fitness_arr
-    out.gbest_position = gbest_position  # gbest_particle.position
+    out.gbest_position = gbest_position  # gbest_particle.gene
     out.best_patterns = best_patterns
     out.str_iterations = str_iter
     out.iteration_count = it_count

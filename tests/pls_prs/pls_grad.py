@@ -45,11 +45,11 @@ def run_hill_climbing(f_path, min_supp, max_iteration, max_evaluations, step_siz
     # Empty Individual Template
     best_sol = structure()
     candidate = structure()
-    # best_sol.position = None
+    # best_sol.gene = None
     # best_sol.cost = float('inf')
 
     # INITIALIZE
-    # best_sol.position = np.random.uniform(var_min, var_max, nvar)
+    # best_sol.gene = np.random.uniform(var_min, var_max, nvar)
 
     # Best Cost of Iteration
     best_costs = np.empty(max_iteration)
@@ -60,7 +60,7 @@ def run_hill_climbing(f_path, min_supp, max_iteration, max_evaluations, step_siz
 
     # generate an initial point
     best_sol.position = None
-    # candidate.position = None
+    # candidate.gene = None
     while best_sol.position is None or not apply_bound(best_sol, var_min, var_max):
         best_sol.position = np.random.uniform(var_min, var_max, nvar)
     # evaluate the initial point

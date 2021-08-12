@@ -27,7 +27,7 @@ EVAPORATION_FACTOR = 0.5
 N_POPULATION = 5
 PC = 0.5
 GAMMA = 0.1  # Cross-over
-MU = 0.1  # Mutation
+MU = 0.5  # Mutation
 SIGMA = 0.5  # Mutation
 
 # PSO-GRAD Configurations:
