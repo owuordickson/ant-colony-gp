@@ -16,7 +16,7 @@ Description:
 import sys
 from optparse import OptionParser
 import config as cfg
-from pkg_algorithms import aco_grad_v4, ga_grad, pso_grad
+from pkg_algorithms import aco_grad_v4, ga_grad, pls_grad, prs_grad, pso_grad
 from pkg_algorithms import graank_v2, aco_lcm, lcm_gp
 
 
@@ -95,7 +95,7 @@ if __name__ == "__main__":
         # ACO-GRAANK
         start = time.time()
         tracemalloc.start()
-        res_text = aco_grad_v4.execute(filePath, minSup, numCores, eVal, cfg.MAX_ITERATIONS)
+        res_text = aco_grad_v4.execute(filePath, minSup, numCores, eVal, cfg.MAX_ITERATIONS, cfg.MAX_EVALUATIONS)
         snapshot = tracemalloc.take_snapshot()
         end = time.time()
 
@@ -175,6 +175,35 @@ if __name__ == "__main__":
         wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
         wr_text += str(res_text)
         f_name = str('res_lcm' + str(end).replace('.', '', 1) + '.txt')
+        Profile.write_file(wr_text, f_name)
+        print(wr_text)
+    elif algChoice == 'prs':
+        # PSO-GRAANK
+        start = time.time()
+        tracemalloc.start()
+        res_text = prs_grad.execute(filePath, minSup, numCores, cfg.MAX_ITERATIONS, cfg.MAX_EVALUATIONS, cfg.N_VAR)
+        snapshot = tracemalloc.take_snapshot()
+        end = time.time()
+
+        wr_text = ("Run-time: " + str(end - start) + " seconds\n")
+        wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
+        wr_text += str(res_text)
+        f_name = str('res_prs' + str(end).replace('.', '', 1) + '.txt')
+        Profile.write_file(wr_text, f_name)
+        print(wr_text)
+    elif algChoice == 'pls':
+        # PSO-GRAANK
+        start = time.time()
+        tracemalloc.start()
+        res_text = pls_grad.execute(filePath, minSup, numCores, cfg.MAX_ITERATIONS, cfg.MAX_EVALUATIONS, stepVal,
+                                    cfg.N_VAR)
+        snapshot = tracemalloc.take_snapshot()
+        end = time.time()
+
+        wr_text = ("Run-time: " + str(end - start) + " seconds\n")
+        wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
+        wr_text += str(res_text)
+        f_name = str('res_pls' + str(end).replace('.', '', 1) + '.txt')
         Profile.write_file(wr_text, f_name)
         print(wr_text)
     else:

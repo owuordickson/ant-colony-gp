@@ -95,7 +95,7 @@ class Profile:
         return wr_line
 
     @staticmethod
-    def write_file(data, path, wr=False):
+    def write_file(data, path, wr=True):
         if wr:
             with open(path, 'w') as f:
                 f.write(data)

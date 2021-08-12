@@ -23,6 +23,11 @@ from .shared.dataset_bfs import Dataset
 from .shared.profile import Profile
 
 
+max_evals = 0
+eval_count = 0
+str_eval = ''
+
+
 def generate_d(valid_bins):
     v_bins = valid_bins
     # 1. Fetch valid bins group
@@ -45,7 +50,10 @@ def generate_d(valid_bins):
     return d, attr_keys
 
 
-def run_ant_colony(f_path, min_supp, evaporation_factor, max_iteration):
+def run_ant_colony(f_path, min_supp, evaporation_factor, max_iteration, max_evaluations):
+    global max_evals
+    max_evals = max_evaluations
+
     # 0. Initialize and prepare data set
     d_set = Dataset(f_path, min_supp)
     d_set.init_gp_attributes()
@@ -57,7 +65,6 @@ def run_ant_colony(f_path, min_supp, evaporation_factor, max_iteration):
     # str_winner_gps = list()  # subsets
     repeated = 0
     it_count = 0
-    max_it = max_iteration
 
     if d_set.no_bins:
         return []
@@ -77,13 +84,15 @@ def run_ant_colony(f_path, min_supp, evaporation_factor, max_iteration):
     pheromones = np.ones(d.shape, dtype=float)
 
     # Best Cost of Iteration
-    best_cost_arr = np.empty(max_it)
+    best_cost_arr = np.empty(max_iteration)
     best_cost = 1
     str_iter = ''
 
     # 4. Iterations for ACO
-    # while repeated < 1:
-    while it_count < max_it:
+    repeated = 0
+    while eval_count < max_evaluations:
+        # while it_count < max_iteration:
+        # while repeated < 1:
         rand_gp, pheromones = generate_aco_gp(attr_keys, d, pheromones, evaporation_factor)
         candidate_cost = cost_func(d_set, rand_gp)
         if candidate_cost < best_cost:
@@ -129,8 +138,10 @@ def run_ant_colony(f_path, min_supp, evaporation_factor, max_iteration):
     out.best_costs = best_cost_arr
     out.best_patterns = winner_gps
     out.str_iterations = str_iter
+    out.str_evaluations = str_eval
     out.iteration_count = it_count
-    out.max_iteration = max_it
+    out.max_iteration = max_iteration
+    out.cost_evaluations = eval_count
     out.titles = d_set.titles
     out.col_count = d_set.col_count
     out.row_count = d_set.row_count
@@ -192,6 +203,12 @@ def cost_func(d_set, pattern):
         cost = (1 / bin_sum)
     else:
         cost = 1
+
+    global str_eval
+    global eval_count
+    if eval_count < max_evals:
+        eval_count += 1
+        str_eval += "{}: {} \n".format(eval_count, cost)
     return cost
 
 
@@ -255,14 +272,14 @@ def is_duplicate(pattern, lst_winners, lst_losers):
     return False
 
 
-def execute(f_path, min_supp, cores,  evaporation_factor, max_iteration):
+def execute(f_path, min_supp, cores,  evaporation_factor, max_iteration, max_evaluations):
     try:
         if cores > 1:
             num_cores = cores
         else:
             num_cores = Profile.get_num_cores()
 
-        out = run_ant_colony(f_path, min_supp, evaporation_factor, max_iteration)
+        out = run_ant_colony(f_path, min_supp, evaporation_factor, max_iteration, max_evaluations)
         list_gp = out.best_patterns
 
         # Results
@@ -276,7 +293,8 @@ def execute(f_path, min_supp, cores,  evaporation_factor, max_iteration):
         wr_line += "Minimum support: " + str(min_supp) + '\n'
         wr_line += "Number of cores: " + str(num_cores) + '\n'
         wr_line += "Number of patterns: " + str(len(list_gp)) + '\n'
-        wr_line += "Number of iterations: " + str(out.iteration_count) + '\n\n'
+        wr_line += "Number of iterations: " + str(out.iteration_count) + '\n'
+        wr_line += "Number of cost evaluations: " + str(out.cost_evaluations) + '\n\n'
 
         for txt in out.titles:
             try:
@@ -293,8 +311,10 @@ def execute(f_path, min_supp, cores,  evaporation_factor, max_iteration):
         # wr_line += "\nPheromone Matrix\n"
         # wr_line += str(ac.p_matrix)
         # ac.plot_pheromone_matrix()
-        wr_line += '\n\n' + "Iteration: Best Cost" + '\n'
-        wr_line += out.str_iterations
+        # wr_line += '\n\n' + "Iteration: Best Cost" + '\n'
+        # wr_line += out.str_iterations
+        wr_line += '\n\n' + "Evaluation: Cost" + '\n'
+        wr_line += out.str_evaluations
         return wr_line
     except ArithmeticError as error:
         wr_line = "Failed: " + str(error)
