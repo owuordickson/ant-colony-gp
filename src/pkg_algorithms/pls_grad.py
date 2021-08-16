@@ -71,10 +71,10 @@ def run_hill_climbing(f_path, min_supp, max_iteration, max_evaluations, step_siz
             alpha = np.random.uniform(-step_size, 1 + step_size, best_sol.position.shape[1])
             candidate.position = alpha*best_sol.position
         candidate.cost = cost_func(candidate.position, attr_keys_spl, d_set)
-        eval_count += 1
 
         if candidate.cost < best_sol.cost:
             best_sol = candidate.deepcopy()
+        eval_count += 1
         str_eval += "{}: {} \n".format(eval_count, best_sol.cost)
 
         best_gp = validate_gp(d_set, decode_gp(attr_keys_spl, best_sol.position))
@@ -109,7 +109,6 @@ def run_hill_climbing(f_path, min_supp, max_iteration, max_evaluations, step_siz
     out.titles = d_set.titles
     out.col_count = d_set.col_count
     out.row_count = d_set.row_count
-
     return out
 
 
