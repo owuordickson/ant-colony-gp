@@ -61,8 +61,8 @@ def run_genetic_algorithm(f_path, min_supp, max_iteration, max_evaluations, n_po
     str_eval = ''
 
     repeated = 0
-    while eval_count < max_evaluations:
-        # while it_count < max_iteration:
+    while it_count < max_iteration:
+        # while eval_count < max_evaluations:
         # while repeated < 1:
 
         c_pop = []  # Children population
@@ -72,32 +72,42 @@ def run_genetic_algorithm(f_path, min_supp, max_iteration, max_evaluations, n_po
             p1 = pop[q[0]]
             p2 = pop[q[1]]
 
-            # Perform Crossover
+            # a. Perform Crossover
             c1, c2 = crossover(p1, p2, gamma)
-
-            # Perform Mutation
-            c1 = mutate(c1, mu, sigma)
-            c2 = mutate(c2, mu, sigma)
-
-            # Apply Bound
-            # apply_bound(c1, var_min, var_max)
-            # apply_bound(c2, var_min, var_max)
 
             # Evaluate First Offspring
             c1.cost = cost_func(c1.gene, attr_keys_spl, d_set)
-            eval_count += 1
             if c1.cost < best_sol.cost:
                 best_sol = c1.deepcopy()
+            eval_count += 1
             str_eval += "{}: {} \n".format(eval_count, best_sol.cost)
 
             # Evaluate Second Offspring
             c2.cost = cost_func(c2.gene, attr_keys_spl, d_set)
-            eval_count += 1
             if c2.cost < best_sol.cost:
                 best_sol = c2.deepcopy()
+            eval_count += 1
             str_eval += "{}: {} \n".format(eval_count, best_sol.cost)
 
-            # Add Offsprings to c_pop
+            # b. Perform Mutation
+            c1 = mutate(c1, mu, sigma)
+            c2 = mutate(c2, mu, sigma)
+
+            # Evaluate First Offspring
+            c1.cost = cost_func(c1.gene, attr_keys_spl, d_set)
+            if c1.cost < best_sol.cost:
+                best_sol = c1.deepcopy()
+            eval_count += 1
+            str_eval += "{}: {} \n".format(eval_count, best_sol.cost)
+
+            # Evaluate Second Offspring
+            c2.cost = cost_func(c2.gene, attr_keys_spl, d_set)
+            if c2.cost < best_sol.cost:
+                best_sol = c2.deepcopy()
+            eval_count += 1
+            str_eval += "{}: {} \n".format(eval_count, best_sol.cost)
+
+            # c. Add Offsprings to c_pop
             c_pop.append(c1)
             c_pop.append(c2)
 
@@ -123,7 +133,7 @@ def run_genetic_algorithm(f_path, min_supp, max_iteration, max_evaluations, n_po
             best_costs[it_count] = best_sol.cost
             best_genes.append(best_sol.gene)
             # print("Iteration {}: Best Cost = {}".format(it_count, best_costs[it_count]))
-            str_iter += "Iteration {}: Best Cost: {} \n".format(it_count, best_costs[it_count])
+            str_iter += "{}: {} \n".format(it_count, best_costs[it_count])
         except IndexError:
             pass
         it_count += 1
@@ -144,7 +154,6 @@ def run_genetic_algorithm(f_path, min_supp, max_iteration, max_evaluations, n_po
     out.titles = d_set.titles
     out.col_count = d_set.col_count
     out.row_count = d_set.row_count
-
     return out
 
 
@@ -299,10 +308,10 @@ def execute(f_path, min_supp, cores, max_iteration, max_evaluations, n_pop, pc, 
         for gp in list_gp:
             wr_line += (str(gp.to_string()) + ' : ' + str(round(gp.support, 3)) + '\n')
 
-        # wr_line += '\n\n' + "Iteration: Best Cost" + '\n'
-        # wr_line += out.str_iterations
-        wr_line += '\n\n' + "Evaluation: Cost" + '\n'
-        wr_line += out.str_evaluations
+        wr_line += '\n\n' + "Iteration: Cost" + '\n'
+        wr_line += out.str_iterations
+        # wr_line += '\n\n' + "Evaluation: Cost" + '\n'
+        # wr_line += out.str_evaluations
         return wr_line
     except ArithmeticError as error:
         wr_line = "Failed: " + str(error)

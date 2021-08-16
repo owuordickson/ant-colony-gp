@@ -52,15 +52,15 @@ def run_particle_swarm(f_path, min_supp, max_iteration, max_evaluations, n_parti
     best_particle.position = gbest_particle.position
     best_particle.fitness = fitness_function(best_particle.position, attr_keys_spl, d_set)
 
-    velocity_vector = np.zeros(n_particles)
+    velocity_vector = np.ones(n_particles)
     best_fitness_arr = np.empty(max_iteration)
     best_patterns = []
     str_iter = ''
     str_eval = ''
 
     repeated = 0
-    while eval_count < max_evaluations:
-        # while it_count < max_iteration:
+    while it_count < max_iteration:
+        # while eval_count < max_evaluations:
         # while repeated < 1:
         for i in range(n_particles):
             particle_pop[i].fitness = fitness_function(particle_pop[i].position, attr_keys_spl, d_set)
@@ -261,10 +261,10 @@ def execute(f_path, min_supp, cores, max_iteration, max_evaluations, n_particles
         for gp in list_gp:
             wr_line += (str(gp.to_string()) + ' : ' + str(round(gp.support, 3)) + '\n')
 
-        # wr_line += '\n\n' + "Iteration: Best Cost" + '\n'
-        # wr_line += out.str_iterations
-        wr_line += '\n\n' + "Evaluation: Cost" + '\n'
-        wr_line += out.str_evaluations
+        wr_line += '\n\n' + "Iteration: Cost" + '\n'
+        wr_line += out.str_iterations
+        # wr_line += '\n\n' + "Evaluation: Cost" + '\n'
+        # wr_line += out.str_evaluations
         return wr_line
     except ArithmeticError as error:
         wr_line = "Failed: " + str(error)

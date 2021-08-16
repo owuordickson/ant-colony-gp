@@ -2,7 +2,7 @@
 
 # Configurations for Gradual Patterns:
 # INITIALIZATIONS = 3
-ALGORITHM = 'pso'
+ALGORITHM = 'ga'
 MIN_SUPPORT = 0.5
 CPU_CORES = 4
 
@@ -16,7 +16,7 @@ DATASET = "../data/DATASET.csv"
 # DATASET = "data/DATASET.csv"
 
 # Global Swarm Configurations
-MAX_ITERATIONS = 100
+MAX_ITERATIONS = 10
 MAX_EVALUATIONS = 100
 N_VAR = 1  # DO NOT CHANGE
 
@@ -26,13 +26,13 @@ EVAPORATION_FACTOR = 0.5
 # GA-GRAD Configurations:
 N_POPULATION = 5
 PC = 0.5
-GAMMA = 0.1  # Cross-over
-MU = 0.5  # Mutation
-SIGMA = 0.5  # Mutation
+GAMMA = 1  # Cross-over
+MU = 0.9  # Mutation
+SIGMA = 0.9  # Mutation
 
 # PSO-GRAD Configurations:
-VELOCITY = 0.1
-PERSONAL_COEFF = 0.1
+VELOCITY = 0.9  # higher values helps to move to next number in search space
+PERSONAL_COEFF = 0.01
 GLOBAL_COEFF = 0.9
 TARGET = 1
 TARGET_ERROR = 1e-6

@@ -58,8 +58,8 @@ def run_pure_random_search(f_path, min_supp, max_iteration, max_evaluations, nva
     str_eval = ''
 
     repeated = 0
-    while eval_count < max_evaluations:
-        # while it_count < max_iteration:
+    while it_count < max_iteration:
+        # while eval_count < max_evaluations:
 
         candidate.position =  random.random() * build_gp_gene(attr_keys_spl)  # ((var_min + random.random()) * (var_max - var_min))
         candidate.cost = cost_func(candidate.position, attr_keys_spl, d_set)
@@ -242,10 +242,10 @@ def execute(f_path, min_supp, cores, max_iteration, max_evaluations, nvar):
         for gp in list_gp:
             wr_line += (str(gp.to_string()) + ' : ' + str(round(gp.support, 3)) + '\n')
 
-        # wr_line += '\n\n' + "Iteration: Best Cost" + '\n'
-        # wr_line += out.str_iterations
-        wr_line += '\n\n' + "Evaluation: Cost" + '\n'
-        wr_line += out.str_evaluations
+        wr_line += '\n\n' + "Iteration: Cost" + '\n'
+        wr_line += out.str_iterations
+        # wr_line += '\n\n' + "Evaluation: Cost" + '\n'
+        # wr_line += out.str_evaluations
         return wr_line
     except ArithmeticError as error:
         wr_line = "Failed: " + str(error)
