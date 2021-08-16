@@ -6,7 +6,7 @@
 @version: "1.0"
 @email: "owuordickson@gmail.com"
 @created: "29 April 2021"
-@modified: "29 April 2021"
+@modified: "16 August 2021"
 
 Breath-First Search for gradual patterns (GA-GRAANK)
 
@@ -19,15 +19,7 @@ from .shared.dataset_bfs import Dataset
 from .shared.profile import Profile
 
 
-max_evals = 0
-eval_count = 0
-str_eval = ''
-
-
 def run_genetic_algorithm(f_path, min_supp, max_iteration, max_evaluations, n_pop, pc, gamma, mu, sigma, nvar):
-    global max_evals
-    max_evals = max_evaluations
-
     # Prepare data set
     d_set = Dataset(f_path, min_supp)
     d_set.init_gp_attributes()
@@ -42,6 +34,7 @@ def run_genetic_algorithm(f_path, min_supp, max_iteration, max_evaluations, n_po
 
     # Parameters
     it_count = 0
+    eval_count = 0
     nc = int(np.round(pc * n_pop / 2) * 2)  # Number of children. np.round is used to get even number of children
 
     # Empty Individual Template
@@ -65,6 +58,7 @@ def run_genetic_algorithm(f_path, min_supp, max_iteration, max_evaluations, n_po
     best_genes = []
     best_patterns = []
     str_iter = ''
+    str_eval = ''
 
     repeated = 0
     while eval_count < max_evaluations:
@@ -91,13 +85,17 @@ def run_genetic_algorithm(f_path, min_supp, max_iteration, max_evaluations, n_po
 
             # Evaluate First Offspring
             c1.cost = cost_func(c1.gene, attr_keys_spl, d_set)
+            eval_count += 1
             if c1.cost < best_sol.cost:
                 best_sol = c1.deepcopy()
+            str_eval += "{}: {} \n".format(eval_count, best_sol.cost)
 
             # Evaluate Second Offspring
             c2.cost = cost_func(c2.gene, attr_keys_spl, d_set)
+            eval_count += 1
             if c2.cost < best_sol.cost:
                 best_sol = c2.deepcopy()
+            str_eval += "{}: {} \n".format(eval_count, best_sol.cost)
 
             # Add Offsprings to c_pop
             c_pop.append(c1)
@@ -167,13 +165,6 @@ def cost_func(gene, attr_keys, d_set):
         cost = (1 / bin_sum)
     else:
         cost = 1
-
-    global str_eval
-    global eval_count
-    if eval_count < max_evals:
-        eval_count += 1
-        str_eval += "{}: {} \n".format(eval_count, cost)
-
     return cost
 
 

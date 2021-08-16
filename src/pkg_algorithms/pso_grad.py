@@ -6,7 +6,7 @@
 @version: "1.0"
 @email: "owuordickson@gmail.com"
 @created: "29 April 2021"
-@modified: "29 April 2021"
+@modified: "16 August 2021"
 
 Breath-First Search for gradual patterns (PSO-GRAANK)
 
@@ -20,15 +20,7 @@ from .shared.dataset_bfs import Dataset
 from .shared.profile import Profile
 
 
-max_evals = 0
-eval_count = 0
-str_eval = ''
-
-
 def run_particle_swarm(f_path, min_supp, max_iteration, max_evaluations, n_particles, velocity, coef_p, coef_g, nvar):
-    global max_evals
-    max_evals = max_evaluations
-
     # Prepare data set
     d_set = Dataset(f_path, min_supp)
     d_set.init_gp_attributes()
@@ -39,6 +31,7 @@ def run_particle_swarm(f_path, min_supp, max_iteration, max_evaluations, n_parti
         return []
 
     it_count = 0
+    eval_count = 0
 
     # Empty particle template
     empty_particle = structure()
@@ -63,6 +56,7 @@ def run_particle_swarm(f_path, min_supp, max_iteration, max_evaluations, n_parti
     best_fitness_arr = np.empty(max_iteration)
     best_patterns = []
     str_iter = ''
+    str_eval = ''
 
     repeated = 0
     while eval_count < max_evaluations:
@@ -70,6 +64,8 @@ def run_particle_swarm(f_path, min_supp, max_iteration, max_evaluations, n_parti
         # while repeated < 1:
         for i in range(n_particles):
             particle_pop[i].fitness = fitness_function(particle_pop[i].position, attr_keys_spl, d_set)
+            eval_count += 1
+            str_eval += "{}: {} \n".format(eval_count, particle_pop[i].fitness)
 
             if pbest_pop[i].fitness > particle_pop[i].fitness:
                 pbest_pop[i].fitness = particle_pop[i].fitness
@@ -146,13 +142,6 @@ def fitness_function(position, attr_keys, d_set):
         cost = (1 / bin_sum)
     else:
         cost = 1
-
-    global str_eval
-    global eval_count
-    if eval_count < max_evals:
-        eval_count += 1
-        str_eval += "{}: {} \n".format(eval_count, cost)
-
     return cost
 
 
