@@ -4,7 +4,7 @@
 # INITIALIZATIONS = 3
 ALGORITHM = 'aco'  # aco, ga, pso, graank, acolcm, lcm, prs, pls
 MIN_SUPPORT = 0.5
-CPU_CORES = 4
+CPU_CORES = 4  # Depends on your computer
 
 # DATASET = "../../data/DATASET.csv"
 # DATASET = "../../data/hcv_data.csv"
