@@ -42,6 +42,6 @@ N_PARTICLES = 5
 STEP_SIZE = 0.5
 
 # VISUALIZATIONS
-SHOW_P_MATRIX = False  # FOR aco
+SHOW_P_MATRIX = False  # FOR aco ONLY
 SHOW_EVALUATIONS = False  # FOR aco, prs, pls, pso
 SHOW_ITERATIONS = False  # FOR aco, prs, pls, pso
