@@ -18,7 +18,6 @@ import multiprocessing as mp
 from .shared.dataset_dfs import DatasetDFS
 from .shared.gp import GI, GP
 from .shared.profile import Profile
-# from .shared import config as cfg
 
 
 class LcmGP:

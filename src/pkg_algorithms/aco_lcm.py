@@ -20,12 +20,12 @@ from .lcm_gp import LcmGP
 from .shared.gp import GI, GP
 from .shared.dataset_dfs import DatasetDFS
 from .shared.profile import Profile
-from .shared import config as cfg
+# from .shared import config as cfg
 
 
 class LcmACO(LcmGP):
 
-    def __init__(self, f_path, min_supp, n_jobs=1):
+    def __init__(self, f_path, min_supp, evaporation_factor, n_jobs=1):
         # super().__init__(file, min_supp, n_jobs)
         print("LcmACO: Version 1.0")
         self.min_supp = min_supp  # provided by user
@@ -38,7 +38,7 @@ class LcmACO(LcmGP):
         self.c_matrix = np.ones((self.size, self.size), dtype=np.float64)
         self.p_matrix = np.ones((self.size, self.size), dtype=np.float64)
         np.fill_diagonal(self.p_matrix, 0)
-        self.e_factor = cfg.EVAPORATION_FACTOR  # evaporation factor
+        self.e_factor = evaporation_factor  # evaporation factor
         self.item_to_tids = self._fit()
         # self.large_tids = np.array([])
         # self.attr_index = self.d_set.attr_cols
@@ -165,14 +165,14 @@ class LcmACO(LcmGP):
         return pat
 
 
-def init(f_path, min_supp, cores):
+def init(f_path, min_supp, e_factor, cores):
     try:
         if cores > 1:
             num_cores = cores
         else:
             num_cores = Profile.get_num_cores()
 
-        ac = LcmACO(f_path, min_supp, n_jobs=num_cores)
+        ac = LcmACO(f_path, min_supp, e_factor, n_jobs=num_cores)
         lst_gp = ac.run_ant_colony()
 
         d_set = ac.d_set

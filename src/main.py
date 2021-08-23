@@ -87,6 +87,14 @@ if __name__ == "__main__":
         vFactor = options.vFactor
         stepVal = options.stepVal
 
+        VISUAL = [0, 0, 0]
+        if cfg.SHOW_P_MATRIX:
+            VISUAL[0] = True
+        if cfg.SHOW_EVALUATIONS:
+            VISUAL[1] = True
+        if cfg.SHOW_ITERATIONS:
+            VISUAL[2] = True
+
     import time
     import tracemalloc
     from pkg_algorithms.shared.profile import Profile
@@ -95,7 +103,8 @@ if __name__ == "__main__":
         # ACO-GRAANK
         start = time.time()
         tracemalloc.start()
-        res_text = aco_grad_v4.execute(filePath, minSup, numCores, eVal, cfg.MAX_ITERATIONS, cfg.MAX_EVALUATIONS)
+        res_text = aco_grad_v4.execute(filePath, minSup, numCores, eVal, cfg.MAX_ITERATIONS, cfg.MAX_EVALUATIONS,
+                                       VISUAL)
         snapshot = tracemalloc.take_snapshot()
         end = time.time()
 
@@ -110,7 +119,7 @@ if __name__ == "__main__":
         start = time.time()
         tracemalloc.start()
         res_text = ga_grad.execute(filePath, minSup, numCores, cfg.MAX_ITERATIONS, cfg.MAX_EVALUATIONS,
-                                   cfg.N_POPULATION, pcVal, cfg.GAMMA, cfg.MU, cfg.SIGMA, cfg.N_VAR)
+                                   cfg.N_POPULATION, pcVal, cfg.GAMMA, cfg.MU, cfg.SIGMA, cfg.N_VAR, VISUAL)
         snapshot = tracemalloc.take_snapshot()
         end = time.time()
 
@@ -125,7 +134,7 @@ if __name__ == "__main__":
         start = time.time()
         tracemalloc.start()
         res_text = pso_grad.execute(filePath, minSup, numCores, cfg.MAX_ITERATIONS, cfg.MAX_EVALUATIONS,
-                                    cfg.N_PARTICLES, vFactor, cfg.PERSONAL_COEFF, cfg.GLOBAL_COEFF, cfg.N_VAR)
+                                    cfg.N_PARTICLES, vFactor, cfg.PERSONAL_COEFF, cfg.GLOBAL_COEFF, cfg.N_VAR, VISUAL)
         snapshot = tracemalloc.take_snapshot()
         end = time.time()
 
@@ -153,7 +162,7 @@ if __name__ == "__main__":
         # ACO-LCM
         start = time.time()
         tracemalloc.start()
-        res_text = aco_lcm.init(filePath, minSup, numCores)
+        res_text = aco_lcm.init(filePath, minSup, eVal, numCores)
         snapshot = tracemalloc.take_snapshot()
         end = time.time()
 
@@ -181,7 +190,8 @@ if __name__ == "__main__":
         # PSO-GRAANK
         start = time.time()
         tracemalloc.start()
-        res_text = prs_grad.execute(filePath, minSup, numCores, cfg.MAX_ITERATIONS, cfg.MAX_EVALUATIONS, cfg.N_VAR)
+        res_text = prs_grad.execute(filePath, minSup, numCores, cfg.MAX_ITERATIONS, cfg.MAX_EVALUATIONS, cfg.N_VAR,
+                                    VISUAL)
         snapshot = tracemalloc.take_snapshot()
         end = time.time()
 
@@ -196,7 +206,7 @@ if __name__ == "__main__":
         start = time.time()
         tracemalloc.start()
         res_text = pls_grad.execute(filePath, minSup, numCores, cfg.MAX_ITERATIONS, cfg.MAX_EVALUATIONS, stepVal,
-                                    cfg.N_VAR)
+                                    cfg.N_VAR, VISUAL)
         snapshot = tracemalloc.take_snapshot()
         end = time.time()
 

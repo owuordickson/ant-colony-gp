@@ -204,7 +204,7 @@ def is_duplicate(pattern, lst_winners):
     return False
 
 
-def execute(f_path, min_supp, cores, max_iteration, max_evaluations, nvar):
+def execute(f_path, min_supp, cores, max_iteration, max_evaluations, nvar, visuals):
     try:
         if cores > 1:
             num_cores = cores
@@ -241,10 +241,12 @@ def execute(f_path, min_supp, cores, max_iteration, max_evaluations, nvar):
         for gp in list_gp:
             wr_line += (str(gp.to_string()) + ' : ' + str(round(gp.support, 3)) + '\n')
 
-        wr_line += '\n\n' + "Iteration: Cost" + '\n'
-        wr_line += out.str_iterations
-        # wr_line += '\n\n' + "Evaluation: Cost" + '\n'
-        # wr_line += out.str_evaluations
+        if visuals[1]:
+            wr_line += '\n\n' + "Evaluation: Cost" + '\n'
+            wr_line += out.str_evaluations
+        if visuals[2]:
+            wr_line += '\n\n' + "Iteration: Best Cost" + '\n'
+            wr_line += out.str_iterations
         return wr_line
     except ArithmeticError as error:
         wr_line = "Failed: " + str(error)

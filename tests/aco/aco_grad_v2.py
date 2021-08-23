@@ -19,7 +19,7 @@ from ypstruct import structure
 from src.pkg_algorithms import GI, GP
 from src.pkg_algorithms import Dataset
 from src.pkg_algorithms.shared.profile import Profile
-from src.pkg_algorithms.shared import config as cfg
+from tests import config as cfg
 
 
 class GradACO:
