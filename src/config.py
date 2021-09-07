@@ -2,7 +2,7 @@
 
 # Configurations for Gradual Patterns:
 # INITIALIZATIONS = 3
-ALGORITHM = 'aco'  # aco, ga, pso, graank, acolcm, lcm, prs, pls
+ALGORITHM = 'ga'  # aco, ga, pso, graank, acolcm, lcm, prs, pls
 MIN_SUPPORT = 0.5
 CPU_CORES = 4  # Depends on your computer
 
@@ -44,4 +44,4 @@ STEP_SIZE = 0.5
 # VISUALIZATIONS
 SHOW_P_MATRIX = False  # ONLY FOR: aco
 SHOW_EVALUATIONS = False  # FOR aco, prs, pls, pso
-SHOW_ITERATIONS = False  # FOR aco, prs, pls, pso
+SHOW_ITERATIONS = True  # FOR aco, prs, pls, pso
