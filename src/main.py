@@ -17,7 +17,7 @@ import sys
 from optparse import OptionParser
 import config as cfg
 from pkg_algorithms import aco_grad_v4, ga_grad, pls_grad, prs_grad, pso_grad
-# from pkg_algorithms import graank_v2, aco_lcm, lcm_gp
+from pkg_algorithms import graank_v2, aco_lcm, lcm_gp
 
 
 if __name__ == "__main__":
@@ -87,13 +87,13 @@ if __name__ == "__main__":
         vFactor = options.vFactor
         stepVal = options.stepVal
 
-        VISUAL = [0, 0, 0]
-        if cfg.SHOW_P_MATRIX:
-            VISUAL[0] = True
-        if cfg.SHOW_EVALUATIONS:
-            VISUAL[1] = True
-        if cfg.SHOW_ITERATIONS:
-            VISUAL[2] = True
+    VISUAL = [0, 0, 0]
+    if cfg.SHOW_P_MATRIX:
+        VISUAL[0] = True
+    if cfg.SHOW_EVALUATIONS:
+        VISUAL[1] = True
+    if cfg.SHOW_ITERATIONS:
+        VISUAL[2] = True
 
     import time
     import tracemalloc
