@@ -17,7 +17,7 @@ import sys
 from optparse import OptionParser
 import config as cfg
 from pkg_algorithms import aco_grad_v4, ga_grad, pls_grad, prs_grad, pso_grad
-from pkg_algorithms import graank_v2, aco_lcm, lcm_gp
+# from pkg_algorithms import graank_v2, aco_lcm, lcm_gp
 
 
 if __name__ == "__main__":
@@ -111,7 +111,7 @@ if __name__ == "__main__":
         wr_text = ("Run-time: " + str(end - start) + " seconds\n")
         wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
         wr_text += str(res_text)
-        f_name = str('res_aco' + str(end).replace('.', '', 1) + '.txt')
+        f_name = str('res_aco_v1' + str(end).replace('.', '', 1) + '.txt')
         Profile.write_file(wr_text, f_name)
         print(wr_text)
     elif algChoice == 'ga':
@@ -126,7 +126,7 @@ if __name__ == "__main__":
         wr_text = ("Run-time: " + str(end - start) + " seconds\n")
         wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
         wr_text += str(res_text)
-        f_name = str('res_ga' + str(end).replace('.', '', 1) + '.txt')
+        f_name = str('res_ga_v1' + str(end).replace('.', '', 1) + '.txt')
         Profile.write_file(wr_text, f_name)
         print(wr_text)
     elif algChoice == 'pso':
@@ -141,7 +141,7 @@ if __name__ == "__main__":
         wr_text = ("Run-time: " + str(end - start) + " seconds\n")
         wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
         wr_text += str(res_text)
-        f_name = str('res_pso' + str(end).replace('.', '', 1) + '.txt')
+        f_name = str('res_pso_v1' + str(end).replace('.', '', 1) + '.txt')
         Profile.write_file(wr_text, f_name)
         print(wr_text)
     elif algChoice == 'graank':
@@ -198,7 +198,7 @@ if __name__ == "__main__":
         wr_text = ("Run-time: " + str(end - start) + " seconds\n")
         wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
         wr_text += str(res_text)
-        f_name = str('res_prs' + str(end).replace('.', '', 1) + '.txt')
+        f_name = str('res_prs_v1' + str(end).replace('.', '', 1) + '.txt')
         Profile.write_file(wr_text, f_name)
         print(wr_text)
     elif algChoice == 'pls':
@@ -213,7 +213,7 @@ if __name__ == "__main__":
         wr_text = ("Run-time: " + str(end - start) + " seconds\n")
         wr_text += (Profile.get_quick_mem_use(snapshot) + "\n")
         wr_text += str(res_text)
-        f_name = str('res_pls' + str(end).replace('.', '', 1) + '.txt')
+        f_name = str('res_pls_v1' + str(end).replace('.', '', 1) + '.txt')
         Profile.write_file(wr_text, f_name)
         print(wr_text)
     else:
