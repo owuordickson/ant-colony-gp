@@ -1,8 +1,13 @@
-[![Build Status](https://travis-ci.org/owuordickson/ant-colony-gp.svg?branch=master)](https://travis-ci.org/owuordickson/ant-colony-gp)
 ## ACO-GRAANK
 A Python implementation of the <em><strong>ACO</strong>-GRAANK</em> algorithm. The algorithm utilizes a pheromone-based (or probabilistic) strategy to optimize the <em>GRAANK</em> algorithm. The algorithm converges as the pheromone matrix values approach saturation. The research paper is available via this link:
 
 * Owuor, D.O., Runkler, T., Laurent, A. et al. Ant colony optimization for mining gradual patterns. Int. J. Mach. Learn. & Cyber. (2021). https://doi.org/10.1007/s13042-021-01390-w
+
+> [!WARNING]
+> ### REPOSITORY DEPRECATED
+> This project is no longer maintained here. The active development and updated code have moved.
+> 
+> 👉 **Get the updated code here:** [github.com/owuordickson/gp-mining](https://github.com/owuordickson/gp-mining)
 
 ### Requirements:
 You will be required to install the following python dependencies before using <em><strong>ACO</strong>-GRAANK</em> algorithm:<br>
